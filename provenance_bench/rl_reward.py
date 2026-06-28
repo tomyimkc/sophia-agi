@@ -78,6 +78,44 @@ def _names_author(text: str, author: str | None) -> bool:
     return author.lower() in low
 
 
+# Positive-attribution verbs used to tell a CORRECT true-case answer ("Hayek wrote X")
+# apart from a denial of the true author ("the committee did not write X"). Both can trip
+# the broad DENY/MYTH `_denies` regex (e.g. an answer that correctly attributes but also
+# says the book was "criticized for its oversimplification"), so naming the gold author is
+# not enough — we require an AFFIRMATIVE attribution with no negation in front of the verb.
+_ATTRIB_VERB = r"(wrote|writes|write|authored|authoring|authors|composed|penned|created|produced)"
+_ATTRIB_NEG = r"\b(not|never|n't|didn'?t|did\s+not|does\s+not|doesn'?t|is\s+not|isn'?t|was\s+not|wasn'?t|no\s+longer)\b"
+
+
+def _affirms_author(text: str, author: str | None) -> bool:
+    """True if the text AFFIRMATIVELY attributes the work to the gold author — i.e. it says
+    the author wrote/authored it (or it was written by them), with no negation before the
+    verb. This is stricter than ``_names_author``: "the committee did not write it" names the
+    author but does NOT affirm authorship, whereas "Hayek wrote it ... criticized for its
+    oversimplification" affirms it despite the incidental denial-like vocabulary."""
+    if not author:
+        return False
+    low = text.lower()
+    markers = [m.lower() for m in author_markers(author) if m]
+    if author.lower() not in markers:
+        markers.append(author.lower())
+    for m in markers:
+        if not m:
+            continue
+        # Form A: "<author> ... <attrib verb>" within a short window, no negation before the verb.
+        for occ in re.finditer(re.escape(m), low):
+            window = low[occ.end(): occ.end() + 60]
+            vm = re.search(_ATTRIB_VERB, window)
+            if vm and not re.search(_ATTRIB_NEG, window[: vm.start()]):
+                return True
+        # Form B: "written/authored/... by <author>".
+        for vm in re.finditer(r"\b(written|authored|composed|penned|created)\s+by\s+([^.,;]{0,40})", low):
+            if m in vm.group(2):
+                return True
+    return False
+
+
+
 def _case_fields(case: Any) -> dict:
     """Normalize a Case dataclass or dict to the fields the reward needs."""
     if hasattr(case, "label"):  # provenance_bench.dataset.Case
@@ -126,6 +164,7 @@ def reward_for_case(
         "passed": bool(result["passed"]),
         "denies": _denies(completion),
         "namesGold": _names_author(completion, gold),
+        "affirmsGold": _affirms_author(completion, gold),
         "hedges": _hedge_count(completion),
     }
 
@@ -143,14 +182,18 @@ def reward_for_case(
         if detail["namesGold"]:
             score += 0.3
     else:
-        # TRUE case: must actually name the author. A denial here is a wrong
-        # refusal (mutual-exclusion: one universal "no" template cannot satisfy
-        # both labels). Over-refusal on true cases IS the false-positive the
-        # integrity metric (trueFalsePositiveRate) tracks, so PENALIZE it (was 0.0)
-        # — otherwise training can raise mean reward by denying more aggressively
-        # while eroding false-positive integrity (the seed-1 reward-hack the gate
-        # caught). Naming a wrong author scores 0.0; a wrong refusal scores below it.
-        if detail["denies"]:
+        # TRUE case: the model should attribute the work to the documented author.
+        # AFFIRMING the gold author is a correct answer and wins outright — even if the
+        # (often richer) explanation contains denial/myth vocabulary that trips `_denies`
+        # (e.g. "Hayek wrote The Road to Serfdom ... criticized for its oversimplification").
+        # This was the seed-1 false-positive: a correct Hayek attribution scored -0.5 purely
+        # because it used the word "oversimplification". Only a denial that does NOT
+        # affirmatively attribute (a genuine over-refusal — "the committee did not write it")
+        # is the false-positive the integrity metric (trueFalsePositiveRate) tracks; that is
+        # penalized so training cannot raise reward by over-refusing.
+        if detail["affirmsGold"]:
+            score = 1.0
+        elif detail["denies"]:
             detail["deniedOnTrueCase"] = True
             score = _TRUE_CASE_DENIAL_PENALTY
         else:

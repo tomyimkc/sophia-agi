@@ -1,0 +1,50 @@
+{
+  "schema": "sophia.closed_loop.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "initialUplift": 0.0,
+  "finalUplift": 0.0,
+  "finalModelSpec": "mock:mock",
+  "cycles": [
+    {
+      "cycle": 0,
+      "modelSpec": "mock:mock",
+      "baselineUplift": 0.0,
+      "baselineHarnessRate": 1.0,
+      "baselineDemonstrated": false,
+      "pairsDistilled": 0,
+      "trainRan": false,
+      "candidateSpec": "mock:mock",
+      "promotionVerdict": "no-candidate",
+      "promotionReasons": [],
+      "postUplift": 0.0,
+      "postHarnessRate": 1.0,
+      "modelAdvanced": false
+    },
+    {
+      "cycle": 1,
+      "modelSpec": "mock:mock",
+      "baselineUplift": 0.0,
+      "baselineHarnessRate": 1.0,
+      "baselineDemonstrated": false,
+      "pairsDistilled": 0,
+      "trainRan": false,
+      "candidateSpec": "mock:mock",
+      "promotionVerdict": "no-candidate",
+      "promotionReasons": [],
+      "postUplift": 0.0,
+      "postHarnessRate": 1.0,
+      "modelAdvanced": false
+    }
+  ],
+  "invariants": {
+    "nonDegenerate": true,
+    "saturated": false,
+    "promotedAny": false
+  },
+  "haltedEarly": false,
+  "haltReason": "",
+  "interpretation": "IDLE: no candidate was promoted (no training ran, or every candidate was gated). The loop ran end-to-end without error but produced no model change. For a real run, point train_step at a live GPU trainer.",
+  "mode": "mock",
+  "runAt": "2026-06-26T16:26:38"
+}

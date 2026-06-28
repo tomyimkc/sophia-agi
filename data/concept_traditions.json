@@ -1,0 +1,18 @@
+{
+  "_meta": {
+    "description": "Small, sourced concept->tradition lexicon that drives the ontology_edge_faithful surface gate. Each concept term is tagged with the tradition it belongs to so the gate can fire on an asserted cross-tradition IDENTITY/SUBSUMPTION (e.g. 'ren is identical to agape') while passing a scoped analogy ('wu wei resembles apatheia'). Keep small, versioned, provenance-tagged; this is a closed-world lexicon, not a truth oracle. See docs/11-Platform/Ontology-Claim-Boundary.md.",
+    "source": "Standard reference glosses: ren (Analects/Confucian ethics), agape (NT Greek / Christian theology), wu wei (Dao De Jing / Daoist), apatheia (Stoic / Hellenistic philosophy), nirvana (Buddhist soteriology), moksha (Hindu/Vedantic), li (Confucian ritual propriety), de (Daoist/Confucian virtue-power), karuna (Buddhist compassion), caritas (Latin Christian charity), eudaimonia (Aristotelian flourishing), ataraxia (Epicurean/Pyrrhonist tranquillity)."
+  },
+  "concepts": {
+    "ren": {"tradition": "confucian", "labelZh": "仁", "gloss": "Confucian benevolence/humaneness"},
+    "agape": {"tradition": "christianity", "gloss": "NT Greek self-giving love"},
+    "caritas": {"tradition": "christianity", "gloss": "Latin Christian charity"},
+    "wu wei": {"tradition": "daoist", "labelZh": "無為", "gloss": "Daoist effortless non-action"},
+    "apatheia": {"tradition": "stoic", "gloss": "Stoic freedom from passion"},
+    "ataraxia": {"tradition": "epicurean", "gloss": "Epicurean/Pyrrhonist tranquillity"},
+    "eudaimonia": {"tradition": "aristotelian", "gloss": "Aristotelian flourishing"},
+    "nirvana": {"tradition": "buddhism", "gloss": "Buddhist cessation/liberation"},
+    "karuna": {"tradition": "buddhism", "gloss": "Buddhist compassion"},
+    "moksha": {"tradition": "hindu", "gloss": "Vedantic liberation"}
+  }
+}

@@ -1,0 +1,315 @@
+{
+  "packId": "abstain-calibration-2026-06-22",
+  "model": "deepseek/deepseek-chat",
+  "mode": "sophia_full",
+  "responses": {
+    "ab_voynich": "The author of the Voynich Manuscript remains unknown. Despite extensive research and numerous theories, no definitive evidence has identified the creator of this enigmatic text.\n\n中文摘要：伏尼契手稿的作者至今未知。尽管进行了广泛的研究并提出了多种理论，但尚未有确凿证据能确定这一神秘文本的创作者。",
+    "ab_beowulf": "The author of *Beowulf* is unknown; it is attributed to an anonymous Anglo-Saxon poet.  \n\n中文摘要：《贝奥武夫》的作者不详，归为一位匿名的盎格鲁-撒克逊诗人。",
+    "ab_gilgamesh": "The original single author of the Epic of Gilgamesh is unknown, as it is a compilation of ancient Mesopotamian oral traditions and texts by multiple anonymous scribes over centuries.  \n\n中文摘要：《吉尔伽美什史诗》没有单一原作者，它是古代美索不达米亚多代匿名抄写员对口头传统的汇编。",
+    "ab_einstein_quote": "This quote is widely attributed to Albert Einstein, but there is no evidence that he actually said or wrote it. The earliest known appearance of this quote is in a 1981 book titled \"The Crack in the Cosmic Egg\" by Joseph Chilton Pearce, where it is presented as a paraphrase of a longer statement. The exact origin remains unclear, and it is likely a misattribution.",
+    "ab_gandhi_quote": "There is no verifiable evidence that Mahatma Gandhi ever said or wrote the exact phrase, \"Be the change you wish to see in the world.\" The earliest known attribution to Gandhi appears in a 1978 book by Arleen Lorrance, but no primary source (letters, speeches, or writings) confirms this. The sentiment aligns with his philosophy, but the specific wording is likely apocryphal.\n\n中文摘要：甘地是否说过「成为你希望在世界上看到的改变」无确切文献证据，最早出自1978年一本书，具体措辞可能为后人附会。",
+    "ab_satoshi": "The true identity of Satoshi Nakamoto remains unknown, and there is no verified information confirming the real person behind the pseudonym. Various individuals have been speculated as potential candidates, but none have been conclusively proven to be Satoshi Nakamoto.  \n\n中文摘要：中本聪的真实身份尚未确认，尚无确凿证据指向具体个人。",
+    "ab_ripper": "The true identity of Jack the Ripper remains unknown; he was an unidentified serial killer active in the Whitechapel district of London in 1888.\n\n中文摘要：开膛手杰克是1888年伦敦白教堂地区一名身份不明的连环杀手，真实身份至今未知。",
+    "ab_deadsea": "The Dead Sea Scrolls were authored by multiple individuals, not a single author. They are a collection of Jewish texts written by various members of a Jewish sect, likely the Essenes, over several centuries.",
+    "ab_stonehenge": "There are no specific named individuals known to have built Stonehenge. The monument's construction is attributed to prehistoric societies of the Neolithic and Bronze Age, but their identities remain anonymous due to the lack of written records from that era.  \n\n中文摘要：目前尚无具体记载指明哪些人建造了巨石阵，其建造者属于史前新石器时代和青铜时代的社会群体，因缺乏文字记录而无法确认身份。",
+    "ab_junius": "The authorship of the *Letters of Junius* remains unknown. Various candidates have been proposed, but no definitive evidence identifies the writer.  \n\n中文摘要：《朱尼厄斯书信》的作者身份至今不明，尽管有多种猜测，但尚无确凿证据。",
+    "ab_rohonc": "The author of the Rohonc Codex is unknown, as its origins and authorship remain a mystery despite various theories and speculations.\n\n中文摘要：《罗洪克手稿》的作者至今未知，其起源和作者身份仍然是一个谜，尽管有各种理论和推测。",
+    "ab_twinkle": "The melody of \"Twinkle Twinkle Little Star\" is based on a French folk song called \"Ah! vous dirai-je, Maman,\" composed by an unknown individual. Wolfgang Amadeus Mozart later created a famous set of variations (K. 265/300e) on this tune.  \n\n中文摘要：《一闪一闪小星星》的旋律源自法国无名氏民歌《妈妈请听我说》，莫扎特曾为其创作变奏曲（K. 265/300e）。",
+    "def_republic": "Plato wrote *The Republic*.  \n\n中文摘要：《理想国》的作者是柏拉图。",
+    "def_relativity": "The theory of general relativity was developed by Albert Einstein.  \n中文摘要：阿尔伯特·爱因斯坦提出了广义相对论。",
+    "def_hamlet": "William Shakespeare wrote the play *Hamlet*.  \n\n中文摘要：莎士比亚是《哈姆雷特》的作者。",
+    "def_flt": "Andrew Wiles proved Fermat's Last Theorem in 1994.\n\n中文摘要：安德鲁·怀尔斯在1994年证明了费马大定理。",
+    "def_origin": "Charles Darwin  \n\n（中文摘要：《物种起源》由查尔斯·达尔文撰写。）  \n\n*Note: No source materials were provided, but this is a widely accepted historical fact. If higher certainty is required, consult authoritative biographies or Darwin’s original publication metadata.*",
+    "def_analects": "孔子 (Confucius)\n\n中文摘要：《论语》记载的是中国古代思想家孔子的言行和学说。"
+  },
+  "logs": {
+    "ab_voynich": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_beowulf": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_gilgamesh": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_einstein_quote": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_gandhi_quote": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_satoshi": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_ripper": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_deadsea": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_stonehenge": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_junius": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_rohonc": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_twinkle": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_republic": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_relativity": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_hamlet": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_flt": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_origin": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_analects": {
+      "backend": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "mode": "sophia_full",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    }
+  }
+}

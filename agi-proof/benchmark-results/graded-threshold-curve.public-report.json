@@ -1,0 +1,85 @@
+{
+  "benchmark": "graded-threshold operating curve (live provenance signal, OKF wiki)",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "n": 84,
+  "loFixedAt": 0.4,
+  "currentDefault": {
+    "hi": 0.7,
+    "lo": 0.4,
+    "mix": {
+      "hi": 0.7,
+      "lo": 0.4,
+      "answer": 0.381,
+      "hedge": 0.6071,
+      "abstain": 0.0119
+    }
+  },
+  "curve": [
+    {
+      "hi": 0.4,
+      "lo": 0.4,
+      "answer": 0.9881,
+      "hedge": 0.0,
+      "abstain": 0.0119
+    },
+    {
+      "hi": 0.45,
+      "lo": 0.4,
+      "answer": 0.9286,
+      "hedge": 0.0595,
+      "abstain": 0.0119
+    },
+    {
+      "hi": 0.5,
+      "lo": 0.4,
+      "answer": 0.6905,
+      "hedge": 0.2976,
+      "abstain": 0.0119
+    },
+    {
+      "hi": 0.55,
+      "lo": 0.4,
+      "answer": 0.6667,
+      "hedge": 0.3214,
+      "abstain": 0.0119
+    },
+    {
+      "hi": 0.6,
+      "lo": 0.4,
+      "answer": 0.5714,
+      "hedge": 0.4167,
+      "abstain": 0.0119
+    },
+    {
+      "hi": 0.65,
+      "lo": 0.4,
+      "answer": 0.5476,
+      "hedge": 0.4405,
+      "abstain": 0.0119
+    },
+    {
+      "hi": 0.7,
+      "lo": 0.4,
+      "answer": 0.381,
+      "hedge": 0.6071,
+      "abstain": 0.0119
+    },
+    {
+      "hi": 0.75,
+      "lo": 0.4,
+      "answer": 0.3571,
+      "hedge": 0.631,
+      "abstain": 0.0119
+    },
+    {
+      "hi": 0.8,
+      "lo": 0.4,
+      "answer": 0.2857,
+      "hedge": 0.7024,
+      "abstain": 0.0119
+    }
+  ],
+  "honestBound": "Sensitivity analysis of the answer/hedge/abstain MIX vs the hi cut point over the real corpus — an operating curve for choosing a threshold against target coverage, NOT a fitted optimum. A production-optimal hi/lo needs labeled {confidence, correct} outcomes from a stochastic model run (use --data); offline truth labels cannot be fabricated. Defaults are unchanged."
+}

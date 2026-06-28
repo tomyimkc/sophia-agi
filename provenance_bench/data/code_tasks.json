@@ -1,0 +1,1902 @@
+{
+  "_meta": {
+    "description": "Exec-verified code RLVR pack (tests-pass-as-reward). Families chosen so a correct solution requires real logic (the answer is computed, not restated), making tests-pass a non-gameable reward. Split is by FIXED held-out families (identical across seeds) so seeds are comparable; eval families are unseen algorithmic TYPES (palindrome, order-preserving dedupe, sorted merge) never trained. The reference solution is generator-only and never placed in an RLVR row. Regenerate with SOPHIA_ALLOW_CODE_EXEC=1 python tools/gen_code_pack.py.",
+    "schemaVersion": 1,
+    "rewardOracle": "provenance_bench.code_exec.run_solution (interpreter = ground truth)",
+    "trainFamilies": [
+      "abs_diff",
+      "count_vowels",
+      "last_n",
+      "max_of",
+      "negate",
+      "repeat_str",
+      "scale",
+      "sum_range"
+    ],
+    "evalFamilies": [
+      "dedupe_order",
+      "is_palindrome",
+      "merge_sorted"
+    ],
+    "counts": {
+      "train": 160,
+      "eval": 48
+    },
+    "canClaimAGI": false,
+    "trainingOracleOnly": true
+  },
+  "tasks": [
+    {
+      "id": "scale-12-1",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(12, 1) == 12\nassert scale(12, 1) == 12\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale-0-1",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(0, 1) == 0\nassert scale(0, 1) == 0\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale--3-6",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(-3, 6) == -18\nassert scale(-3, 1) == -3\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale-3-8",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(3, 8) == 24\nassert scale(3, 1) == 3\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale--5-8",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(-5, 8) == -40\nassert scale(-5, 1) == -5\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale--9-4",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(-9, 4) == -36\nassert scale(-9, 1) == -9\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale-2-7",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(2, 7) == 14\nassert scale(2, 1) == 2\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale--1-8",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(-1, 8) == -8\nassert scale(-1, 1) == -1\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale--1-5",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(-1, 5) == -5\nassert scale(-1, 1) == -1\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale-0-5",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(0, 5) == 0\nassert scale(0, 1) == 0\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale--6--1",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(-6, -1) == 6\nassert scale(-6, 1) == -6\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale-0--6",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(0, -6) == 0\nassert scale(0, 1) == 0\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale--8--5",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(-8, -5) == 40\nassert scale(-8, 1) == -8\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale-11-5",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(11, 5) == 55\nassert scale(11, 1) == 11\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale-0--1",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(0, -1) == 0\nassert scale(0, 1) == 0\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale--4-4",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(-4, 4) == -16\nassert scale(-4, 1) == -4\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale-3--6",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(3, -6) == -18\nassert scale(3, 1) == 3\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale-6-3",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(6, 3) == 18\nassert scale(6, 1) == 6\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale-12--2",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(12, -2) == -24\nassert scale(12, 1) == 12\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale-4--4",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(4, -4) == -16\nassert scale(4, 1) == 4\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale--1-8",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(-1, 8) == -8\nassert scale(-1, 1) == -1\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale-5--2",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(5, -2) == -10\nassert scale(5, 1) == 5\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale--7-1",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(-7, 1) == -7\nassert scale(-7, 1) == -7\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "scale--1--4",
+      "family": "scale",
+      "split": "train",
+      "entry_point": "scale",
+      "prompt": "Write a function scale(n, k) that returns n multiplied by k.",
+      "test": "assert scale(-1, -4) == 4\nassert scale(-1, 1) == -1\n",
+      "solution": "def scale(n, k):\n    return n * k\n"
+    },
+    {
+      "id": "negate-7",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(7) == -7\nassert negate(-7) == 7\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "negate-24",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(24) == -24\nassert negate(-24) == 24\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "negate-19",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(19) == -19\nassert negate(-19) == 19\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "negate--19",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(-19) == 19\nassert negate(19) == -19\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "negate--9",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(-9) == 9\nassert negate(9) == -9\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "negate-36",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(36) == -36\nassert negate(-36) == 36\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "negate--1",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(-1) == 1\nassert negate(1) == -1\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "negate-9",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(9) == -9\nassert negate(-9) == 9\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "negate--6",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(-6) == 6\nassert negate(6) == -6\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "negate--49",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(-49) == 49\nassert negate(49) == -49\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "negate--48",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(-48) == 48\nassert negate(48) == -48\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "negate-27",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(27) == -27\nassert negate(-27) == 27\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "negate-35",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(35) == -35\nassert negate(-35) == 35\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "negate--38",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(-38) == 38\nassert negate(38) == -38\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "negate-43",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(43) == -43\nassert negate(-43) == 43\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "negate--3",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(-3) == 3\nassert negate(3) == -3\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "negate-11",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(11) == -11\nassert negate(-11) == 11\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "negate-39",
+      "family": "negate",
+      "split": "train",
+      "entry_point": "negate",
+      "prompt": "Write a function negate(n) that returns the negation of n.",
+      "test": "assert negate(39) == -39\nassert negate(-39) == 39\n",
+      "solution": "def negate(n):\n    return -n\n"
+    },
+    {
+      "id": "absdiff--10--17",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(-10, -17) == 7\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff-8--7",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(8, -7) == 15\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff--8--1",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(-8, -1) == 7\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff--10-19",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(-10, 19) == 29\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff--14-2",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(-14, 2) == 16\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff--1-3",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(-1, 3) == 4\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff-10-4",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(10, 4) == 6\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff--18-17",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(-18, 17) == 35\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff-6--12",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(6, -12) == 18\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff--2--4",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(-2, -4) == 2\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff--18--18",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(-18, -18) == 0\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff-17--18",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(17, -18) == 35\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff--3-2",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(-3, 2) == 5\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff-1-19",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(1, 19) == 18\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff--5-2",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(-5, 2) == 7\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff-2-3",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(2, 3) == 1\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff-8--12",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(8, -12) == 20\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff--18--5",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(-18, -5) == 13\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff-13-16",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(13, 16) == 3\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff--11-12",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(-11, 12) == 23\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff--1-15",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(-1, 15) == 16\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "absdiff-4--17",
+      "family": "abs_diff",
+      "split": "train",
+      "entry_point": "abs_diff",
+      "prompt": "Write a function abs_diff(a, b) that returns the absolute difference between a and b.",
+      "test": "assert abs_diff(4, -17) == 21\n",
+      "solution": "def abs_diff(a, b):\n    return abs(a - b)\n"
+    },
+    {
+      "id": "sumrange-3-18",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(3, 18) == 168\nassert sum_range(3, 3) == 3\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-1-8",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(1, 8) == 36\nassert sum_range(1, 1) == 1\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-3-14",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(3, 14) == 102\nassert sum_range(3, 3) == 3\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-1-17",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(1, 17) == 153\nassert sum_range(1, 1) == 1\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-6-8",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(6, 8) == 21\nassert sum_range(6, 6) == 6\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-5-7",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(5, 7) == 18\nassert sum_range(5, 5) == 5\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-6-12",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(6, 12) == 63\nassert sum_range(6, 6) == 6\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-6-18",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(6, 18) == 156\nassert sum_range(6, 6) == 6\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-6-15",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(6, 15) == 105\nassert sum_range(6, 6) == 6\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-5-10",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(5, 10) == 45\nassert sum_range(5, 5) == 5\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-4-18",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(4, 18) == 165\nassert sum_range(4, 4) == 4\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-4-14",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(4, 14) == 99\nassert sum_range(4, 4) == 4\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-3-7",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(3, 7) == 25\nassert sum_range(3, 3) == 3\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-1-12",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(1, 12) == 78\nassert sum_range(1, 1) == 1\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-5-12",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(5, 12) == 68\nassert sum_range(5, 5) == 5\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-3-15",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(3, 15) == 117\nassert sum_range(3, 3) == 3\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-3-10",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(3, 10) == 52\nassert sum_range(3, 3) == 3\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-4-11",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(4, 11) == 60\nassert sum_range(4, 4) == 4\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-6-14",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(6, 14) == 90\nassert sum_range(6, 6) == 6\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-2-17",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(2, 17) == 152\nassert sum_range(2, 2) == 2\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-5-14",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(5, 14) == 95\nassert sum_range(5, 5) == 5\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "sumrange-4-13",
+      "family": "sum_range",
+      "split": "train",
+      "entry_point": "sum_range",
+      "prompt": "Write a function sum_range(a, b) that returns the sum of all integers from a through b inclusive.",
+      "test": "assert sum_range(4, 13) == 85\nassert sum_range(4, 4) == 4\n",
+      "solution": "def sum_range(a, b):\n    return sum(range(a, b + 1))\n"
+    },
+    {
+      "id": "cvowels-24736",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"oihe\") == 3\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-1921",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"jgef\") == 1\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-44467",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"ceu\") == 2\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-24025",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"aoua\") == 4\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-53607",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"uieg\") == 3\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-92028",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"augdech\") == 3\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-51740",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"bgheug\") == 2\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-25099",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"iffcufj\") == 2\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-41810",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"uuceac\") == 4\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-68668",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"eioggboa\") == 5\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-434",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"adof\") == 2\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-95168",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"hbdgi\") == 1\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-47105",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"gfeg\") == 1\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-57768",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"iihiaie\") == 6\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-44610",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"jadoau\") == 4\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-51725",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"aioehdui\") == 6\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-96093",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"hajidf\") == 2\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-63572",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"uciahaa\") == 5\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-40352",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"ajecbeao\") == 5\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "cvowels-67191",
+      "family": "count_vowels",
+      "split": "train",
+      "entry_point": "count_vowels",
+      "prompt": "Write a function count_vowels(s) that returns the number of vowels (a, e, i, o, u) in s.",
+      "test": "assert count_vowels(\"gaoad\") == 3\n",
+      "solution": "def count_vowels(s):\n    return sum(1 for c in s if c in 'aeiou')\n"
+    },
+    {
+      "id": "maxof-92617",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([0, 4, 12]) == 12\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "maxof-11520",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([-7, -1, 2, 13, 17]) == 17\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "maxof-83976",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([-15, -9, 14]) == 14\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "maxof-85690",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([-7, 11, 18]) == 18\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "maxof-54245",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([-13, -2, 0]) == 0\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "maxof-42220",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([-19, -17, -15, 6, 13, 19]) == 19\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "maxof-28482",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([-14, -10, -7, -6, 6]) == 6\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "maxof-82306",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([-20, -7, 2, 8, 14]) == 14\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "maxof-5205",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([-15, -9, 11]) == 11\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "maxof-88617",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([-14, -11, 3, 9]) == 9\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "maxof-86405",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([6, 10, 12, 16, 18, 19]) == 19\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "maxof-30598",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([-17, -11, 4, 7, 8, 11]) == 11\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "maxof-27965",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([-18, -14, -9, 3, 4, 18]) == 18\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "maxof-48284",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([-20, -16, -13, -12, -9, 19]) == 19\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "maxof-53208",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([-13, -12, 1, 7, 14]) == 14\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "maxof-14444",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([-14, -10, -6, -5, 13, 14]) == 14\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "maxof-29862",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([-13, 13, 17]) == 17\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "maxof-13758",
+      "family": "max_of",
+      "split": "train",
+      "entry_point": "max_of",
+      "prompt": "Write a function max_of(lst) that returns the largest element of a non-empty list.",
+      "test": "assert max_of([-11, 5, 6]) == 6\n",
+      "solution": "def max_of(lst):\n    return max(lst)\n"
+    },
+    {
+      "id": "lastn-21919",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([5, 6, 7, 8, 9, 10, 11], 7) == [5, 6, 7, 8, 9, 10, 11]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "lastn-3144",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([5], 1) == [5]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "lastn-26669",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 4) == [8, 9, 10, 11]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "lastn-76048",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([1, 2, 3, 4, 5], 1) == [5]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "lastn-96606",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([3, 4, 5, 6, 7, 8], 5) == [4, 5, 6, 7, 8]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "lastn-20727",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([5, 6, 7], 2) == [6, 7]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "lastn-75978",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([4, 5], 2) == [4, 5]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "lastn-39963",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([1, 2, 3, 4, 5, 6], 2) == [5, 6]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "lastn-31247",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([2, 3, 4, 5, 6, 7, 8, 9, 10], 1) == [10]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "lastn-1084",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([5, 6, 7, 8, 9, 10, 11], 3) == [9, 10, 11]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "lastn-71842",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([4, 5, 6, 7], 2) == [6, 7]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "lastn-67123",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([4, 5, 6, 7, 8], 1) == [8]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "lastn-86289",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([5, 6, 7, 8], 3) == [6, 7, 8]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "lastn-31130",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([2, 3, 4, 5, 6], 2) == [5, 6]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "lastn-50932",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([3, 4, 5], 1) == [5]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "lastn-67237",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([2, 3, 4, 5, 6, 7, 8, 9, 10], 5) == [6, 7, 8, 9, 10]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "lastn-22377",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([1, 2, 3, 4, 5], 2) == [4, 5]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "lastn-74703",
+      "family": "last_n",
+      "split": "train",
+      "entry_point": "last_n",
+      "prompt": "Write a function last_n(lst, n) that returns the last n elements of lst.",
+      "test": "assert last_n([3, 4, 5, 6, 7], 3) == [5, 6, 7]\n",
+      "solution": "def last_n(lst, n):\n    return lst[-n:]\n"
+    },
+    {
+      "id": "repeat-7405",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"gbi\", 3) == 'gbigbigbi'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "repeat-99537",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"dbi\", 1) == 'dbi'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "repeat-30915",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"ic\", 4) == 'icicicic'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "repeat-87274",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"bg\", 2) == 'bgbg'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "repeat-7236",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"dca\", 4) == 'dcadcadcadca'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "repeat-89264",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"jfg\", 2) == 'jfgjfg'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "repeat-63642",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"jih\", 5) == 'jihjihjihjihjih'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "repeat-72776",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"fee\", 4) == 'feefeefeefee'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "repeat-68767",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"d\", 3) == 'ddd'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "repeat-73268",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"bf\", 3) == 'bfbfbf'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "repeat-33837",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"hgi\", 2) == 'hgihgi'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "repeat-34728",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"ag\", 2) == 'agag'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "repeat-25683",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"g\", 3) == 'ggg'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "repeat-32536",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"jjh\", 3) == 'jjhjjhjjh'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "repeat-80283",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"ad\", 4) == 'adadadad'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "repeat-6588",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"ge\", 3) == 'gegege'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "repeat-37179",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"ii\", 5) == 'iiiiiiiiii'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "repeat-29704",
+      "family": "repeat_str",
+      "split": "train",
+      "entry_point": "repeat_str",
+      "prompt": "Write a function repeat_str(s, n) that returns the string s repeated n times.",
+      "test": "assert repeat_str(\"gc\", 1) == 'gc'\n",
+      "solution": "def repeat_str(s, n):\n    return s * n\n"
+    },
+    {
+      "id": "palin-59201",
+      "family": "is_palindrome",
+      "split": "eval",
+      "entry_point": "is_palindrome",
+      "prompt": "Write a function is_palindrome(s) that returns True if s reads the same forwards and backwards, else False.",
+      "test": "assert is_palindrome(\"bafeddefab\") == True\n",
+      "solution": "def is_palindrome(s):\n    return s == s[::-1]\n"
+    },
+    {
+      "id": "palin-25147",
+      "family": "is_palindrome",
+      "split": "eval",
+      "entry_point": "is_palindrome",
+      "prompt": "Write a function is_palindrome(s) that returns True if s reads the same forwards and backwards, else False.",
+      "test": "assert is_palindrome(\"hegjbbjgeh\") == True\n",
+      "solution": "def is_palindrome(s):\n    return s == s[::-1]\n"
+    },
+    {
+      "id": "palin-27379",
+      "family": "is_palindrome",
+      "split": "eval",
+      "entry_point": "is_palindrome",
+      "prompt": "Write a function is_palindrome(s) that returns True if s reads the same forwards and backwards, else False.",
+      "test": "assert is_palindrome(\"ghdccdhg\") == True\n",
+      "solution": "def is_palindrome(s):\n    return s == s[::-1]\n"
+    },
+    {
+      "id": "palin-3851",
+      "family": "is_palindrome",
+      "split": "eval",
+      "entry_point": "is_palindrome",
+      "prompt": "Write a function is_palindrome(s) that returns True if s reads the same forwards and backwards, else False.",
+      "test": "assert is_palindrome(\"aheffheehffeha\") == True\n",
+      "solution": "def is_palindrome(s):\n    return s == s[::-1]\n"
+    },
+    {
+      "id": "palin-97184",
+      "family": "is_palindrome",
+      "split": "eval",
+      "entry_point": "is_palindrome",
+      "prompt": "Write a function is_palindrome(s) that returns True if s reads the same forwards and backwards, else False.",
+      "test": "assert is_palindrome(\"cbbc\") == True\n",
+      "solution": "def is_palindrome(s):\n    return s == s[::-1]\n"
+    },
+    {
+      "id": "palin-34190",
+      "family": "is_palindrome",
+      "split": "eval",
+      "entry_point": "is_palindrome",
+      "prompt": "Write a function is_palindrome(s) that returns True if s reads the same forwards and backwards, else False.",
+      "test": "assert is_palindrome(\"bjicggcijb\") == True\n",
+      "solution": "def is_palindrome(s):\n    return s == s[::-1]\n"
+    },
+    {
+      "id": "palin-2054",
+      "family": "is_palindrome",
+      "split": "eval",
+      "entry_point": "is_palindrome",
+      "prompt": "Write a function is_palindrome(s) that returns True if s reads the same forwards and backwards, else False.",
+      "test": "assert is_palindrome(\"eigfjbjfgie\") == True\n",
+      "solution": "def is_palindrome(s):\n    return s == s[::-1]\n"
+    },
+    {
+      "id": "palin-28321",
+      "family": "is_palindrome",
+      "split": "eval",
+      "entry_point": "is_palindrome",
+      "prompt": "Write a function is_palindrome(s) that returns True if s reads the same forwards and backwards, else False.",
+      "test": "assert is_palindrome(\"daibdbiad\") == True\n",
+      "solution": "def is_palindrome(s):\n    return s == s[::-1]\n"
+    },
+    {
+      "id": "palin-73051",
+      "family": "is_palindrome",
+      "split": "eval",
+      "entry_point": "is_palindrome",
+      "prompt": "Write a function is_palindrome(s) that returns True if s reads the same forwards and backwards, else False.",
+      "test": "assert is_palindrome(\"acjhjca\") == True\n",
+      "solution": "def is_palindrome(s):\n    return s == s[::-1]\n"
+    },
+    {
+      "id": "palin-75465",
+      "family": "is_palindrome",
+      "split": "eval",
+      "entry_point": "is_palindrome",
+      "prompt": "Write a function is_palindrome(s) that returns True if s reads the same forwards and backwards, else False.",
+      "test": "assert is_palindrome(\"jfegggefj\") == True\n",
+      "solution": "def is_palindrome(s):\n    return s == s[::-1]\n"
+    },
+    {
+      "id": "palin-29814",
+      "family": "is_palindrome",
+      "split": "eval",
+      "entry_point": "is_palindrome",
+      "prompt": "Write a function is_palindrome(s) that returns True if s reads the same forwards and backwards, else False.",
+      "test": "assert is_palindrome(\"bbbbbb\") == True\n",
+      "solution": "def is_palindrome(s):\n    return s == s[::-1]\n"
+    },
+    {
+      "id": "palin-98471",
+      "family": "is_palindrome",
+      "split": "eval",
+      "entry_point": "is_palindrome",
+      "prompt": "Write a function is_palindrome(s) that returns True if s reads the same forwards and backwards, else False.",
+      "test": "assert is_palindrome(\"efefgiccigfefe\") == True\n",
+      "solution": "def is_palindrome(s):\n    return s == s[::-1]\n"
+    },
+    {
+      "id": "palin-85451",
+      "family": "is_palindrome",
+      "split": "eval",
+      "entry_point": "is_palindrome",
+      "prompt": "Write a function is_palindrome(s) that returns True if s reads the same forwards and backwards, else False.",
+      "test": "assert is_palindrome(\"deidbggbdied\") == True\n",
+      "solution": "def is_palindrome(s):\n    return s == s[::-1]\n"
+    },
+    {
+      "id": "palin-1898",
+      "family": "is_palindrome",
+      "split": "eval",
+      "entry_point": "is_palindrome",
+      "prompt": "Write a function is_palindrome(s) that returns True if s reads the same forwards and backwards, else False.",
+      "test": "assert is_palindrome(\"iggi\") == True\n",
+      "solution": "def is_palindrome(s):\n    return s == s[::-1]\n"
+    },
+    {
+      "id": "palin-43189",
+      "family": "is_palindrome",
+      "split": "eval",
+      "entry_point": "is_palindrome",
+      "prompt": "Write a function is_palindrome(s) that returns True if s reads the same forwards and backwards, else False.",
+      "test": "assert is_palindrome(\"eacfcae\") == True\n",
+      "solution": "def is_palindrome(s):\n    return s == s[::-1]\n"
+    },
+    {
+      "id": "palin-34813",
+      "family": "is_palindrome",
+      "split": "eval",
+      "entry_point": "is_palindrome",
+      "prompt": "Write a function is_palindrome(s) that returns True if s reads the same forwards and backwards, else False.",
+      "test": "assert is_palindrome(\"iabhihbai\") == True\n",
+      "solution": "def is_palindrome(s):\n    return s == s[::-1]\n"
+    },
+    {
+      "id": "dedupe-19615",
+      "family": "dedupe_order",
+      "split": "eval",
+      "entry_point": "dedupe",
+      "prompt": "Write a function dedupe(lst) that returns lst with duplicates removed, preserving the order of first occurrence.",
+      "test": "assert dedupe([4, 1, 0, 3, 2]) == [4, 1, 0, 3, 2]\n",
+      "solution": "def dedupe(lst):\n    out = []\n    for x in lst:\n        if x not in out:\n            out.append(x)\n    return out\n"
+    },
+    {
+      "id": "dedupe-26505",
+      "family": "dedupe_order",
+      "split": "eval",
+      "entry_point": "dedupe",
+      "prompt": "Write a function dedupe(lst) that returns lst with duplicates removed, preserving the order of first occurrence.",
+      "test": "assert dedupe([0, 4, 4, 1, 5]) == [0, 4, 1, 5]\n",
+      "solution": "def dedupe(lst):\n    out = []\n    for x in lst:\n        if x not in out:\n            out.append(x)\n    return out\n"
+    },
+    {
+      "id": "dedupe-55237",
+      "family": "dedupe_order",
+      "split": "eval",
+      "entry_point": "dedupe",
+      "prompt": "Write a function dedupe(lst) that returns lst with duplicates removed, preserving the order of first occurrence.",
+      "test": "assert dedupe([5, 0, 1, 3, 0, 3, 2]) == [5, 0, 1, 3, 2]\n",
+      "solution": "def dedupe(lst):\n    out = []\n    for x in lst:\n        if x not in out:\n            out.append(x)\n    return out\n"
+    },
+    {
+      "id": "dedupe-57438",
+      "family": "dedupe_order",
+      "split": "eval",
+      "entry_point": "dedupe",
+      "prompt": "Write a function dedupe(lst) that returns lst with duplicates removed, preserving the order of first occurrence.",
+      "test": "assert dedupe([5, 0, 1, 5, 3]) == [5, 0, 1, 3]\n",
+      "solution": "def dedupe(lst):\n    out = []\n    for x in lst:\n        if x not in out:\n            out.append(x)\n    return out\n"
+    },
+    {
+      "id": "dedupe-19813",
+      "family": "dedupe_order",
+      "split": "eval",
+      "entry_point": "dedupe",
+      "prompt": "Write a function dedupe(lst) that returns lst with duplicates removed, preserving the order of first occurrence.",
+      "test": "assert dedupe([3, 0, 4, 2, 3, 1, 4]) == [3, 0, 4, 2, 1]\n",
+      "solution": "def dedupe(lst):\n    out = []\n    for x in lst:\n        if x not in out:\n            out.append(x)\n    return out\n"
+    },
+    {
+      "id": "dedupe-57099",
+      "family": "dedupe_order",
+      "split": "eval",
+      "entry_point": "dedupe",
+      "prompt": "Write a function dedupe(lst) that returns lst with duplicates removed, preserving the order of first occurrence.",
+      "test": "assert dedupe([4, 0, 1, 0, 4, 1, 1]) == [4, 0, 1]\n",
+      "solution": "def dedupe(lst):\n    out = []\n    for x in lst:\n        if x not in out:\n            out.append(x)\n    return out\n"
+    },
+    {
+      "id": "dedupe-77868",
+      "family": "dedupe_order",
+      "split": "eval",
+      "entry_point": "dedupe",
+      "prompt": "Write a function dedupe(lst) that returns lst with duplicates removed, preserving the order of first occurrence.",
+      "test": "assert dedupe([2, 0, 0, 0, 3, 2, 2]) == [2, 0, 3]\n",
+      "solution": "def dedupe(lst):\n    out = []\n    for x in lst:\n        if x not in out:\n            out.append(x)\n    return out\n"
+    },
+    {
+      "id": "dedupe-87475",
+      "family": "dedupe_order",
+      "split": "eval",
+      "entry_point": "dedupe",
+      "prompt": "Write a function dedupe(lst) that returns lst with duplicates removed, preserving the order of first occurrence.",
+      "test": "assert dedupe([4, 4, 3, 0, 5, 5]) == [4, 3, 0, 5]\n",
+      "solution": "def dedupe(lst):\n    out = []\n    for x in lst:\n        if x not in out:\n            out.append(x)\n    return out\n"
+    },
+    {
+      "id": "dedupe-1083",
+      "family": "dedupe_order",
+      "split": "eval",
+      "entry_point": "dedupe",
+      "prompt": "Write a function dedupe(lst) that returns lst with duplicates removed, preserving the order of first occurrence.",
+      "test": "assert dedupe([3, 1, 5, 5, 5]) == [3, 1, 5]\n",
+      "solution": "def dedupe(lst):\n    out = []\n    for x in lst:\n        if x not in out:\n            out.append(x)\n    return out\n"
+    },
+    {
+      "id": "dedupe-27950",
+      "family": "dedupe_order",
+      "split": "eval",
+      "entry_point": "dedupe",
+      "prompt": "Write a function dedupe(lst) that returns lst with duplicates removed, preserving the order of first occurrence.",
+      "test": "assert dedupe([5, 3, 3, 1, 2, 4, 1]) == [5, 3, 1, 2, 4]\n",
+      "solution": "def dedupe(lst):\n    out = []\n    for x in lst:\n        if x not in out:\n            out.append(x)\n    return out\n"
+    },
+    {
+      "id": "dedupe-96181",
+      "family": "dedupe_order",
+      "split": "eval",
+      "entry_point": "dedupe",
+      "prompt": "Write a function dedupe(lst) that returns lst with duplicates removed, preserving the order of first occurrence.",
+      "test": "assert dedupe([2, 0, 4, 0, 1, 2, 1]) == [2, 0, 4, 1]\n",
+      "solution": "def dedupe(lst):\n    out = []\n    for x in lst:\n        if x not in out:\n            out.append(x)\n    return out\n"
+    },
+    {
+      "id": "dedupe-99449",
+      "family": "dedupe_order",
+      "split": "eval",
+      "entry_point": "dedupe",
+      "prompt": "Write a function dedupe(lst) that returns lst with duplicates removed, preserving the order of first occurrence.",
+      "test": "assert dedupe([2, 2, 3, 1, 0]) == [2, 3, 1, 0]\n",
+      "solution": "def dedupe(lst):\n    out = []\n    for x in lst:\n        if x not in out:\n            out.append(x)\n    return out\n"
+    },
+    {
+      "id": "dedupe-60283",
+      "family": "dedupe_order",
+      "split": "eval",
+      "entry_point": "dedupe",
+      "prompt": "Write a function dedupe(lst) that returns lst with duplicates removed, preserving the order of first occurrence.",
+      "test": "assert dedupe([4, 3, 2, 4, 1, 1, 4, 1]) == [4, 3, 2, 1]\n",
+      "solution": "def dedupe(lst):\n    out = []\n    for x in lst:\n        if x not in out:\n            out.append(x)\n    return out\n"
+    },
+    {
+      "id": "dedupe-4827",
+      "family": "dedupe_order",
+      "split": "eval",
+      "entry_point": "dedupe",
+      "prompt": "Write a function dedupe(lst) that returns lst with duplicates removed, preserving the order of first occurrence.",
+      "test": "assert dedupe([3, 3, 0, 3, 0, 3, 4, 5]) == [3, 0, 4, 5]\n",
+      "solution": "def dedupe(lst):\n    out = []\n    for x in lst:\n        if x not in out:\n            out.append(x)\n    return out\n"
+    },
+    {
+      "id": "dedupe-53554",
+      "family": "dedupe_order",
+      "split": "eval",
+      "entry_point": "dedupe",
+      "prompt": "Write a function dedupe(lst) that returns lst with duplicates removed, preserving the order of first occurrence.",
+      "test": "assert dedupe([0, 0, 0, 0]) == [0]\n",
+      "solution": "def dedupe(lst):\n    out = []\n    for x in lst:\n        if x not in out:\n            out.append(x)\n    return out\n"
+    },
+    {
+      "id": "dedupe-13529",
+      "family": "dedupe_order",
+      "split": "eval",
+      "entry_point": "dedupe",
+      "prompt": "Write a function dedupe(lst) that returns lst with duplicates removed, preserving the order of first occurrence.",
+      "test": "assert dedupe([3, 2, 4, 2, 2, 2, 5, 0]) == [3, 2, 4, 5, 0]\n",
+      "solution": "def dedupe(lst):\n    out = []\n    for x in lst:\n        if x not in out:\n            out.append(x)\n    return out\n"
+    },
+    {
+      "id": "merge-77365",
+      "family": "merge_sorted",
+      "split": "eval",
+      "entry_point": "merge_sorted",
+      "prompt": "Write a function merge_sorted(a, b) that merges two already-sorted lists into one sorted list.",
+      "test": "assert merge_sorted([-10, 1, 10, 11, 19], [-3, 4]) == [-10, -3, 1, 4, 10, 11, 19]\n",
+      "solution": "def merge_sorted(a, b):\n    return sorted(a + b)\n"
+    },
+    {
+      "id": "merge-15243",
+      "family": "merge_sorted",
+      "split": "eval",
+      "entry_point": "merge_sorted",
+      "prompt": "Write a function merge_sorted(a, b) that merges two already-sorted lists into one sorted list.",
+      "test": "assert merge_sorted([-3, 0, 11, 12, 16], [1, 15, 19]) == [-3, 0, 1, 11, 12, 15, 16, 19]\n",
+      "solution": "def merge_sorted(a, b):\n    return sorted(a + b)\n"
+    },
+    {
+      "id": "merge-24232",
+      "family": "merge_sorted",
+      "split": "eval",
+      "entry_point": "merge_sorted",
+      "prompt": "Write a function merge_sorted(a, b) that merges two already-sorted lists into one sorted list.",
+      "test": "assert merge_sorted([-10, -6, -2, 18], [0, 1, 16]) == [-10, -6, -2, 0, 1, 16, 18]\n",
+      "solution": "def merge_sorted(a, b):\n    return sorted(a + b)\n"
+    },
+    {
+      "id": "merge-45285",
+      "family": "merge_sorted",
+      "split": "eval",
+      "entry_point": "merge_sorted",
+      "prompt": "Write a function merge_sorted(a, b) that merges two already-sorted lists into one sorted list.",
+      "test": "assert merge_sorted([-9, 0, 11, 15], [-5, -4, 3, 4, 19]) == [-9, -5, -4, 0, 3, 4, 11, 15, 19]\n",
+      "solution": "def merge_sorted(a, b):\n    return sorted(a + b)\n"
+    },
+    {
+      "id": "merge-20185",
+      "family": "merge_sorted",
+      "split": "eval",
+      "entry_point": "merge_sorted",
+      "prompt": "Write a function merge_sorted(a, b) that merges two already-sorted lists into one sorted list.",
+      "test": "assert merge_sorted([-10, -8, -4, 7, 17], [-7, 2, 7, 11]) == [-10, -8, -7, -4, 2, 7, 7, 11, 17]\n",
+      "solution": "def merge_sorted(a, b):\n    return sorted(a + b)\n"
+    },
+    {
+      "id": "merge-39289",
+      "family": "merge_sorted",
+      "split": "eval",
+      "entry_point": "merge_sorted",
+      "prompt": "Write a function merge_sorted(a, b) that merges two already-sorted lists into one sorted list.",
+      "test": "assert merge_sorted([-5, 11, 12, 15, 17], [-1, 3, 9, 19]) == [-5, -1, 3, 9, 11, 12, 15, 17, 19]\n",
+      "solution": "def merge_sorted(a, b):\n    return sorted(a + b)\n"
+    },
+    {
+      "id": "merge-70640",
+      "family": "merge_sorted",
+      "split": "eval",
+      "entry_point": "merge_sorted",
+      "prompt": "Write a function merge_sorted(a, b) that merges two already-sorted lists into one sorted list.",
+      "test": "assert merge_sorted([-5, -2, 5, 7], [-6, -2, -1]) == [-6, -5, -2, -2, -1, 5, 7]\n",
+      "solution": "def merge_sorted(a, b):\n    return sorted(a + b)\n"
+    },
+    {
+      "id": "merge-29918",
+      "family": "merge_sorted",
+      "split": "eval",
+      "entry_point": "merge_sorted",
+      "prompt": "Write a function merge_sorted(a, b) that merges two already-sorted lists into one sorted list.",
+      "test": "assert merge_sorted([-3, 5, 9, 19], [-1, 8, 14]) == [-3, -1, 5, 8, 9, 14, 19]\n",
+      "solution": "def merge_sorted(a, b):\n    return sorted(a + b)\n"
+    },
+    {
+      "id": "merge-18165",
+      "family": "merge_sorted",
+      "split": "eval",
+      "entry_point": "merge_sorted",
+      "prompt": "Write a function merge_sorted(a, b) that merges two already-sorted lists into one sorted list.",
+      "test": "assert merge_sorted([-6, 9, 13, 18], [-9, 6, 17, 18]) == [-9, -6, 6, 9, 13, 17, 18, 18]\n",
+      "solution": "def merge_sorted(a, b):\n    return sorted(a + b)\n"
+    },
+    {
+      "id": "merge-83536",
+      "family": "merge_sorted",
+      "split": "eval",
+      "entry_point": "merge_sorted",
+      "prompt": "Write a function merge_sorted(a, b) that merges two already-sorted lists into one sorted list.",
+      "test": "assert merge_sorted([-10, 0, 1, 15], [-8, -7, 0, 10, 13]) == [-10, -8, -7, 0, 0, 1, 10, 13, 15]\n",
+      "solution": "def merge_sorted(a, b):\n    return sorted(a + b)\n"
+    },
+    {
+      "id": "merge-28426",
+      "family": "merge_sorted",
+      "split": "eval",
+      "entry_point": "merge_sorted",
+      "prompt": "Write a function merge_sorted(a, b) that merges two already-sorted lists into one sorted list.",
+      "test": "assert merge_sorted([7, 10], [4, 6, 7, 13, 16]) == [4, 6, 7, 7, 10, 13, 16]\n",
+      "solution": "def merge_sorted(a, b):\n    return sorted(a + b)\n"
+    },
+    {
+      "id": "merge-90225",
+      "family": "merge_sorted",
+      "split": "eval",
+      "entry_point": "merge_sorted",
+      "prompt": "Write a function merge_sorted(a, b) that merges two already-sorted lists into one sorted list.",
+      "test": "assert merge_sorted([5, 13], [-8, -7, -3, 0]) == [-8, -7, -3, 0, 5, 13]\n",
+      "solution": "def merge_sorted(a, b):\n    return sorted(a + b)\n"
+    },
+    {
+      "id": "merge-39009",
+      "family": "merge_sorted",
+      "split": "eval",
+      "entry_point": "merge_sorted",
+      "prompt": "Write a function merge_sorted(a, b) that merges two already-sorted lists into one sorted list.",
+      "test": "assert merge_sorted([5, 15, 19], [-1, 4, 5, 7, 11]) == [-1, 4, 5, 5, 7, 11, 15, 19]\n",
+      "solution": "def merge_sorted(a, b):\n    return sorted(a + b)\n"
+    },
+    {
+      "id": "merge-9211",
+      "family": "merge_sorted",
+      "split": "eval",
+      "entry_point": "merge_sorted",
+      "prompt": "Write a function merge_sorted(a, b) that merges two already-sorted lists into one sorted list.",
+      "test": "assert merge_sorted([-10, 2, 3, 6], [5, 17]) == [-10, 2, 3, 5, 6, 17]\n",
+      "solution": "def merge_sorted(a, b):\n    return sorted(a + b)\n"
+    },
+    {
+      "id": "merge-41973",
+      "family": "merge_sorted",
+      "split": "eval",
+      "entry_point": "merge_sorted",
+      "prompt": "Write a function merge_sorted(a, b) that merges two already-sorted lists into one sorted list.",
+      "test": "assert merge_sorted([-4, 1, 2, 16], [-7, -2, 4, 14, 18]) == [-7, -4, -2, 1, 2, 4, 14, 16, 18]\n",
+      "solution": "def merge_sorted(a, b):\n    return sorted(a + b)\n"
+    },
+    {
+      "id": "merge-4297",
+      "family": "merge_sorted",
+      "split": "eval",
+      "entry_point": "merge_sorted",
+      "prompt": "Write a function merge_sorted(a, b) that merges two already-sorted lists into one sorted list.",
+      "test": "assert merge_sorted([-10, -9, -2, 3, 16], [-10, -6]) == [-10, -10, -9, -6, -2, 3, 16]\n",
+      "solution": "def merge_sorted(a, b):\n    return sorted(a + b)\n"
+    }
+  ]
+}

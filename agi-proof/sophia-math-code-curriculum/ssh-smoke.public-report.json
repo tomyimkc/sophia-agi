@@ -1,0 +1,41 @@
+{
+  "schema": "sophia.runpod_ssh_smoke.v1",
+  "experimentId": "sophia-math-code-curriculum",
+  "recordedAt": "2026-06-25T11:46:40Z",
+  "branch": "claude/sophia-math-code-curriculum",
+  "repoHead": "e72943717e6c84d3553c8622b908ee56d7e67cb2",
+  "canClaimAGI": false,
+  "verdict": "FAIL",
+  "runpodApi": {
+    "listPods": "PASS",
+    "createPod": "PASS"
+  },
+  "probe": {
+    "attempts": [
+      {
+        "podId": "m9atlzki74hsjo",
+        "error": "Timed out waiting for public SSH mapping (600s)"
+      },
+      {
+        "podId": "64o3crc5yxbqh9",
+        "error": "Timed out waiting for public SSH mapping (600s)"
+      },
+      {
+        "podId": "5gmtho2z91z1e1",
+        "error": "Timed out waiting for public SSH mapping (600s)"
+      }
+    ],
+    "name": "sophia-math-code-ssh-smoke",
+    "sshMapped": false,
+    "sshLogin": false,
+    "nvidiaSmi": false,
+    "error": "no SSH-reachable pod after 3 attempt(s)",
+    "podDeletedAfterProbe": true
+  },
+  "environment": "darwin \u2014 Cursor agent shell at /Users/tom/Documents/GitHub/sophia-agi",
+  "egressCheck": {
+    "target": "157.157.221.29:42525",
+    "tcpProbe": "nc hung past 45s \u2014 outbound RunPod SSH likely blocked"
+  },
+  "conclusion": "SSH smoke FAIL on this host. Do not launch paid SFT until echo sophia-ssh-ok and nvidia-smi -L succeed."
+}

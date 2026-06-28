@@ -1,0 +1,3931 @@
+{
+  "schema": "sophia.fact_check.live_eval.v1",
+  "candidateOnly": false,
+  "level3Evidence": false,
+  "liveBackendUsed": true,
+  "n": 228,
+  "labelCounts": {
+    "true": 41,
+    "false": 187,
+    "unknowable": 0
+  },
+  "metrics": {
+    "fabricationRate": 0.016,
+    "overAbstentionRate": 0.2195,
+    "falseRejectRateOnTrue": 0.7073,
+    "correctAbstentionRateOnUnknowable": 0.0,
+    "resolvedAnswerableAccuracy": 0.7982,
+    "overallDecisionAccuracy": 0.8202,
+    "calibrationNResolved": 214,
+    "ece": 0.0495,
+    "brier": 0.1296
+  },
+  "confidenceIntervals": {
+    "fabricationRateWilson95": {
+      "k": 3,
+      "n": 187,
+      "low": 0.0055,
+      "high": 0.0461
+    },
+    "overAbstentionRateWilson95": {
+      "k": 9,
+      "n": 41,
+      "low": 0.12,
+      "high": 0.3671
+    }
+  },
+  "derivedFloors": {
+    "targetFabricationRate": 0.01,
+    "byRisk": {
+      "normal": {
+        "floor": 1.01,
+        "measuredFabricationRate": 1.0,
+        "trueAcceptCoverage": 0.0,
+        "nAcceptedAtFloor": 0,
+        "note": "no threshold met target"
+      }
+    }
+  },
+  "riskCoverage": [
+    {
+      "coverage": 0.0044,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0088,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0132,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0175,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0219,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0263,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0307,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0351,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0395,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0439,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0482,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0526,
+      "risk": 0.0,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.057,
+      "risk": 0.0769,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0614,
+      "risk": 0.0714,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0658,
+      "risk": 0.0667,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0702,
+      "risk": 0.0625,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0746,
+      "risk": 0.0588,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0789,
+      "risk": 0.0556,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0833,
+      "risk": 0.0526,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0877,
+      "risk": 0.05,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0921,
+      "risk": 0.0476,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.0965,
+      "risk": 0.0455,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1009,
+      "risk": 0.0435,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1053,
+      "risk": 0.0417,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1096,
+      "risk": 0.04,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.114,
+      "risk": 0.0385,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1184,
+      "risk": 0.037,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1228,
+      "risk": 0.0357,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1272,
+      "risk": 0.0345,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1316,
+      "risk": 0.0333,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.136,
+      "risk": 0.0323,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1404,
+      "risk": 0.0312,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1447,
+      "risk": 0.0303,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1491,
+      "risk": 0.0294,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1535,
+      "risk": 0.0286,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1579,
+      "risk": 0.0278,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1623,
+      "risk": 0.027,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1667,
+      "risk": 0.0526,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1711,
+      "risk": 0.0513,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1754,
+      "risk": 0.05,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1798,
+      "risk": 0.0488,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1842,
+      "risk": 0.0476,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1886,
+      "risk": 0.0465,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.193,
+      "risk": 0.0455,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.1974,
+      "risk": 0.0444,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2018,
+      "risk": 0.0435,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2061,
+      "risk": 0.0426,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2105,
+      "risk": 0.0417,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2149,
+      "risk": 0.0408,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2193,
+      "risk": 0.04,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2237,
+      "risk": 0.0392,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2281,
+      "risk": 0.0385,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2325,
+      "risk": 0.0377,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2368,
+      "risk": 0.037,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2412,
+      "risk": 0.0364,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2456,
+      "risk": 0.0357,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.25,
+      "risk": 0.0351,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2544,
+      "risk": 0.0345,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2588,
+      "risk": 0.0339,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2632,
+      "risk": 0.0333,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2675,
+      "risk": 0.0328,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2719,
+      "risk": 0.0323,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2763,
+      "risk": 0.0317,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2807,
+      "risk": 0.0312,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2851,
+      "risk": 0.0308,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2895,
+      "risk": 0.0303,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2939,
+      "risk": 0.0299,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.2982,
+      "risk": 0.0294,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3026,
+      "risk": 0.029,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.307,
+      "risk": 0.0286,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3114,
+      "risk": 0.0282,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3158,
+      "risk": 0.0278,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3202,
+      "risk": 0.0274,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3246,
+      "risk": 0.027,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3289,
+      "risk": 0.0267,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3333,
+      "risk": 0.0263,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3377,
+      "risk": 0.026,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3421,
+      "risk": 0.0256,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3465,
+      "risk": 0.0253,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3509,
+      "risk": 0.025,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3553,
+      "risk": 0.0247,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3596,
+      "risk": 0.0366,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.364,
+      "risk": 0.0361,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3684,
+      "risk": 0.0357,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3728,
+      "risk": 0.0353,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3772,
+      "risk": 0.0349,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3816,
+      "risk": 0.0345,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.386,
+      "risk": 0.0341,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3904,
+      "risk": 0.0337,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3947,
+      "risk": 0.0333,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.3991,
+      "risk": 0.033,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4035,
+      "risk": 0.0326,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4079,
+      "risk": 0.0323,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4123,
+      "risk": 0.0319,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4167,
+      "risk": 0.0316,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4211,
+      "risk": 0.0312,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4254,
+      "risk": 0.0309,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4298,
+      "risk": 0.0306,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4342,
+      "risk": 0.0303,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4386,
+      "risk": 0.03,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.443,
+      "risk": 0.0297,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4474,
+      "risk": 0.0294,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4518,
+      "risk": 0.0291,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4561,
+      "risk": 0.0288,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4605,
+      "risk": 0.0286,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4649,
+      "risk": 0.0283,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4693,
+      "risk": 0.028,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4737,
+      "risk": 0.0278,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4781,
+      "risk": 0.0367,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4825,
+      "risk": 0.0364,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4868,
+      "risk": 0.045,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4912,
+      "risk": 0.0446,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.4956,
+      "risk": 0.0442,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5,
+      "risk": 0.0439,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5044,
+      "risk": 0.0435,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5088,
+      "risk": 0.0431,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5132,
+      "risk": 0.0427,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5175,
+      "risk": 0.0424,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5219,
+      "risk": 0.042,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5263,
+      "risk": 0.0417,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5307,
+      "risk": 0.0413,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5351,
+      "risk": 0.0492,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5395,
+      "risk": 0.0488,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5439,
+      "risk": 0.0565,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5482,
+      "risk": 0.064,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5526,
+      "risk": 0.0635,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.557,
+      "risk": 0.0709,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5614,
+      "risk": 0.0781,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5658,
+      "risk": 0.0775,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5702,
+      "risk": 0.0769,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5746,
+      "risk": 0.0763,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5789,
+      "risk": 0.0758,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5833,
+      "risk": 0.0752,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5877,
+      "risk": 0.0746,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5921,
+      "risk": 0.0815,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.5965,
+      "risk": 0.0809,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6009,
+      "risk": 0.0876,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6053,
+      "risk": 0.087,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6096,
+      "risk": 0.0863,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.614,
+      "risk": 0.0857,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6184,
+      "risk": 0.0851,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6228,
+      "risk": 0.0845,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6272,
+      "risk": 0.0839,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6316,
+      "risk": 0.0833,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.636,
+      "risk": 0.0828,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6404,
+      "risk": 0.0822,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6447,
+      "risk": 0.0816,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6491,
+      "risk": 0.0811,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6535,
+      "risk": 0.0805,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6579,
+      "risk": 0.08,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6623,
+      "risk": 0.0795,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6667,
+      "risk": 0.0789,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6711,
+      "risk": 0.0784,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6754,
+      "risk": 0.0779,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6798,
+      "risk": 0.0774,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6842,
+      "risk": 0.0769,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6886,
+      "risk": 0.0764,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.693,
+      "risk": 0.0759,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.6974,
+      "risk": 0.0755,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7018,
+      "risk": 0.075,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7061,
+      "risk": 0.0745,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7105,
+      "risk": 0.0741,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7149,
+      "risk": 0.0736,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7193,
+      "risk": 0.0732,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7237,
+      "risk": 0.0788,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7281,
+      "risk": 0.0843,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7325,
+      "risk": 0.0838,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7368,
+      "risk": 0.0893,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7412,
+      "risk": 0.0888,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7456,
+      "risk": 0.0941,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.75,
+      "risk": 0.0994,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7544,
+      "risk": 0.0988,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7588,
+      "risk": 0.104,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7632,
+      "risk": 0.1092,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7675,
+      "risk": 0.1143,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7719,
+      "risk": 0.1136,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7763,
+      "risk": 0.113,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7807,
+      "risk": 0.1124,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7851,
+      "risk": 0.1117,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7895,
+      "risk": 0.1111,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7939,
+      "risk": 0.1105,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.7982,
+      "risk": 0.1099,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8026,
+      "risk": 0.1093,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.807,
+      "risk": 0.1141,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8114,
+      "risk": 0.1189,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8158,
+      "risk": 0.1237,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8202,
+      "risk": 0.1283,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8246,
+      "risk": 0.133,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8289,
+      "risk": 0.1376,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8333,
+      "risk": 0.1368,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8377,
+      "risk": 0.1361,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8421,
+      "risk": 0.1354,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8465,
+      "risk": 0.1347,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8509,
+      "risk": 0.134,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8553,
+      "risk": 0.1385,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8596,
+      "risk": 0.1378,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.864,
+      "risk": 0.1371,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8684,
+      "risk": 0.1414,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8728,
+      "risk": 0.1407,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8772,
+      "risk": 0.14,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8816,
+      "risk": 0.1443,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.886,
+      "risk": 0.1436,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8904,
+      "risk": 0.1429,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8947,
+      "risk": 0.1422,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.8991,
+      "risk": 0.1415,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.9035,
+      "risk": 0.1456,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.9079,
+      "risk": 0.1449,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.9123,
+      "risk": 0.1442,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.9167,
+      "risk": 0.1435,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.9211,
+      "risk": 0.1476,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.9254,
+      "risk": 0.1469,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.9298,
+      "risk": 0.1462,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.9342,
+      "risk": 0.1455,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.9386,
+      "risk": 0.1495,
+      "threshold": 0.9
+    },
+    {
+      "coverage": 0.943,
+      "risk": 0.1488,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9474,
+      "risk": 0.1481,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9518,
+      "risk": 0.1521,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9561,
+      "risk": 0.156,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9605,
+      "risk": 0.1553,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9649,
+      "risk": 0.1591,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9693,
+      "risk": 0.1629,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9737,
+      "risk": 0.1667,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9781,
+      "risk": 0.1704,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9825,
+      "risk": 0.1741,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9868,
+      "risk": 0.1778,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9912,
+      "risk": 0.1814,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 0.9956,
+      "risk": 0.1806,
+      "threshold": 0.0
+    },
+    {
+      "coverage": 1.0,
+      "risk": 0.1798,
+      "threshold": 0.0
+    }
+  ],
+  "cases": [
+    {
+      "id": "claimreview_0001",
+      "claim": "UN scientists paid to push flawed, extreme emission scenarios",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0002",
+      "claim": "5G towers are used for weather engineering",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0003",
+      "claim": "Ancient trees in the Arctic prove human-induced climate change is not happening",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0004",
+      "claim": "Doubling CO2 will not have an effect on Earth's temperatures",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0005",
+      "claim": "Atmospheric carbon dioxide can't warm the earth's surface because heat only goes up.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0006",
+      "claim": "Climate not to blame for houses collapsing in North Carolina",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0007",
+      "claim": "An ocean temperature decrease between 2013-2022 proves global warming is a hoax.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0008",
+      "claim": "DoE document reassesses accuretaly role of CO2, US emissions in climate change",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0010",
+      "claim": "The Club of Rome admitted making up climate change in a 1991 report.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0011",
+      "claim": "Scientists have had to pause the Climate Change Hoax Scam",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0012",
+      "claim": "Earth is in a cooling phase, which questions scientific proof behind human-driven global warming",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0013",
+      "claim": "Antarctica's ice gain shows climate change has no impact on continent",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0015",
+      "claim": "Canada can rely on CCS and electrification to compensate emissions from oil and gas",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0017",
+      "claim": "Common spring allergy myths make claims about pollen, honey and climate.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0018",
+      "claim": "Unbiased Grok-written scientific paper proves absence of anthropogenic climate change",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0019",
+      "claim": "Antarctic sea ice extent is 17 per cent higher today compared to 1979.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0020",
+      "claim": "A Status Red weather warning issued during Storm Éowyn was a form of climate lockdown",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0021",
+      "claim": "US Climate Reference Network data shows 'no obvious warming' since 2005",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0022",
+      "claim": "An Oxfam report found $41 billion missing from the World Bank’s climate fund.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0023",
+      "claim": "A staggering $41 billion has gone missing from the globalist World Bank’s Climate Change fund under the watch of Ajay Banga",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0024",
+      "claim": "A nature study indicates no acceleration in global warming, implying that climate change concerns are exaggerated",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0025",
+      "claim": "Paper journal Nature shows no change in global warming since 1970s",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0026",
+      "claim": "\"They don’t call it [global warming] anymore, they call it climate change because, you know, some parts of the planet are cooling and warming.\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0027",
+      "claim": "Scientists \"have no idea what’s going to happen [with climate change]. It’s weather.\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0030",
+      "claim": "“You know, years ago they used to call it global cooling.\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0033",
+      "claim": "\"The wind doesn’t work ... It’s the most expensive energy.\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0034",
+      "claim": "Vice President Kamala Harris said “it was a bad idea to have kids because of climate change anxiety.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0036",
+      "claim": "Vice President Kamala Harris “is calling for an end to the child tax credit.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0037",
+      "claim": "Climate change is a lie because Greece has experienced high temperatures for a long time.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0038",
+      "claim": "Heat wave is minor because of summer and cooler weather elsewhere",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0040",
+      "claim": "Human-contributed CO2 is .0016% of atmosphere, so can't spur climate change",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0041",
+      "claim": "\"Majority of fires\" in Canada in 2023 were the result of arson, not conditions due in part to climate change.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0042",
+      "claim": "Historic bison herds had the same impact on the climate as US cattle today",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0043",
+      "claim": "Judith Curry gets no media coverage and she says climate changes is a \"hoax.\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0045",
+      "claim": "Climate change isn’t real because Florida has had 119 hurricanes since 1850.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0046",
+      "claim": "Flowers are now starting to bloom in Antarctica",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0047",
+      "claim": "“… with 93% of that power being renewable.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0048",
+      "claim": "“Almost a billion [people] have no access to clean cooking energy.”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0049",
+      "claim": "“Our national grid currently operates at 3 gigawatts …”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0056",
+      "claim": "The term global warming was changed to climate change because the earth wasn’t warming as predicted.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0057",
+      "claim": "“The climate change agenda is a hoax … The reality is more people are dying of bad climate change policies than they are of actual climate change.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0058",
+      "claim": "\"The climate change agenda is a hoax.\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0059",
+      "claim": "\"The amount of carbon dioxide in the atmosphere is actually close to an all-time low ever in human history.\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0060",
+      "claim": "Bill Gates is backing efforts to cut down 70 million acres of trees in order to fight global warming.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0061",
+      "claim": "Timing of ice ages, CO2 changes show CO2 not driving modern climate change",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0062",
+      "claim": "Climate change is a 'scam' because the US was hotter in 1913 than 2023",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0063",
+      "claim": "Climate change a 'scam' as Australian trees absorb more CO2 than is made",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0065",
+      "claim": "Aphelion phenomenon will cause a drastic change in climate!!",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0066",
+      "claim": "“I cannot rule out (the possibility of the use of climate weapons). America, which is using everything modern technology is capable of, can do this as well. But you can’t use climate weapons against, say, Russia; you can use it against the whole world, but we will suffer the most because of it.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0067",
+      "claim": "President Joe Biden said, “I know you all know there’s no climate problem,” proving that people have been “lying for decades” about climate change.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0068",
+      "claim": "Photo shows Glastonbury 2022 after Greta Thunberg climate change speech",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0069",
+      "claim": "Climate change is a scam made to impede economic growth in the West (iterations of this claim blame it on China directly).",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0070",
+      "claim": "Pacific islands are not threatened by climate change",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0072",
+      "claim": "NASA admits that climate change occurs because of changes in Earth’s solar orbit",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0074",
+      "claim": "Map shows a majority of United States will be submerged in 30 years if climate change is not reversed.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0075",
+      "claim": "Video shows recent South Korean protest calling for rerun of election.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0076",
+      "claim": "CCTV shows South Korean election officials rigging ballot boxes",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0078",
+      "claim": "A picture shows an anti-Reform rally in Wigan ahead of the Makerfield by-election.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0079",
+      "claim": "The Supreme Court issued a decision declaring Alan Peter Cayetano as Senate President and invalidating the election of Sherwin Gatchalian as Senator Pro Tempore.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0080",
+      "claim": "Alan Peter Cayetano resigned as Senate president. Sherwin Gatchalian is the newly elected Senate president.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0081",
+      "claim": "A purported Amul creative was shared online, claiming that the dairy brand had mocked the Mamata Banerjee-led Trinamool Congress (TMC) through its creative following the party's defeat in the West Bengal Assembly elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0082",
+      "claim": "S.Korean ballots transported by Chinese national proves election meddling",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0084",
+      "claim": "S. Korean officials cover cameras at polling stations to rig elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0085",
+      "claim": "There will be no elections in 2028, and President Ferdinand Marcos Jr. will be replaced by his son, House Majority Leader Sandro Marcos.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0086",
+      "claim": "The video shows the illegal Bangladeshi immigrants being deported from West Bengal following the BJP's victory in the Assembly Elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0089",
+      "claim": "Photos show a riot and a burning building in Honiara post-election",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0090",
+      "claim": "Video of mob violence in West Bengal after state assembly elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0091",
+      "claim": "Michigan's election statistics prove the 2022 gubernatorial election was fraudulent by showing more registered voters than the state's voting-age population.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0092",
+      "claim": "aftermath of the 2026 West Bengal Assembly Election 2026 results",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0093",
+      "claim": "Video allegedly showed yet another instance of BJP supporters attacking Muslims and vandalising properties in West Bengal following the party’s landslide victory in the Assembly elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0094",
+      "claim": "Post-election violence in West Bengal",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0096",
+      "claim": "TMC leader Sayoni Ghosh danced on stage during the elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0097",
+      "claim": "A viral video shows anti-Muslim violence and arson attacks in Kolkata after the West Bengal election.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0098",
+      "claim": "A \"ballot drop\" gave Karen Bass thousands of votes and Spencer Pratt none",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0099",
+      "claim": "A video shows the Green Party celebrating an election win in a foreign language.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0100",
+      "claim": "The video shows shops being vandalised and violence being carried out by BJP workers following the West Bengal Assembly elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0101",
+      "claim": "The video shows CRPF personnel and police targeting Muslims and Christians in West Bengal after the BJP’s election victory in 2026 by labelling them as Bangladeshi immigrants.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0102",
+      "claim": "In 2020, “Amy Acton called off Ohio’s election at the last minute.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0103",
+      "claim": "This video shows scenes of post-poll violence after the 2026 West Bengal elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0105",
+      "claim": "Clip shows celebration after BJP victory in West Bengal elections",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0106",
+      "claim": "Newly elected Reform UK councillor George Boyd doesn’t exist.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0107",
+      "claim": "A video is being shared claiming that people celebrated the BJP’s victory in the 2026 West Bengal Assembly elections by waving national flags, while in Kerala, Pakistani flags were waved during celebrations for the Congress-led UDF alliance’s victory.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0108",
+      "claim": "Labour promised in its 2022 electoral manifesto to reduce corporate tax from 35% to 25% on the first €250,000 of profits — and did not implement the cut over the 2022-2026 legislature.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0109",
+      "claim": "This video shows TVK women cadres arguing with traffic police after their party won the Tamil Nadu elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0110",
+      "claim": "The video shows Bangladeshi migrants crossing the border after the BJP’s victory in the 2026 West Bengal Assembly elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0111",
+      "claim": "South Korea's early voting system is easily hacked",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0112",
+      "claim": "Video shows a Muslim TMC supporter who challenged to roam naked if the party lost the election got beaten by Hindus after BJP's win.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0113",
+      "claim": "The video shows BJP workers targeting TMC offices following the elections results in West Bengal.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0114",
+      "claim": "Policemen dancing after BJP victory in West Bengal state election.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0115",
+      "claim": "Maricopa County ballot envelopes contained illegal \"cutout windows\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0116",
+      "claim": "The video shows Mamata Banerjee’s condition after TMC’s defeat in the 2026 West Bengal elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0117",
+      "claim": "The video shows a meeting between DMK and AIADMK leaders after the recently concluded assembly elections in Tamil Nadu.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0118",
+      "claim": "Mamata Banerjee fainted after losing the election.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0119",
+      "claim": "After Bengal Elections, BJP workers set fire to Mamata Banerjee's Residence and TMC office.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0120",
+      "claim": "The video shows a TMC worker’s fake injuries being exposed on camera during a media interaction on post-election violence in West Bengal.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0121",
+      "claim": "Viral video shows BJP supporters rioting in West Bengal following the party’s victory in the Assembly elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0122",
+      "claim": "The viral video shows people celebrating BJP’s victory in the 2026 West Bengal Assembly elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0123",
+      "claim": "Video showed West Bengal police officials dancing among the public to celebrate the BJP’s victory in the 2026 West Bengal Assembly elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0124",
+      "claim": "This video shows Bangladeshi Muslims fleeing West Bengal after the BJP won the elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0125",
+      "claim": "The video shows police personnel dancing in celebration of the BJP’s victory in the 2026 West Bengal Assembly elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0126",
+      "claim": "The video shows Bangladeshi residents residing in West Bengal leaving the state after the BJP’s victory in the elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0127",
+      "claim": "A viral video shows illegal Bangladeshi immigrants returning to Bangladesh after BJP’s victory in the West Bengal elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0128",
+      "claim": "A viral video shows women cadres of Vijay-led TVK arguing with a police officer after it emerged as the single largest party in the Tamil Nadu elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0129",
+      "claim": "Video shows post poll attacks in West Bengal after assembly election results",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0130",
+      "claim": "During the 2024 election, U.S. President Joe Biden deployed troops to polling locations in 15 different states.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0131",
+      "claim": "Video showed massive celebrations erupting at Kolkata’s Howrah Bridge after the BJP’s victory in the 2026 West Bengal Assembly elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0132",
+      "claim": "Visuals showing people celebrating the BJP’s victory in the 2026 Assembly elections on the Howrah Bridge in Kolkata.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0134",
+      "claim": "A video circulating on social media purportedly shows West Bengal police personnel celebrating the BJP’s victory in the recently concluded Assembly elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0135",
+      "claim": "A video circulating on social media allegedly shows BJP workers setting fire to Mamata Banerjee’s residence following the defeat of the TMC in the recently held West Bengal Assembly elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0136",
+      "claim": "Labour's leadership was publicly inconsistent on early elections — denying one weeks before Robert Abela called it.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0137",
+      "claim": "Video of CRPF personnel thrashing a Trinamool Congress (TMC) supporter in West Bengal following the 2026 Assembly elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0138",
+      "claim": "Labour criticised PN's 15% corporate tax proposal, then announced a similar lower corporate tax for Maltese companies before the election.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0139",
+      "claim": "Labour criticised PN's €5,000 Child Trust Fund proposal, then announced a similar €5,000 birth bonus before the election.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0140",
+      "claim": "Chinese campaign poster distributed by Reform Party politician in S. Korea",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0141",
+      "claim": "This video shows the BJP taking control of the Election Commission’s office before counting on May 4 in Kolkata.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0142",
+      "claim": "The image purportedly showed senior BJP leader Locket Chatterjee secretly visiting the TMC office in Kolkata ahead of the West Bengal Assembly election results.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0143",
+      "claim": "A video shows security personnel lathi-charging voters during the 2026 West Bengal Assembly elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0144",
+      "claim": "A video claimed to show CPI(M) members singing a Ram Bhajan during a public event ahead of the Assembly election results.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0145",
+      "claim": "The video shows West Bengal Education Minister Bratya Basu taking bribe amid the ongoing elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0146",
+      "claim": "Video shows woman threatening voters over West Bengal election",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0147",
+      "claim": "Photo shows election fraud in the ongoing West Bengal Assembly elections.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0149",
+      "claim": "The Prime Minister has constitutional discretion to call a general election and appoint Cabinet.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0150",
+      "claim": "The Wonderful Co., which produces the pomegranate juice brand Pom Wonderful, uses a pesticide called paraquat banned in more than 60 countries due to its links to Parkinson's disease, non-Hodgkins lymphoma and other serious health risks.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0151",
+      "claim": "Health secretary Ted Herbosa endorsed MediHope+, a milk powder product, as a form of cancer treatment.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0152",
+      "claim": "Hantavirus is Becoming a Health Concern or Danger in India",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0153",
+      "claim": "Malta has the highest healthy life expectancy in Europe.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0154",
+      "claim": "Health Minister Joe Abela said in 2024 that cancer medicines would move from the Malta Community Chest Fund to government administration; this did not happen.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0155",
+      "claim": "Government gave €400 million to foreigners instead of investing properly in health.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0156",
+      "claim": "Labour made two U-turns on a new mental health hospital: PN proposed one near Mater Dei in 2023, Fearne agreed government would do it, Joe Abela later said a ward was enough, then the PM announced a new hospital again.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0159",
+      "claim": "The Rabat Gozo health centre does not open 24/7.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0160",
+      "claim": "President Ferdinand \"Bongbong\" Marcos Jr.’s health is deteriorating, raising the possibility that Vice President Sara Duterte will replace him.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0161",
+      "claim": "The Supreme Court (SC) has issued a verdict on the petition seeking to compel President Ferdinand Marcos Jr. to disclose his medical condition.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0162",
+      "claim": "American doctors Meredith Grey and Miranda Bailey are assisting in taking care of Rodrigo Duterte's health.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0163",
+      "claim": "Consuming a quarter teaspoon of turpentine oil daily is good for health",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0164",
+      "claim": "The signals emitted by 5G towers are damaging to humans, animals and plants, and can cause health conditions, including heart and vision problems.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0165",
+      "claim": "Palace press officer Undersecretary Claire Castro said that President Ferdinand Marcos Jr. does not have long to live after he was diagnosed with a life-threatening condition.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0167",
+      "claim": "In December 2025, the U.S. Department of Health and Human Services, led by Robert F. Kennedy Jr., repealed a rule that required nurses to be present around the clock in long-term care facilities.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0168",
+      "claim": "Oura, the maker of the Oura ring, shares its users' biometric data with Palantir Technologies.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0169",
+      "claim": "Former U.S. President Ronald Reagan signed the Emergency Medical Treatment and Active Labor Act, which required emergency rooms to provide emergency health care to anyone, regardless of immigration status, in 1986.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0172",
+      "claim": "“Today, on the CDC’s website right now, they list the 10 top advances — the 10 greatest advances in medical science. And one of them is abortion.\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0173",
+      "claim": "“Nations who accept the new regulations [WHO International Health Regulations] are signing over their power in health emergencies to an unelected international organization that could order lockdowns, travel restrictions, or any other measures.\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0174",
+      "claim": "Are these Atrium Health texts legit?",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0175",
+      "claim": "Health Ministry Issued Warnings on Samosa and Jalebi Like It Does for Cigarettes.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0176",
+      "claim": "NSW public health psychiatrists' average salary is $438,000.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0177",
+      "claim": "Nicotine cures Parkinson's, Alzheimer's, hypothyroidism and brain tumors",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0178",
+      "claim": "Canada's top public health official has warned about deadly COVID vaccine side effects.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0183",
+      "claim": "“There are no Medicaid cuts in the Big Beautiful Bill. ... We’re reducing fraud, waste and abuse that is rampant in Medicaid to ensure that that program is essential for so many people, ensure that it’s available for the most vulnerable.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0184",
+      "claim": "Liv Muztang capsules can solve all men’s sexual health problems",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0185",
+      "claim": "The Department of Health (DOH) and the Philippine General Hospital (PGH) are endorsing \"Hepa Pro,\" a product which allegedly cures liver disease.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0186",
+      "claim": "1 in 10 patients experience serious adverse event following abortion pill",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0187",
+      "claim": "“[We have achieved a] 33% increase in the number of graduates from 15,915 in 2022 to 21,261 in 2025 in KMTC.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0188",
+      "claim": "“4.2 million verified members were transitioned from the defunct NHIF.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0189",
+      "claim": "“[We have achieved a] 146.25% increase in membership under the Social Health Authority (SHA). 19.7 million Kenyans have registered with SHA in 2025 compared to 8 million that had registered with the National Hospital Insurance Fund.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0191",
+      "claim": "The National Institutes of Health spent “almost nothing” on researching the causes of chronic disease, focusing instead on infectious disease.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0192",
+      "claim": "According to Florida Surgeon General Dr. Joseph Lapado, the mRNA COVID-19 vaccines can infect human DNA and cause cancer.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0193",
+      "claim": "\"The Cochrane Collaboration has said that the \"gold standard\" approach for treating opioid addiction is 12 step programs.\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0194",
+      "claim": "GLP-1 drugs are \"the first front-line intervention\" to treat obesity \"for 6-year-old kids\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0196",
+      "claim": "“We brought that petition after CDC recommended COVID vaccine without any scientific basis for 6-year-old children.\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0202",
+      "claim": "Amendment to health act will force Malaysians to be vaccinated.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0207",
+      "claim": "Cardiologist and online health personality Dr. Willie Ong, also known as Doc Willie, endorses Envy Apple Cider Vinegar Gummies which claims to lower cholesterol, smoothen the skin, and increase height.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0208",
+      "claim": "Spring cleaning can help your mental health",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0209",
+      "claim": "“[The] 2024 health budget allocation is the highest in the last decade.”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0210",
+      "claim": "“[The] 2024 health budget allocation is more than 5% of the total budget.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0212",
+      "claim": "“7.7 million Nigerian girls have been vaccinated with the HPV vaccine in the 2023 vaccine rollout.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0213",
+      "claim": "செலவே இல்லாமல் 5 லட்சம் இன்சூரன்ஸ் பெரும் வழி… Ayushman Bharath Health Account",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0214",
+      "claim": "Are health care plans with large cash benefits legit?",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0219",
+      "claim": "Health Undersecretary Rosario Vergeire is endorsing Neocardia, a pill supplement that cures hypertension, helps with weight loss and improves eyesight",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0220",
+      "claim": "\"We have 85 million Americans who have no health insurance.\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0221",
+      "claim": "Democrats voted to fine American citizens for not buying health insurance and conspired to give it to “illegal aliens” for free.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0222",
+      "claim": "Facebook posts correctly state that \"988 is a new system that recently went live to help people reach help in a mental health crisis.\"",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0223",
+      "claim": "Says Department of Health Services Secretary Andrea Palm is a “career bureaucrat with no past ties to Wisconsin.”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0224",
+      "claim": "South Africa spends about seven times more per head on healthcare than Nigeria does.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0225",
+      "claim": "Economic growth creates demand for foreign workers, not the other way around.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0226",
+      "claim": "New poll shows 89 percent of Canadians blame Trump for economy",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0227",
+      "claim": "Gaming today represents 11% of the Maltese economy.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0229",
+      "claim": "Malta tripled the size of its economy over 12 years.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0230",
+      "claim": "Malta's economy is among the best in Europe.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0232",
+      "claim": "Malta's economic growth is being inflated by population growth and foreign-worker inflows — the foreign-born share went from 5% to 25%, and that is what is producing the GDP numbers.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0233",
+      "claim": "Malta is facing major international instability — and energy security, energy stability and economic stability are central topics in the EU and globally.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0234",
+      "claim": "Malta had the fastest-growing economy in Europe.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0235",
+      "claim": "In April 2026, Canadian Prime Minister Mark Carney said: \"The United States — our neighbour, our largest trading partner, the country whose economy has been braided into ours for the better part of two centuries — is no longer an ally we can count on.\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0236",
+      "claim": "New Zealand has experienced sustained economic growth for three quarters.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0237",
+      "claim": "“(Kenya) has 6,000 kilometres of tarmac under construction.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0238",
+      "claim": "“Kenya is a middle-income country. Kenya’s neighbouring countries are least developed countries.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0240",
+      "claim": "“The total length of tarmac roads in Uganda, Tanzania, Democratic Republic of [the] Congo, Rwanda, Burundi and South Sudan combined is less than 20,000 kilometres.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0241",
+      "claim": "“Middle-income countries generally have higher or similar prices compared to Kenya.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0242",
+      "claim": "“Kenya has 20,000 km of tarmac roads.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0243",
+      "claim": "“South Africa’s population grows faster than its economy.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0246",
+      "claim": "“Our borrowing costs have been declining.”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0247",
+      "claim": "“12.4 million South Africans are unemployed.”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0248",
+      "claim": "“… we have experienced four consecutive quarters of GDP growth …”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0249",
+      "claim": "“Interest rates are coming down.”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0250",
+      "claim": "“Employment increased by 44,000 in the fourth quarter of 2025.”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0251",
+      "claim": "“We have achieved two consecutive primary budget surpluses.”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0252",
+      "claim": "“Over 40 million people in the country are living below R3,000 a month, yet the food basket price is R5,300.”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0253",
+      "claim": "“Unemployment is the lowest that it has been in five years.”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0254",
+      "claim": "“Inflation is at its lowest level in 20 years.”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0255",
+      "claim": "“35.8% of black South Africans are unemployed.”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0257",
+      "claim": "“Your lost decade has produced 2.8 million chronically food-insecure South Africans. It has produced 3.6 million food-insecure South Africans.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0258",
+      "claim": "“So, under my leadership, economic growth is exploding to numbers unheard of. They’ve never had them before.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0259",
+      "claim": "\"Under the Biden administration, America was plagued by the nightmare of stagflation, meaning low growth and high inflation, a recipe for misery, failure and decline.\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0261",
+      "claim": "India has recently pulled out 500 billion euros from the United Kingdom's economy.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0263",
+      "claim": "IMF ranked Nigeria as fourth fastest-growing economy in 2025",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0264",
+      "claim": "India surpassed Japan to become the fourth largest economy; India is currently a $4 trillion economy",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "accepted",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0266",
+      "claim": "Tanzania’s economy is “50%” of Kenya’s economy.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0267",
+      "claim": "Uganda’s economy is “a quarter [the size] of our economy”.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0270",
+      "claim": "“Today, every Kenyan is saving 6% of their salary and every employer is saving on behalf of their employees 6% of their salary”.",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0271",
+      "claim": "“Savings as a percentage of GDP in China … is 55%.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0272",
+      "claim": "“Kenya's savings to GDP ratio currently stands at between 10 and 12%..”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0274",
+      "claim": "“In Uganda, everybody saves 10% of their salary.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0278",
+      "claim": "“Uganda has a bigger social security fund than Kenya.”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0279",
+      "claim": "“In just two years from 2023 up to 2025, today we have mobilised 280 billion in national savings.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0281",
+      "claim": "Calabarzon is PH's best-performing regional economy",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0282",
+      "claim": "Mexico's president threatened a global boycott of US goods in an open letter to US voters.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0283",
+      "claim": "“Well, first off, Donald Trump walked in with a crappy economy. The number of full-time jobs has been dropping almost the entire Biden administration.\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0284",
+      "claim": "“GDP growth improved from 4.9% in 2022 to 5.6% in 2023 …”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0285",
+      "claim": "“The exchange rate stabilised at KSh129.19 in March 2025, down from KSh160.8 in January 2024.”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0286",
+      "claim": "“[We have achieved] 60% increase in diaspora remittance inflows from KSh400 billion in 2022 to KSh641 billion in 2025.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0287",
+      "claim": "“Fiscal deficit (including grants) reduced from 6.2% of GDP in September 2022 to 5.2% of GDP as at January 2025.”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0288",
+      "claim": "“Forex reserves stand at over $10 billion as at February 2025.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0289",
+      "claim": "“Revenue collection increased from KSh1.9 trillion in 2022 to KSh2.7 trillion in 2025, a 42% growth.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0290",
+      "claim": "“Inflation dropped from 9.2% in September 2022 to 3.5% in February 2025.”",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0292",
+      "claim": "Kamala Harris “destroyed our economy.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0294",
+      "claim": "Goldman Sachs, Moody's, Wharton School of Business and 16 Nobel laureates \"have collectively determined\" that her economic plan \"would strengthen the economy\" and former President Donald Trump's \"would weaken it.\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0295",
+      "claim": "“Russia has become the fourth world economy and the largest European economy. … [T]he USA have lost their leading position and dropped to second place.”",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0296",
+      "claim": "\"Under President Trump, we had the strongest economy in history.\"",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0297",
+      "claim": "A meme graphic accurately compares various economic indicators under Trump and Biden.",
+      "label": "false",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "held",
+      "confidence": 0.0,
+      "correct": true,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    },
+    {
+      "id": "claimreview_0299",
+      "claim": "\"Homeownership is now out of reach unless you make over $106,000.\"",
+      "label": "true",
+      "type": "external_domain",
+      "risk": "normal",
+      "verdict": "rejected",
+      "confidence": 0.9,
+      "correct": false,
+      "reason": "raw base-model classifier (no gate, no retrieval)",
+      "claims": []
+    }
+  ],
+  "condition": "raw",
+  "rawModel": "mlx:Qwen/Qwen2.5-3B-Instruct"
+}

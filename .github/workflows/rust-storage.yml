@@ -1,0 +1,107 @@
+name: rust-storage
+
+# CI for the sophia-storage Rust workspace (sophia-lsm + sophia-kvcache).
+#
+# This is the workspace's ONLY CI: fmt, clippy -D warnings, doctest, and test on
+# the std backend across Ubuntu + Windows (the crates are std-only and portable),
+# plus a Linux-only job exercising the io_uring feature (it needs Linux 5.1+).
+#
+# Path-filtered so Python-only changes don't rent a Rust toolchain install. The
+# default build is #![forbid(unsafe_code)] in both crates, so a green build here
+# is the proof that "the publishable path contains no unsafe".
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "sophia-storage/**"
+      - ".github/workflows/rust-storage.yml"
+  push:
+    branches: [main]
+    paths:
+      - "sophia-storage/**"
+      - ".github/workflows/rust-storage.yml"
+
+concurrency:
+  group: rust-storage-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  fmt:
+    name: rustfmt
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: cargo fmt --check
+        working-directory: sophia-storage
+        run: cargo fmt --all -- --check
+
+  clippy:
+    name: clippy (std backend, -D warnings)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      # The default std build is #![forbid(unsafe_code)]; clippy on it proves the
+      # publishable path compiles with zero unsafe and no lint warnings.
+      - name: cargo clippy (default features)
+        working-directory: sophia-storage
+        run: cargo clippy --all-targets -- -D warnings
+
+  test:
+    name: test (std backend)
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - name: cargo test (default features + doctests)
+        working-directory: sophia-storage
+        run: cargo test --workspace --all-targets
+      # Doctests run as a separate step because --all-targets does not always
+      # include them depending on the cargo version; keep them honest.
+      - name: cargo test --doc
+        working-directory: sophia-storage
+        run: cargo test --workspace --doc
+
+  msrv:
+    name: MSRV (rustc 1.85, edition 2024)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      # Pin to the declared MSRV (rust-version = "1.85" in the workspace). This
+      # catches accidental use of newer-stabilized APIs and confirms the
+      # edition-2024 + let-chain code actually compiles on the floor.
+      - uses: dtolnay/rust-toolchain@1.85.0
+      - name: cargo build on MSRV
+        working-directory: sophia-storage
+        run: cargo build --workspace --all-targets
+
+  io_uring:
+    name: test (io_uring feature, Linux only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      # The io_uring feature is the one path that contains unsafe (audited FFI to
+      # the io-uring crate). This job compiles + tests that path on Linux 5.1+,
+      # where the default forbid(unsafe_code) is downgraded to allow.
+      - name: cargo test --features io_uring (sophia-lsm)
+        working-directory: sophia-storage
+        run: cargo test -p sophia-lsm --features io_uring --all-targets

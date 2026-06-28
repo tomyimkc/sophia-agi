@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sophia.aihk/schema/intake-contract-1.0.0.json",
+  "title": "Sophia Request Triage + Intake Contract",
+  "description": "Machine-checkable intake contract for preserving a raw prompt, recording intent-fidelity metadata, and narrowing tool/BLP policy before execution. Candidate v1.0.0; it contains no answer and no inlined memory content.",
+  "x-contract-version": "1.0.0",
+  "$defs": {
+    "blp_level": {
+      "type": "string",
+      "enum": ["UNCLASSIFIED", "CONFIDENTIAL", "SECRET", "TOP_SECRET"]
+    },
+    "source_status": {
+      "type": "string",
+      "enum": ["ok", "stale", "refuted", "invalid"]
+    },
+    "recommended_action": {
+      "type": "string",
+      "enum": ["allow", "retrieve", "clarify", "escalate", "abstain"]
+    },
+    "intent_label": {
+      "type": "string",
+      "enum": ["answer_question", "coding_task", "tool_use", "planning", "learning", "advice", "unknown"]
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"]
+    },
+    "operation": {
+      "type": "string",
+      "enum": ["record_claim", "verify_claim", "enqueue_task", "admin"]
+    },
+    "normalization_change": {
+      "type": "object",
+      "required": ["kind", "description"],
+      "properties": {
+        "kind": {"type": "string"},
+        "description": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "ambiguity": {
+      "type": "object",
+      "required": ["id", "description", "clarifying_question"],
+      "properties": {
+        "id": {"type": "string"},
+        "description": {"type": "string"},
+        "clarifying_question": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "check_item": {
+      "type": "object",
+      "required": ["id", "description", "checkable"],
+      "properties": {
+        "id": {"type": "string"},
+        "description": {"type": "string"},
+        "checkable": {"type": "boolean"},
+        "verifier_family": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "source_ref": {
+      "type": "object",
+      "required": ["id", "status"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "status": {"$ref": "#/$defs/source_status"},
+        "date": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "provenance_requirements": {
+      "type": "object",
+      "required": ["sources_required", "freshness_days", "source_refs", "content_policy"],
+      "properties": {
+        "sources_required": {"type": "boolean"},
+        "freshness_days": {"type": ["integer", "null"], "minimum": 0},
+        "source_refs": {"type": "array", "items": {"$ref": "#/$defs/source_ref"}},
+        "content_policy": {"type": "string", "const": "references_only_no_inline_memory_content"}
+      },
+      "additionalProperties": false
+    },
+    "tool_policy": {
+      "type": "object",
+      "required": ["basis", "role", "requested_ops", "scope_ops", "allowed_ops", "denied_ops"],
+      "properties": {
+        "basis": {"type": "string", "const": "intersection_with_scope"},
+        "role": {"type": "string"},
+        "requested_ops": {"type": "array", "items": {"$ref": "#/$defs/operation"}},
+        "scope_ops": {"type": "array", "items": {"$ref": "#/$defs/operation"}},
+        "allowed_ops": {"type": "array", "items": {"$ref": "#/$defs/operation"}},
+        "denied_ops": {"type": "array", "items": {"$ref": "#/$defs/operation"}}
+      },
+      "additionalProperties": false
+    },
+    "material_rewrite": {
+      "type": "object",
+      "required": ["kind", "original_span", "replacement", "rationale", "surfaced"],
+      "properties": {
+        "kind": {"type": "string"},
+        "original_span": {"type": "string"},
+        "replacement": {"type": "string"},
+        "rationale": {"type": "string"},
+        "surfaced": {"type": "boolean", "const": true}
+      },
+      "additionalProperties": false
+    },
+    "intake_contract": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "contract_id",
+        "original_prompt",
+        "original_prompt_sha256",
+        "normalized_prompt",
+        "normalization_changes",
+        "intent_label",
+        "ambiguities",
+        "constraints",
+        "success_criteria",
+        "failure_criteria",
+        "risk_level",
+        "blp_level",
+        "provenance_requirements",
+        "tool_policy",
+        "recommended_action",
+        "material_rewrites",
+        "confidence"
+      ],
+      "properties": {
+        "schema_version": {"type": "string", "const": "1.0.0"},
+        "contract_id": {"type": "string", "pattern": "^clm_[0-9a-f]{24}$"},
+        "original_prompt": {"type": "string", "minLength": 1},
+        "original_prompt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "normalized_prompt": {"type": "string"},
+        "normalization_changes": {"type": "array", "items": {"$ref": "#/$defs/normalization_change"}},
+        "intent_label": {"$ref": "#/$defs/intent_label"},
+        "ambiguities": {"type": "array", "items": {"$ref": "#/$defs/ambiguity"}},
+        "constraints": {"type": "array", "items": {"$ref": "#/$defs/check_item"}},
+        "success_criteria": {"type": "array", "items": {"$ref": "#/$defs/check_item"}},
+        "failure_criteria": {"type": "array", "items": {"$ref": "#/$defs/check_item"}},
+        "risk_level": {"$ref": "#/$defs/risk_level"},
+        "blp_level": {"$ref": "#/$defs/blp_level"},
+        "provenance_requirements": {"$ref": "#/$defs/provenance_requirements"},
+        "tool_policy": {"$ref": "#/$defs/tool_policy"},
+        "recommended_action": {"$ref": "#/$defs/recommended_action"},
+        "material_rewrites": {"type": "array", "items": {"$ref": "#/$defs/material_rewrite"}},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "signature": {"type": "string", "pattern": "^sig_[0-9a-f]{32}$"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$ref": "#/$defs/intake_contract"
+}

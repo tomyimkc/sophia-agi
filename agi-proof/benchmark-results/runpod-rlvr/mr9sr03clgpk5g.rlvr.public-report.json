@@ -1,0 +1,28 @@
+{
+  "benchmark": "rlvr-provenance",
+  "task": "provenance",
+  "model": "zai-org/glm-4-9b-chat-hf",
+  "visibility": "public-aggregate",
+  "claimStatus": "Open — capability claim requires a gated run (aggregate._is_validated); this artifact records the training config only",
+  "config": {
+    "vllm": "colocate",
+    "quant": "bf16",
+    "epochs": 1.0,
+    "lr": 1e-05,
+    "beta": 0.04,
+    "num_generations": 8,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_up_proj",
+      "down_proj"
+    ]
+  },
+  "trainCases": 225,
+  "evalCases": 94,
+  "trainSealed": "3fd4894823a7c14f",
+  "evalSealed": "a5004ea6cbf51cd8",
+  "baseModelLicense": "glm-4-9b License (NOT MIT; commercial use needs Zhipu registration)"
+}

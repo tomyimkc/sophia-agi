@@ -9,15 +9,22 @@ venv/
 !.env.example
 *.key
 *.pem
-rag/index/embeddings.npz
+# NOTE: rag/index/embeddings.npz IS committed — the local hashing backend
+# (agent/rag_local_embed.py) produces a small, deterministic, reproducible index
+# (verified in CI via `python tools/build_rag_index.py --verify`), so vector recall
+# ships live and airgap-safe. Only ignore ad-hoc per-developer index dirs:
+rag/index-*/embeddings.npz
 # fetched external benchmarks (large public datasets — keep the committed style-sample only)
 eval/external/gsm8k-test.jsonl
 eval/external/gsm8k-train.jsonl
+eval/external/.cache/
 benchmark/model_runs/*.log
 train-error.log
 train-out.txt
 agent/memory/*.jsonl
 agent/memory/agent_runs/
+agent/memory/closed-loop/
+agent/memory/task_ledgers/
 agent/memory/legal_cache.json
 # live governance-contract stores (claims/decisions/tasks/traces)
 agent/memory/contract/
@@ -45,13 +52,19 @@ eval/provenance_audit.json
 provenance_bench/dataset.jsonl
 agi-proof/benchmark-results/provenance-delta.public-report.json
 agi-proof/benchmark-results/provenance-delta.md
+# Faithfulness probe: machine/adapter-specific (run on the M4 Max with mlx-lm);
+# the recall report IS committed (deterministic, seed-based, machine-independent).
+agi-proof/verified-traces/faithfulness-probe.public-report.json
 
 # Build artifacts
 *.jsonl.bak
 dist/
 build/
+# setuptools egg-info (regenerated on every editable install; per-developer build metadata)
+*.egg-info/
 training/lora/checkpoints/
 training/lora/bench/
+training/hk_advisor/checkpoints/
 *-mlx-data/
 training/lab/reviews/*.json
 training/lab/judgements/*.json
@@ -86,3 +99,51 @@ training/feedback/failure_memory/
 
 # SSIL runtime registry (mutable append log)
 agi-proof/self-extension/ssil-registry.jsonl
+
+# Team-agents generated weights (never commit adapters)
+training/team_agents/checkpoints/
+training/team_agents/*.safetensors
+training/team_agents/adapter_model/
+
+# Rust build artifacts (storage/ workspace)
+storage/target/
+**/target/
+# Rust ANN serving build artifacts
+services/ann_serving/target/
+rag/index/vectors.txt
+# external-validation: generated per-run outputs (reviewers run their own)
+agi-proof/external-validation/seib-uplift.validation-report.json
+agi-proof/external-validation/_seib-live.raw.json
+training/tool_use/checkpoints/
+training/tool_use/dpo_pairs.jsonl
+!training/tool_use/sft_traces.jsonl
+
+# ──────────────────────────────────────────────────────────────────────────
+# OPEN-CORE: keep the FUTURE training recipe + algorithm tuning private.
+#
+# Honest scope: the already-committed v1–v3 recipe/adapters above are PUBLIC and
+# cannot be un-published (git history + forks already have them). These rules
+# only stop *new* (v4+) recipe artifacts from leaking into the public repo. The
+# primary protection is a separate private repo — see docs/PRIVATE-REPO-SETUP.md.
+# ──────────────────────────────────────────────────────────────────────────
+
+# Local-only working area for vNext recipe/algorithm (never committed here).
+private/
+
+# Explicit-private convention: any file you name *.private.* stays out.
+**/*.private.*
+.env.private
+
+# New training-run hyperparameter dumps (v2/v3 are whitelisted above as proof).
+training/**/training_run_v[4-9]*.json
+training/**/*.recipe.json
+
+# Real (non-sample) experiment/recipe configs — commit only sanitized *.sample.json.
+configs/*.json
+!configs/*.sample.json
+
+# Personal setup / secrets (if secret/ has tracked files, also run:
+#   git rm -r --cached secret/   then commit, to stop tracking them).
+secret/**
+!secret/.gitkeep
+

@@ -34,6 +34,10 @@ from agent.continual_qa_hybrid import ABSTAIN, FALLBACK, STRICT, classify_contex
 
 # Extra policy label: the fallback was generated but the attribution gate rejected it.
 FALLBACK_GATED = "fallback_gated_abstain"
+# Extra policy label: the answer was generated from a grounded source but an INDEPENDENT
+# verification channel (corroborate_fn) rejected it — e.g. the source itself was contaminated
+# and the answer would repeat the contamination. Fail closed.
+STRICT_GATED = "strict_gated_abstain"
 
 
 def default_attribution_check(question: str, answer: str) -> bool:
@@ -47,7 +51,7 @@ def default_attribution_check(question: str, answer: str) -> bool:
 
 
 def answer_with_policy(question: str, source_text, complete, *, answer_bearing: bool,
-                       attribution_check=None) -> "dict[str, Any]":
+                       attribution_check=None, corroborate_fn=None) -> "dict[str, Any]":
     """Route a query by context type and return {answer, policy, gated}.
 
     - no grounded source        -> hard-abstain (traps can never reach a model call)
@@ -55,19 +59,34 @@ def answer_with_policy(question: str, source_text, complete, *, answer_bearing: 
     - grounded but thin source  -> attribution-safe fallback, THEN verified by the real
                                    attribution gate; if it fabricates an attribution the
                                    policy abstains (fail-closed) instead of returning it.
+
+    ``corroborate_fn`` (optional, signature ``(question, answer) -> bool``): an INDEPENDENT
+    verification channel checked AFTER the answer is generated, on BOTH the strict and
+    fallback paths. Use it to defend against SOURCE CONTAMINATION — when the grounding
+    source itself contains a fabrication, consistency-with-source (the default check) cannot
+    catch it, but a verifier that re-checks against sources INDEPENDENT of ``source_text``
+    can. On failure the policy fails closed (``STRICT_GATED``/``FALLBACK_GATED`` abstain).
+    See ``agent.source_verifier.make_independent_verifier``. Independence of the verifier's
+    sources from ``source_text`` is the load-bearing property — the seam cannot enforce it.
     """
     policy = classify_context(source_text, answer_bearing=answer_bearing)
     if policy == ABSTAIN:
         return {"answer": ABSTAIN_TEXT, "policy": ABSTAIN, "gated": False}
     if policy == STRICT:
-        return {"answer": generate_grounded(question, source_text, complete, mode="strict"),
-                "policy": STRICT, "gated": False}
+        answer = generate_grounded(question, source_text, complete, mode="strict")
+        if corroborate_fn is not None and not corroborate_fn(question, answer):
+            # The answer repeats a fabrication an independent verifier rejects -> fail closed.
+            return {"answer": ABSTAIN_TEXT, "policy": STRICT_GATED, "gated": True}
+        return {"answer": answer, "policy": STRICT, "gated": False}
 
     # Thin source -> gated parametric fallback.
     answer = generate_grounded(question, source_text, complete, mode="attribution_safe")
     check = attribution_check or default_attribution_check
     if not check(question, answer):
         # The fallback asserted an attribution the gate cannot verify -> fail closed.
+        return {"answer": ABSTAIN_TEXT, "policy": FALLBACK_GATED, "gated": True}
+    if corroborate_fn is not None and not corroborate_fn(question, answer):
+        # Independent verification rejected the answer -> fail closed (source contamination).
         return {"answer": ABSTAIN_TEXT, "policy": FALLBACK_GATED, "gated": True}
     return {"answer": answer, "policy": FALLBACK, "gated": False}
 

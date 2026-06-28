@@ -15,6 +15,7 @@ import os
 import re
 import subprocess
 import warnings
+from collections import OrderedDict
 from glob import glob as _glob
 from pathlib import Path
 from typing import Any, Callable
@@ -836,6 +837,79 @@ def _load_provenance_records() -> dict:
     return records
 
 
+# --- concept-TBox loaders (the doNotMergeWith / cross-tradition channel) ----- #
+# The provenance loader above keeps ONLY records with doNotAttributeTo, so the
+# concept-boundary data (records carrying doNotMergeWith) is dropped before the
+# attribution gate ever sees it. These parallel loaders surface that data for the
+# ontology gate (the fix the plan calls for at _merge_records). See
+# docs/11-Platform/Ontology-Claim-Boundary.md.
+_TRADITION_FILES = ("traditions.json", "religion_concepts.json")
+_CONCEPT_LEXICON_FILE = "concept_traditions.json"
+
+
+def _load_merge_records() -> dict:
+    """Load every record carrying a non-empty ``doNotMergeWith`` list (the field
+    the ontology gate enforces), keyed by record/tradition id. Parallel to
+    :func:`_load_provenance_records`, which keeps only ``doNotAttributeTo``."""
+    records: dict = {}
+    for filename in _TRADITION_FILES:
+        path = DATA_DIR / filename
+        if not path.exists():
+            continue
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError) as exc:  # malformed seed -> skip, not crash
+            warnings.warn(f"could not load merge records from {path}: {exc}")
+            continue
+        if not isinstance(data, dict):
+            continue
+        for key, record in data.items():
+            if isinstance(record, dict) and record.get("doNotMergeWith"):
+                records[record.get("id") or record.get("recordId") or key] = record
+    return records
+
+
+def _load_dnm_by_tradition() -> dict:
+    """Map a tradition id -> set of traditions it must not be merged with, unioned
+    over traditions.json (per-tradition) and religion_concepts.json (per-record
+    ``tradition`` + ``doNotMergeWith``). Used to flag a cross-tradition identity
+    assertion as an *explicit* do-not-merge violation (vs a merely distinct pair)."""
+    dnm: dict[str, set] = {}
+    for record in _load_merge_records().values():
+        trad = record.get("id") or record.get("tradition")
+        if not trad:
+            continue
+        forbidden = {str(t).lower() for t in (record.get("doNotMergeWith") or [])}
+        dnm.setdefault(str(trad).lower(), set()).update(forbidden)
+    return dnm
+
+
+def _load_concept_traditions() -> dict:
+    """Load the concept->tradition lexicon (term -> tradition id). Drives the
+    surface ontology gate so it can fire on a concept-level cross-tradition
+    identity assertion (``ren is identical to agape``). Small, sourced, versioned;
+    a closed-world lexicon, not a truth oracle (see data/concept_traditions.json)."""
+    path = DATA_DIR / _CONCEPT_LEXICON_FILE
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as exc:
+        warnings.warn(f"could not load concept lexicon from {path}: {exc}")
+        return {}
+    concepts = data.get("concepts") if isinstance(data, dict) else None
+    if not isinstance(concepts, dict):
+        return {}
+    out: dict[str, str] = {}
+    for term, rec in concepts.items():
+        if isinstance(rec, dict) and rec.get("tradition"):
+            out[str(term).lower()] = str(rec["tradition"]).lower()
+            zh = rec.get("labelZh")
+            if zh:
+                out[str(zh).lower()] = str(rec["tradition"]).lower()
+    return out
+
+
 # Clause boundaries for SCOPING the negation/correction carve-out. We split a
 # sentence into clauses on contrastive connectors and a leading subordinate clause,
 # but NOT on bare commas — commas hold appositives the gate must keep matching
@@ -866,7 +940,77 @@ def _carveout_clauses(low: str) -> list:
     return [c for c in (head + _CLAUSE_SPLIT.split(low)) if c and c.strip()]
 
 
-def provenance_faithful(records: "dict | None" = None) -> Verifier:
+# Compiled-spec cache for provenance_faithful. Building the per-(record, author)
+# patterns is ~0.3s / 765 re.compile calls for the 36-record corpus, and the gate
+# is invoked once *per claim* (e.g. provenance_bench scores 300+ cases × 2 arms ×
+# several tests), so rebuilding every call turned a fast verifier into a multi-minute
+# CI hang. The compiled patterns depend only on the records' titles + doNotAttributeTo,
+# so we memoise them under a content key. LRU-bounded so grounded mode (which
+# synthesises fresh per-claim records) cannot grow the cache without limit.
+_PROV_SPEC_CACHE: "OrderedDict[tuple, list]" = OrderedDict()
+_PROV_SPEC_CACHE_MAX = 256
+
+
+def _provenance_spec_key(records: dict) -> tuple:
+    """Hashable key over exactly the record fields that determine the compiled specs."""
+    return tuple(
+        (
+            rid,
+            (records[rid] or {}).get("canonicalTitleEn"),
+            (records[rid] or {}).get("canonicalTitleZh"),
+            tuple((records[rid] or {}).get("altTitlesEn") or ()),
+            tuple((records[rid] or {}).get("doNotAttributeTo") or ()),
+        )
+        for rid in sorted(records)
+    )
+
+
+def _build_provenance_specs(
+    records: dict, *, attr: str, attr_p: str, app: str, the: str, the_q: str,
+    conn: str, nm: str, author_markers: "Callable",
+) -> list[tuple]:
+    """Compile the per-(record, author) attribution patterns. Pure function of
+    records + the (constant) regex fragments — safe to memoise by content key."""
+    specs: list[tuple] = []
+    for rid, record in records.items():
+        titles = [
+            str(t).lower()
+            for t in (
+                record.get("canonicalTitleEn"),
+                record.get("canonicalTitleZh"),
+                rid.replace("_", " "),
+                *(record.get("altTitlesEn") or []),
+            )
+            if t and len(str(t)) >= 3
+        ]
+        if not titles:
+            continue
+        # longest titles first so "constitution of the athenians" wins over a substring
+        titles = sorted(dict.fromkeys(titles), key=len, reverse=True)
+        title_alt = "(?:" + "|".join(re.escape(t) for t in titles) + ")"
+        for author in record.get("doNotAttributeTo", []):
+            a = "(?:" + "|".join(re.escape(m.lower()) for m in author_markers(author)) + r")\b"
+            t = title_alt + r"\b"
+            # Explicit grammatical constructions of *asserted authorship*, in both
+            # orders, with tight connectors only (no wildcard gap) so a comparison
+            # ("Plato wrote Republic — not Socrates") or a possessive of a different
+            # noun ("from Epictetus's teachings") does not cross-match.
+            patterns = [
+                re.compile(a + app + r"\s*" + attr + r"\s+" + the_q + t),                                # X (the …) wrote (the) "Y"
+                re.compile(a + r"(?:\s+(?:is|was|being))?\s+" + the + r"(?:author|writer|composer)\s+of\s+" + the_q + t),  # X is the author of Y
+                re.compile(a + app + r"\s*(?:is|was)\s+credited\s+with\s+\w+ing\s+" + the_q + t),        # X (the …) is credited with writing Y
+                re.compile(a + r"['’]s\s+" + the_q + t),                                                 # X's (the) Y
+                re.compile(conn + t + r"(?:\s*,)?(?:\s+(?:was|is|were|been))?\s+(?:" + attr_p + r"|attributed)\s+by\s+" + nm + a),  # Y (was) written/discovered by X
+                re.compile(conn + t + r"(?:\s*,)?\s+(?:is|was|are|were|been|being)?\s*attributed\s+to\s+" + nm + a),  # Y is attributed to (the prophet) X
+                re.compile(t + r"(?:\s*,)?\s+(?:a\s+|the\s+)?(?:work|text|book|composition|treatise)\s+(?:by|of)\s+" + a),  # Y, a work by X
+                re.compile(t + r"\s+(?:was\s+|is\s+)?" + a + r"['’]s\s+(?:\w+\s+)?(?:work|text|masterpiece|composition|book|treatise)\b"),  # Y was X's work
+                re.compile(a + r"\s*著\s*" + title_alt),                                                 # X 著 Y
+            ]
+            specs.append((rid, author, patterns))
+    return specs
+
+
+def provenance_faithful(records: "dict | None" = None, *, return_specs: bool = False) -> Verifier:
     """Fail if the text asserts an attribution forbidden by a record's
     doNotAttributeTo — Sophia's core "don't merge lineages" rule, machine-checked.
 
@@ -874,6 +1018,12 @@ def provenance_faithful(records: "dict | None" = None) -> Verifier:
     DENY/MYTH markers), so a page that CORRECTLY says "Confucius did not write the
     Dao De Jing" passes while "Confucius wrote the Dao De Jing" fails. Works on
     agent answers and on wiki page bodies alike.
+
+    With ``return_specs=True`` the returned verifier carries a ``.specs``
+    attribute — the compiled ``(rid, author, patterns)`` tuples it built. This is
+    a read-only hook for the Datalog port (:mod:`agent.datalog_provenance`) to
+    extract ground facts using the gate's OWN patterns; it changes nothing about
+    the verdict path and stays out of the production decision.
     """
     from agent.benchmark_checks import DENY_PATTERNS, MYTH_PATTERNS, author_markers, matches_any
 
@@ -915,42 +1065,20 @@ def provenance_faithful(records: "dict | None" = None) -> Verifier:
         r"\bdisputed\b", r"\bdoubtful\b", r"\bdebated\b", r"scholars?\s+(?:doubt|reject|dispute|question)",
     ]
 
-    specs: list[tuple] = []
-    for rid, record in records.items():
-        titles = [
-            str(t).lower()
-            for t in (
-                record.get("canonicalTitleEn"),
-                record.get("canonicalTitleZh"),
-                rid.replace("_", " "),
-                *(record.get("altTitlesEn") or []),
-            )
-            if t and len(str(t)) >= 3
-        ]
-        if not titles:
-            continue
-        # longest titles first so "constitution of the athenians" wins over a substring
-        titles = sorted(dict.fromkeys(titles), key=len, reverse=True)
-        title_alt = "(?:" + "|".join(re.escape(t) for t in titles) + ")"
-        for author in record.get("doNotAttributeTo", []):
-            a = "(?:" + "|".join(re.escape(m.lower()) for m in author_markers(author)) + r")\b"
-            t = title_alt + r"\b"
-            # Explicit grammatical constructions of *asserted authorship*, in both
-            # orders, with tight connectors only (no wildcard gap) so a comparison
-            # ("Plato wrote Republic — not Socrates") or a possessive of a different
-            # noun ("from Epictetus's teachings") does not cross-match.
-            patterns = [
-                re.compile(a + app + r"\s*" + attr + r"\s+" + the_q + t),                                # X (the …) wrote (the) "Y"
-                re.compile(a + r"(?:\s+(?:is|was|being))?\s+" + the + r"(?:author|writer|composer)\s+of\s+" + the_q + t),  # X is the author of Y
-                re.compile(a + app + r"\s*(?:is|was)\s+credited\s+with\s+\w+ing\s+" + the_q + t),        # X (the …) is credited with writing Y
-                re.compile(a + r"['’]s\s+" + the_q + t),                                                 # X's (the) Y
-                re.compile(conn + t + r"(?:\s*,)?(?:\s+(?:was|is|were|been))?\s+(?:" + attr_p + r"|attributed)\s+by\s+" + nm + a),  # Y (was) written/discovered by X
-                re.compile(conn + t + r"(?:\s*,)?\s+(?:is|was|are|were|been|being)?\s*attributed\s+to\s+" + nm + a),  # Y is attributed to (the prophet) X
-                re.compile(t + r"(?:\s*,)?\s+(?:a\s+|the\s+)?(?:work|text|book|composition|treatise)\s+(?:by|of)\s+" + a),  # Y, a work by X
-                re.compile(t + r"\s+(?:was\s+|is\s+)?" + a + r"['’]s\s+(?:\w+\s+)?(?:work|text|masterpiece|composition|book|treatise)\b"),  # Y was X's work
-                re.compile(a + r"\s*著\s*" + title_alt),                                                 # X 著 Y
-            ]
-            specs.append((rid, author, patterns))
+    # Compiled per-(record, author) patterns are content-memoised (see cache above):
+    # rebuilding ~765 regexes on every claim was an O(claims) CI hang.
+    _spec_key = _provenance_spec_key(records)
+    specs = _PROV_SPEC_CACHE.get(_spec_key)
+    if specs is not None:
+        _PROV_SPEC_CACHE.move_to_end(_spec_key)
+    else:
+        specs = _build_provenance_specs(
+            records, attr=attr, attr_p=attr_p, app=app, the=the, the_q=the_q,
+            conn=conn, nm=nm, author_markers=author_markers,
+        )
+        _PROV_SPEC_CACHE[_spec_key] = specs
+        if len(_PROV_SPEC_CACHE) > _PROV_SPEC_CACHE_MAX:
+            _PROV_SPEC_CACHE.popitem(last=False)
 
     def _verify(text: str, task: Any, step: dict) -> dict:
         violations: list[str] = []
@@ -972,6 +1100,8 @@ def provenance_faithful(records: "dict | None" = None) -> Verifier:
             return _fail([f"forbidden attribution asserted: {v}" for v in violations], {"violations": violations})
         return _ok({"recordsChecked": len(records)})
 
+    if return_specs:
+        _verify.specs = specs  # type: ignore[attr-defined]  # read-only hook for the Datalog port
     return _verify
 
 
@@ -1136,6 +1266,102 @@ def personality_faithful(spec: "dict | None" = None) -> Verifier:
 personality_discipline = personality_faithful
 
 
+# Cross-tradition concept-MERGE assertions: claiming a concept from one tradition
+# IS / equals / is-a-subclass-of a concept from another tradition ("ren is
+# identical to agape", "wu wei ⊑ apatheia"). Mirrors provenance_faithful /
+# personality_faithful: an ASSERTED unscoped identity fails; a SCOPED analogy or a
+# correction in the same clause is carved out. This is the verifier the report
+# found missing — the boundary fact (doNotMergeWith) was dropped upstream before
+# any gate could fire. See docs/11-Platform/Ontology-Claim-Boundary.md.
+_ONTOLOGY_IDENTITY_PATTERNS: list[str] = [
+    r"\bis identical to\b", r"\bis the same as\b", r"\bis the same thing as\b",
+    r"\bare the same\b", r"\bis equivalent to\b", r"\bis equal to\b", r"\bequates? to\b",
+    r"\bis just\b", r"\bis simply\b", r"\bis merely\b", r"\bis nothing but\b",
+    r"\bis basically\b", r"\bis essentially\b",
+    r"\bis a subclass of\b", r"\bis a subset of\b", r"\bis a kind of\b", r"\bis a type of\b",
+    r"\bis a form of\b", r"\bis a species of\b",
+    r"≡", r"⊑", r"\b即\b", r"\b等同(?:於|于)?\b",
+]
+# A SCOPED analogy or an explicit contrast/negation is allowed — it is exactly the
+# admissible form (closeMatch / scopedAnalogy), not a banned bare identity.
+_ONTOLOGY_SCOPE_CARVEOUT: list[str] = [
+    r"\bresembl", r"\bas if\b", r"\bloosely\b", r"\bby analogy\b", r"\banalog",
+    r"\bsimilar to\b", r"\bakin to\b", r"\bcompar", r"\bparallel", r"\becho",
+    r"\bwith respect to\b", r"\bin the sense\b", r"\bin some respects?\b",
+    r"\bnot\b", r"\bisn't\b", r"\baren't\b", r"\bdiffer", r"\bunlike\b",
+    r"\bdistinct\b", r"\bcontrast", r"\bscoped\b", r"\bnuance", r"\bonly partially\b",
+]
+
+
+def ontology_edge_faithful(spec: "dict | None" = None) -> Verifier:
+    """Fail if the text asserts an UNSCOPED cross-tradition concept identity /
+    subsumption — the concept-TBox analogue of ``provenance_faithful``.
+
+    - ASSERTING an unscoped cross-tradition identity ("ren is identical to agape",
+      "wu wei ⊑ apatheia") -> FAIL ("contradicted").
+    - A SCOPED analogy ("wu wei resembles apatheia with respect to ...") or an
+      explicit contrast/negation ("ren is not agape") -> allowed (carved out).
+    - Nothing forbidden -> ABSTAIN (passed True, status "abstained") -- the
+      no-overclaim default; this gate never *admits* a cross-tradition claim as
+      true (no in-repo ground-truth channel; see the claim-boundary doc).
+
+    Driven by ``data/concept_traditions.json`` (concept -> tradition) so it fires
+    on concept-level claims the attribution gate never sees. ``spec`` may override
+    ``concept_lexicon`` / ``dnm_by_tradition`` / ``identity_patterns`` for testing.
+    """
+    from agent.benchmark_checks import matches_any
+
+    spec = spec or {}
+    lexicon = spec.get("concept_lexicon") if spec.get("concept_lexicon") is not None else _load_concept_traditions()
+    dnm = spec.get("dnm_by_tradition") if spec.get("dnm_by_tradition") is not None else _load_dnm_by_tradition()
+    identity_patterns = spec.get("identity_patterns", _ONTOLOGY_IDENTITY_PATTERNS)
+    terms_by_len = sorted(lexicon, key=len, reverse=True)
+
+    def _terms_in(clause: str) -> list[tuple[str, str]]:
+        found: list[tuple[str, str]] = []
+        for term in terms_by_len:
+            if re.search(r"\b" + re.escape(term) + r"\b", clause):
+                found.append((term, lexicon[term]))
+        return found
+
+    def _explicit_dnm(ta: str, tb: str) -> bool:
+        return tb in dnm.get(ta, set()) or ta in dnm.get(tb, set())
+
+    def _verify(text: str, task: Any, step: dict) -> dict:
+        violations: list[str] = []
+        for sentence in re.split(r"[.!?。！？\n]+", text or ""):
+            low = sentence.lower()
+            if not low.strip():
+                continue
+            for clause in _carveout_clauses(low):
+                if not clause.strip():
+                    continue
+                if matches_any(clause, _ONTOLOGY_SCOPE_CARVEOUT):
+                    continue  # a scoped analogy / contrast — the admissible form
+                if not any(re.search(p, clause) for p in identity_patterns):
+                    continue
+                terms = _terms_in(clause)
+                for i in range(len(terms)):
+                    for j in range(i + 1, len(terms)):
+                        (term_a, ta), (term_b, tb) = terms[i], terms[j]
+                        if ta == tb:
+                            continue
+                        marker = " [doNotMergeWith]" if _explicit_dnm(ta, tb) else ""
+                        violations.append(f"{term_a} ({ta}) = {term_b} ({tb}){marker}")
+        violations = sorted(set(violations))
+        if violations:
+            return _fail(
+                [f"unscoped cross-tradition identity asserted: {v}" for v in violations],
+                {"status": "contradicted", "violations": violations},
+            )
+        return _ok({"status": "abstained", "reason": "notValidated", "conceptsKnown": len(lexicon)})
+
+    return _verify
+
+
+ontology_discipline = ontology_edge_faithful
+
+
 # Parameterless verifiers usable directly by name (CLI / harness registry).
 VERIFIERS: dict[str, Callable[[], Verifier]] = {
     "arithmetic_sound": arithmetic_sound,
@@ -1146,6 +1372,7 @@ VERIFIERS: dict[str, Callable[[], Verifier]] = {
     "frontmatter_schema_valid": frontmatter_schema_valid,
     "legal_citation_exists": legal_citation_exists,
     "personality_faithful": personality_faithful,
+    "ontology_edge_faithful": ontology_edge_faithful,
 }
 
 

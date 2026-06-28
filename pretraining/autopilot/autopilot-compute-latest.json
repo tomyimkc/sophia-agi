@@ -1,0 +1,162 @@
+{
+  "agent": "autonomous pretraining-experiment runner",
+  "canClaimAGI": false,
+  "honesty_note": "Real closed-loop search over toy nano experiments. Every score is measured, diverged runs are recorded as failures, nothing is simulated. Not an AGI agent and not a capability claim.",
+  "objective": "held_loss",
+  "n_trials": 5,
+  "n_diverged": 0,
+  "stop_reason": "converged",
+  "best": {
+    "trial": 1,
+    "config": {
+      "vocab": 8,
+      "order": 2,
+      "context": 2,
+      "hidden": 8,
+      "D": 6215,
+      "epochs": 12,
+      "seed": 0
+    },
+    "result": {
+      "held_loss": 0.8418,
+      "train_loss": 1.01726,
+      "diverged": false,
+      "params": 208,
+      "compute_proxy": 1292720,
+      "floor_E": 0.90938,
+      "excess": -0.06758
+    },
+    "score": 0.8418,
+    "diverged": false,
+    "is_best_so_far": true,
+    "rationale": "new best 0.8418 at {hidden=8, D=6215} -> keep exploring nearby"
+  },
+  "history": [
+    {
+      "trial": 0,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 4,
+        "D": 11970,
+        "epochs": 12,
+        "seed": 0
+      },
+      "result": {
+        "held_loss": 0.97134,
+        "train_loss": 1.17193,
+        "diverged": false,
+        "params": 108,
+        "compute_proxy": 1292760,
+        "floor_E": 0.90938,
+        "excess": 0.06196
+      },
+      "score": 0.97134,
+      "diverged": false,
+      "is_best_so_far": true,
+      "rationale": "new best 0.97134 at {hidden=4, D=11970} -> keep exploring nearby"
+    },
+    {
+      "trial": 1,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 8,
+        "D": 6215,
+        "epochs": 12,
+        "seed": 0
+      },
+      "result": {
+        "held_loss": 0.8418,
+        "train_loss": 1.01726,
+        "diverged": false,
+        "params": 208,
+        "compute_proxy": 1292720,
+        "floor_E": 0.90938,
+        "excess": -0.06758
+      },
+      "score": 0.8418,
+      "diverged": false,
+      "is_best_so_far": true,
+      "rationale": "new best 0.8418 at {hidden=8, D=6215} -> keep exploring nearby"
+    },
+    {
+      "trial": 2,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 3168,
+        "epochs": 12,
+        "seed": 0
+      },
+      "result": {
+        "held_loss": 0.89484,
+        "train_loss": 0.99481,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 1292544,
+        "floor_E": 0.90938,
+        "excess": -0.01454
+      },
+      "score": 0.89484,
+      "diverged": false,
+      "is_best_so_far": false,
+      "rationale": "no improvement over best 0.8418 -> narrowing / counting toward patience"
+    },
+    {
+      "trial": 3,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 32,
+        "D": 1600,
+        "epochs": 12,
+        "seed": 0
+      },
+      "result": {
+        "held_loss": 0.88698,
+        "train_loss": 1.09681,
+        "diverged": false,
+        "params": 808,
+        "compute_proxy": 1292800,
+        "floor_E": 0.90938,
+        "excess": -0.0224
+      },
+      "score": 0.88698,
+      "diverged": false,
+      "is_best_so_far": false,
+      "rationale": "no improvement over best 0.8418 -> narrowing / counting toward patience"
+    },
+    {
+      "trial": 4,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 64,
+        "D": 803,
+        "epochs": 12,
+        "seed": 0
+      },
+      "result": {
+        "held_loss": 1.03383,
+        "train_loss": 1.14849,
+        "diverged": false,
+        "params": 1608,
+        "compute_proxy": 1291224,
+        "floor_E": 0.90938,
+        "excess": 0.12445
+      },
+      "score": 1.03383,
+      "diverged": false,
+      "is_best_so_far": false,
+      "rationale": "no improvement over best 0.8418 -> narrowing / counting toward patience"
+    }
+  ],
+  "task": "compute"
+}

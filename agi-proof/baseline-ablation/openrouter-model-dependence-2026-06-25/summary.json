@@ -1,0 +1,78 @@
+{
+  "benchmark": "calibration-abstention model-dependence (OpenRouter, working backend)",
+  "date": "2026-06-25",
+  "pack": "abstain-pack-2026-06-22 (18 cases: 12 abstain + 6 definite, reviewer-authored)",
+  "backend": "OpenRouter via tools/run_hidden_eval_openrouter.py (transport)",
+  "scorer": "tools/run_calibration_score.py --json (deterministic fabricationMarkers; authoritative numbers only)",
+  "runs": 1,
+  "modeNote": "sophia_full / gate_only are SYSTEM-PROMPT-level here, NOT the full gated Sophia pipeline",
+  "perModel": {
+    "strong_deepseek-v3": {
+      "raw": {
+        "calibrationScore": 0.8833,
+        "nCases": 18,
+        "abstainCases": 12,
+        "definiteCases": 6,
+        "fabricationRate": 0.0,
+        "overAbstentionRate": 0.0
+      },
+      "sophia-full": {
+        "calibrationScore": 0.9056,
+        "nCases": 18,
+        "abstainCases": 12,
+        "definiteCases": 6,
+        "fabricationRate": 0.0833,
+        "overAbstentionRate": 0.0
+      },
+      "gate-only": {
+        "calibrationScore": 0.8056,
+        "nCases": 18,
+        "abstainCases": 12,
+        "definiteCases": 6,
+        "fabricationRate": 0.0,
+        "overAbstentionRate": 0.0
+      }
+    },
+    "weak_llama-3.1-8b": {
+      "raw": {
+        "calibrationScore": 0.7167,
+        "nCases": 18,
+        "abstainCases": 12,
+        "definiteCases": 6,
+        "fabricationRate": 0.25,
+        "overAbstentionRate": 0.0
+      },
+      "sophia-full": {
+        "calibrationScore": 0.6889,
+        "nCases": 18,
+        "abstainCases": 12,
+        "definiteCases": 6,
+        "fabricationRate": 0.0,
+        "overAbstentionRate": 0.0
+      },
+      "gate-only": {
+        "calibrationScore": 0.5778,
+        "nCases": 18,
+        "abstainCases": 12,
+        "definiteCases": 6,
+        "fabricationRate": 0.1667,
+        "overAbstentionRate": 0.0
+      }
+    }
+  },
+  "headline": {
+    "weak_raw_fabRate": 0.25,
+    "weak_sophiaFull_fabRate": 0.0,
+    "strong_raw_fabRate": 0.0,
+    "strong_sophiaFull_fabRate": 0.0833
+  },
+  "finding": "The Sophia system-prompt's anti-fabrication advantage is MODEL-DEPENDENT. WEAK model (llama-3.1-8b): raw fabricates 3/12 abstain cases (0.25) -> sophia-full 0/12 (0.00) \u2014 the effect reproduces. STRONG model (deepseek-v3): raw already 0/12 (0.00); sophia-full 1/12 (0.083) \u2014 no benefit, slight regression in this single run. Corroborates the ledger's weak-backend calibration win AND bounds it: the advantage decays toward zero as the base model strengthens.",
+  "implication": "Provenance/abstention prompting is a crutch for weak models; on strong models (the actual path toward AGI) its marginal value on this axis is ~0. Real AGI value must come from capability gains (e.g. verifier-gated learning), not abstention scaffolding alone.",
+  "caveats": [
+    "N=18, single run per model (no CI)",
+    "deterministic regex scorer",
+    "prompt-level not full pipeline",
+    "self/reviewer-authored pack",
+    "does NOT change canClaimAGI (False); does NOT clear any gate"
+  ]
+}

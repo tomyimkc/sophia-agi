@@ -4,6 +4,243 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+### Added — always-available RunPod connection + stalled-pod checker
+
+Makes reaching RunPod reliable even when `RUNPOD_API_KEY` is absent from the current
+context (public repo / interactive agent session → 401 on every call). Two routes,
+at least one always available; the key never lives anywhere but the environment or
+the GitHub Actions secret.
+
+- **`tools/runpod_connect.py`** — single source of truth for connecting. Resolves the
+  key (env → fail-closed), lists pods and flags **stalled** ones (REST-only heuristic:
+  `desiredStatus=RUNNING` but no live runtime), and can stop+start them
+  (`--restart-stalled`). Offline `--dry-run` reports which route is available.
+- **`.github/workflows/runpod-connect.yml`** — the GitHub-mediated fallback: a
+  `workflow_dispatch` that injects the repo secret and runs the same checker, so RunPod
+  is reachable from GitHub even when the local context has no key.
+- **`skills/portable/sophia-runpod-connect/SKILL.md`** — portable (non-encrypted) skill
+  documenting the connect decision tree (direct key/MCP → else dispatch the workflow).
+- **`tests/test_runpod_connect.py`** — offline tests for key resolution + stall classifier.
+
+### Added — `cluster/` supercomputer scheduling + resilience simulator (measured, pure-stdlib)
+
+Turns the repo's single-pod RunPod tooling (`tools/runpod_train.py`, the
+`runpod-gpu-orchestration` skill) into an analyzable cluster model, in the
+measured-not-claimed style. Deterministic, seeded, pure stdlib (runs in CI, no deps).
+
+- **`cluster/topology.py`** — heterogeneous `Device/Node/Cluster` with NVLink islands +
+  racks; `homogeneous_cluster()` / `heterogeneous_cluster()` (mixed accelerator classes,
+  e.g. `klass="domestic-x1"`).
+- **`cluster/scheduler.py`** — three placement policies spanning the throughput/latency/
+  utilization trade-off: `FifoFirstFit`, `TopologyAware` (best-fit island packing),
+  `BackfillTopo` (EASY backfill); `fragmentation()` placement-locality score.
+- **`cluster/simulator.py`** — discrete-event replay with a network-tax model (scattering a
+  collective-heavy job across islands/nodes costs runtime, as cross-NIC all-reduce would).
+- **`cluster/observability.py`** — `summarize()` (p50/p90/p99/cv jitter) and
+  `straggler_report()` (the synchronous-step slowdown a single long-pole rank imposes).
+- **`cluster/faults.py`** — Poisson node-failure injection + checkpoint/restart recovery;
+  separates raw busy time from **goodput** and quantifies the wasted-compute tax of an
+  MTBF + checkpoint cadence.
+- **Tools** — `tools/run_cluster_sim.py`, `tools/run_cluster_faultsim.py` →
+  `agi-proof/benchmark-results/cluster/*.public-report.json`. Measured (simulated): topology
+  packing cuts fragmentation 0.43→0.16 and network tax 1.53→1.31x; backfill cuts p50 queue
+  wait 9474→7064s. Tests: `tests/test_cluster_{scheduler,observability,faults}.py`.
+- **Roadmap** — `docs/11-Platform/Cluster-Engineering-Roadmap.md` maps the DeepSeek
+  超算集群研发工程师 responsibilities to repo assets and an honest open-work ledger (RDMA is
+  modeled not measured; no live telemetry collection yet; NPU/DPU interface-only).
+
+### Added — network-tax calibration: modeled → measured (RDMA all-reduce)
+
+Turns the simulator's guessed comm penalty into a bandwidth-derived (and measurable) one.
+
+- **`cluster/netcalib.py`** — derives `island_tax` / `node_tax` from ring all-reduce cost
+  per interconnect tier (`T = 2(N-1)/N·size/bw + 2(N-1)·lat`), worst-tier model (collective
+  runs at its slowest hop: NIC ≫ NVSwitch ≫ NVLink). Loads/saves `cluster/netcalib.json`
+  with per-tier provenance (measured vs modeled). `cluster/simulator.py` now consumes it
+  automatically; `effective_runtime` switched from linear-in-span to worst-tier semantics.
+- **`tools/calibrate_network_tax.py`** — writes the committed MODELED calibration
+  (NVLink 400 / NVSwitch 120 / RoCE 50 GB/s, exposed-comm 0.15 → `island_tax≈0.345`,
+  `node_tax≈1.036`); `--from-nccl` ingests a measured report and re-fits the NVLink tier.
+- **`tools/bench_nccl_allreduce.py`** — on-pod NCCL all-reduce bus-bandwidth micro-benchmark
+  (torchrun, one rank per GPU; lazy torch import so dry-run/tests are pure stdlib).
+- **`tools/runpod_nccl_bench.py`** — rents one multi-GPU SXM pod, runs the benchmark, copies
+  the report back, `--calibrate` re-fits the tax (reuses the `runpod_rlvr` pod lifecycle).
+- Calibrated trade-off (128 GPUs, seed 7, simulated): topology packing cuts fragmentation
+  0.48→0.20 and network tax 1.88→1.68x; backfill cuts p50 wait 10203→7467s. Tests:
+  `tests/test_cluster_netcalib.py`. Live measurement blocked in this env (no SSH egress);
+  honest blocker at `agi-proof/benchmark-results/cluster/nccl-measure-blocker.public-report.json`.
+### Added — served-answer verification: "retrieved" becomes "served" only after the answer passes
+
+- **Verified search** (`agent/verified_search.py`): ground → generate → **verify** → serve-or-
+  withhold. A *generated* answer (caller-supplied `generate(question, context)`) is re-checked
+  before serving — citation faithfulness (`agent/rerank.citation_faithfulness`), the epistemic
+  gate (`agent/gate.check_response`, gating on hard violations not style warnings), and a
+  negation-aware **source-discipline** check (an answer that affirmatively attributes a work to
+  a `doNotAttributeTo` author is rejected; denials/incidental mentions are not). Failing answers
+  are **withheld fail-closed** (raw kept for audit); a verified weak-source answer is hedged, a
+  verified strong-source answer committed; an abstaining grounding never spends a generation.
+  Withheld/hedged queries feed the knowledge-gap worklist. Tests: `tests/test_verified_search.py`.
+- **Substrate doc**: the Verify property is now marked shipped; the four properties (ground ·
+  calibrate/abstain · verify · self-correct) are wired end-to-end. Remaining: worklist→auto-ingest.
+
+### Added — grounded search: the AI-search pipeline becomes a verifiable perception organ
+
+- **Grounded, calibrated search** (`agent/grounded_search.py`): wraps `ai_search` and overlays
+  Sophia's trust layer — ground the top result in the OKF belief graph (entity-link →
+  lineage / confidence-laundering / `contradicts` / `doNotAttributeTo`), derive a **provenance
+  confidence** (`agent/grounded_confidence.py`), and apply the **answer / hedge / abstain**
+  reflex (`agent/graded_decision.py`), downgrade-only and fail-closed. A confidence-laundered
+  belief can never be served as a clean answer. Tests: `tests/test_grounded_search.py`.
+- **Self-correction loop**: hedged/abstained queries are logged as knowledge gaps
+  (`agent/knowledge_gap_log.py`, gap policies extended) that feed the existing frequency-ranked
+  corpus-enrichment worklist — the badcase → corpus flywheel for perception failures.
+- **Calibrated-abstention eval** (`tools/eval_grounded_search.py`): measured discrimination over
+  the OKF wiki — **weak sources downgraded 100%**, strong answered ~67% (discrimination +0.67).
+  Candidate report; not validated. Tests: `tests/test_eval_grounded_search.py`.
+- **Substrate doc** updated (`docs/09-Agent/Search-as-AGI-Substrate.md`): grounding /
+  calibration / abstention / self-correction now marked shipped; remaining steps are
+  served-answer verification and worklist→auto-ingest.
+
+### Added — AI-search algorithm layer (query understanding + hybrid recall + quality eval)
+
+- **Query understanding** (`agent/query_understanding.py`): deterministic, offline, bilingual
+  (EN+ZH) query layer — normalize, language detect, intent classification (definition /
+  comparison / temporal / navigational / factoid), multi-hop **decomposition** (`"compare A
+  and B"` → `["A", "B"]`; CJK `比较 A 和 B` splits without whitespace), and recall **expansion**
+  via author surface forms (reused from `agent/entity_aliases.py`, incl. cross-lingual aliases)
+  + a curated seed synonym map. Optional HyDE-style `rewrite_with_llm` is additive (`[]` on
+  failure). Tests: `tests/test_query_understanding.py`.
+- **Hybrid retrieval** (`agent/hybrid_retrieval.py`): dense cosine ⨁ sparse BM25-lite over the
+  same committed index, fused by **weighted Reciprocal Rank Fusion** (dense 1.0 / sparse 0.4 —
+  sparse as a minority vote because the near-duplicate teacher corpus makes BM25 low-precision).
+  Index-size-agnostic fusion. Tests: `tests/test_hybrid_retrieval.py`.
+- **AI-search orchestrator** (`agent/ai_search.py`): `search()` runs understand → per-sub-query
+  hybrid recall → cross-sub-query RRF → rerank, returning a `SearchResult` carrying the
+  `AnalyzedQuery` plan so a miss is attributable to a stage. Doc: `docs/09-Agent/AI-Search.md`.
+- **Search-quality eval体系** (`tools/eval_search_quality.py`, `eval/search_quality/`): graded
+  **nDCG@k / recall@k / MRR** across keyword/vector/hybrid + a **badcase taxonomy**
+  (`lexical_gap`, `semantic_gap`, `tied_burial`, `absent_from_pool`). Honest finding: pure dense
+  wins on this corpus (recall@5 0.52 vs hybrid 0.27 vs keyword 0.20); hybrid beats keyword and
+  closes lexical gaps but not dense, because sparse needs near-duplicate dedup first — the
+  harness *revealed* that. Candidate report; not validated. Tests: `tests/test_eval_search_quality.py`.
+- **Rust ANN serving core** (`services/ann_serving/`): dependency-free flat (exact) + NSW +
+  **multi-layer HNSW** cosine index — the architecture-track systems artifact. HNSW lifts recall
+  over single-layer NSW at equal `ef` (benched: 0.96 vs 0.87 recall@10 at ef=256; ~3–28×
+  speedup vs exact across the curve). `cargo test` (7 tests).
+- **Near-duplicate collapse** (`agent/dedup.py`): word-shingle Jaccard clustering keyed on chunk
+  body; opt-in `retrieve_hybrid(dedupe=True)`, default-on in `ai_search`. Honest finding: a
+  no-op on the gold-record metric here (the eval's `hybrid_dedup` ablation shows it) — it
+  improves result diversity, not recall, since the sparse false-positives are distinct records,
+  not body-duplicates. Tests: `tests/test_dedup.py`.
+- **Pluggable embedder registry** (`agent/embedding_backends.py`): the seam where a learned
+  multilingual/**multimodal** embedder registers under a backend id and is picked up by
+  `retrieval.embed_query_for_index` with no retrieval-path change. Built-ins: `local-hash-v1`,
+  `gemini`. Tests: `tests/test_embedding_backends.py`.
+- **Python↔Rust serving bridge** (`agent/ann_client.py`, `tools/export_rag_index.py`,
+  `services/ann_serving/serve`): export the committed index → stream queries to the Rust HNSW
+  server → row ids map back to chunks. Fail-soft (falls back to the Python vector path when the
+  binary/export are absent). Verified to return the same top-k as Python exact cosine at high
+  `ef`. Tests: `tests/test_ann_bridge.py` (live round-trip gated on the built binary).
+- **Search-as-AGI-substrate** doc (`docs/09-Agent/Search-as-AGI-Substrate.md`): how grounding
+  this pipeline on the belief graph + grounded gate + graded abstention + badcase flywheel turns
+  it into a verifiable perception organ — search as Sophia's AGI substrate.
+
+## [0.10.0] - 2026-06-26
+
+### Milestone — first external, cross-model validation of a Sophia calibration method
+
+The first Sophia capability result validated on **non-self-authored, public, human-authored**
+data, clearing the no-overclaim gate (≥2 independent grader families + CI excluding zero) on
+**two independent subject models**. This is a **calibration / selective-prediction** result —
+**not** an AGI claim; `canClaimAGI` stays false.
+
+- **C1 conformal / self-consistency selective prediction, on SimpleQA.** Answering only the most
+  self-consistent 20% lifts selective accuracy by **+15.8% [9.8%, 22.1%]** (DeepSeek, N=1000) and
+  **+7.8% [2.3%, 13.5%]** (Qwen-2.5-72B, N=2000) — both CIs exclude zero, graded by Claude +
+  Gemini (Cohen κ = 0.97 / 0.99). Of three confidence signals **only self-consistency works**;
+  stated confidence (overconfident) and token-logprob (saturated) are non-significant. The effect
+  is base-model-dependent (larger for the overconfident DeepSeek). `tools/run_simpleqa_calibration.py`
+  + `tools/analyze_simpleqa_calibration.py`; reports under `agi-proof/benchmark-results/real-model/simpleqa/`.
+
+### Added — five frontier-research candidate mechanisms (C1–C5), implemented + measured
+
+Built on existing seams, each fail-closed, with tests, pre-registration, an OPEN/Partial
+failure-ledger row, and real-model runs (DeepSeek subject; Claude/Gemini graders):
+
+- **C1 conformal abstention** (`agent/graded_decision.decide_conformal`, `guarded on_fail="conformal"`,
+  `tools/fit_conformal_policy.py`, MCP `sophia_conformal_decide`) — validated externally (above).
+- **C3 abstention-aware scoring** (`agent/abstention_scoring.py`) — Kalai reform; fail-closed beats
+  always-guessing on SimpleQA at λ ≥ 0.5.
+- **C4 CoT faithfulness** (`tools/run_faithfulness_bench.py`, MCP `sophia_cross_trace_mine`) —
+  multi-family corroborated (3 decider families, AUROC 1.0, separation CI [0.875, 1.0]).
+- **C2 prover-verifier self-play** (`agent/prover_verifier.py`) — real legibility delta +0.125;
+  honest negative on gate coverage.
+- **C5 truth-probe** (`tools/eval_truth_probe.py`) — honest weak result (AUROC 0.625 real).
+
+### Added — Google Fact Check Tools backend, live-validated
+
+`GoogleFactCheckBackend` run live (`tools/run_google_factcheck_coverage.py`): 6/6 coverage on
+general/viral claims, 0/6 on literary-provenance — a documented capability boundary.
+
+## [0.9.1] - 2026-06-26
+
+### Added — IP-protection & defensive-publication package (docs-only)
+
+A provenance/IP package to secure credit, priority, and brand for an already-public,
+Apache-2.0 project. No code or licence changes. This release also serves as the
+**Zenodo-archived, DOI-minted** snapshot of the method.
+
+- **`paper/sophia-whitepaper.md`** — arXiv-ready defensive publication of the
+  provenance-aware, verifier-gated abstention method.
+- **`CITATION.cff`** + **`.zenodo.json`** — citable authorship/date record (author of
+  record: Yim Kin Cheong, Hong Kong, ORCID 0009-0005-9520-0033) and Zenodo archive config.
+- **`docs/IP-PROTECTION.md`** — strategy: patent/trademark timing, commit-signing guide,
+  defensive-publication checklist.
+- **`docs/prior-art-survey.md`** — structured prior-art survey (~40 sources). Key finding:
+  two granted US patents (US 12,468,899; US 12,505,311, priority early 2023) plus NeMo
+  Guardrails / RARR / ALCE / Self-RAG / Conformal Abstention make a broad method patent
+  almost certainly anticipated/obvious.
+- **`docs/trademark-application.md`** — mark descriptions, Nice classes (9/42/41),
+  goods/services wording, HK IPD / USPTO / Madrid clearance checklist.
+- **`docs/submission-cover-note.md`** — arXiv-ready abstract, categories, keywords, venue
+  comparison (Zenodo / OSF / arXiv).
+- **`docs/release-notes-v0.9.0.md`** — release-body template (carried forward for this
+  DOI-minting release).
+- **README** — "Cite this work & establish provenance" section.
+
+## [0.9.0] - 2026-06-25
+
+### Added — runtime trust-layer wiring + measurement arc
+
+- **Graded answer/hedge/abstain router wired live** (`agent/grounded_agent.grounded_answer(graded=True)`
+  → `apply_graded_decision` → `agent/graded_decision.decide`): a gate-passing answer is
+  downgraded to hedge/abstain on low confidence (downgrade-only, fail-closed, opt-in, no-op
+  without a signal). Closes the "graded router has no live caller" gap. Tests:
+  `tests/test_grounded_agent_graded.py`.
+- **Live provenance-derived confidence** (`agent/grounded_confidence.py`): pools the routed
+  page's `authorConfidence` with k-hop neighbor corroboration; `grounded_answer(
+  confidence_from_sources=True)`. Measured over the OKF wiki: weak sources downgraded 100%,
+  strong kept 67% (`tools/eval_graded_confidence.py`, candidate).
+- **Real vector recall, offline + committed** (`agent/rag_local_embed.py`): deterministic,
+  airgap-safe hashing embedder; committed reproducible `rag/index/embeddings.npz` (+
+  `tools/build_rag_index.py --verify` in CI) drives cosine search in `agent/retrieval.retrieve`.
+  Measured delta vs keyword: +0.317 recall@5 (`tools/eval_retrieval_recall.py`, candidate).
+- **Served-output re-verification** (`sophia_mcp/gateway_wiring.verify_output`, opt-in
+  `SOPHIA_MCP_OUTPUT_VERIFY=1`): re-checks served tool text through the epistemic gate and
+  withholds fabricated-attribution payloads fail-closed. Tests: `tests/test_gateway_output_reverify.py`.
+- **Graded-threshold calibration** (`tools/calibrate_graded_thresholds.py` operating curve +
+  loop-closer; `tools/run_graded_calibration_live.py` real stochastic run). Honest finding:
+  provenance confidence is a weak, non-monotonic predictor of answer correctness, so the
+  default hi=0.7 is near-optimal and fitted thresholds are NOT adopted.
+
+### Added — automatic version control (tag + release on VERSION bump)
+
+- `.github/workflows/release.yml` — auto-creates the `vX.Y.Z` tag + GitHub Release from the
+  CHANGELOG section whenever `VERSION` changes on `main` (idempotent; `workflow_dispatch` to
+  backfill). Fixes the drift that left VERSION at 0.8.0 with the last tag at v0.5.3.
+- `tools/check_version_consistency.py` + CI guard — a VERSION bump must carry a matching
+  CHANGELOG section and a synced README badge. Tests: `tests/test_check_version_consistency.py`.
+
 ### Added — CPQA hybrid gate productized into the agent
 
 - `agent/grounded_agent.py` + `tools/sophia_agent.py --grounded` — wires the CPQA gated
@@ -187,6 +424,16 @@ All notable changes to Sophia AGI are documented here.
 - Added `# SPDX-License-Identifier: Apache-2.0` headers to 525 first-party
   Python files.
 - Author references normalized to `tomyimkc` only.
+
+### Fixed — stale promotion-gate test (CI)
+
+- `tests/test_promote_adapter.py::test_v2_adapter_rejects_on_religion_regression`
+  asserted the real v2 adapter regressed religion to `0.0`. The re-measured artifact
+  (`training/local_sophia_v2/eval_ladder_adapter.json`) now shows **religion 0.167 ==
+  base**, i.e. *no* regression — so the real adapter now **promotes**, not rejects.
+  Rather than fake the data, the test now verifies the gate's reject-on-protected-
+  regression logic on a deterministic synthetic ladder (matching the other two tests
+  in the file), so it no longer breaks when the real artifact is re-run.
 
 ## [0.7.47] - 2026-06-24
 

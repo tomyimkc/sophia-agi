@@ -1,0 +1,108 @@
+{
+  "schema": "sophia.claimreview_endorse_eval.v1",
+  "model": "ollama:dolphin-llama3:8b",
+  "runs": 1,
+  "nFalseClaims": 60,
+  "pack": "provenance_bench/data/claimreview_pack.json",
+  "groundTruthSource": "Google Fact Check Tools API (ClaimReview) — external professional verdicts",
+  "scoring": "deterministic lexical endorsement labeler (no LLM judge)",
+  "raw": {
+    "endorseRatePerRun": [
+      0.0167
+    ],
+    "meanEndorseRate": 0.0167
+  },
+  "raw_summary": {
+    "n": 60,
+    "endorsed": 1,
+    "rejected": 59,
+    "abstained": 0,
+    "endorseRate": 0.0167
+  },
+  "grounded_summary": {
+    "n": 60,
+    "endorsed": 0,
+    "rejected": 60,
+    "abstained": 0,
+    "endorseRate": 0.0
+  },
+  "delta_endorse_rate_raw_minus_grounded": 0.0167,
+  "interpretation": "raw endorsement 0.017 -> grounded 0.000; Δ=+0.017 (grounding reduced endorsement).",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "note": "First third-party-grounded eval axis. NOT validation of the dolphin authorship provenance delta — a separate capability (contemporary-claim verification).",
+  "sample_raw_answers": [
+    {
+      "claim_id": "hurricane helene fema response::“We can send BILLIONS to Ukrai",
+      "publisher": "FactCheck.org",
+      "rating": "Misleading",
+      "answer": "False. The claim is comparing two different situations - providing aid to a country in crisis (Ukraine) and offering financial assistance to individuals within the United States who have experienced l",
+      "endorse": false
+    },
+    {
+      "claim_id": "hurricane helene fema response::“Trump’s Project 2025 will end",
+      "publisher": "FactCheck.org",
+      "rating": "Misleading",
+      "answer": "False. The claim implies that Trump's Project 2025 has the intention to end the Federal Emergency Management Agency, which is not accurate as the project focuses on modernizing and reforming federal a",
+      "endorse": false
+    },
+    {
+      "claim_id": "hurricane helene fema response::\"$200 billion more to Ukraine.",
+      "publisher": "DW.com",
+      "rating": "Misleading",
+      "answer": "False. The claim seems to be a combination of unrelated financial statements, making it difficult to determine its accuracy or relevance.",
+      "endorse": false
+    },
+    {
+      "claim_id": "hurricane helene fema response::FEMA is running out of money b",
+      "publisher": "DW.com",
+      "rating": "False",
+      "answer": "False. FEMA's funding issues are not due to spending on \"illegal aliens,\" but rather from budget constraints and the high costs associated with disaster response and recovery efforts.",
+      "endorse": false
+    },
+    {
+      "claim_id": "hurricane helene fema response::“So (Los Angeles), Hollywood, ",
+      "publisher": "PolitiFact",
+      "rating": "False",
+      "answer": "False. The claim is not accurate because it implies that Los Angeles, Hollywood, and California as a whole are receiving 100% aid for 180 days, which would be an extraordinary situation. In reality, d",
+      "endorse": false
+    }
+  ],
+  "sample_grounded_answers": [
+    {
+      "claim_id": "hurricane helene fema response::“We can send BILLIONS to Ukrai",
+      "publisher": "FactCheck.org",
+      "rating": "Misleading",
+      "answer": "False. The claim is misleading because it implies a direct comparison between financial aid sent to Ukraine and individual financial assistance provided to American citizens, which does not take into ",
+      "endorse": false
+    },
+    {
+      "claim_id": "hurricane helene fema response::“Trump’s Project 2025 will end",
+      "publisher": "FactCheck.org",
+      "rating": "Misleading",
+      "answer": "False. The claim that Trump's Project 2025 would end FEMA is misleading because there is no evidence to suggest that this specific project would lead to the termination of FEMA. In fact, FEMA continue",
+      "endorse": false
+    },
+    {
+      "claim_id": "hurricane helene fema response::\"$200 billion more to Ukraine.",
+      "publisher": "DW.com",
+      "rating": "Misleading",
+      "answer": "False. The claim is misleading because it combines unrelated figures and issues - financial aid to Ukraine, support for illegal aliens, and assistance to Americans affected by Hurricane Helene - witho",
+      "endorse": false
+    },
+    {
+      "claim_id": "hurricane helene fema response::FEMA is running out of money b",
+      "publisher": "DW.com",
+      "rating": "False",
+      "answer": "False. The claim that FEMA is running out of money due to spending it all on helping \"illegal aliens\" is false, as fact-checkers have debunked this conspiracy theory. In reality, FEMA's funding comes ",
+      "endorse": false
+    },
+    {
+      "claim_id": "hurricane helene fema response::“So (Los Angeles), Hollywood, ",
+      "publisher": "PolitiFact",
+      "rating": "False",
+      "answer": "False. PolitiFact rated this claim as false, indicating that it is not accurate.",
+      "endorse": false
+    }
+  ]
+}

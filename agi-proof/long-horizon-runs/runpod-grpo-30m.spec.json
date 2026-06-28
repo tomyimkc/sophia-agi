@@ -1,0 +1,38 @@
+{
+  "runId": "runpod-grpo-30m",
+  "goal": "A GENUINE long-horizon autonomous run: dispatch and supervise a REAL live GRPO (RLVR) training run on a rented RunPod GPU to completion, measured end-to-end by the long-horizon harness's own monotonic clock. The dominant phase is real GPU compute (vLLM-colocate GRPO on a 9B model: dependency build, model download, GRPO training, held-out adapter-eval), NOT padding or a sleep loop. The harness times the whole pod lifecycle (rent -> SSH -> dep-install -> GRPO train -> adapter-eval -> copy-back -> delete pod); the SSIL Layer-1 gate then ingests the FRESH pod adapter-eval. Substantive by BOTH the duration tier (>=1800s real GPU compute) and the tool-call count. This is the honest answer to agi-proof/long-horizon-runs/HONEST-WALL-2026-06-27.md section 4: run the harness on the box that actually has the compute.",
+  "plan": [
+    "provenance: record runner env, repo head, and the dispatch parameters",
+    "dry-run the RunPod payload (no pod, no cost) to sanity-check the request",
+    "LIVE: rent a GPU, run GRPO over SSH to completion, copy back the adapter-eval, delete the pod (the long real-compute phase)",
+    "ingest ONLY the FRESH pod adapter-eval into the SSIL Layer-1 gate (fail-closed; never re-gate a committed archive)",
+    "objective gate: a fresh pod adapter-eval report exists and parses (execution truth that a real GRPO run completed)"
+  ],
+  "objectiveGate": ["bash", "-lc", "f=$(ls -t agi-proof/benchmark-results/runpod-rlvr/*adapter-eval*.json 2>/dev/null | head -1); test -n \"$f\" && python3 -m json.tool \"$f\" >/dev/null"],
+  "steps": [
+    {
+      "name": "provenance",
+      "cmd": ["bash", "-lc", "python3 --version; echo head=$(git rev-parse HEAD); echo \"params: task=$LH_TASK epochs=$LH_EPOCHS seed=$LH_SEED gpu='$LH_GPU' branch=$LH_BRANCH mode=$LH_MODE interruptible=$LH_INTERRUPTIBLE\""],
+      "purpose": "record runner environment, repo head, and dispatch parameters"
+    },
+    {
+      "name": "dry-run-payload",
+      "cmd": ["bash", "-lc", "python3 tools/runpod_rlvr.py --dry-run --source git --branch \"$LH_BRANCH\" --remote-mode \"$LH_MODE\" --task \"$LH_TASK\" --gpu-type \"$LH_GPU\""],
+      "purpose": "sanity-check the RunPod request payload without renting a GPU (no cost)",
+      "verification": true
+    },
+    {
+      "name": "live-grpo-runpod",
+      "cmd": ["bash", "-lc", "INT=; [ \"$LH_INTERRUPTIBLE\" = true ] && INT=--interruptible; set -x; python3 tools/runpod_rlvr.py --yes --source git --branch \"$LH_BRANCH\" --remote-mode \"$LH_MODE\" --task \"$LH_TASK\" --epochs \"$LH_EPOCHS\" --seed \"$LH_SEED\" --quant bf16 --vllm colocate --gpu-type \"$LH_GPU\" $INT"],
+      "purpose": "REAL long-running compute: rent GPU + GRPO over SSH + held-out adapter-eval + always delete the pod",
+      "artifact": "agi-proof/benchmark-results/runpod-rlvr/"
+    },
+    {
+      "name": "ssil-gate-ingest",
+      "cmd": ["bash", "-lc", "found=$(ls -t agi-proof/benchmark-results/runpod-rlvr/*adapter-eval*.json 2>/dev/null | head -1); if [ -n \"$found\" ]; then echo \"Ingesting FRESH pod report (newest mtime): $found\"; python3 tools/ingest_rlvr_eval.py \"$found\" --print --hardened --registry agi-proof/benchmark-results/rlvr-replication/registry.jsonl; else echo 'No fresh adapter-eval copied back from the pod (fail-closed); not gating any committed archive.'; exit 1; fi"],
+      "purpose": "gate ONLY the freshest pod adapter-eval (newest mtime = the one THIS run copied back) through the SSIL Layer-1 gate; ls -t avoids the non-deterministic find|head-1 ordering that can pick a stale committed eval. A gate REJECT is a legitimate scientific outcome, not a harness failure",
+      "verification": true,
+      "allowFailure": true
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "benchmark": "grounded-search calibrated abstention (self-authored OKF probes)",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "probes": 76,
+  "strong": {
+    "n": 48,
+    "answeredFraction": 0.6667
+  },
+  "weak": {
+    "n": 28,
+    "downgradedFraction": 1.0
+  },
+  "discrimination": 0.6667,
+  "actionByTier": {
+    "attributed": {
+      "answer": 23,
+      "hedge": 8,
+      "abstain": 0,
+      "n": 31
+    },
+    "disputed": {
+      "answer": 0,
+      "hedge": 19,
+      "abstain": 0,
+      "n": 19
+    },
+    "consensus": {
+      "answer": 3,
+      "hedge": 0,
+      "abstain": 0,
+      "n": 3
+    },
+    "legendary": {
+      "answer": 0,
+      "hedge": 7,
+      "abstain": 0,
+      "n": 7
+    },
+    "anachronism_risk": {
+      "answer": 0,
+      "hedge": 0,
+      "abstain": 1,
+      "n": 1
+    },
+    "none_extant": {
+      "answer": 0,
+      "hedge": 1,
+      "abstain": 0,
+      "n": 1
+    },
+    "layered": {
+      "answer": 0,
+      "hedge": 2,
+      "abstain": 0,
+      "n": 2
+    },
+    "compiled": {
+      "answer": 6,
+      "hedge": 6,
+      "abstain": 0,
+      "n": 12
+    }
+  },
+  "honestBound": "Self-authored probes over the live OKF wiki; the label is each page's own declared authorConfidence tier, not third-party truth. Measures whether the serve/abstain reflex tracks source quality (a calibrated prior), not whether any sentence is true."
+}

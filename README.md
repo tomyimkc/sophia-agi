@@ -3,8 +3,9 @@
 > **Wisdom before intelligence.** A provenance-aware reasoning layer that **abstains instead of fabricating**.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20930874.svg)](https://doi.org/10.5281/zenodo.20930874)
 [![CI](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/tomyimkc/sophia-agi/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.8.0-blue)
+![Version](https://img.shields.io/badge/version-0.10.0-blue)
 ![Corpus](https://img.shields.io/badge/corpus-528_bilingual_examples-green)
 ![Scope](https://img.shields.io/badge/scope-AGI--candidate%2C_not_proven_AGI-lightgrey)
 [![Thesis site](https://img.shields.io/badge/live-thesis_site-9a7b4f)](https://tomyimkc.github.io/sophia-agi/)
@@ -22,9 +23,17 @@ claim  →  verify against sources  →  accept · abstain · block
 **One-sentence problem it solves:** Modern AI confidently merges Confucius with the *Dao De Jing*, credits Freud for ideas from the 1950s, and treats legendary figures as literal authors — then uses those errors as premises for further reasoning.
 
 **Validated proof (clears the no-overclaim gate):**
-- On an 8B local model, Sophia cuts hallucinated attributions from **36.1% → 23.6%** (Δ **12.5%**, 95% CI [5.6%, 19.4%]) at **0% false-positive cost**.
+- On a local model, Sophia cuts hallucinated attributions from **36.1% → 23.6%** (Δ **12.5%**, 95% CI [5.6%, 19.4%]) at **0% false-positive cost**.
 - On genuine "I don't know" traps, Sophia fabricates **0%** while raw models fabricate 17–25%.
-- Every public number requires ≥2 judge families, κ ≥ 0.40, ≥3 runs, and confidence intervals. See [RESULTS.md](RESULTS.md).
+- **First external, cross-model validation (calibration):** on the **public, human-authored SimpleQA**, Sophia's **self-consistency selective-prediction** gate lifts selective accuracy at 20% coverage by **+15.8% [9.8%, 22.1%]** on DeepSeek and **+7.8% [2.3%, 13.5%]** on Qwen-2.5-72B — both 95% CIs exclude zero, graded by **2 independent families** (Cohen κ = 0.97 / 0.99). Of three confidence signals only self-consistency works (stated confidence and token-logprob are non-significant). A **calibration / selective-prediction** result on **non-self-authored** data — **not** an AGI claim.
+- Every public number requires ≥2 judge families and confidence intervals (κ ≥ 0.40 or a CI excluding zero). See [RESULTS.md](RESULTS.md).
+
+**Public failure ledger (first-class artifact):** the most honest thing here is what Sophia
+has *not* proven. [`agi-proof/failure-ledger.md`](agi-proof/failure-ledger.md) lists every
+OPEN blocker on the AGI claim with claim-impact and the required next step; its OPEN/CLOSED
+summary is regenerated into [`evidence-manifest.json`](agi-proof/evidence-manifest.json) and
+structurally validated in CI (`python tools/validate_failure_ledger.py --check`). If the
+OPEN count ever reaches 0, the public wording must be upgraded — not the gate silently relaxed.
 
 > **Scope, stated plainly.** This is a research program for *grounded, machine-checked* reasoning — **not a claim of AGI**. Thresholds are pre-registered and honestly not yet met. The deliverable is the honest machinery (verifiers, abstaining gate, governance contract) and the measured data. Full commitments: [VISION.md](VISION.md) · [SECURITY.md](SECURITY.md).
 
@@ -43,7 +52,7 @@ Try the gate right now: `python scripts/demo_gate.py` (abstain + provenance verd
 
 ## What it does (main usage)
 
-**Sophia is a fail-closed provenance gate.** It checks each claim against sources it can machine-verify, **abstains instead of fabricating**, and only lets `accepted` output through. Measured effect: on an 8B model it cuts attribution-hallucination Δ12.5% (95% CI [5.6%, 19.4%]) at 0% false-positive cost — but **23.6% still gets through. It is a filter that reduces harm, not a guarantee, and not a substitute for human oversight.**
+**Sophia is a fail-closed provenance gate.** It checks each claim against sources it can machine-verify, **abstains instead of fabricating**, and only lets `accepted` output through. Measured effect: on a local model it cuts attribution-hallucination Δ12.5% (95% CI [5.6%, 19.4%]) at 0% false-positive cost — but **23.6% still gets through. It is a filter that reduces harm, not a guarantee, and not a substitute for human oversight.**
 
 The validated delta above is the one result that has cleared the full no-overclaim gate. See [What Sophia cannot do (yet)](#what-sophia-cannot-do-yet) for the honest limits.
 
@@ -84,14 +93,14 @@ Stated plainly, because owning the limits is the point. Sophia **today**:
 - **Does not generalize like a mind** — the "AGI-shaped" modules (program induction, planner, world model, …) are fail-closed *interfaces with toy reference implementations*, not the capabilities their names describe. See [AGI-Missing-Pillars](docs/11-Platform/AGI-Missing-Pillars.md).
 - **Is not independently replicated** — benchmarks, packs, judges, and corpus are largely first-party. A fully independent claim needs third-party packs + human review.
 
-The single validated result is narrow: **attribution-hallucination reduction on one 8B model, LLM-judged.** Everything else is labelled *illustrative* or *candidate*. The honest deliverable is the machinery + the measured data + the public ledger of what is **not** yet proven.
+The single validated result is narrow: **attribution-hallucination reduction on one local model, LLM-judged.** Everything else is labelled *illustrative* or *candidate*. The honest deliverable is the machinery + the measured data + the public ledger of what is **not** yet proven.
 
 ## Support this work
 
 The core is Apache-2.0 and always will be. If it's useful to you, you can fund the time and compute
 to keep it honest — especially the third-party validation the ledger says is still missing.
 
-- **Sponsor** → [SPONSORS.md](SPONSORS.md) — recognition only; sponsors never steer what counts as true.
+- **Sponsor** → [SPONSORS.md](SPONSORS.md) (Patreon + GitHub Sponsors) — recognition only; sponsors never steer what counts as true.
 - **Hire me** → [services](docs/07-Growth/SERVICES.md) — install the provenance gate in your stack (scoped, measured, no guarantees).
 - **Learn the method** → [Source-Discipline Engineering](docs/07-Growth/education/Source-Discipline-Engineering.md).
 
@@ -149,6 +158,17 @@ purpose:
 brand being protected stops someone from shipping an unverified product under the Sophia name and
 eroding the no-overclaim standard the project exists to uphold. Authored and maintained by the
 sole author and rights holder, **tomyimkc**. Every fork carries [NOTICE.md](NOTICE.md).
+
+### Cite this work & establish provenance
+
+Sophia is permanently archived and citable (defensive publication):
+
+- **Archival DOI:** [10.5281/zenodo.20930874](https://doi.org/10.5281/zenodo.20930874) — permanent, timestamped record on Zenodo.
+- **Citation metadata:** [CITATION.cff](CITATION.cff) — GitHub renders a "Cite this repository" button.
+- **Whitepaper (arXiv-ready):** [paper/sophia-whitepaper.md](paper/sophia-whitepaper.md).
+- **Full strategy & patent/trademark timing:** [docs/IP-PROTECTION.md](docs/IP-PROTECTION.md).
+
+> **To cite:** Yim, K. C. (2026). *Sophia — the Wisdom Gate: a provenance-aware, verifier-gated reasoning layer that abstains instead of fabricating* (v0.9.1). Zenodo. https://doi.org/10.5281/zenodo.20930874
 
 ## Moral + epistemic Conscience Kernel (seven paths)
 
@@ -248,6 +268,33 @@ python tools/build_agi_proof_package.py
 python tools/build_web_data.py
 ```
 
+## Pretraining research artifacts (`pretraining/`)
+
+A small, self-contained body of **pretraining-direction** research — built to the same
+no-overclaim discipline — that lets Sophia speak the language of a data/algorithm pretraining
+researcher without pretending to out-train a frontier lab. Every study runs in **pure Python
+(no numpy/torch)** on a real, tiny, hand-backpropped LM whose **irreducible loss is known in
+closed form**, so each fit is *checked*, not trusted.
+
+- **Algorithm:** a data-scaling law `L(D)=E+A·D^-p` with a **pre-registered extrapolation**
+  (passes a 10 % gate at ≈3 % error; honestly reports that the irreducible floor is
+  *under-identified* away from saturation); an optimizer dynamics/stability frontier
+  (SGD/momentum/Adam); a top-1 **MoE-vs-dense** routing probe with collapse detection
+  (`pretraining/architecture/ARCHITECTURE.md` documents the real DeepSeek **MLA + MoE**).
+- **Data:** a per-row **data passport** (hash, source, license, quality, MinHash dedup) that
+  found the committed math-code curriculum is **~60 % near-duplicate** and unlicensed; a
+  mixture-ratio (**配比**) sweep; a **synthetic-data scaling & collapse** study; a
+  multi-dimensional **eval coverage matrix** (surfaces that only 9/90 capability×domain cells
+  are covered); and typed, fail-closed schemas for **agent / feedback / multimodal** data.
+
+Pre-registered gates: [`pretraining/PRE-REGISTRATION.md`](pretraining/PRE-REGISTRATION.md) ·
+overview: [`pretraining/README.md`](pretraining/README.md)
+
+```bash
+python tests/test_pretraining.py                 # fast property tests (10/10)
+python -m pretraining.scaling.run_scaling        # + each study has a CLI / --quick mode
+```
+
 ## OKF provenance wiki (new in 0.7.0)
 
 An **Open Knowledge Format / LLM-Wiki** layer that turns Sophia's scattered provenance
@@ -310,7 +357,10 @@ python tools/sophia_agent.py repo "What should I do next?" --execute --approve
 python tools/sophia_agent.py life "Should I prioritize corpus or marketing?"
 ```
 
-See [docs/09-Agent/Sophia-Agent.md](docs/09-Agent/Sophia-Agent.md).
+See [docs/09-Agent/Sophia-Agent.md](docs/09-Agent/Sophia-Agent.md). For where the
+harness is headed — context management, subagent delegation, long-horizon execution,
+and the model↔harness co-evolution loop — see
+[docs/09-Agent/Harness-Roadmap.md](docs/09-Agent/Harness-Roadmap.md).
 
 ## Online RAG (Gemini / Vertex)
 
@@ -323,6 +373,23 @@ python tools/sophia_rag.py "Did Confucius write the Dao De Jing?"
 ```
 
 Cloud Run API: `services/rag_api/` — see [docs/09-Agent/Online-RAG.md](docs/09-Agent/Online-RAG.md).
+
+## AI search pipeline (understand → hybrid recall → verify-ready)
+
+A deterministic, offline AI-search layer over the same index: **query understanding**
+(normalize · intent · multi-hop decomposition · alias/synonym expansion, EN+ZH), **hybrid
+recall** (dense cosine ⨁ sparse BM25-lite fused by weighted Reciprocal Rank Fusion), near-dup
+collapse, and rerank — returning a `SearchResult` that carries the analyzed plan.
+
+```python
+from agent.ai_search import search
+r = search("Compare Plato and Aristotle on virtue")   # intent=comparison, fans out per entity
+```
+
+- Pipeline + honest bounds: [docs/09-Agent/AI-Search.md](docs/09-Agent/AI-Search.md)
+- Quality eval体系 (graded nDCG / recall / MRR + badcase taxonomy): `tools/eval_search_quality.py`, [eval/search_quality/](eval/search_quality/)
+- Scale-out: dependency-free Rust **HNSW** serving core + Python bridge — [services/ann_serving/](services/ann_serving/)
+- **Why it's an AGI substrate** (verifiable, provenance-grounded perception): [docs/09-Agent/Search-as-AGI-Substrate.md](docs/09-Agent/Search-as-AGI-Substrate.md)
 
 ## Thesis web UI (council-decided)
 
@@ -361,9 +428,13 @@ sophia-agi/
 ├── docs/              # disputes, growth playbook, domains, platform/verticals
 ├── agent/             # verifier-gated core, council deliberate, gate, model
 │   └── legal_sources/ # federated HK/UK/US live citator (HKLII, e-Leg, TNA, CL)
+├── serving/           # systems track: tiered KV cache + cache-aware load balancer
+├── kernels/           # systems track: FlashAttention online-softmax (numpy ref + Triton)
+├── moe/               # systems track: top-k MoE routing + INT8/FP8 quant
 ├── benchmark/         # responses template + leaderboard + gated harnesses
 ├── training/          # JSONL-ready examples + gate-filtered council traces
 ├── agi-proof/         # AGI-candidate proof package and evidence manifest
+├── pretraining/       # honest pretraining-research artifacts (scaling/optimizer/MoE; data passport/mixing/synthetic/eval-matrix)
 ├── tools/             # validate, export, score, council + uplift + distill
 ├── scripts/           # ops helpers (e.g. safe one-way iCloud backup)
 ├── web/               # thesis UI (council-decided; GitHub Pages)
@@ -405,7 +476,7 @@ is "validated" only with multi-judge consensus + CIs; see [RESULTS.md](RESULTS.m
   a semantic **holding-faithfulness** tier. Sophia's **first gate-validated number**
   lives here (RESULTS.md → *Semantic evals*), with honest small-N bounds. Not legal
   advice · [Legal-Industry-Fit.md](docs/08-Domains/Legal-Industry-Fit.md).
-- **Council distillation** — teach a small student (Qwen2.5-7B) the discipline from
+- **Council distillation** — teach a small student model the discipline from
   **gate-filtered** teacher traces, so it stays disciplined without the scaffold ·
   [Council-Distillation.md](docs/11-Platform/Council-Distillation.md).
 - **Cantonese (粵語)** — written-Cantonese detection + output (`agent/cantonese.py`),
@@ -443,19 +514,12 @@ opt-in (`--provider openclaw`) and shells out to the `openclaw` CLI behind a stu
 it adds no knowledge-write path and never bypasses the provenance gate. See
 [docs/11-Platform/OpenClaw.md](docs/11-Platform/OpenClaw.md).
 
-## Build your local LLM (Claude + LoRA)
+## Run locally (open weights)
 
-Claude API builds data and packaging; **open weights** run offline:
-
-```bash
-python tools/claude_model_lab.py run-all          # review, distill, Ollama Modelfile
-pip install -r requirements-lora.txt
-python tools/train_lora.py --4bit --epochs 3      # Qwen2.5-7B QLoRA
-python tools/eval_local_model.py --adapter training/lora/checkpoints/sophia-v1 --with-gate
-ollama create sophia-7b -f models/ollama/Modelfile
-```
-
-See [Model-Lab.md](docs/09-Agent/Model-Lab.md) and [LoRA-Experiment.md](docs/09-Agent/LoRA-Experiment.md).
+Sophia runs fully offline on open weights, always paired with the runtime gate
+(`sophia_gate_check` / `agent/gate.py`) — weights alone do not guarantee trap
+safety. The local-model build and evaluation steps live in the repo for
+contributors rather than on this front page.
 
 ## Hugging Face
 

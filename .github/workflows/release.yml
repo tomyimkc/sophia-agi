@@ -1,0 +1,72 @@
+# Automatic tag + GitHub Release whenever VERSION changes on main.
+#
+# Why VERSION-triggered (not bump-on-every-push): the VERSION file is the single source of
+# truth and a bump is a deliberate human act. This workflow automates the mechanics that were
+# missing — tagging and publishing — so the repo can never again sit at VERSION 0.8.0 with the
+# last tag at v0.5.3. Push a commit to main that changes VERSION (with a matching CHANGELOG
+# section) and the tag + release appear automatically. Idempotent: skips if the tag exists.
+name: release
+
+on:
+  push:
+    branches: [main]
+    paths: ["VERSION"]
+  workflow_dispatch: {}   # allow a manual run to backfill a missed release
+
+permissions:
+  contents: write          # create tags + releases
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0     # need full history + tags
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Validate version consistency (VERSION ↔ CHANGELOG ↔ README badge)
+        run: python tools/check_version_consistency.py
+
+      - name: Resolve version and tag
+        id: ver
+        run: |
+          v="$(cat VERSION)"
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          echo "tag=v$v" >> "$GITHUB_OUTPUT"
+
+      - name: Skip if the tag already exists
+        id: gate
+        run: |
+          if git ls-remote --exit-code --tags origin "refs/tags/${{ steps.ver.outputs.tag }}" >/dev/null 2>&1; then
+            echo "already released ${{ steps.ver.outputs.tag }} — nothing to do"
+            echo "create=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "create=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Extract release notes from CHANGELOG
+        if: steps.gate.outputs.create == 'true'
+        run: |
+          python tools/create_github_release.py --tag "${{ steps.ver.outputs.tag }}" --dry-run > release-notes.md
+          echo "----- notes -----"; cat release-notes.md
+
+      - name: Create tag and GitHub Release
+        if: steps.gate.outputs.create == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git tag "${{ steps.ver.outputs.tag }}" "${{ github.sha }}"
+          git push origin "${{ steps.ver.outputs.tag }}"
+          gh release create "${{ steps.ver.outputs.tag }}" \
+            --title "Sophia AGI ${{ steps.ver.outputs.tag }}" \
+            --notes-file release-notes.md \
+            --target "${{ github.sha }}"
+          echo "Published ${{ steps.ver.outputs.tag }}"

@@ -1,0 +1,25 @@
+{
+  "packId": "selfauthored-fugu-w1-2026-06-26-v1",
+  "runId": "hidden-selfauthored-pack-2026-06-26-deepseek-w1",
+  "status": "revealed-after-eval-self-authored-artifact-loss-record",
+  "origin": "Self-authored by Fugu worker agent in this worktree immediately before initial W1 execution; not third-party/reviewer-independent.",
+  "residualIndependenceGap": "Pack was unspent before the first execution but self-authored; does not close third-party independence caveat.",
+  "artifactLossBoundary": "The first unspent execution printed an aggregate but the requested response/private/public/manual artifacts were not retained for checksum/commit; console numbers are recorded only as failure-ledger context, not evidence.",
+  "packPathAtRun": "private/hidden-evals/hidden-selfauthored-pack-2026-06-26-deepseek-w1/pack.json",
+  "publicRevealedPackPath": "agi-proof/hidden-reviewer-packs/hidden-selfauthored-pack-2026-06-26-deepseek-w1.pack.revealed.json",
+  "packSha256": "d9fba6493f9453ebabe552c21ccba4c3e09f84c1b10630649693b6a8b177ea7c",
+  "caseCount": 8,
+  "domains": [
+    "philosophy",
+    "psychology",
+    "history",
+    "logic",
+    "coding",
+    "planning",
+    "tool_use",
+    "learning"
+  ],
+  "createdAt": "2026-06-26T02:30:00+08:00",
+  "commitHashBeforeRun": "de52a7786be6fa1bc191c701fc65b89db140160a",
+  "branchAtRun": "claude/agi-gap-audit-roadmap-12ft30"
+}

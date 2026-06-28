@@ -32,8 +32,10 @@ if str(ROOT) not in sys.path:
 
 from provenance_bench.dataset_guard import check_contamination, eval_prompt_set  # noqa: E402
 
-OUT = ROOT / "training" / "local_sophia_v2"
-BASE_MODEL = "Qwen/Qwen2.5-3B-Instruct"
+DEFAULT_OUT = ROOT / "training" / "local_sophia_v2"
+DEFAULT_BASE_MODEL = "Qwen/Qwen2.5-3B-Instruct"
+OUT = DEFAULT_OUT  # backward compat for tests
+BASE_MODEL = DEFAULT_BASE_MODEL
 MLX_MAX_TOKENS = 1024  # must match the trainer's --max-seq-length; rows are fit to this
 
 
@@ -80,38 +82,55 @@ def _to_mlx_rows(rows: list[dict]) -> list[dict]:
     return out
 
 
-# (source path, output pack name, kind)
-SFT_SOURCES = [
-    ("training/corpus.jsonl", "sft_source_discipline.jsonl", "sft"),
-    ("training/wiki_provenance_sft.jsonl", "sft_wiki_provenance.jsonl", "sft"),
-    ("training/council/traces.jsonl", "sft_council_traces.jsonl", "sft"),
-    ("training/council/religion_repair_c4.jsonl", "sft_religion_repair_c4.jsonl", "sft"),
-    ("training/moral_gate_sft.jsonl", "sft_moral_gate.jsonl", "sft"),
-    ("training/local_sophia_v2/general_instruct.jsonl", "general_instruct.jsonl", "sft"),
-    # C4: human-reviewed, promoted gate-feedback misses (optional; absent → skipped).
-    # Decontaminated like any source, so it cannot leak eval/holdout prompts.
-    ("training/feedback/sft_from_feedback.jsonl", "sft_from_feedback.jsonl", "sft"),
-]
+HOLDOUT_SRC = "training/lora/holdout.jsonl"
+
+
+def _sft_sources(out: Path) -> list[tuple[str, str, str]]:
+    gi = out / "general_instruct.jsonl"
+    gi_rel = str(gi.relative_to(ROOT)) if gi.exists() else "training/local_sophia_v2/general_instruct.jsonl"
+    return [
+        ("training/corpus.jsonl", "sft_source_discipline.jsonl", "sft"),
+        ("training/wiki_provenance_sft.jsonl", "sft_wiki_provenance.jsonl", "sft"),
+        ("training/council/traces.jsonl", "sft_council_traces.jsonl", "sft"),
+        ("training/council/religion_repair_c4.jsonl", "sft_religion_repair_c4.jsonl", "sft"),
+        ("training/moral_gate_sft.jsonl", "sft_moral_gate.jsonl", "sft"),
+        (gi_rel, "general_instruct.jsonl", "sft"),
+        # C4: human-reviewed, promoted gate-feedback misses (optional; absent → skipped).
+        # Decontaminated like any source, so it cannot leak eval/holdout prompts.
+        ("training/feedback/sft_from_feedback.jsonl", "sft_from_feedback.jsonl", "sft"),
+        ("training/hk_advisor/sft_traces.jsonl", "sft_hk_advisor.jsonl", "sft"),
+    ]
+
+
+def _required_inputs(out: Path) -> dict:
+    gi = out / "general_instruct.jsonl"
+    gi_rel = str(gi.relative_to(ROOT)) if gi.exists() else "training/local_sophia_v2/general_instruct.jsonl"
+    return {
+        "general_instruction_retention": {
+            "source": gi_rel,
+            "message": "Bring a license-clean external instruct slice (~10% of mix) or the model becomes a narrow refusal machine.",
+        },
+        "moral_gate_sft": {
+            "source": "training/moral_gate_sft.jsonl",
+            "message": "Convert moral_corpus/ structured data into routing SFT examples (allow/revise/retrieve/clarify/escalate/abstain/block).",
+        },
+    }
+
+
+# Legacy alias for imports/tests
+SFT_SOURCES = _sft_sources(ROOT / "training" / "local_sophia_v2")
 DPO_SOURCES = [
     ("training/hard_negatives_dpo.jsonl", "dpo_hard_negatives.jsonl", "dpo"),
     ("training/wiki_provenance_dpo.jsonl", "dpo_wiki_provenance.jsonl", "dpo"),
+    ("training/hk_advisor/dpo_pairs.jsonl", "dpo_hk_advisor.jsonl", "dpo"),
+    ("training/tool_use/dpo_pairs.jsonl", "dpo_tool_use_mcp.jsonl", "dpo"),
 ]
-HOLDOUT_SRC = "training/lora/holdout.jsonl"
 
-REQUIRED_INPUTS = {
-    "general_instruction_retention": {
-        "source": "training/local_sophia_v2/general_instruct.jsonl",
-        "message": "Bring a license-clean external instruct slice (~10% of mix) or the model becomes a narrow refusal machine.",
-    },
-    "moral_gate_sft": {
-        "source": "training/moral_gate_sft.jsonl",
-        "message": "Convert moral_corpus/ structured data into routing SFT examples (allow/revise/retrieve/clarify/escalate/abstain/block).",
-    },
-}
+REQUIRED_INPUTS = _required_inputs(ROOT / "training" / "local_sophia_v2")
 
 
-def _existing_baseline() -> dict | None:
-    manifest = OUT / "manifest.json"
+def _existing_baseline(out: Path) -> dict | None:
+    manifest = out / "manifest.json"
     if not manifest.exists():
         return None
     try:
@@ -122,9 +141,23 @@ def _existing_baseline() -> dict | None:
     return baseline if isinstance(baseline, dict) else None
 
 
-def build(check_only: bool) -> int:
+def build(
+    check_only: bool,
+    *,
+    out: Path = DEFAULT_OUT,
+    base_model: str = DEFAULT_BASE_MODEL,
+) -> int:
     from provenance_bench.dataset_guard import normalize, prompt_of
+    from provenance_bench.holdout_seal import verify_manifest
 
+    seal_path = ROOT / "agi-proof" / "sophia-7b-train-verify" / "heldout-seal.manifest.json"
+    if seal_path.exists():
+        seal = verify_manifest(seal_path, ROOT / HOLDOUT_SRC)
+        if not seal["ok"]:
+            print("::error:: holdout seal mismatch — run tools/seal_sophia_7b_holdout.py", file=sys.stderr)
+            return 1
+
+    out = out.resolve()
     holdout = _read_jsonl(ROOT / HOLDOUT_SRC)
     holdout_prompts = {normalize(prompt_of(r)) for r in holdout if prompt_of(r)}
     evalset = eval_prompt_set(root=ROOT)
@@ -136,7 +169,10 @@ def build(check_only: bool) -> int:
     all_sft: list[dict] = []
     dropped_total = 0
 
-    for rel, name, kind in SFT_SOURCES + DPO_SOURCES:
+    sft_sources = _sft_sources(out)
+    required_inputs = _required_inputs(out)
+
+    for rel, name, kind in sft_sources + DPO_SOURCES:
         rows = _read_jsonl(ROOT / rel)
         # DECONTAMINATE: drop any row whose prompt collides with eval/holdout.
         clean_rows, dropped = [], 0
@@ -154,10 +190,10 @@ def build(check_only: bool) -> int:
             if kind == "sft":
                 all_sft.extend(clean_rows)
             if not check_only:
-                _write_jsonl(OUT / name, clean_rows)
+                _write_jsonl(out / name, clean_rows)
 
     if holdout and not check_only:
-        _write_jsonl(OUT / "holdout.jsonl", holdout)
+        _write_jsonl(out / "holdout.jsonl", holdout)
 
     # MLX-LM consumes a data directory with train/valid JSONL. Train only on SFT-style
     # messages; DPO/preference rows are retained for future preference training, not MLX SFT.
@@ -168,8 +204,8 @@ def build(check_only: bool) -> int:
     mlx_train_fitted, mlx_train_fit = fit_rows(_to_mlx_rows(all_sft), max_tokens=MLX_MAX_TOKENS)
     mlx_valid_fitted, mlx_valid_fit = fit_rows(_to_mlx_rows(holdout), max_tokens=MLX_MAX_TOKENS)
     if not check_only:
-        _write_jsonl(OUT / "mlx" / "train.jsonl", mlx_train_fitted)
-        _write_jsonl(OUT / "mlx" / "valid.jsonl", mlx_valid_fitted)
+        _write_jsonl(out / "mlx" / "train.jsonl", mlx_train_fitted)
+        _write_jsonl(out / "mlx" / "valid.jsonl", mlx_valid_fitted)
 
     # --- fail-closed guard: after decontamination, train MUST be disjoint ---
     contam = check_contamination(all_train, evalset, root=ROOT)
@@ -178,14 +214,14 @@ def build(check_only: bool) -> int:
 
     missing_required = {
         key: spec["message"]
-        for key, spec in REQUIRED_INPUTS.items()
+        for key, spec in required_inputs.items()
         if not _read_jsonl(ROOT / spec["source"])
     }
 
     manifest = {
         "schema": "sophia.local_sophia_dataset.v2",
         "trainingGoal": "local verifier-gated wisdom model — NOT AGI",
-        "baseModel": BASE_MODEL,
+        "baseModel": base_model,
         "packs": packs,
         "holdout": {"source": HOLDOUT_SRC, "rows": len(holdout)},
         "trainRowsTotal": len(all_train),
@@ -197,7 +233,7 @@ def build(check_only: bool) -> int:
         "missingRequiredInputs": missing_required,
         "excluded": ["benchmark/eval holdouts", "hidden-eval packs", "API keys",
                      "unverified self-generated answers"],
-        "baseline": _existing_baseline(),  # fill via tools/eval_ladder.py on your hardware BEFORE training
+        "baseline": _existing_baseline(out),  # fill via tools/eval_ladder.py on your hardware BEFORE training
         "promotionRule": "promote only if provenance/citation improves at acceptable "
                          "false-positive cost (no useful-correctness regression).",
         "contamination": {
@@ -207,7 +243,7 @@ def build(check_only: bool) -> int:
             "clean": contam["clean"] and not holdout_overlap,
         },
         "mlx": {"trainRows": len(mlx_train_fitted), "validRows": len(mlx_valid_fitted),
-                "path": "training/local_sophia_v2/mlx", "maxTokens": MLX_MAX_TOKENS,
+                "path": str(out.relative_to(ROOT) / "mlx"), "maxTokens": MLX_MAX_TOKENS,
                 "fit": {"train": mlx_train_fit, "valid": mlx_valid_fit}},
         "claimBoundary": "Trains behavioral discipline, not general intelligence. "
                          "External MCP/verifier gates enforce correctness at runtime.",
@@ -215,8 +251,8 @@ def build(check_only: bool) -> int:
 
     if not check_only:
         _write_jsonl  # noqa
-        (OUT).mkdir(parents=True, exist_ok=True)
-        (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
+        out.mkdir(parents=True, exist_ok=True)
+        (out / "manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
                                            encoding="utf-8")
 
     print(json.dumps({k: manifest[k] for k in
@@ -225,14 +261,17 @@ def build(check_only: bool) -> int:
     if not manifest["contamination"]["clean"]:
         print("::error:: CONTAMINATION — training prompts overlap eval/holdout. Fail-closed.")
         return 1
-    print("contamination guard: CLEAN" + ("  (check-only)" if check_only else f"  → wrote {OUT}"))
+    print("contamination guard: CLEAN" + ("  (check-only)" if check_only else f"  → wrote {out}"))
     return 0
 
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--check", action="store_true", help="guard only; no writes (CI)")
-    return build(ap.parse_args(argv).check)
+    ap.add_argument("--out", type=Path, default=DEFAULT_OUT, help="output pack directory")
+    ap.add_argument("--base-model", default=DEFAULT_BASE_MODEL, help="target base model id")
+    args = ap.parse_args(argv)
+    return build(args.check, out=args.out, base_model=args.base_model)
 
 
 if __name__ == "__main__":

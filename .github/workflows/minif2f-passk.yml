@@ -1,0 +1,137 @@
+name: minif2f-passk
+
+# Real miniF2F-v2 pass@1 (critique §5 step 2). Preregistered:
+# agi-proof/formal-proofs/minif2f-passk.preregistration.json; sealed split:
+# formal_proofs/eval/minif2f-v2-test.manifest.json (244 ids, pinned commit).
+#
+# An LLM proposes a whole proof per problem; the proof replaces the benchmark's `sorry`
+# and is elaborated by the REAL Lean 4 kernel under Mathlib via `lake env lean`. pass@1 =
+# kernel-accepted / N. Fail-closed: a proof is never counted solved without the kernel
+# accepting it (sorry/admit -> rejected; no Mathlib -> abstain).
+#
+# Manual-only (workflow_dispatch): it clones miniF2F-lean4 + downloads multi-GB Mathlib
+# oleans, and makes paid model calls. This is the lane that produces the number — the dev
+# sandbox CANNOT (its git-proxy 403s the Mathlib clone). Mirrors the proven l0-mathlib job.
+#
+# REQUIRED SECRET: OPENROUTER_API_KEY (or the matching provider key for `spec`). No key is
+# ever printed. candidateOnly throughout; canClaimAGI unchanged. A green run + the
+# committed/artifacted report ARE the evidence; the pass@1 is descriptive (the benchmark
+# is public — suggestive, not contamination-free; see the preregistration).
+
+on:
+  workflow_dispatch:
+    inputs:
+      spec:
+        description: 'Model spec (provider:model) for agent.model'
+        required: true
+        default: 'openrouter:deepseek/deepseek-chat'
+      limit:
+        description: 'Run only the first N problems (0 = all 244)'
+        required: false
+        default: '25'
+      timeout:
+        description: 'Per-problem Lean elaboration timeout (s)'
+        required: false
+        default: '300'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: minif2f-passk-${{ github.ref }}
+  cancel-in-progress: false   # don't cancel a paid run mid-flight
+
+jobs:
+  passk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Free disk space (Mathlib oleans are multi-GB)
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android /usr/local/.ghcup || true
+          df -h /
+
+      - name: Install Lean 4 toolchain (elan + lean + lake)
+        run: |
+          bash scripts/install_lean.sh
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Install harness deps (numpy for the agent stack)
+        run: pip install --quiet numpy
+
+      - name: Read the pinned miniF2F commit from the sealed manifest
+        id: pin
+        run: |
+          commit=$(python -c "import json;print(json.load(open('formal_proofs/eval/minif2f-v2-test.manifest.json'))['source']['commit'])")
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+
+      - name: Clone miniF2F-lean4 at the pinned commit
+        # No agent git-proxy in GitHub Actions, so this external clone works (unlike the
+        # dev sandbox). Pinned to the sealed-split commit so the split cannot drift.
+        run: |
+          git clone --no-checkout https://github.com/yangky11/miniF2F-lean4 "$HOME/miniF2F-lean4"
+          git -C "$HOME/miniF2F-lean4" checkout "${{ steps.pin.outputs.commit }}"
+          cat "$HOME/miniF2F-lean4/lean-toolchain"
+          # Export the absolute project dir for later steps. `${{ env.HOME }}` is EMPTY in
+          # the expression context, so working-directory/env must use this instead of $HOME.
+          echo "PROJECT_DIR=$HOME/miniF2F-lean4" >> "$GITHUB_ENV"
+
+      - name: Cache Mathlib oleans (~/.cache/mathlib + project .lake)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/mathlib
+            ~/miniF2F-lean4/.lake
+          key: minif2f-mathlib-${{ steps.pin.outputs.commit }}-${{ runner.os }}
+
+      - name: Download prebuilt Mathlib (lake exe cache get) + build deps
+        # Downloads Mathlib's prebuilt oleans for the project's pinned toolchain (v4.24.0)
+        # instead of compiling Mathlib from scratch. Then a no-op build resolves deps.
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: |
+          lake exe cache get || lake exe cache get   # one retry; cache fetch can flake
+          lake build MiniF2F.Test.aime_1983_p1 || true   # warm one module; ignore proof state
+
+      - name: Run miniF2F-v2 pass@1 (Mathlib-verified)
+        id: run
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MINIF2F_PROJECT: ${{ env.PROJECT_DIR }}
+        run: |
+          args=(--spec "${{ inputs.spec }}" --timeout "${{ inputs.timeout }}")
+          if [ "${{ inputs.limit }}" != "0" ]; then args+=(--limit "${{ inputs.limit }}"); fi
+          python tools/run_minif2f_passk.py "${args[@]}"
+
+      - name: Upload the pass@1 report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: minif2f-v2-passk-report
+          path: agi-proof/benchmark-results/minif2f-v2-passk.public-report.json
+          if-no-files-found: warn
+
+      - name: Job summary
+        if: always()
+        run: |
+          echo "## miniF2F-v2 pass@1 (Mathlib-verified)" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f agi-proof/benchmark-results/minif2f-v2-passk.public-report.json ]; then
+            python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          d=json.load(open("agi-proof/benchmark-results/minif2f-v2-passk.public-report.json"))
+          print(f"- **spec:** `{d['modelSpec']}`")
+          print(f"- **pass@1:** **{d['solved']}/{d['n']} = {d['passAt1']}**  (~${d['estCostUsd']})")
+          print(f"- **commit:** `{d['pinnedCommit']}`  verifier: `{d['verifier']}`")
+          print(f"- candidateOnly; public benchmark (suggestive, not contamination-free).")
+          PY
+          else
+            echo "- (no report produced — see run log)" >> "$GITHUB_STEP_SUMMARY"
+          fi

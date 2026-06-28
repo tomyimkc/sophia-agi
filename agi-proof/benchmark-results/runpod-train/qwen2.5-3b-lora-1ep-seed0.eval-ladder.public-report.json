@@ -1,0 +1,76 @@
+{
+  "benchmark": "lora-eval-ladder",
+  "model": "Qwen/Qwen2.5-3B-Instruct",
+  "adapter": "sophia-cuda-v1",
+  "quantization": "QLoRA 4-bit",
+  "epochs": 1,
+  "seed": 0,
+  "eval_set": {
+    "domains": ["philosophy", "psychology", "history", "religion"],
+    "items": 32,
+    "note": "held-out provenance set; single-judge content+format scoring via tools/eval_local_model.py"
+  },
+  "ladder": [
+    {
+      "rung": "base",
+      "with_gate": false,
+      "domains": {
+        "philosophy": {"format_pct": 100.0, "content": "6/9", "content_pct": 66.7, "combined": "6/9"},
+        "psychology": {"format_pct": 100.0, "content": "6/9", "content_pct": 66.7, "combined": "6/9"},
+        "history": {"format_pct": 100.0, "content": "6/8", "content_pct": 75.0, "combined": "6/8"},
+        "religion": {"format_pct": 16.7, "content": "5/6", "content_pct": 83.3, "combined": "1/6"}
+      },
+      "channels": {"format": "27/32", "format_pct": 84.4, "content": "23/32", "content_pct": 71.9, "combined": "19/32", "combined_pct": 59.4}
+    },
+    {
+      "rung": "base+gate",
+      "with_gate": true,
+      "gate_failures": 31,
+      "channels": {"format": "27/32", "format_pct": 84.4, "content": "23/32", "content_pct": 71.9, "combined": "19/32", "combined_pct": 59.4}
+    },
+    {
+      "rung": "adapter",
+      "with_gate": false,
+      "domains": {
+        "philosophy": {"format_pct": 100.0, "content": "8/9", "content_pct": 88.9, "combined": "8/9"},
+        "psychology": {"format_pct": 100.0, "content": "5/9", "content_pct": 55.6, "combined": "5/9"},
+        "history": {"format_pct": 100.0, "content": "6/8", "content_pct": 75.0, "combined": "6/8"},
+        "religion": {"format_pct": 33.3, "content": "4/6", "content_pct": 66.7, "combined": "2/6"}
+      },
+      "channels": {"format": "28/32", "format_pct": 87.5, "content": "23/32", "content_pct": 71.9, "combined": "21/32", "combined_pct": 65.6}
+    },
+    {
+      "rung": "adapter+gate",
+      "with_gate": true,
+      "gate_failures": 30,
+      "channels": {"format": "28/32", "format_pct": 87.5, "content": "23/32", "content_pct": 71.9, "combined": "21/32", "combined_pct": 65.6}
+    }
+  ],
+  "result": {
+    "content_base_pct": 71.9,
+    "content_adapter_pct": 71.9,
+    "content_delta_pct": 0.0,
+    "combined_base_pct": 59.4,
+    "combined_adapter_pct": 65.6,
+    "combined_delta_pct": 6.2,
+    "interpretation": "The QLoRA adapter did NOT improve held-out CONTENT accuracy over the FP16 base: both score 23/32 = 71.9%. The adapter redistributed within domains (philosophy 6/9 -> 8/9; psychology 6/9 -> 5/9; religion content 5/6 -> 4/6) for a net-zero content change. The +6.2pt on the COMBINED (format AND content) channel is format-driven, not a content gain. The provenance gate left content unchanged at every rung (base == base+gate, adapter == adapter+gate)."
+  },
+  "claim": "real-GPU LoRA eval-ladder datapoint (NOT a capability claim)",
+  "judge": "single-judge content+format scoring (tools/eval_local_model.py); NOT the kappa>=0.40 / 2-judge-family / >=3-run / 95%-CI VALIDATED bar",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "honest_scope": "One real-GPU QLoRA run (1 epoch, seed 0, 32-item held-out provenance eval, single judge). This is candidate-only / illustrative evidence that validates the GitHub-Actions -> RunPod -> eval-ladder path end-to-end and records an HONEST directional null: 1-epoch QLoRA on this curated set is capability-neutral on held-out content. It is NOT a validated capability claim and does not move canClaimAGI.",
+  "provenance": {
+    "workflow": ".github/workflows/train-runpod.yml",
+    "run_url": "https://github.com/tomyimkc/sophia-agi/actions/runs/28277773519",
+    "run_id": 28277773519,
+    "run_number": 5,
+    "head_sha": "6c4d75074b7eebf88692c52312edba9769b7749b",
+    "gpu_pool": ["NVIDIA GeForce RTX 4090", "NVIDIA A40", "NVIDIA GeForce RTX 3090", "NVIDIA A100-SXM4-80GB", "NVIDIA RTX A6000", "NVIDIA L40S"],
+    "artifact_id": 7921061942,
+    "artifact_sha256": "d6a9225ab543dd257643dd8408174045558c98521705455d5f3ad92855873171",
+    "source": "transcribed from the train-runpod step-7 eval-ladder report printed in the run log; the W2 promotion.public-report.json verdict is inside the run artifact",
+    "dispatched_date": "2026-06-27"
+  }
+}

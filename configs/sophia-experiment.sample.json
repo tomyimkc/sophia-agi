@@ -1,0 +1,53 @@
+{
+  "schema": "sophia.experiment.v1",
+  "name": "local-sophia-candidate-dry-run",
+  "claimBoundary": "AGI-candidate training workflow; not AGI proof. Promotion still requires verifier artifacts, external gates, and the no-overclaim standard.",
+  "dryRunDefault": true,
+  "model": {
+    "name": "Qwen/Qwen2.5-3B-Instruct",
+    "backend": "peft"
+  },
+  "data": {
+    "enabled": true,
+    "outDir": "training/lora",
+    "maxTokens": 1024
+  },
+  "sft": {
+    "enabled": true,
+    "data": "training/sophia-math-code-curriculum/sft_all.jsonl",
+    "output": "training/lora/checkpoints/sophia-v1",
+    "epochs": 1,
+    "seed": 0,
+    "scaffold": true,
+    "guard": true,
+    "distill": false
+  },
+  "dpo": {
+    "enabled": true,
+    "pairs": "training/local_sophia_7b/dpo_hard_negatives.jsonl",
+    "adapter": "training/lora/checkpoints/sophia-v1",
+    "output": "training/lora/checkpoints/sophia-dpo-v1",
+    "epochs": 1.0,
+    "seed": 0
+  },
+  "rlvr": {
+    "enabled": true,
+    "task": "provenance",
+    "reward": "verifier",
+    "output": "training/rlvr/checkpoints/sophia-rlvr-v1",
+    "report": "agi-proof/benchmark-results/rlvr.public-report.json",
+    "seed": 0
+  },
+  "eval": {
+    "enabled": true,
+    "backend": "hf",
+    "adapter": "training/lora/checkpoints/sophia-v1"
+  },
+  "promotion": {
+    "enabled": true,
+    "adapterLadder": "training/local_sophia_v2/eval_ladder_adapter.json",
+    "baselineLadder": "training/local_sophia_v2/eval_ladder_baseline.json",
+    "manifest": "training/local_sophia_v2/manifest.json",
+    "candidateId": "local-sophia-v2-mlx"
+  }
+}

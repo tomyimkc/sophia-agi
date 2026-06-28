@@ -31,6 +31,7 @@ from agent.metacognition import assess_uncertainty
 from agent.moral_aggregator import moral_parliament
 from agent.public_sanitize import sanitize_public_artifact
 from agent.public_standard_gate import check_public_standard
+from agent.refusal import refusal_screen
 
 
 @dataclass(frozen=True)
@@ -49,6 +50,7 @@ class ConscienceDecision:
     moral: dict[str, Any] = field(default_factory=dict)
     deception: dict[str, Any] = field(default_factory=dict)
     publicStandard: dict[str, Any] = field(default_factory=dict)
+    consequence: dict[str, Any] = field(default_factory=dict)
     recommendedActions: tuple[dict[str, Any], ...] = ()
     boundary: str = "Sophia is an AGI-candidate verifier-gated epistemic framework; this decision is not proof of AGI."
 
@@ -68,6 +70,7 @@ class ConscienceDecision:
             "moral": self.moral,
             "deception": self.deception,
             "publicStandard": self.publicStandard,
+            "consequence": self.consequence,
             "recommendedActions": list(self.recommendedActions),
             "boundary": self.boundary,
         }
@@ -159,6 +162,21 @@ def conscience_check(
     # norm is not a falsifiable empirical claim. Hard-floor violations block
     # before the parliament; gray-zone signals escalate; unmet duties revise.
     public_standard = check_public_standard(text, context=context).to_dict()
+    # 8th path — ConsequenceGate. Only consulted when the caller EXPLICITLY asks
+    # for a consequence simulation by supplying BOTH an OKF belief graph
+    # (``context["okfGraph"]``) AND a retraction target (``context["consequenceMove"]``).
+    # If either is absent the path is skipped (empty report) — we deliberately do
+    # NOT fall back to an arbitrary graph node, because silently retracting a real
+    # claim from a forgotten key would violate the fail-closed invariant the gate
+    # exists to enforce. The report is a deterministic derivation over
+    # already-grounded derivesFrom edges; it invents no facts (see
+    # agent.consequence_gate).
+    consequence: dict[str, Any] = {}
+    okf_graph = context.get("okfGraph")
+    consequence_move = context.get("consequenceMove")
+    if okf_graph is not None and consequence_move:
+        from agent.consequence_gate import simulate_cascade
+        consequence = simulate_cascade(okf_graph, consequence_move).to_dict()
     computed_fact_verdict = "non_factual" if all(c.get("type") == "subjective" for c in fact.get("claims", [])) else fact.get("verdict")
     # Trusted internal adapters (e.g. LayeredMemory after an upstream verifier
     # accepted a claim with evidence) may pass trustUpstreamVerdict=True. This is
@@ -181,8 +199,16 @@ def conscience_check(
         agenda = build_active_agenda({"cases": [{"id": "conscience", "claim": text, "verdict": fact.get("verdict"), "confidence": meta.get("confidence", 0.0), "risk": "high" if high else "normal", "reason": fact.get("reason", ""), "claims": fact.get("claims", [])}]}, limit=5)
         agenda_actions = agenda.get("plans", [])
 
+    # Acceptable-use refusal (opt-in at the input boundary). OFF by default so
+    # epistemic behavior is unchanged; the serving profile sets
+    # context["enforceAcceptableUse"]=True to enforce USAGE-POLICY.md prohibitions.
+    refusal = (refusal_screen(text) if context.get("enforceAcceptableUse")
+               else {"block": False, "category": None})
+
     # Hard gates first.
-    if deontic.get("verdict") == "rejected":
+    if refusal.get("block"):
+        verdict, reason = "block", f"acceptable-use refusal ({refusal['category']}): {refusal.get('reason','')}"
+    elif deontic.get("verdict") == "rejected":
         verdict, reason = "block", "deontic hard prohibition triggered"
     elif constitution.get("verdict") == "rejected":
         verdict, reason = "block", "constitutional critical prohibition triggered"
@@ -194,8 +220,21 @@ def conscience_check(
         verdict, reason = "block", "deception or gate-tampering signal triggered"
     elif fact.get("verdict") == "rejected":
         verdict, reason = "block", "fact-check gate rejected one or more claims"
+    # 8th path routing — ConsequenceGate. A severe cascade (flip severity at/above
+    # threshold) or an unbounded consequence (unresolved retraction target) forces
+    # escalate/abstain BEFORE the benign-boundary allow and the soft
+    # public-standard/moral routing. It never overrides a hard block above, and never
+    # turns a safe claim into a block — but it CAN escalate/abstain otherwise-safe
+    # boundary wording when the supplied retraction move's cascade is severe/unbounded
+    # (that is the entire point of an opt-in consequence simulation). Placed above the
+    # benign_boundary allow so the gate cannot be bypassed by classification alone.
+    elif consequence.get("verdict") == "abstain":
+        verdict, reason = "abstain", "consequence of the candidate move cannot be bounded"
+    elif consequence.get("verdict") == "escalate":
+        verdict, reason = "escalate", "consequence cascade exceeds flip-severity threshold"
     # Safe self-boundary statements are allowed even when the open-world fact
-    # checker cannot externally prove the project-status wording offline.
+    # checker cannot externally prove the project-status wording offline. (Runs after
+    # consequence routing so a severe cascade is never masked by benign wording.)
     elif classifier.get("category") == "benign_boundary" and constitution.get("verdict") == "accepted" and deception.get("verdict") == "clear":
         verdict, reason = "allow", "safe candidate/no-overclaim boundary wording"
     # Soft/fail-closed routing.
@@ -220,7 +259,7 @@ def conscience_check(
     else:
         verdict, reason = "allow", "all conscience gates passed"
 
-    return ConscienceDecision(
+    decision = ConscienceDecision(
         verdict=verdict,
         reason=reason,
         action=act,
@@ -232,8 +271,42 @@ def conscience_check(
         moral=moral,
         deception=deception,
         publicStandard=public_standard,
+        consequence=consequence,
         recommendedActions=tuple(agenda_actions),
     )
+
+    # Verified-trace hook (observer-only): persist one fact+logic-stamped trace per
+    # conscience decision. The fact stamp IS the conscience verdict; the logic
+    # stamp is derived from it (a block/abstain/escalate verdict is not emittable).
+    # This makes every conscience call auditable without changing the verdict path.
+    # A logger fault can never change a verdict (``emit`` swallows exceptions).
+    try:
+        from agent.verified_trace import VerifiedTrace, emit, _trace_id
+        emit(VerifiedTrace(
+            traceId=_trace_id(f"conscience:{act}:{text[:128]}"),
+            runId="conscience",
+            phase="conscience",
+            stepIdx=0,
+            claimText=text,
+            claimKind="derived",
+            fact={
+                "verdict": verdict,
+                "source": "conscience_check",
+                "authorConfidence": "compiled",
+                "effectiveConfidenceRank": 2 if verdict in {"allow", "retrieve"} else 0,
+                "sources": [],
+            },
+            logic={
+                "emittable": verdict in {"allow", "retrieve", "revise", "clarify"},
+                "contradictions": [] if verdict != "block" else [{"verdict": verdict, "reason": reason}],
+                "laundered": [],
+                "semanticsPreserved": True,
+            },
+        ))
+    except Exception:  # noqa: BLE001 - observer-only: never change a verdict
+        pass
+
+    return decision
 
 
 def run_conscience_benchmark() -> dict[str, Any]:

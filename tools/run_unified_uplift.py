@@ -163,11 +163,24 @@ def main(argv: "list[str] | None" = None) -> int:
 
     # collect runs per lever
     runs_per_lever: dict[str, list] = {lev: [] for lev in levers}
+    # Per-run checkpoint: dump accumulated raw rows after each run so an interruption
+    # (the shared working tree here is routinely churned by concurrent sessions) does
+    # not lose ALL completed runs. The final aggregated report is still written at the
+    # end; this partial is a recovery artifact, never the headline.
+    checkpoint = args.out.with_suffix(".partial.json") if args.out else None
     for r in range(max(1, args.runs)):
         one = run_once(cases, client, records=records, levers=levers, llm_judge_fn=llm_judge_fn, grounded=args.grounded)
         for lev in levers:
             runs_per_lever[lev].append(one[lev])
         print(f"run {r + 1}/{args.runs} done ({len(cases)} cases x {len(levers)} levers)", flush=True)
+        if checkpoint is not None:
+            import json as _json
+            checkpoint.parent.mkdir(parents=True, exist_ok=True)
+            checkpoint.write_text(
+                _json.dumps({"model": args.model, "runs_completed": r + 1, "runs_target": args.runs,
+                             "judges": judge_specs, "levers": {lev: runs_per_lever[lev] for lev in levers}},
+                            ensure_ascii=False) + "\n", encoding="utf-8")
+            print(f"  checkpoint (runs 1-{r + 1}) -> {checkpoint}", flush=True)
 
     # aggregate each lever with the SAME no-overclaim machinery as run_provenance_delta
     lever_results = {}

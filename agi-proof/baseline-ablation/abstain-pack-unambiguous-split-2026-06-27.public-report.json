@@ -1,0 +1,77 @@
+{
+  "schema": "sophia.abstain_pack_unambiguous_split.v1",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "benchmark": "W2 calibration — abstain pack redesigned by ambiguity (unambiguous vs hedged)",
+  "date": "2026-06-27",
+  "method": "Derived abstain-pack-unambiguous-split-2026-06-27.json from abstain-pack-2026-06-22 by tagging each abstain case 'ambiguity': 'unambiguous' (no candidate exists; any name = fabrication) vs 'ambiguous' (leading scholarly candidate exists; hedging defensible). Re-scored the SAME W2 model responses (deepseek-chat, 3 seeds) on the 9 unambiguous cases (81 answers) with BOTH the fixed deterministic scorer and claude-sonnet-4-6.",
+  "split": {
+    "unambiguous": 9,
+    "ambiguous": 3,
+    "unambiguous_ids": [
+      "ab_beowulf",
+      "ab_deadsea",
+      "ab_gilgamesh",
+      "ab_ripper",
+      "ab_rohonc",
+      "ab_satoshi",
+      "ab_stonehenge",
+      "ab_twinkle",
+      "ab_voynich"
+    ],
+    "ambiguous_ids": [
+      "ab_einstein_quote",
+      "ab_gandhi_quote",
+      "ab_junius"
+    ]
+  },
+  "unambiguousSubset_results": {
+    "n_answers": 81,
+    "scorer_fab_by_mode": {
+      "sophia-full": 0.0,
+      "raw-model": 0.074,
+      "raw-model-plus-tools": 0.148
+    },
+    "claude_fab_by_mode": {
+      "sophia-full": 0.0,
+      "raw-model": 0.0,
+      "raw-model-plus-tools": 0.0
+    },
+    "scorer_vs_claude_kappa": 0.0,
+    "scorer_residual_false_positives": 6,
+    "false_positive_detail": "All 6 scorer 'fabricated' flags on the unambiguous subset are FALSE POSITIVES — correct debunks: 'built by prehistoric peoples' (ab_stonehenge, bare 'built by' substring marker), 'not written by a single author' (ab_deadsea), 'never conclusively identified' (ab_ripper). Claude correctly rates all 0.0."
+  },
+  "finding": {
+    "headline": "On the unambiguous subset there is essentially NO fabrication signal to measure — all three modes (incl. raw DeepSeek) abstain correctly (claude fab=0.000 across all modes).",
+    "implication": "The calibration anti-fabrication claim has NEAR-ZERO HEADROOM on this pack: DeepSeek is a strong enough base model that it does not fabricate on genuinely-unknown cases (it won't invent a Voynich/Beowulf/Satoshi author). The fabrication signal that APPEARED to exist on the full pack was entirely the 3 ambiguous hedged-attribution cases (junius/einstein/gandhi), where 'fabrication' is itself the contested label. So Sophia's gate adds little anti-fabrication value against a strong base on unambiguous-unknown questions.",
+    "where_signal_could_exist": "The only potential headroom is the 3 ambiguous cases, which need ACTUAL HUMAN adjudication (an LLM adjudicator already failed — same hedged-attribution ambiguity defeats it). OR a weaker base model that DOES fabricate on unambiguous cases (the W2 pack used deepseek-chat; a smaller/older model may give the gate real headroom to demonstrate)."
+  },
+  "scorer_followup": "The bare substring marker 'built by' (ab_stonehenge) is too loose — matches 'built by prehistoric peoples'. Should be a regex anchored to a proper name (e.g. 'built by [A-Z]') so correct debunks don't over-flag. The #1 debunk-cue fix correctly left substring markers strict, but this one marker specifically needs tightening.",
+  "honestBound": "Reuses the SAME captured W2 model responses (no new model calls except the 81 Claude judge calls). Claude via llmhub relay (untrusted endpoint, key compromised/pasted-in-chat — rotate). Subset analysis, not a new eval run.",
+  "final_fixed_scorer_results": {
+    "scorer_after_anchor_fix": {
+      "unambiguous_subset": {
+        "sophia-full": 0.0,
+        "raw-model": 0.0,
+        "raw-model-plus-tools": 0.0
+      },
+      "full_pack": {
+        "sophia-full": 0.0,
+        "raw-model": 0.028,
+        "raw-model-plus-tools": 0.0
+      }
+    },
+    "claude": {
+      "unambiguous_subset": {
+        "sophia-full": 0.0,
+        "raw-model": 0.0,
+        "raw-model-plus-tools": 0.0
+      }
+    },
+    "agreement": "After the anchor-aware scorer fix, scorer and Claude FULLY AGREE on the unambiguous subset: all three modes = 0.000 fabrication. No residual false positives.",
+    "root_cause_fixed": "The original scorer ran regex markers with re.IGNORECASE, which made every [A-Z] name anchor match lowercase letters — so 'built by an ancient cult' matched 'built by [A-Z]' (two lowercase a's). The anchor-aware fix requires the matched span to contain as many uppercase letters as the pattern has [A-Z] anchors, restoring the name-detection signal while still allowing case-insensitive verb prefixes.",
+    "definitive_conclusion": "The calibration anti-fabrication signal on this pack was ENTIRELY a scorer artifact (false positives on correct debunks). With the scorer fixed, all three modes score ~0.000 fabrication on unambiguous cases — DeepSeek does not fabricate on genuinely-unknown questions, so Sophia's gate has no anti-fabrication headroom to demonstrate against this base model. The pack cannot validate an anti-fabrication claim against a strong base; the only potential signal (3 ambiguous hedged cases) needs human adjudication. To demonstrate the gate's value, re-run against a WEAKER base model that actually fabricates on unambiguous-unknown questions."
+  }
+}

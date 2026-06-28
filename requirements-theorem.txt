@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Theorem-proving backend (optional, fail-closed) — Path B of Two-Paths-To-Novelty.
+#
+# agent.lean_backend + agent.proof_search use lean-dojo when present and abstain
+# (lean_unavailable verdict, never a fabricated proof) when absent. Installing this
+# extra enables the real Lean 4 path. Requires a Lean 4 toolchain (elan) on the host
+# in addition to the Python package — see https://leandojo.readthedocs.io/.
+#
+# CI and the production DEFAULT stay sympy-only (math_verifier.verify); this is an
+# opt-in research extra, not a core dependency.
+lean-dojo>=4.0

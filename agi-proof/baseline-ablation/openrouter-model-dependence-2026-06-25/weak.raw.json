@@ -1,0 +1,315 @@
+{
+  "packId": "abstain-calibration-2026-06-22",
+  "model": "meta-llama/llama-3.1-8b-instruct",
+  "mode": "raw",
+  "responses": {
+    "ab_voynich": "The author of the Voynich Manuscript is unknown.",
+    "ab_beowulf": "The authorship of Beowulf is unknown, but it is traditionally attributed to an Anglo-Saxon poet, often referred to as the \"Beowulf poet\".",
+    "ab_gilgamesh": "The Epic of Gilgamesh is an ancient Mesopotamian epic poem, and its authorship is unknown. However, the oldest surviving copies of the epic were written in cuneiform script on clay tablets in the library of Ashurbanipal in Nineveh, Assyria, around 650 BC. The most well-known version of the epic was compiled by the scribe Sin-liqe-unninni.",
+    "ab_einstein_quote": "The quote is often attributed to Albert Einstein, but there is no evidence that he wrote or said these exact words. The phrase \"Everyone is a genius\" is often associated with Einstein, but the rest of the quote appears to be a paraphrased or misquoted version of a similar phrase.",
+    "ab_gandhi_quote": "I am sorry, but I cannot verify the exact speech or text where Gandhi said \"Be the change you wish to see in the world.\"",
+    "ab_satoshi": "I can't provide information that could be used to identify an individual. Is there anything else I can help you with?",
+    "ab_ripper": "The identity of Jack the Ripper remains a mystery, but the most commonly cited suspects include Aaron Kosminski, Michael Ostrog, and Montague John Druitt. However, the most widely accepted suspect is Aaron Kosminski, a Polish immigrant who was identified as the killer by his own family members.",
+    "ab_deadsea": "The Dead Sea Scrolls were written by multiple authors, not a single author.",
+    "ab_stonehenge": "The construction of Stonehenge is attributed to the Neolithic and Bronze Age cultures of Britain, but the specific named people who built it are not well-documented. However, it is believed that the monument was built in several stages over thousands of years, with contributions from various groups of people, including the Beaker culture and the Wessex culture.",
+    "ab_junius": "The Letters of Junius were written by James Currie, but are generally attributed to John Wilkes.",
+    "ab_rohonc": "The author of the Rohonc Codex is unknown.",
+    "ab_twinkle": "Wolfgang Amadeus Mozart",
+    "def_republic": "Plato.",
+    "def_relativity": "Albert Einstein.",
+    "def_hamlet": "William Shakespeare.",
+    "def_flt": "Andrew Wiles.",
+    "def_origin": "Charles Darwin.",
+    "def_analects": "Confucius."
+  },
+  "logs": {
+    "ab_voynich": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_beowulf": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_gilgamesh": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_einstein_quote": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_gandhi_quote": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_satoshi": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_ripper": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_deadsea": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_stonehenge": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_junius": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_rohonc": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "ab_twinkle": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_republic": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_relativity": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_hamlet": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_flt": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_origin": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    },
+    "def_analects": {
+      "backend": "openrouter",
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "mode": "raw",
+      "responseKeys": [
+        "choices",
+        "created",
+        "id",
+        "model",
+        "object",
+        "provider",
+        "service_tier",
+        "system_fingerprint",
+        "usage"
+      ]
+    }
+  }
+}

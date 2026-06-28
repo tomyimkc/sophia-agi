@@ -87,6 +87,23 @@ def test_reward_true_case_denial_penalized() -> None:
     assert detail.get("deniedOnTrueCase") is True
 
 
+def test_reward_true_case_affirm_beats_incidental_denial() -> None:
+    """A true-case answer that AFFIRMS the gold author scores 1.0 even if it contains
+    denial/myth vocabulary that trips `_denies` — the seed-1 false-positive: the adapter
+    correctly said "Hayek wrote The Road to Serfdom ... criticized for its oversimplification"
+    but was penalized -0.5 purely for the word "oversimplification". Affirmation must win;
+    only a denial that does NOT affirm the author (a real over-refusal) is penalized."""
+    gate = _gate()
+    affirmed_with_myth_word = (
+        "The Project Phoenix Charter was written by the founding committee, though some "
+        "critics dismiss that as an oversimplification of a messy drafting history."
+    )
+    r, detail = rl_reward.reward_for_case(TRUE_CASE, affirmed_with_myth_word, gate=gate)
+    assert detail["denies"] is True and detail["affirmsGold"] is True
+    assert r == 1.0
+    assert detail.get("deniedOnTrueCase") is not True  # NOT a false-positive
+
+
 def test_reward_invokes_verifier_seam() -> None:
     spy = {"verifier_calls": 0}
     gate = _gate()
@@ -204,6 +221,7 @@ def main() -> int:
     test_reward_false_monotone_and_forbidden_negative()
     test_reward_true_monotone()
     test_reward_true_case_denial_penalized()
+    test_reward_true_case_affirm_beats_incidental_denial()
     test_reward_invokes_verifier_seam()
     test_reward_is_bounded()
     test_reward_anti_hedging_cap()

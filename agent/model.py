@@ -37,7 +37,7 @@ import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Sequence
 
 from agent.config import (
     anthropic_api_key,
@@ -80,6 +80,14 @@ PRESETS: dict[str, dict[str, Any]] = {
     "llamacpp": {"kind": "openai", "base_url": "http://localhost:8080/v1", "api_key_env": "LLAMACPP_API_KEY", "model": "local", "api_key_default": "sk-no-key"},
     "grok": {"kind": "grok", "model": "grok-cli"},
     "openclaw": {"kind": "openclaw", "model": "xai/grok-4.3"},
+    # llmhub.com.cn: an OpenAI-compatible aggregator fronting many vendor families
+    # (openai/gpt-*, anthropic/claude-*, google/gemini-*, deepseek-*, ...). It serves
+    # BARE model ids (no "vendor/" prefix), so family detection needs a name->family map
+    # rather than the openrouter "vendor/model" split (see _LLMHUB_FAMILY in
+    # provenance_bench/aggregate.py). HTTPS (host 301-redirects HTTP->HTTPS); key via
+    # LLMHUB_API_KEY. Lets two genuinely-different vendors behind one key count as two
+    # independent judge families for the no-overclaim >=2-family gate.
+    "llmhub": {"kind": "openai", "base_url": "https://api.llmhub.com.cn/v1", "api_key_env": "LLMHUB_API_KEY", "model": "gpt-4o"},
     "mlx": {"kind": "mlx", "model": "Qwen/Qwen2.5-3B-Instruct"},
     "mock": {"kind": "mock", "model": "mock-1"},
 }
@@ -192,6 +200,14 @@ def resolve_config(spec: str | None = None) -> ModelConfig:
 
     provider, _, model_override = spec.partition(":")
     provider = provider.strip().lower()
+    # Per-spec base_url override: "provider:model@http://host/v1". Model IDs contain no
+    # '@', so this is unambiguous; it lets two local judges hit two ports on one host, e.g.
+    # "vllm:Qwen/..@http://localhost:8000/v1" and "vllm:meta-llama/..@http://localhost:8001/v1"
+    # (a local judge farm on a DGX Spark). Most-specific: beats the preset AND SOPHIA_MODEL_BASE_URL.
+    spec_base_url = None
+    if "@" in model_override:
+        model_override, _, spec_base_url = model_override.partition("@")
+        spec_base_url = spec_base_url.strip() or None
     preset = PRESETS.get(provider)
     if preset is None:
         raise ValueError(f"unknown model provider {provider!r}; valid: {', '.join(sorted(PRESETS))}")
@@ -200,7 +216,7 @@ def resolve_config(spec: str | None = None) -> ModelConfig:
         kind=preset["kind"],
         model=model_override.strip() or os.environ.get("SOPHIA_MODEL") or preset["model"],
         label=provider,
-        base_url=os.environ.get("SOPHIA_MODEL_BASE_URL") or preset.get("base_url"),
+        base_url=spec_base_url or os.environ.get("SOPHIA_MODEL_BASE_URL") or preset.get("base_url"),
         api_key_env=preset.get("api_key_env"),
         api_key_default=preset.get("api_key_default"),
         adapter_path=(os.environ.get("SOPHIA_MLX_ADAPTER") or None) if preset["kind"] == "mlx" else None,
@@ -477,6 +493,99 @@ def _call_mlx(system: str, user: str, cfg: ModelConfig, *, on_token: Callable[[s
         )
     except Exception as exc:
         return ModelResult(text="", provider="mlx", model=cfg.model, ok=False, error=repr(exc))
+
+
+def _continuation_targets(prompt_ids: Sequence[int], full_ids: Sequence[int]) -> list[int]:
+    """Return the continuation token ids under the prompt/full-tokenize contract."""
+    start = len(prompt_ids)
+    if start > len(full_ids):
+        raise ValueError("prompt tokenization is longer than prompt+continuation")
+    return [int(t) for t in full_ids[start:]]
+
+
+def _sum_logprob_rows(logit_rows: Sequence[Sequence[float]], target_ids: Sequence[int]) -> float:
+    """Pure-Python log-softmax gather for tiny tests; production uses MLX tensors."""
+    import math
+
+    if len(logit_rows) != len(target_ids):
+        raise ValueError("logit row count must match target token count")
+    total = 0.0
+    for row, target in zip(logit_rows, target_ids):
+        values = [float(x) for x in row]
+        if target < 0 or target >= len(values):
+            raise ValueError(f"target id {target} outside vocab size {len(values)}")
+        m = max(values)
+        log_denom = m + math.log(sum(math.exp(v - m) for v in values))
+        total += values[target] - log_denom
+    return float(total)
+
+
+def _score_logprob_loaded(prompt: str, continuation: str, model: Any, tokenizer: Any) -> float:
+    """Score ``continuation`` after ``prompt`` using a loaded MLX model/tokenizer.
+
+    The model runs once on ``prompt + continuation``. We then sum the log-probability
+    assigned to continuation tokens only, with no length normalization.
+    """
+    prompt_ids = list(tokenizer.encode(prompt))
+    full_ids = list(tokenizer.encode(prompt + continuation))
+    target_ids = _continuation_targets(prompt_ids, full_ids)
+    if not target_ids:
+        return 0.0
+    if len(prompt_ids) == 0:
+        raise ValueError("prompt must tokenize to at least one token for continuation scoring")
+
+    try:
+        import mlx.core as mx  # lazy: absent off-Mac/CI
+    except Exception as exc:
+        raise RuntimeError(f"mlx unavailable for logprob scoring: {type(exc).__name__}: {exc}") from exc
+
+    input_ids = mx.array([full_ids])
+    logits = model(input_ids)
+    if isinstance(logits, (tuple, list)):
+        logits = logits[0]
+    start = len(prompt_ids)
+    # Logits at position k-1 predict token k. Slice exactly the continuation
+    # targets full_ids[start:].
+    pred = logits[:, start - 1 : len(full_ids) - 1, :]
+    targets = mx.array([target_ids])
+    log_probs = pred - mx.logsumexp(pred, axis=-1, keepdims=True)
+    chosen = mx.take_along_axis(log_probs, targets[..., None], axis=-1)
+    total = mx.sum(chosen)
+    mx.eval(total)
+    return float(total)
+
+
+def build_logprob_scorer(spec: str | None = None, *, adapter_path: str | None = None) -> Callable[[str, str], float]:
+    """Load a local MLX model once and return ``score_logprob(prompt, continuation)``.
+
+    This is deterministic, uses no sampling, and fails closed when MLX/``mlx_lm``
+    is unavailable or when a non-MLX provider is requested.
+    """
+    cfg = resolve_config(spec or "mlx")
+    if cfg.kind != "mlx":
+        raise RuntimeError(f"logprob scoring currently requires mlx:<model>, got {cfg.kind!r}")
+    if adapter_path is not None:
+        cfg.adapter_path = adapter_path
+    try:
+        from mlx_lm import load  # lazy: only present on Apple Silicon with mlx-lm
+    except Exception as exc:
+        raise RuntimeError(f"mlx_lm unavailable for logprob scoring: {type(exc).__name__}: {exc}") from exc
+    load_kwargs: dict[str, Any] = {}
+    if cfg.adapter_path:
+        load_kwargs["adapter_path"] = cfg.adapter_path
+    try:
+        loaded_model, tokenizer = load(cfg.model, **load_kwargs)
+    except Exception as exc:
+        raise RuntimeError(f"mlx_lm load failed for {cfg.model}: {exc!r}") from exc
+    return lambda prompt, continuation: _score_logprob_loaded(prompt, continuation, loaded_model, tokenizer)
+
+
+def score_logprob(prompt: str, continuation: str, *, spec: str | None = None, adapter_path: str | None = None) -> float:
+    """One-shot continuation log-probability scorer for MLX models/adapters.
+
+    Prefer :func:`build_logprob_scorer` for benchmarks so the model is loaded once.
+    """
+    return build_logprob_scorer(spec, adapter_path=adapter_path)(prompt, continuation)
 
 
 _TRANSPORTS: dict[str, Callable[..., ModelResult]] = {

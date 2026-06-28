@@ -1,0 +1,48 @@
+{
+  "schema": "sophia.runpod_stage2_blocker.v1",
+  "experimentId": "sophia-7b-train-verify",
+  "recordedAt": "2026-06-25",
+  "head": "897574498eb2900ed7a10821157c8b4d7278b245",
+  "stage": 2,
+  "status": "BLOCKED",
+  "blocker": "runpod_pod_ssh_egress_timeout",
+  "detail": "RUNPOD_API_KEY present. SSH smoke probe created two interruptible pods; RunPod API reported SSH port mapping but outbound SSH from local Mac (Cursor agent shell) to mapped ip:high-port timed out on login (300s wait per attempt). Pods deleted. Same failure mode as prior session.",
+  "host": {
+    "label": "local Mac (darwin 27.0.0, arm64, Cursor agent shell)",
+    "hostname": "TomdeMacBook-Pro.local",
+    "outboundSshPort22": {
+      "github.com": "pass",
+      "ssh.runpod.io": "pass"
+    },
+    "runpodPodSshSmoke": "fail_mapped_port_timeout"
+  },
+  "priorAttempts": [
+    {"podId": "crdl0788rpc98m", "mapped": "157.157.221.29:31790", "outcome": "ssh_login_timeout", "deleted": true},
+    {"podId": "8k7vqe3m5nbynv", "mapped": "213.181.111.2:43206", "outcome": "ssh_login_timeout", "deleted": true}
+  ],
+  "currentSession": {
+    "recordedAt": "2026-06-25T11:10Z",
+    "runpodApiKey": "present",
+    "sshSmokeAttempts": [
+      {"podId": "g6de2tbp9jzge1", "mapped": "213.173.109.78:15792", "outcome": "ssh_login_timeout", "deleted": true},
+      {"podId": "6l4go54e2n4f54", "mapped": "213.173.107.230:12881", "outcome": "ssh_login_timeout", "deleted": true}
+    ],
+    "sftSeedsCompleted": 0,
+    "dpoSeedsCompleted": 0,
+    "dryRunOnly": false
+  },
+  "logs": [
+    "agi-proof/benchmark-results/runpod-train/ssh-smoke-20260625-111011.log",
+    "agi-proof/benchmark-results/runpod-train/sft-3seed-20260625-095511.log",
+    "agi-proof/benchmark-results/runpod-train/sft-seed0-retry.log"
+  ],
+  "preflight": {
+    "build_local_sophia_dataset_check": "CLEAN",
+    "holdoutSeal": "84d00bdc36205abdb5a162530d8fc972ee27075c053bfd0615de59d3ed9aeb97",
+    "positive_control": "OK",
+    "lint_claims": "OK"
+  },
+  "nextStep": "Dispatch .github/workflows/runpod-sophia-7b-sft.yml (GitHub Actions, RUNPOD_API_KEY secret). Do NOT run runpod-sft-3seed.sh from local Mac/Cursor agent shell. See agi-proof/sophia-7b-train-verify/README.md.",
+  "canClaimAGI": false,
+  "label": "infrastructure blocker — not a training verdict"
+}

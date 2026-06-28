@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent.planner_mcts import VerificationSimulator, run_mcts  # noqa: E402
+from agent.verification_mcts import VerificationSimulator, run_mcts  # noqa: E402
 
 
 def test_mcts_gathers_three_sources_for_high_risk_macro() -> None:

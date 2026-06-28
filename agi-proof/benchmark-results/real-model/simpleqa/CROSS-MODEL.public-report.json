@@ -1,0 +1,44 @@
+{
+  "schema": "sophia.simpleqa_crossmodel.v2",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "syntheticData": false,
+  "externalPublicBenchmark": "google/simpleqa-verified (DeepSeek) + openai/simpleqa (Qwen power-up)",
+  "graders": [
+    "claude-sonnet-4-6",
+    "gemini-2.5-pro"
+  ],
+  "deepseek": {
+    "n": 1000,
+    "attempted": 940,
+    "abstentionRate": 0.06,
+    "accuracy": 0.216,
+    "interGraderKappa": 0.9736,
+    "selfconsAUROC": 0.6485,
+    "lift@20": 0.1578,
+    "lift95CI": [
+      0.0979,
+      0.2213
+    ],
+    "excludesZero": true,
+    "validated": true
+  },
+  "qwen": {
+    "n": 2000,
+    "attempted": 786,
+    "abstentionRate": 0.607,
+    "accuracy": 0.057,
+    "interGraderKappa": 0.9948,
+    "selfconsAUROC": 0.636,
+    "lift@20": 0.078,
+    "lift95CI": [
+      0.0231,
+      0.1353
+    ],
+    "excludesZero": true,
+    "validated": true
+  },
+  "crossModelValidated": true,
+  "finding": "CROSS-MODEL VALIDATED. Self-consistency selective prediction significantly lifts selective accuracy on BOTH independent model families: DeepSeek +0.158 (95% CI [0.098,0.221]) and Qwen-2.5-72B +0.078 (95% CI [0.023,0.135]), each with near-perfect grading (Cohen \u03ba 0.97/0.99, 2 families). The effect is SMALLER on Qwen, consistent with its heavy self-abstention (61-67% vs DeepSeek's 6%) leaving less headroom \u2014 magnitude depends on base-model abstention behavior. Stated confidence and token-logprob remain weak/non-significant on both. The earlier N=600 Qwen non-significance was a POWER artifact (the 3 stable seeds predicted it), resolved at N=2000.",
+  "honestBound": "Two subject models, 2 graders, CI excludes 0 on both, external public data. canClaimAGI false."
+}

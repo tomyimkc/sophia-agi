@@ -43,7 +43,16 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from provenance_bench import math_dataset, math_reward, rl_dataset, rl_reward  # noqa: E402
+from provenance_bench import (  # noqa: E402
+    code_dataset,
+    code_reward,
+    math_dataset,
+    math_reward,
+    ontology_rl_dataset,
+    ontology_rl_reward,
+    rl_dataset,
+    rl_reward,
+)
 from provenance_bench.dataset import Case  # noqa: E402
 
 OUT_JSON = ROOT / "agi-proof" / "benchmark-results" / "rlvr.public-report.json"
@@ -95,6 +104,29 @@ def _offline_invariants() -> tuple[bool, dict]:
 
     rewards = [r_good_f, r_bad_f, r_good_t, r_bad_t]
 
+    # Emit one verified trace per (case, completion) reward evaluation so the
+    # offline check leaves a per-step provenance record of the learning signal a
+    # GRPO run would optimize. The trace's reward IS the rl_reward value (from the
+    # verifier/gate seam, never a self-score). Observer-only: never changes a reward.
+    trace_rows: list[dict] = []
+    try:
+        from agent.verified_trace_rlvr import rewarded, reward_summary
+        for step, (case, completion, r, d) in enumerate([
+            (_FALSE_CASE, good_false, r_good_f, d_good_f),
+            (_FALSE_CASE, bad_false, r_bad_f, d_bad_f),
+            (_TRUE_CASE, good_true, r_good_t, d_good_t),
+            (_TRUE_CASE, bad_true, r_bad_t, d_bad_t),
+        ]):
+            ack = rewarded(case, completion, reward=r, detail=d, step_idx=step)
+            # read back the emitted row so the summary reflects what was logged
+            from sophia_contract.stores import _read_jsonl
+            from agent.verified_trace import TRACE_LOG
+            rows = _read_jsonl(TRACE_LOG)
+            if rows:
+                trace_rows.append(rows[-1])
+    except Exception:  # noqa: BLE001 - observer-only: tracing must never break the reward check
+        pass
+
     # Real dataset build + contamination-free split.
     data = rl_dataset.build_rl_dataset(eval_frac=0.3, seed=0)
 
@@ -120,6 +152,12 @@ def _offline_invariants() -> tuple[bool, dict]:
         "entityIntersection": data["entity_intersection"],
         "gateTargetModules": GLM_TARGET_MODULES,
     }
+    # Reward-trace summary: what a GRPO run's trace log would surface. Honest on
+    # empty (tracing disabled / failed): the summary reports n=0, not a failure.
+    try:
+        detail["verifiedTraces"] = reward_summary(trace_rows) if trace_rows else {"n": 0}
+    except Exception:  # noqa: BLE001 - observer-only
+        detail["verifiedTraces"] = {"n": 0}
     return all(checks.values()), detail
 
 
@@ -211,6 +249,15 @@ def _run_gpu(args: argparse.Namespace) -> int:
     if args.task == "math":
         data = math_dataset.build_math_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
         reward_fn = math_reward.make_grpo_reward()  # gold column -> sympy math_equivalent
+    elif args.task == "concept":
+        data = ontology_rl_dataset.build_ontology_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+        # expected/answerable columns -> symbolic concept-TBox gate (outside gradient).
+        reward_fn = ontology_rl_reward.make_grpo_reward()
+    elif args.task == "code":
+        data = code_dataset.build_code_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+        # test column -> hidden-tests-pass (provenance_bench.code_exec). Judge-free;
+        # the interpreter decides. No false-positive axis (every item has a test).
+        reward_fn = code_reward.make_grpo_reward(timeout_sec=args.code_timeout)
     else:
         data = rl_dataset.build_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
         if args.reward == "gate":
@@ -313,8 +360,10 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     ap.add_argument("--model", default="mock", help=f'subject model (default "mock"; GPU: "{DEFAULT_MODEL}")')
-    ap.add_argument("--task", choices=["provenance", "math"], default="provenance",
-                    help="reward task: provenance (provenance_faithful) or math (sympy math_equivalent)")
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept"], default="provenance",
+                    help="reward task: provenance (provenance_faithful), math (sympy math_equivalent), "
+                         "code (hidden-tests-pass via provenance_bench.code_exec), or concept "
+                         "(concept-TBox gate: don't merge cross-tradition concepts)")
     ap.add_argument("--dry-run", action="store_true", help="offline reward-wiring check only (no GPU)")
     ap.add_argument("--out", type=Path, default=OUT_JSON)
     # GPU-only args (ignored under --model mock / --dry-run)
@@ -333,6 +382,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--lora-r", type=int, default=16)
     ap.add_argument("--lora-alpha", type=int, default=32)
     ap.add_argument("--eval-frac", type=float, default=0.3)
+    ap.add_argument("--code-timeout", type=int, default=15,
+                    help="code-task only: wall-clock seconds for the hidden-test executor")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument(
         "--reward", default="verifier", choices=["verifier", "gate"],
@@ -349,6 +400,18 @@ def main(argv: list[str] | None = None) -> int:
     if args.model == "mock" or args.dry_run:
         if args.task == "math":
             ok, detail = math_reward.offline_invariants()
+        elif args.task == "code":
+            ok, detail = code_reward.offline_invariants()
+        elif args.task == "concept":
+            ok, detail = ontology_rl_reward.offline_invariants()
+            # The concept task additionally requires the spurious-reward ablation to
+            # discriminate (uplift must not replicate under a random reward).
+            from provenance_bench import spurious_ablation
+
+            abl = spurious_ablation.run_spurious_ablation(seed=args.seed)
+            ok = ok and bool(abl["discriminates"])
+            detail.setdefault("checks", {})["spuriousAblationDiscriminates"] = bool(abl["discriminates"])
+            detail["spuriousAblation"] = abl
         else:
             ok, detail = _offline_invariants()
             # Also prove the gate-as-reward wiring offline (abstention-collapse fix).

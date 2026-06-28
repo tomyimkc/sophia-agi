@@ -33,11 +33,11 @@ on:
         type: choice
         options: [offline, live]
       task:
-        description: 'RLVR reward task: provenance (provenance_faithful) or math (sympy math_equivalent)'
+        description: 'RLVR reward task: provenance / math (sympy) / code (hidden-tests-pass) / concept (concept-TBox gate)'
         required: true
         default: 'provenance'
         type: choice
-        options: [provenance, math]
+        options: [provenance, math, code, concept]
       epochs:
         description: 'Training epochs (live mode)'
         required: false
@@ -137,7 +137,8 @@ jobs:
           for f in agi-proof/benchmark-results/runpod-rlvr/**/*adapter-eval*.json; do found="$f"; break; done
           if [ -n "$found" ]; then
             echo "Ingesting FRESH pod report: $found"
-            python tools/ingest_rlvr_eval.py "$found" --print
+            python tools/ingest_rlvr_eval.py "$found" --print \
+              --hardened --registry agi-proof/benchmark-results/rlvr-replication/registry.jsonl
           else
             echo "::warning::No fresh adapter-eval was copied back from the pod. NOT gating any"
             echo "committed archive (fail-closed). The live run produces sophia-rlvr-v1.adapter-eval.json"

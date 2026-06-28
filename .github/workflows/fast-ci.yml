@@ -46,6 +46,9 @@ jobs:
           python tools/claim_gate.py --prefix M3-pilot
           python tools/claim_gate.py --prefix M3-transfer
 
+      - name: Web privacy guard (no training/architecture leaks on the public site)
+        run: python tools/lint_web_privacy.py
+
       - name: Core unit tests (fast, dependency-free)
         run: |
           python tests/test_skills.py
@@ -55,3 +58,5 @@ jobs:
           python tests/test_contract_conformance.py
           python tests/test_gateway.py
           python tests/test_fact_check_gate.py
+          python tests/test_proof_search.py
+          python tests/test_novelty_dag.py

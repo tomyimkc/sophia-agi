@@ -1,0 +1,41 @@
+{
+  "schema": "sophia.verified_trace_recall.v1",
+  "benchmark": "verified-trace-recall",
+  "experiment": {
+    "graphs": 400,
+    "seed": 2026,
+    "contradictionFrac": 0.5,
+    "plantedContradictions": 200,
+    "cleanGraphs": 200
+  },
+  "compiler": {
+    "contradictionRecall": 1.0,
+    "failclosedRate": 1.0,
+    "falseContradictionRate": 0.0,
+    "semanticsPreservedRate": 1.0,
+    "meanCostReduction": 0.529411512099012
+  },
+  "trace": {
+    "nTraces": 400,
+    "nWithContradiction": 200,
+    "contradictionRecall": 1.0,
+    "stepVerifiedRate": 0.5,
+    "factLogicAgreement": 1.0,
+    "chainIntact": true,
+    "phases": {
+      "benchmark": 400
+    }
+  },
+  "invariants": {
+    "traceMatchesCompilerRecall": true,
+    "recallIsPerfect": true,
+    "chainIntactAcrossFullRun": true,
+    "noOverclaimTriadOnEveryRecord": true
+  },
+  "verdict": "CONFIRMED",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "validated": false,
+  "claimStatus": "Candidate-only structural evidence. CONFIRMED means the trace logger inherits the compiler's fail-closed contradiction detection on synthetic graphs; real-world recall is bounded by the fact gate's external (recall, fpr). Not a validated claim.",
+  "boundary": "Sophia is an AGI-candidate verifier-gated epistemic framework; this trace-recall result is not proof of AGI."
+}

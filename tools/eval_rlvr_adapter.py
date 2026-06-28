@@ -36,9 +36,46 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from provenance_bench import math_dataset, math_reward, rl_dataset, rl_reward  # noqa: E402
+from provenance_bench import (  # noqa: E402
+    code_dataset,
+    code_reward,
+    math_dataset,
+    math_reward,
+    ontology_rl_dataset,
+    ontology_rl_reward,
+    rl_dataset,
+    rl_reward,
+)
 
 OUT = ROOT / "agi-proof" / "benchmark-results" / "rlvr.adapter-eval.json"
+
+
+def _run_capability_panel(args: argparse.Namespace, model_desc: str) -> dict | None:
+    """Run the capability-delta panel (attribution/hallucination/calibration).
+
+    Returns the panel report (dict), or ``None`` if it could not run. Imported
+    lazily and wrapped so a panel failure never breaks the headline eval report
+    — the legacy ``base``/``adapterScore``/``delta`` numbers are already written
+    by the caller; the panel is additive evidence.
+    """
+    try:
+        import importlib.util as _ilu
+        _spec = _ilu.spec_from_file_location(
+            "eval_capability_panel", Path(__file__).resolve().parent / "eval_capability_panel.py"
+        )
+        _mod = _ilu.module_from_spec(_spec)
+        assert _spec and _spec.loader
+        _spec.loader.exec_module(_mod)
+        return _mod.run(
+            mode=args.mode,
+            model=model_desc if args.mode == "real" else "mock",
+            adapter=str(args.adapter) if args.adapter else None,
+            limit=args.limit,
+            out=None,  # no per-file write; caller embeds the dict in this report
+        )
+    except Exception as exc:  # non-fatal — panel is additive
+        print(f"[capability-panel] skipped: {type(exc).__name__}: {exc}")
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}", "candidateOnly": True}
 
 
 def _write(path: Path, obj: dict) -> None:
@@ -135,6 +172,32 @@ def _score_cases(cases: list, completions: dict[str, str], *, records: dict) -> 
     }
 
 
+def false_positive_regressions(base_rows: list[dict], adapter_rows: list[dict]) -> list[dict]:
+    """The TRUE-label cases where the adapter regressed integrity: the base did NOT
+    false-positive (reward > 0) but the adapter did (reward <= 0). This is exactly the
+    `trueFalsePositiveRate` regression the SSIL protected metric tracks — surfaced per case
+    so a regression is diagnosable (which cases flipped), not just an aggregate delta."""
+    base_by_id = {r["case_id"]: r for r in base_rows}
+    out: list[dict] = []
+    for ar in adapter_rows:
+        if ar.get("label") != "true":
+            continue
+        br = base_by_id.get(ar["case_id"])
+        if br is None:
+            continue
+        if float(br["reward"]) > 0.0 and float(ar["reward"]) <= 0.0:
+            out.append({
+                "case_id": ar["case_id"],
+                "work": ar.get("work"),
+                "baseReward": br["reward"],
+                "adapterReward": ar["reward"],
+                "baseCompletion": br.get("completion"),
+                "adapterCompletion": ar.get("completion"),
+                "adapterDeniedOnTrueCase": bool(ar.get("detail", {}).get("deniedOnTrueCase")),
+            })
+    return out
+
+
 def run_eval(args: argparse.Namespace) -> dict:
     data = rl_dataset.build_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
     cases = data["eval_cases"]
@@ -183,6 +246,10 @@ def run_eval(args: argparse.Namespace) -> dict:
         "base": {k: v for k, v in base_score.items() if k != "rows"},
         "adapterScore": {k: v for k, v in adapter_score.items() if k != "rows"},
         "delta": {"meanReward": delta, "trueFalsePositiveRate": fp_delta},
+        # Self-diagnosis: the exact TRUE cases whose integrity the adapter regressed. When
+        # fp_delta > 0 this names WHICH cases flipped, so a regression (e.g. the seed-1
+        # finding) is diagnosable from the report alone instead of needing the raw rows.
+        "falsePositiveRegressions": false_positive_regressions(base_score["rows"], adapter_score["rows"]),
         "checks": {
             "contaminationFree": not data["entity_intersection"],
             "adapterImprovesMeanReward": delta > 0,
@@ -190,6 +257,13 @@ def run_eval(args: argparse.Namespace) -> dict:
         },
         "rows": {"base": base_score["rows"], "adapter": adapter_score["rows"]},
     }
+    if args.capability_panel:
+        # Optional capability-delta panel (attribution / hallucination / calibration).
+        # Attached as a NEW key only — the legacy base/adapterScore/delta/checks above
+        # are untouched, so ingest_rlvr_eval.map_report and aggregate_rlvr_runs keep
+        # working unchanged. In real mode this reuses the model already loaded above;
+        # in mock mode it uses the panel's own deterministic fixtures.
+        report["capabilityPanel"] = _run_capability_panel(args, model_desc)
     report["passed"] = all(report["checks"].values())
     return report
 
@@ -287,11 +361,214 @@ def run_eval_math(args: argparse.Namespace) -> dict:
     return report
 
 
+# --------------------------------------------------------------------------- #
+# Code task — held-out pass@1 before/after on UNSEEN task families.
+# Reward = hidden-tests-pass (provenance_bench.code_exec; deterministic, no judge),
+# so pass@1 IS the capability number; no false-positive axis (every item has a test).
+# --------------------------------------------------------------------------- #
+def _mock_completion_code(task: dict, *, improved: bool) -> str:
+    if improved:
+        # The fenced reference solution (pack-generator-verified to pass the test).
+        return "```python\n" + task["solution"].rstrip() + "\n```"
+    # Base: a syntactically valid but wrong implementation (restates the wrong op).
+    return "```python\ndef " + task["entry_point"] + "(*args, **kwargs):\n    return 0\n```"
+
+
+def _score_tasks(tasks: list, completions: dict) -> dict:
+    rows, rewards, pass1 = [], [], 0
+    by_family: dict = {}
+    for t in tasks:
+        text = completions.get(t["id"], "")
+        reward, detail = code_reward.reward_for_task(text, t["test"])
+        rewards.append(float(reward))
+        ok = int(reward >= 1.0)
+        pass1 += ok
+        by_family.setdefault(t["family"], []).append(ok)
+        rows.append({"task_id": t["id"], "family": t["family"], "reward": reward,
+                     "detail": detail, "completion": text})
+    return {
+        "n": len(tasks),
+        "meanReward": round(statistics.mean(rewards), 4) if rewards else 0.0,
+        "passAt1": round(pass1 / len(tasks), 4) if tasks else 0.0,
+        "passAt1ByFamily": {f: round(sum(v) / len(v), 4) for f, v in by_family.items()},
+        "rows": rows,
+    }
+
+
+def run_eval_code(args: argparse.Namespace) -> dict:
+    data = code_dataset.build_code_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+    tasks = data["eval_tasks"]
+    if args.limit:
+        tasks = tasks[: args.limit]
+    if data["family_intersection"]:
+        raise SystemExit(f"contaminated split: {data['family_intersection']}")
+
+    if args.mode == "mock":
+        base = {t["id"]: _mock_completion_code(t, improved=False) for t in tasks}
+        adapter = {t["id"]: _mock_completion_code(t, improved=True) for t in tasks}
+        model_desc = "mock"
+    else:
+        if not args.adapter:
+            raise SystemExit("--adapter is required under --mode real")
+        if not code_reward.exec_enabled():
+            raise SystemExit("code adapter eval needs SOPHIA_ALLOW_CODE_EXEC=1 (interpreter = reward)")
+        base_gen, adapter_gen = _load_real_generators(args.model, args.adapter, max_new_tokens=args.max_new_tokens)
+        base, adapter = {}, {}
+        for i, t in enumerate(tasks, 1):
+            print(f"[eval-code] {i}/{len(tasks)} {t['id']}", flush=True)
+            base[t["id"]] = base_gen(t["prompt"])
+            adapter[t["id"]] = adapter_gen(t["prompt"])
+        model_desc = args.model
+
+    base_score = _score_tasks(tasks, base)
+    adapter_score = _score_tasks(tasks, adapter)
+    delta = round(adapter_score["passAt1"] - base_score["passAt1"], 4)
+    report = {
+        "benchmark": "rlvr-adapter-heldout",
+        "task": "code",
+        "mode": args.mode,
+        "model": model_desc,
+        "adapter": str(args.adapter) if args.adapter else None,
+        "claimStatus": (
+            "Open — per-run held-out comparison on UNSEEN task families. Capability "
+            "claim requires >=3 seeds and no-overclaim aggregation (CI excludes 0)."
+        ),
+        "split": {
+            "evalTasks": len(tasks),
+            "seed": args.seed,
+            "evalFrac": args.eval_frac,
+            "evalFamilies": sorted({t["family"] for t in tasks}),
+            "trainSealed": data["train_sealed"],
+            "evalSealed": data["eval_sealed"],
+            "familyIntersection": data["family_intersection"],
+        },
+        "base": {k: v for k, v in base_score.items() if k != "rows"},
+        "adapterScore": {k: v for k, v in adapter_score.items() if k != "rows"},
+        "delta": {"passAt1": delta},
+        "checks": {
+            "contaminationFree": not data["family_intersection"],
+            "adapterImprovesPassAt1": delta > 0,
+            "noPassAt1Regression": delta >= 0,
+        },
+        "rows": {"base": base_score["rows"], "adapter": adapter_score["rows"]},
+    }
+    report["passed"] = all(report["checks"].values())
+    return report
+
+
+# --------------------------------------------------------------------------- #
+# Concept task — held-out before/after on UNSEEN concept pairs. Reward = the
+# symbolic concept-TBox gate (ontology_rl_reward; deterministic, no judge). The
+# capability metric is meanReward (so ingest_rlvr_eval maps it through the generic
+# meanReward branch); the protected axis is the over-abstention rate (lower better).
+# --------------------------------------------------------------------------- #
+def _mock_completion_concept(case: dict, *, improved: bool) -> str:
+    a = case.get("subject", "the first concept")
+    b = case.get("object", "the second concept")
+    expected = case.get("expected", "distinct")
+    if improved:
+        if expected == "admit":
+            return f"{a} and {b} are related within their shared tradition and reinforce one another."
+        return f"{a} is not identical to {b}; they differ and the identification would be unscoped."
+    # Base: the careless failure modes — a forbidden merge on cross-tradition pairs,
+    # over-refusal on the answerable intra-tradition pairs.
+    if expected == "admit":
+        return "I can't answer this; it's underdetermined."
+    return f"{a} is identical to {b}; they are the same thing."
+
+
+def _score_concept(cases: list[dict], completions: dict) -> dict:
+    rows, rewards, pass1 = [], [], 0
+    over_abstain = answerable = 0
+    forbidden = 0
+    for c in cases:
+        text = completions.get(c["id"], "")
+        reward, detail = ontology_rl_reward.reward_for_edge_case(c, text)
+        rewards.append(float(reward))
+        pass1 += int(reward >= 1.0)
+        if c.get("answerable", True):
+            answerable += 1
+            if detail.get("abstained"):
+                over_abstain += 1
+        forbidden += int(detail.get("assertedForbidden", False))
+        rows.append({"case_id": c["id"], "expected": c.get("expected"), "reward": reward,
+                     "detail": detail, "completion": text})
+    return {
+        "n": len(cases),
+        "meanReward": round(statistics.mean(rewards), 4) if rewards else 0.0,
+        "passAt1": round(pass1 / len(cases), 4) if cases else 0.0,
+        "overAbstainRate": round(over_abstain / answerable, 4) if answerable else 0.0,
+        "forbiddenMergeRate": round(forbidden / len(cases), 4) if cases else 0.0,
+        "rows": rows,
+    }
+
+
+def run_eval_concept(args: argparse.Namespace) -> dict:
+    data = ontology_rl_dataset.build_ontology_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+    cases = data["eval_cases"]
+    if args.limit:
+        cases = cases[: args.limit]
+    if data["entity_intersection"]:
+        raise SystemExit(f"contaminated split: {data['entity_intersection']}")
+
+    if args.mode == "mock":
+        base = {c["id"]: _mock_completion_concept(c, improved=False) for c in cases}
+        adapter = {c["id"]: _mock_completion_concept(c, improved=True) for c in cases}
+        model_desc = "mock"
+    else:
+        if not args.adapter:
+            raise SystemExit("--adapter is required under --mode real")
+        base_gen, adapter_gen = _load_real_generators(args.model, args.adapter, max_new_tokens=args.max_new_tokens)
+        base, adapter = {}, {}
+        for i, c in enumerate(cases, 1):
+            print(f"[eval-concept] {i}/{len(cases)} {c['id']}", flush=True)
+            base[c["id"]] = base_gen(c["prompt"])
+            adapter[c["id"]] = adapter_gen(c["prompt"])
+        model_desc = args.model
+
+    base_score = _score_concept(cases, base)
+    adapter_score = _score_concept(cases, adapter)
+    delta = round(adapter_score["meanReward"] - base_score["meanReward"], 4)
+    # Protected axis: over-abstention must not rise (the AlphaAlign failure mode).
+    oa_delta = round(adapter_score["overAbstainRate"] - base_score["overAbstainRate"], 4)
+    report = {
+        "benchmark": "rlvr-adapter-heldout",
+        "task": "concept",
+        "mode": args.mode,
+        "model": model_desc,
+        "adapter": str(args.adapter) if args.adapter else None,
+        "claimStatus": (
+            "Open — per-run held-out comparison on UNSEEN concept pairs. Capability claim "
+            "requires >=3 seeds, >=2 base-model families, and no-overclaim aggregation (CI excludes 0)."
+        ),
+        "split": {
+            "evalCases": len(cases),
+            "seed": args.seed,
+            "evalFrac": args.eval_frac,
+            "trainSealed": data["train_sealed"],
+            "evalSealed": data["eval_sealed"],
+            "entityIntersection": data["entity_intersection"],
+        },
+        "base": {k: v for k, v in base_score.items() if k != "rows"},
+        "adapterScore": {k: v for k, v in adapter_score.items() if k != "rows"},
+        "delta": {"meanReward": delta, "overAbstainRate": oa_delta},
+        "checks": {
+            "contaminationFree": not data["entity_intersection"],
+            "adapterImprovesMeanReward": delta > 0,
+            "noOverAbstentionRegression": oa_delta <= args.max_fp_regression,
+        },
+        "rows": {"base": base_score["rows"], "adapter": adapter_score["rows"]},
+    }
+    report["passed"] = all(report["checks"].values())
+    return report
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--mode", choices=["mock", "real"], default="mock")
-    ap.add_argument("--task", choices=["provenance", "math"], default="provenance",
-                    help="provenance (provenance_faithful reward) or math (sympy math_equivalent reward)")
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept"], default="provenance",
+                    help="provenance (provenance_faithful), math (sympy math_equivalent), "
+                         "code (hidden-tests-pass via code_exec), or concept (concept-TBox gate)")
     ap.add_argument("--model", default="zai-org/glm-4-9b-chat-hf")
     ap.add_argument("--adapter", type=Path, default=None)
     ap.add_argument("--out", type=Path, default=OUT)
@@ -300,8 +577,19 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--limit", type=int, default=0, help="debug subset size")
     ap.add_argument("--max-new-tokens", type=int, default=128)
     ap.add_argument("--max-fp-regression", type=float, default=0.0)
+    ap.add_argument("--capability-panel", action="store_true",
+                    help="also run the capability-delta panel (attribution/hallucination/"
+                         "calibration) and attach it under report['capabilityPanel']. "
+                         "Provenance task only; additive evidence (legacy keys unchanged).")
     args = ap.parse_args(argv)
-    report = run_eval_math(args) if args.task == "math" else run_eval(args)
+    if args.task == "math":
+        report = run_eval_math(args)
+    elif args.task == "code":
+        report = run_eval_code(args)
+    elif args.task == "concept":
+        report = run_eval_concept(args)
+    else:
+        report = run_eval(args)
     _write(args.out, report)
     print("RLVR ADAPTER EVAL PASS ✓" if report["passed"] else "RLVR ADAPTER EVAL NOT PASSED ✗")
     return 0 if report["passed"] else 1

@@ -1,0 +1,682 @@
+{
+  "schema": "sophia.consequence_cascade_benchmark.v1",
+  "benchmark": "Consequence-Cascade synthetic pack (38 cases)",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "validated": false,
+  "claimBoundary": "Deterministic structural benchmark over synthetic OKF graphs. The ground-truth label is graph structure (what fraction a retraction orphans), never a model judgement, so the gate is never grading itself. The recommended threshold is data-derived from SYNTHETIC graph structure; it is not validated against real belief graphs and earns level3Evidence only after a real run routes decisions through the live gate. Proves candidate tuning behavior, not AGI.",
+  "thresholdUsedForRows": null,
+  "n": 38,
+  "metrics": {
+    "verdictAccuracyRate": 1.0,
+    "flipSeverityBandRate": 1.0
+  },
+  "thresholdSweep": {
+    "candidates": [
+      0.05,
+      0.08,
+      0.1,
+      0.12,
+      0.15,
+      0.18,
+      0.2,
+      0.25,
+      0.3,
+      0.4,
+      0.5
+    ],
+    "recommended": 0.15,
+    "table": [
+      {
+        "threshold": 0.05,
+        "verdictAccuracy": 0.5789,
+        "correct": 22,
+        "n": 38,
+        "marginToNearestSeverity": 0.0
+      },
+      {
+        "threshold": 0.08,
+        "verdictAccuracy": 0.8947,
+        "correct": 34,
+        "n": 38,
+        "marginToNearestSeverity": 0.02
+      },
+      {
+        "threshold": 0.1,
+        "verdictAccuracy": 0.8947,
+        "correct": 34,
+        "n": 38,
+        "marginToNearestSeverity": 0.0
+      },
+      {
+        "threshold": 0.12,
+        "verdictAccuracy": 0.9737,
+        "correct": 37,
+        "n": 38,
+        "marginToNearestSeverity": 0.02
+      },
+      {
+        "threshold": 0.15,
+        "verdictAccuracy": 1.0,
+        "correct": 38,
+        "n": 38,
+        "marginToNearestSeverity": 0.0071
+      },
+      {
+        "threshold": 0.18,
+        "verdictAccuracy": 0.9737,
+        "correct": 37,
+        "n": 38,
+        "marginToNearestSeverity": 0.0133
+      },
+      {
+        "threshold": 0.2,
+        "verdictAccuracy": 0.9737,
+        "correct": 37,
+        "n": 38,
+        "marginToNearestSeverity": 0.0
+      },
+      {
+        "threshold": 0.25,
+        "verdictAccuracy": 0.9211,
+        "correct": 35,
+        "n": 38,
+        "marginToNearestSeverity": 0.0
+      },
+      {
+        "threshold": 0.3,
+        "verdictAccuracy": 0.8947,
+        "correct": 34,
+        "n": 38,
+        "marginToNearestSeverity": 0.05
+      },
+      {
+        "threshold": 0.4,
+        "verdictAccuracy": 0.8947,
+        "correct": 34,
+        "n": 38,
+        "marginToNearestSeverity": 0.0286
+      },
+      {
+        "threshold": 0.5,
+        "verdictAccuracy": 0.8684,
+        "correct": 33,
+        "n": 38,
+        "marginToNearestSeverity": 0.0714
+      }
+    ]
+  },
+  "rows": [
+    {
+      "id": "cc_severe_star_01",
+      "caseType": "severe_cascade",
+      "expectVerdict": "escalate",
+      "gotVerdict": "escalate",
+      "found": true,
+      "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
+      "expectFlipSeverityBand": [
+        0.5,
+        1.0
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_severe_star_02",
+      "caseType": "severe_cascade",
+      "expectVerdict": "escalate",
+      "gotVerdict": "escalate",
+      "found": true,
+      "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
+      "expectFlipSeverityBand": [
+        0.5,
+        1.0
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_severe_star_03",
+      "caseType": "severe_cascade",
+      "expectVerdict": "escalate",
+      "gotVerdict": "escalate",
+      "found": true,
+      "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
+      "expectFlipSeverityBand": [
+        0.5,
+        1.0
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_severe_star_04",
+      "caseType": "severe_cascade",
+      "expectVerdict": "escalate",
+      "gotVerdict": "escalate",
+      "found": true,
+      "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
+      "expectFlipSeverityBand": [
+        0.5,
+        1.0
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_severe_star_05",
+      "caseType": "severe_cascade",
+      "expectVerdict": "escalate",
+      "gotVerdict": "escalate",
+      "found": true,
+      "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
+      "expectFlipSeverityBand": [
+        0.5,
+        1.0
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_severe_chain_06",
+      "caseType": "severe_cascade",
+      "expectVerdict": "escalate",
+      "gotVerdict": "escalate",
+      "found": true,
+      "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
+      "expectFlipSeverityBand": [
+        0.5,
+        1.0
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_severe_chain_07",
+      "caseType": "severe_cascade",
+      "expectVerdict": "escalate",
+      "gotVerdict": "escalate",
+      "found": true,
+      "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
+      "expectFlipSeverityBand": [
+        0.5,
+        1.0
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_severe_chain_08",
+      "caseType": "severe_cascade",
+      "expectVerdict": "escalate",
+      "gotVerdict": "escalate",
+      "found": true,
+      "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
+      "expectFlipSeverityBand": [
+        0.5,
+        1.0
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_severe_tree_09",
+      "caseType": "severe_cascade",
+      "expectVerdict": "escalate",
+      "gotVerdict": "escalate",
+      "found": true,
+      "flipSeverity": 1.0,
+      "rawFlipSeverity": 1.0,
+      "expectFlipSeverityBand": [
+        0.5,
+        1.0
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_severe_forest_11",
+      "caseType": "severe_cascade",
+      "expectVerdict": "escalate",
+      "gotVerdict": "escalate",
+      "found": true,
+      "flipSeverity": 0.875,
+      "rawFlipSeverity": 0.875,
+      "expectFlipSeverityBand": [
+        0.5,
+        1.0
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_severe_forest_12",
+      "caseType": "severe_cascade",
+      "expectVerdict": "escalate",
+      "gotVerdict": "escalate",
+      "found": true,
+      "flipSeverity": 0.8571,
+      "rawFlipSeverity": 0.857143,
+      "expectFlipSeverityBand": [
+        0.5,
+        1.0
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_severe_forest_13",
+      "caseType": "severe_cascade",
+      "expectVerdict": "escalate",
+      "gotVerdict": "escalate",
+      "found": true,
+      "flipSeverity": 0.8333,
+      "rawFlipSeverity": 0.833333,
+      "expectFlipSeverityBand": [
+        0.5,
+        1.0
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_severe_mid_15",
+      "caseType": "severe_cascade",
+      "expectVerdict": "escalate",
+      "gotVerdict": "escalate",
+      "found": true,
+      "flipSeverity": 0.4286,
+      "rawFlipSeverity": 0.428571,
+      "expectFlipSeverityBand": [
+        0.3,
+        0.5
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_routine_iso_01",
+      "caseType": "routine_retraction",
+      "expectVerdict": "allow",
+      "gotVerdict": "allow",
+      "found": true,
+      "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.12
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_routine_iso_02",
+      "caseType": "routine_retraction",
+      "expectVerdict": "allow",
+      "gotVerdict": "allow",
+      "found": true,
+      "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.12
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_routine_iso_03",
+      "caseType": "routine_retraction",
+      "expectVerdict": "allow",
+      "gotVerdict": "allow",
+      "found": true,
+      "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.12
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_routine_iso_04",
+      "caseType": "routine_retraction",
+      "expectVerdict": "allow",
+      "gotVerdict": "allow",
+      "found": true,
+      "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.12
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_routine_iso_05",
+      "caseType": "routine_retraction",
+      "expectVerdict": "allow",
+      "gotVerdict": "allow",
+      "found": true,
+      "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.12
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_routine_iso_06",
+      "caseType": "routine_retraction",
+      "expectVerdict": "allow",
+      "gotVerdict": "allow",
+      "found": true,
+      "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.12
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_routine_iso_07",
+      "caseType": "routine_retraction",
+      "expectVerdict": "allow",
+      "gotVerdict": "allow",
+      "found": true,
+      "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.12
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_routine_iso_08",
+      "caseType": "routine_retraction",
+      "expectVerdict": "allow",
+      "gotVerdict": "allow",
+      "found": true,
+      "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.12
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_routine_leaf_01",
+      "caseType": "routine_retraction",
+      "expectVerdict": "allow",
+      "gotVerdict": "allow",
+      "found": true,
+      "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.12
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_routine_leaf_02",
+      "caseType": "routine_retraction",
+      "expectVerdict": "allow",
+      "gotVerdict": "allow",
+      "found": true,
+      "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.12
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_routine_leaf_03",
+      "caseType": "routine_retraction",
+      "expectVerdict": "allow",
+      "gotVerdict": "allow",
+      "found": true,
+      "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.12
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_routine_leaf_04",
+      "caseType": "routine_retraction",
+      "expectVerdict": "allow",
+      "gotVerdict": "allow",
+      "found": true,
+      "flipSeverity": 0.05,
+      "rawFlipSeverity": 0.05,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.12
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_routine_multisrc_01",
+      "caseType": "routine_retraction",
+      "expectVerdict": "allow",
+      "gotVerdict": "allow",
+      "found": true,
+      "flipSeverity": 0.1,
+      "rawFlipSeverity": 0.1,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.15
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_routine_multisrc_02",
+      "caseType": "routine_retraction",
+      "expectVerdict": "allow",
+      "gotVerdict": "allow",
+      "found": true,
+      "flipSeverity": 0.1,
+      "rawFlipSeverity": 0.1,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.15
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_routine_multisrc_03",
+      "caseType": "routine_retraction",
+      "expectVerdict": "allow",
+      "gotVerdict": "allow",
+      "found": true,
+      "flipSeverity": 0.1,
+      "rawFlipSeverity": 0.1,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.15
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_unbounded_01",
+      "caseType": "unbounded_target",
+      "expectVerdict": "abstain",
+      "gotVerdict": "abstain",
+      "found": false,
+      "flipSeverity": 0.0,
+      "rawFlipSeverity": 0.0,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.0
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_unbounded_02",
+      "caseType": "unbounded_target",
+      "expectVerdict": "abstain",
+      "gotVerdict": "abstain",
+      "found": false,
+      "flipSeverity": 0.0,
+      "rawFlipSeverity": 0.0,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.0
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_unbounded_03",
+      "caseType": "unbounded_target",
+      "expectVerdict": "abstain",
+      "gotVerdict": "abstain",
+      "found": false,
+      "flipSeverity": 0.0,
+      "rawFlipSeverity": 0.0,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.0
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_unbounded_04",
+      "caseType": "unbounded_target",
+      "expectVerdict": "abstain",
+      "gotVerdict": "abstain",
+      "found": false,
+      "flipSeverity": 0.0,
+      "rawFlipSeverity": 0.0,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.0
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_unbounded_05",
+      "caseType": "unbounded_target",
+      "expectVerdict": "abstain",
+      "gotVerdict": "abstain",
+      "found": false,
+      "flipSeverity": 0.0,
+      "rawFlipSeverity": 0.0,
+      "expectFlipSeverityBand": [
+        0.0,
+        0.0
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_boundary_star5leaf_01",
+      "caseType": "boundary_cascade",
+      "expectVerdict": "escalate",
+      "gotVerdict": "escalate",
+      "found": true,
+      "flipSeverity": 0.2,
+      "rawFlipSeverity": 0.2,
+      "expectFlipSeverityBand": [
+        0.15,
+        0.3
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_boundary_star5leaf_02",
+      "caseType": "boundary_cascade",
+      "expectVerdict": "escalate",
+      "gotVerdict": "escalate",
+      "found": true,
+      "flipSeverity": 0.2,
+      "rawFlipSeverity": 0.2,
+      "expectFlipSeverityBand": [
+        0.15,
+        0.3
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_boundary_tree7leaf_03",
+      "caseType": "boundary_cascade",
+      "expectVerdict": "allow",
+      "gotVerdict": "allow",
+      "found": true,
+      "flipSeverity": 0.1429,
+      "rawFlipSeverity": 0.142857,
+      "expectFlipSeverityBand": [
+        0.1,
+        0.18
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_boundary_star4leaf_04",
+      "caseType": "boundary_cascade",
+      "expectVerdict": "escalate",
+      "gotVerdict": "escalate",
+      "found": true,
+      "flipSeverity": 0.25,
+      "rawFlipSeverity": 0.25,
+      "expectFlipSeverityBand": [
+        0.2,
+        0.3
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    },
+    {
+      "id": "cc_boundary_star6leaf_05",
+      "caseType": "boundary_cascade",
+      "expectVerdict": "escalate",
+      "gotVerdict": "escalate",
+      "found": true,
+      "flipSeverity": 0.1667,
+      "rawFlipSeverity": 0.166667,
+      "expectFlipSeverityBand": [
+        0.15,
+        0.2
+      ],
+      "verdictOk": true,
+      "flipSeverityBandOk": true
+    }
+  ],
+  "ok": true
+}

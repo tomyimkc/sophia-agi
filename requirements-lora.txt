@@ -6,6 +6,10 @@ peft>=0.19.1,<0.20
 datasets>=2.18
 accelerate>=1.14.0
 bitsandbytes>=0.43; platform_system != "Darwin"
+# z3-solver: enables the W2 promotion oracle's solver_attestation invariant to run
+# (backend=z3) on the pod. Without it the oracle fails closed with held/z3_unavailable
+# and rejects promotion for a missing-tooling reason rather than a quality one.
+z3-solver>=4.12
 
 # Optional backends for tools/train_lora.py --backend (install on the target machine):
 #   --backend unsloth (CUDA, fused kernels, ~2x): pip install "unsloth>=2024.8"

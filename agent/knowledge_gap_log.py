@@ -22,8 +22,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-# Policies that signal the corpus came up short for a real query.
-GAP_POLICIES = {"abstain_no_route", "abstain_no_source", "grounded_fallback", "fallback_gated_abstain"}
+# Policies that signal the corpus came up short for a real query. Includes the grounded-search
+# reflexes (`agent.grounded_search`): a hedged or abstained search is a perception gap the
+# corpus could close, so it feeds the same enrichment worklist as the grounded agent's gaps.
+GAP_POLICIES = {
+    "abstain_no_route", "abstain_no_source", "grounded_fallback", "fallback_gated_abstain",
+    "grounded_search_abstain", "grounded_search_hedge", "grounded_search_ungrounded",
+}
 
 
 def is_gap(policy: str) -> bool:

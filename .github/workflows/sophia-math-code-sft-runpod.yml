@@ -25,6 +25,16 @@ on:
         description: 'Single seed (0, 1, or 2). Leave empty to run all three seeds.'
         required: false
         default: ''
+      on_pod_seeds:
+        description: 'On-pod multi-seed: comma seeds trained on ONE pod, e.g. 0,1,2. Overrides seed/all-seeds. Empty = off.'
+        required: false
+        default: ''
+      on_pod_mode:
+        description: 'On-pod multi-seed mode: parallel (one seed per GPU, multi-GPU pod) or sequential (one GPU, back-to-back)'
+        required: false
+        default: 'parallel'
+        type: choice
+        options: ['parallel', 'sequential']
       branch:
         description: 'Git branch cloned on the pod'
         required: false
@@ -44,7 +54,9 @@ permissions:
   contents: read
 
 concurrency:
-  group: sophia-math-code-sft-runpod
+  # Per-seed group so each seed can rent its own pod and train concurrently
+  # (empty seed = the sequential all-seeds run keeps its own single group).
+  group: sophia-math-code-sft-runpod-${{ github.event.inputs.seed }}
   cancel-in-progress: false
 
 jobs:
@@ -107,11 +119,29 @@ jobs:
             --adapter-dir "/workspace/sophia-runpod/sophia-agi/training/sophia-math-code-curriculum/checkpoints/sophia-cuda-v1-seed0" \
             --train-only
 
+      - name: Estimate ETA → job summary
+        env:
+          SEED_INPUT: ${{ github.event.inputs.seed }}
+          ON_POD_SEEDS: ${{ github.event.inputs.on_pod_seeds }}
+          ON_POD_MODE: ${{ github.event.inputs.on_pod_mode }}
+          EPOCHS_INPUT: ${{ github.event.inputs.epochs }}
+        run: |
+          set -euo pipefail
+          if [ -n "$EPOCHS_INPUT" ]; then EP="$EPOCHS_INPUT"; else EP=2; fi
+          if [ -n "$ON_POD_SEEDS" ]; then SEEDS="$ON_POD_SEEDS"; MODE="on-pod-$ON_POD_MODE";
+          elif [ -n "$SEED_INPUT" ]; then SEEDS="$SEED_INPUT"; MODE="separate-pods";
+          else SEEDS="0,1,2"; MODE="all-seeds-sequential"; fi
+          python3 tools/estimate_runpod_eta.py --model-params 7 --epochs "$EP" \
+            --train-data training/sophia-math-code-curriculum/sft_all.jsonl \
+            --seeds "$SEEDS" --mode "$MODE" --no-eval --markdown >> "$GITHUB_STEP_SUMMARY"
+
       - name: Launch RunPod math-code SFT (3 seeds or single seed)
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
           BRANCH: ${{ github.event.inputs.branch }}
           SEED_INPUT: ${{ github.event.inputs.seed }}
+          ON_POD_SEEDS: ${{ github.event.inputs.on_pod_seeds }}
+          ON_POD_MODE: ${{ github.event.inputs.on_pod_mode }}
           EPOCHS_INPUT: ${{ github.event.inputs.epochs }}
           INTERRUPTIBLE_INPUT: ${{ github.event.inputs.interruptible }}
         run: |
@@ -131,7 +161,16 @@ jobs:
               $([ "$INTERRUPTIBLE_INPUT" = "true" ] && echo --interruptible)
           }
 
-          if [ -n "$SEED_INPUT" ]; then
+          if [ -n "$ON_POD_SEEDS" ]; then
+            echo "===== on-pod multi-seed math-code SFT ($ON_POD_MODE): seeds $ON_POD_SEEDS on ONE pod ====="
+            python3 tools/runpod_train.py --yes --branch "$BRANCH" \
+              --model "Qwen/Qwen2.5-7B-Instruct" --epochs "$EPOCHS" \
+              --train-data training/sophia-math-code-curriculum/sft_all.jsonl \
+              --adapter-dir "/workspace/sophia-runpod/sophia-agi/training/sophia-math-code-curriculum/checkpoints/sophia-cuda-v1" \
+              --train-only --seeds "$ON_POD_SEEDS" --on-pod-mode "$ON_POD_MODE" \
+              --name "sophia-math-code-sft-multiseed" \
+              $([ "$INTERRUPTIBLE_INPUT" = "true" ] && echo --interruptible)
+          elif [ -n "$SEED_INPUT" ]; then
             run_one_seed "$SEED_INPUT"
           else
             bash agi-proof/sophia-math-code-curriculum/runpod-sft-3seed.sh

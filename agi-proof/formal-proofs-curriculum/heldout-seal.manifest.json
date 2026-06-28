@@ -1,0 +1,1010 @@
+{
+  "schema": "sophia.formal_proofs_heldout_seal.v1",
+  "packId": "formal-proofs-curriculum-heldout",
+  "sealedAt": "2026-06-27T13:34:39.690337+00:00",
+  "visibility": "public-hash-only",
+  "privateCopy": "private/formal-proofs-heldout/ (gitignored)",
+  "source": {
+    "benchmark": "miniF2F-v2",
+    "repo": "https://github.com/roozbeh-mohit/miniF2F_v2",
+    "commit": "905eca84f37cf38a49ec54f0f03e7bf99b510168",
+    "split": "test",
+    "dataset": "datasets/miniF2F_v2c.jsonl",
+    "paper": "miniF2F-Lean Revisited (arXiv 2511.03108; OpenReview KtaHv0YUyh); dataset: datasets/miniF2F_v2c.jsonl (competition-level v2c)",
+    "license": "Apache-2.0",
+    "legacyRepoAlias": "https://github.com/roozbeh-yz/miniF2F_v2"
+  },
+  "generatorPolicy": "Proposers/generators MUST NOT read sealed paths (tools/heldout_seal_guard.py enforces).",
+  "leakageControls": {
+    "1_knowledgeCutoff": "Proposer model cutoff recorded in the preregistration, dated relative to the miniF2F-v2 revision pinned by source.commit.",
+    "2_sealedSplit": "These statements are hashed here before any proposer runs; the proposer's data paths are guarded by tools/heldout_seal_guard.py.",
+    "3_noExactLibraryLemma": "A proof closing by citing the target theorem's own library declaration is plagiarism, not evidence; the reward function rejects it. (Enforced at eval time, not here.)"
+  },
+  "pretrainingContaminationPolicy": "miniF2F is a public benchmark; the proposer model may have seen its proofs during pretraining (the miniF2F-Lean Revisited paper documents this). A pass rate on this split is suggestive, NOT contamination-free proof. Controls below reduce and make the residual auditable; a clean external claim requires the third-party-authored pack (agi-proof/third-party-heldout/).",
+  "cleanExternalClaimPath": "agi-proof/third-party-heldout/ (third-party-authored; currently EMPTY)",
+  "files": [
+    {
+      "path": "private/formal-proofs-heldout/minif2f-v2-test.jsonl",
+      "sha256": "9769f7d551056db16b1270a583909a65cf1fdaa1486a7a6c601c6b3788729605",
+      "itemCount": 244,
+      "items": [
+        {
+          "id": "amc12a_2019_p21",
+          "sha256": "e7d0210995ccbaf1a807d58403c44c362d24b55a08ce0cc9f85e15a649b936be"
+        },
+        {
+          "id": "amc12a_2015_p10",
+          "sha256": "1fd125167d26a5d0f8484e4cffeb790ef9774bcf20a3419db795a7e8b55ef28f"
+        },
+        {
+          "id": "amc12a_2008_p8",
+          "sha256": "609ed488a9aaa5e08cfd4e9c6d955a7c3c1d6d775a3a2009257b758ae094eb9e"
+        },
+        {
+          "id": "mathd_algebra_182",
+          "sha256": "074ae217553a3b1360647e635fbd67719306b9730bce62732a751faef72f07e2"
+        },
+        {
+          "id": "aime_1984_p5",
+          "sha256": "55b65901d625b73a2a3b8bd8dc9a89f9a2d2ccedd4cde05ae2d082b417733e26"
+        },
+        {
+          "id": "mathd_numbertheory_780",
+          "sha256": "ce1fa7681aee62b815c73dd25c98d02a92c7a0577a5e8808e5a9f62ad0f40290"
+        },
+        {
+          "id": "mathd_algebra_116",
+          "sha256": "9ec868ffe0d97e6e338a3d09c56d38f22ca04559c56933288a8714b370efd269"
+        },
+        {
+          "id": "mathd_numbertheory_13",
+          "sha256": "a3e4ea5611bb1e39d87a16e4dfd097967dfcefea180b64a0d4951c07b820224c"
+        },
+        {
+          "id": "mathd_numbertheory_169",
+          "sha256": "ab06be30f1f9e89251ab46c8f14767cc2d97925004692f05bc2430f0b3e9aa8a"
+        },
+        {
+          "id": "amc12a_2009_p9",
+          "sha256": "dab33c129d7a6690c9fdc40b3961805f25750abd9149ae7ad4a0ce6eef58f60c"
+        },
+        {
+          "id": "amc12a_2019_p9",
+          "sha256": "0966d91103ef89b4d3ae2157d652adfd785716e08d8e05cd32b1d73605e50f49"
+        },
+        {
+          "id": "mathd_algebra_13",
+          "sha256": "76bcbff105bd0de213611639254602dc97fa64be94a4df497744a7e979f0f3b8"
+        },
+        {
+          "id": "induction_sum2kp1npqsqm1",
+          "sha256": "7fc038a78b980004cfdf1b1e8b954ea0a30aeb74a688e017097eae141f9cf565"
+        },
+        {
+          "id": "aime_1991_p6",
+          "sha256": "c96e7cbe78568ba4429bc2dad34908844df74c298990f1e4ccf6b39056ebacf2"
+        },
+        {
+          "id": "mathd_numbertheory_149",
+          "sha256": "457fd74ea511d69cce1baa958106c7d17d434aac8896b7e3f9c583b14e8a0e57"
+        },
+        {
+          "id": "imo_1984_p2",
+          "sha256": "bf7e5e2cd299215a7cfd7af5edb25c2b3d43cde07bb3b698452381a6a2aa7b2d"
+        },
+        {
+          "id": "amc12a_2008_p4",
+          "sha256": "c6d99139473420674ae9cf5507a6bccbd963736642c8d121ee557cc46bcea941"
+        },
+        {
+          "id": "imo_2006_p3",
+          "sha256": "7b1aa0e08ff976d3a7a833f2e21746fcfbc13ff95223e021f75f9050833fcc3d"
+        },
+        {
+          "id": "mathd_algebra_462",
+          "sha256": "5550dfa88fbc5dc2dd31205c0f0a6af02475fef05f2dddeea6730c9cf6e85e91"
+        },
+        {
+          "id": "imo_1964_p1_2",
+          "sha256": "25fa23d92031f4e9ba1898c8c3db892e23fadd64719222a22a1c00b1d00396f6"
+        },
+        {
+          "id": "mathd_numbertheory_221",
+          "sha256": "bab28e5bff2fe6ec514b605fbe1cae201aeef3f3628a4e1cbbefb13da759ae20"
+        },
+        {
+          "id": "mathd_numbertheory_64",
+          "sha256": "532628a4e538f065d0f5e1b428f76f1dc540dcb5832e4f485c98e100ce42d606"
+        },
+        {
+          "id": "imo_1987_p4",
+          "sha256": "1a78cabba58f3f65d0338993b16d132d12a726cb3700fd250781e1bd6e54f3ec"
+        },
+        {
+          "id": "mathd_numbertheory_33",
+          "sha256": "e548bed7e758a057e722c7176e289a0de13b01773bf5c168040346f853841d3e"
+        },
+        {
+          "id": "amc12_2001_p9",
+          "sha256": "4a6f17ba8d93de88fe67d4aba68c2946f043810af3be455e7aa8be6f8b792d19"
+        },
+        {
+          "id": "imo_1965_p1",
+          "sha256": "46143a84ea2ad1224357fe882504dae031d1a3edaf5a7fab05784b26a1a77df7"
+        },
+        {
+          "id": "mathd_numbertheory_48",
+          "sha256": "bc7d9035a6571cb5e333c6bdff45164e5f9871d723a9748b1a3b57bdc75de1b2"
+        },
+        {
+          "id": "numbertheory_sqmod4in01d",
+          "sha256": "451f7ec33371acf5d92dfa314bed1872cbf5b46f6b9f27509414d45081892f60"
+        },
+        {
+          "id": "mathd_numbertheory_466",
+          "sha256": "fd59436b6858f4fbf514f973b2f406f5401c0decc07230e22ed1fbb44d7d343f"
+        },
+        {
+          "id": "mathd_algebra_48",
+          "sha256": "b77fff105fed6d5b905e288e9e3fa097c7de508b062540bccf6d28575ac1fd4c"
+        },
+        {
+          "id": "amc12_2000_p15",
+          "sha256": "58f07e6c01d20275dfc45b3c426ccc9ba5bb80a6f6adf01aca2139652927342a"
+        },
+        {
+          "id": "mathd_numbertheory_132",
+          "sha256": "181c8ed48d0a23533897d2efc1903d966e48e89eb6a3fb80f6c103dab675b066"
+        },
+        {
+          "id": "amc12a_2009_p5",
+          "sha256": "4e03eb5b489a3995ef911c0d378dfc6090c18e70c8de67d264b9cdc491967402"
+        },
+        {
+          "id": "mathd_numbertheory_188",
+          "sha256": "ea88af2fc53a1bcdabba6ea511cc5b60177db4ee6825e4b40ad279b002d2d9ba"
+        },
+        {
+          "id": "mathd_algebra_224",
+          "sha256": "33a46e6263c8772d2f61a6ecfe4a6d97a1627ebad9dfccda9eb7033414cf0417"
+        },
+        {
+          "id": "induction_divisibility_3divnto3m2n",
+          "sha256": "11c8cec37f088991a29e2f9dd5cf3b6e98a8a32e823664fd8ca8a9531fcfc042"
+        },
+        {
+          "id": "induction_sum_1oktkp1",
+          "sha256": "41f77c72e8da4a919aecfc5ffac0fae25099966e13355383a9fc0a70536b5e70"
+        },
+        {
+          "id": "mathd_numbertheory_32",
+          "sha256": "8d1353f0e26b15b658da97b7392c47cbe86c4d065905a5b13fcb7915270115ec"
+        },
+        {
+          "id": "mathd_algebra_422",
+          "sha256": "ffc7e50542a7987ba34d75b84964877bea32cb15b76f2d6605edabc7e252cf30"
+        },
+        {
+          "id": "amc12b_2002_p11",
+          "sha256": "11cb4503e2aa811d30c2bf006be5a8f1ca4c2e7b5814ebf253e0633ae927a67d"
+        },
+        {
+          "id": "mathd_algebra_73",
+          "sha256": "b3e36506ce9b5be26524a40eb1e8dc0e468f2bc23a4124b0c00bf9c04daf3de6"
+        },
+        {
+          "id": "mathd_numbertheory_109",
+          "sha256": "654d93c7b807306f3f9380fd0b3209b3b8b081d67467bd19230a8eca2773e5ca"
+        },
+        {
+          "id": "algebra_xmysqpymzsqpzmxsqeqxyz_xpypzp6dvdx3y3z3",
+          "sha256": "cfbc98bd78311fbad4947a53f538645b4a21e36fe6625d8a25afeaed05758907"
+        },
+        {
+          "id": "imo_1962_p4",
+          "sha256": "39e9de336ede3a2b6dc18422140b7384cdd9f08cd05befd53c3e2d81620f75fc"
+        },
+        {
+          "id": "mathd_numbertheory_236",
+          "sha256": "2f97ef15fba27bb865a65b0cf0387d5a3ce012e65550fecd61376a4ce565aa6a"
+        },
+        {
+          "id": "mathd_numbertheory_24",
+          "sha256": "26038bfd123786cfc156063cae34cbc0d159afaf45dfedbd30032fc298bae402"
+        },
+        {
+          "id": "algebra_amgm_prod1toneq1_sum1tongeqn",
+          "sha256": "68cc88a0692ead985b40b95c66204f75490f72a42d609d2f15c4b236ee264169"
+        },
+        {
+          "id": "mathd_algebra_101",
+          "sha256": "7d3f0cf3b95a0e86008fc11ac44ec76c005053e9b14850879e44d7c4e00b3088"
+        },
+        {
+          "id": "mathd_numbertheory_257",
+          "sha256": "2bdf96dbfec0e3978b52c3090a0230d570ecb18a473d27d8bb80a3cb62af917b"
+        },
+        {
+          "id": "amc12_2000_p5",
+          "sha256": "f875ad1c2aa587399b1b9ab8e8545371c1397ba4dde891d3f1cb8b69a87cf958"
+        },
+        {
+          "id": "mathd_algebra_547",
+          "sha256": "b0f9d916cc6cb205d0b5b1f7aa8994a2350449d25eb7a20023e1da68833733d9"
+        },
+        {
+          "id": "mathd_numbertheory_200",
+          "sha256": "9d1dc703c46283a8e14c12568cfd5d05eee9fc412b13ef346fda97271087465c"
+        },
+        {
+          "id": "mathd_algebra_510",
+          "sha256": "9c10547ee30883be99e51c87de0a8f8a06b60d87b2d4298729c2c8199bb8110d"
+        },
+        {
+          "id": "mathd_algebra_140",
+          "sha256": "4edd40a25501be2f85ef6f6766294a4fda67d08903ed578dcdb56853b433fa23"
+        },
+        {
+          "id": "mathd_algebra_455",
+          "sha256": "e19169537269f1211f1afea4a5cdb59116670b3421b176bb36731acbbd7878cb"
+        },
+        {
+          "id": "mathd_numbertheory_45",
+          "sha256": "f5870d9106300924e76565196ab3330d0e2814d60eacd52f73b0b03310c646d9"
+        },
+        {
+          "id": "aime_1994_p4",
+          "sha256": "d1230fcad3d944cfec738ec96c06c28607fce6263286662274703eb9286e8404"
+        },
+        {
+          "id": "mathd_numbertheory_739",
+          "sha256": "196b1281cbecbf90071999bb04a95c4eae4821164202998880ce96322a6246ea"
+        },
+        {
+          "id": "mathd_algebra_245",
+          "sha256": "e016a96fce10cc00b2e931cf67c6b91671690cf8b9d30966d6c213bcb53f569f"
+        },
+        {
+          "id": "algebra_apb4leq8ta4pb4",
+          "sha256": "4a2a0c7b770dd49aa4624300bfa1bbdc0292ba7e1df0ab5058b99c1ceb6c9465"
+        },
+        {
+          "id": "mathd_algebra_28",
+          "sha256": "acdc249d44e847959ae988aa3ac9b35a4d85379d4a9a7bb6441099abc2cc42df"
+        },
+        {
+          "id": "mathd_numbertheory_543",
+          "sha256": "bb8d436df1cc71f211dde281475f4a502d2c9f1caa4a2b103275c882c3bc0a2a"
+        },
+        {
+          "id": "mathd_algebra_480",
+          "sha256": "b0629c73189155dbdbe1fbbf18cbce3f41e77e910676da9451ebc4afe4f5dec1"
+        },
+        {
+          "id": "mathd_algebra_69",
+          "sha256": "52748320f93b6dd2e1f4a1a1d06e0f1ce6cb4d81e9c54411b2531acdb2dee11d"
+        },
+        {
+          "id": "mathd_algebra_433",
+          "sha256": "3a2b3e631bf3dd9c83b0504053cbed5b054926255f7b180bcb4b01a0f8ea2cc0"
+        },
+        {
+          "id": "mathd_algebra_126",
+          "sha256": "9de9f71e2d82584f50c8207751261ee546a25fd1301927ca5cc3f84d11ff8df0"
+        },
+        {
+          "id": "aimeII_2020_p6",
+          "sha256": "0b9a2f7bfae656f3aec1e72d134276deff89341b6707c4ad217c3cc1c9f36309"
+        },
+        {
+          "id": "amc12a_2008_p2",
+          "sha256": "7732f938570b14da9c41c1db6cff64705e68a6eb9d0fc9508b82686332c3571c"
+        },
+        {
+          "id": "mathd_algebra_35",
+          "sha256": "a0e8b33c8c0b2fca26a889c893c8deb7083bab880a4a04d75b3e793dfa84c93c"
+        },
+        {
+          "id": "algebra_amgm_faxinrrp2msqrt2geq2mxm1div2x",
+          "sha256": "1810f8d46c58aea284993c8ec578fb8f0e462d922d3cc8c746418ee03702f676"
+        },
+        {
+          "id": "mathd_numbertheory_335",
+          "sha256": "70171405b11b7cbed266791da6ec9bcc985105ec7dd08975a664c1c07be3c9bc"
+        },
+        {
+          "id": "mathd_numbertheory_35",
+          "sha256": "28dd54b3b017f3b407c9054f398c36296ac363dbfb9789f71e2e8a2bcdd5a489"
+        },
+        {
+          "id": "amc12a_2021_p7",
+          "sha256": "7f7ebabafa6ae3b3fec6a96f4a3064d9a766a318bca3209fb2ef19b7ca5dcfa9"
+        },
+        {
+          "id": "mathd_algebra_327",
+          "sha256": "720009ec5ffdae8f67d613ff27a7323cac1aee82e32a2b9244dc45ab0d7f33bb"
+        },
+        {
+          "id": "aime_1984_p15",
+          "sha256": "502202bf28709b730fe5dbcd371e61d34b940fc54f69da02a32e46cb5b39c58a"
+        },
+        {
+          "id": "algebra_amgm_sqrtxymulxmyeqxpy_xpygeq4",
+          "sha256": "2d674199ad380c8bd1200a8c622c820395d8d06ebf7d3b24f81a7ac132c98704"
+        },
+        {
+          "id": "amc12a_2002_p21",
+          "sha256": "474b907be6354ac787d97ca692e83f2af1c246fee794cb84f40a7119725c1cd3"
+        },
+        {
+          "id": "mathd_algebra_192",
+          "sha256": "1c4d38d523918df55ab298889656a2d79f5c900418df6a899faf94c61d64e1df"
+        },
+        {
+          "id": "amc12b_2002_p6",
+          "sha256": "dec081f603e9a624affeabaf53cc1d243b979a8f33b5b4115347f9a25ca28e37"
+        },
+        {
+          "id": "mathd_numbertheory_102",
+          "sha256": "8475ed3f71848f85c728fe16699fc52e10f56ddd73d592cf1463dfd0d10a9eef"
+        },
+        {
+          "id": "amc12a_2010_p22",
+          "sha256": "3039d49df4d61d566085c36eae036eaef8acd17fae41506edd33705816848db2"
+        },
+        {
+          "id": "mathd_numbertheory_81",
+          "sha256": "6e2c119969660cffa2cc82c3365360e9ad9ea29be65fdbea314587e057b5b2da"
+        },
+        {
+          "id": "mathd_numbertheory_155",
+          "sha256": "183fdfa216e2f97603a2f5bb5186168527918e168971a8115d1f64e981d19ce5"
+        },
+        {
+          "id": "imo_1978_p5",
+          "sha256": "7a6b7f4e3abdddb952727b4ef038959cbb83c67a00e82185dc26ed4b1138b4a9"
+        },
+        {
+          "id": "amc12a_2017_p7",
+          "sha256": "ffbfadcb276e95dad9ba41f557205328301cfd35682ac305152eb5bbe22422a2"
+        },
+        {
+          "id": "mathd_numbertheory_42",
+          "sha256": "2d5f82f4a6927ee402c5fd32baabc7959fabea69f366cb8d4bab7e4245f57c96"
+        },
+        {
+          "id": "mathd_algebra_110",
+          "sha256": "b13a145771dc305333a4866315004e49331351e37ace9ea409d5f009c1b48416"
+        },
+        {
+          "id": "amc12b_2021_p21",
+          "sha256": "751d905a95e3efdc3c4146cc234fa9bc120dfa558557f45dc9b1ef656ab90dc0"
+        },
+        {
+          "id": "mathd_algebra_405",
+          "sha256": "ac3f74750c25103b4f8271bc7a42c38f2cdb7a823d7800572ee6febcebb65f88"
+        },
+        {
+          "id": "numbertheory_sumkmulnckeqnmul2pownm1",
+          "sha256": "61b0e19f005a70eaef5ad44d4e03ac402496936591e2445b41044da457877391"
+        },
+        {
+          "id": "mathd_algebra_393",
+          "sha256": "69f1c10a8dd5518913d4dd6a255381a96062a58fa6dae5a6cd162980e19bd1f2"
+        },
+        {
+          "id": "amc12b_2004_p3",
+          "sha256": "c047594d45142f6af2dde37b723ff3acda06382c1696c7b05c2a5b92266cef62"
+        },
+        {
+          "id": "mathd_numbertheory_303",
+          "sha256": "88d64bf3f424552c166a351a834a6788baaed3cde07dbc9cb69ad562f966d918"
+        },
+        {
+          "id": "mathd_algebra_151",
+          "sha256": "017f92426f2ada5f78ec81d58a267aaa30bbd0fffcf52b199871c3191b8d512f"
+        },
+        {
+          "id": "amc12a_2011_p18",
+          "sha256": "62eabd4fe37b24bedb2f82549d5a2455b64a293a9ab793149ac8e22525c2ca10"
+        },
+        {
+          "id": "mathd_algebra_15",
+          "sha256": "c1a13ac262718b2b6302f367b434a2889514e1d41954788dd18cad288ca9ad2a"
+        },
+        {
+          "id": "mathd_numbertheory_211",
+          "sha256": "f3eeee98e4c0c3301485af95442eacb55a3728c8acf7a6747b19c8ca01944097"
+        },
+        {
+          "id": "mathd_numbertheory_640",
+          "sha256": "01c287b9aea3759dc6e31e55e38fc3478454a4580f4c20390ebc8d4ec8dbde12"
+        },
+        {
+          "id": "amc12b_2003_p6",
+          "sha256": "7f84f23b627257681a9fbf28e1c61a06dce34e6c98fb0a3f17f15b496a3d5858"
+        },
+        {
+          "id": "algebra_2rootsintpoly_am10tap11eqasqpam110",
+          "sha256": "c21d74657ae2c5394d0ea59ed477a25518061b46f468883fc638821997fa9783"
+        },
+        {
+          "id": "aime_1991_p1",
+          "sha256": "a85518b6eaf3454f40baccc00e52824bdfd95ccb129a746a359d45c92e5916f6"
+        },
+        {
+          "id": "mathd_algebra_43",
+          "sha256": "bf4fbd9a4813fae5a6d1df52b65c8786e35b03273e6a9aba8a749133d8aa8a64"
+        },
+        {
+          "id": "imo_1988_p6",
+          "sha256": "39004022065ef6b1e39fbbb20aaa8bda5745e8ee5a808640927a36b66fc014d1"
+        },
+        {
+          "id": "aime_1996_p5",
+          "sha256": "8c7f4d1a9b6ea02f0b13422e2aabab9b527f32e4aab3ecc69e804890004789cd"
+        },
+        {
+          "id": "mathd_algebra_55",
+          "sha256": "65a11c37d1299a7a3e84d2c342ebd94198c48781be78d950866d75f83e084c3b"
+        },
+        {
+          "id": "algebra_sqineq_2at2pclta2c2p41pc",
+          "sha256": "7969c12ece6f1a47e22b7e41dc81831c47843f049a3ca85dfaa55883e50722da"
+        },
+        {
+          "id": "mathd_numbertheory_43",
+          "sha256": "08b97d7a9453c4f1588493013550dc744ef112cb794e44a77c1263540ef86d22"
+        },
+        {
+          "id": "mathd_algebra_214",
+          "sha256": "2fc788ed63f765728520f32a0266213f669f01ce177a2cf8ba59ab6f85522cd0"
+        },
+        {
+          "id": "mathd_algebra_96",
+          "sha256": "6d1f27d0fe202b31a9e1ad822f809f3998be7049df56dee2e76de1f74e7b1a65"
+        },
+        {
+          "id": "amc12_2001_p2",
+          "sha256": "412f285dd2d7ffb6c2036a727ad02a0fad994d082341057c6bb2047beacfea4f"
+        },
+        {
+          "id": "mathd_algebra_185",
+          "sha256": "3f7c456c5dc5875546f86bf8b83dc29311c67e851c471b85e52e9f5c8c96ac25"
+        },
+        {
+          "id": "algebra_binomnegdiscrineq_10alt28asqp1",
+          "sha256": "fb1a9959230de5607023add97b17d802f9a872eef8828abfeb61f18444224551"
+        },
+        {
+          "id": "mathd_numbertheory_284",
+          "sha256": "4c91948931c2df5796d565e089d68b1dd737550c026dc7004aab2f45be797764"
+        },
+        {
+          "id": "amc12a_2009_p2",
+          "sha256": "ec9f2573e5afa04419c99e70a3cc8203d003975824612841e040e8e8537e1d5d"
+        },
+        {
+          "id": "mathd_numbertheory_709",
+          "sha256": "c5d13281787e61ae1f2f8e009af986be393f089378eed169e99e1f881445035b"
+        },
+        {
+          "id": "amc12a_2013_p8",
+          "sha256": "f5a6edbcc294b1549bd37fecc973f8e038144bd1e4274405dc50753b6293a420"
+        },
+        {
+          "id": "mathd_numbertheory_461",
+          "sha256": "7e2aa4b8ff2bb2d5a4ac7ca86126ab68f9193565b4bc32177d7372a150d878d1"
+        },
+        {
+          "id": "mathd_algebra_59",
+          "sha256": "aa083786ff608712c98e687504abfac4b4ad451f122aabe8fff87aa6137348bb"
+        },
+        {
+          "id": "mathd_algebra_234",
+          "sha256": "c053f319c05050081cebff841d7ede07c11cf1dccbbc8a87782592becc02a98e"
+        },
+        {
+          "id": "imo_1973_p3",
+          "sha256": "b1a816d82236f4bc4947fe5ea72ae7b5d53bd976eb8875f5e945de1b5ee0b397"
+        },
+        {
+          "id": "amc12b_2020_p5",
+          "sha256": "a6231dc96c2fa910d03c041327be18d86030ccf5ac0e447c3f00a23ba4da32ea"
+        },
+        {
+          "id": "numbertheory_sqmod3in01d",
+          "sha256": "2f9c5ccb2a1314373f6b9a797daf021905f65a965240891706a5f8cc445fea8e"
+        },
+        {
+          "id": "mathd_algebra_131",
+          "sha256": "0230c847e3cbda3b666cad4005635959cfeb17d4ef4aeae33bda2af5379599e9"
+        },
+        {
+          "id": "amc12b_2003_p17",
+          "sha256": "c2f96e99b81e1c324a9adfa2bcbeb006c5ac3709badb365146ba180239e7cd4e"
+        },
+        {
+          "id": "mathd_algebra_536",
+          "sha256": "10b5ed8ea9d9624c6567c0cbcb62fb0c4216a6dbb5688f10c3221d639e13941d"
+        },
+        {
+          "id": "mathd_algebra_22",
+          "sha256": "ace8db32437ea03747903c85d77dc8fdf6e6cf9e2081837b18126126a4f6a36a"
+        },
+        {
+          "id": "numbertheory_xsqpysqintdenomeq",
+          "sha256": "91cd6f73dd05ae3e0c65fecfa2c218847b0c4275707c555dfd4c0048feeae55c"
+        },
+        {
+          "id": "aimeII_2001_p3",
+          "sha256": "510b0c6197c87b1a835093a6f17cd955ff1d4d1f5b12d852dcb9245f7634d19c"
+        },
+        {
+          "id": "mathd_numbertheory_22",
+          "sha256": "2f1bd9bb38ccef6cd2384c4ba2877236b8848349b12dc7ef2122d01030da2f00"
+        },
+        {
+          "id": "aime_1987_p8",
+          "sha256": "3d8ccc066aa012212b901325c7b1dbddd30479c2f86cba5eff25079d47356271"
+        },
+        {
+          "id": "mathd_numbertheory_136",
+          "sha256": "d576a5f119c676f0bd699d001c8776f16ba5b84575bbd3d453c929aea4cf275e"
+        },
+        {
+          "id": "amc12_2000_p11",
+          "sha256": "26dbb86eb114e2d3a90c2ca1bcf82d9f0004c952e2b6eb1ca2d860a6ad40841f"
+        },
+        {
+          "id": "amc12b_2003_p9",
+          "sha256": "4f68919528112d8520f130c078efac18fc9271895edcaea28c08198f5c7e6859"
+        },
+        {
+          "id": "algebra_2complexrootspoly_xsqp49eqxp7itxpn7i",
+          "sha256": "1c610acc7dcfac876b5ff3e8aced7df6ef5277f1c0af80fd9ed78c80881722d6"
+        },
+        {
+          "id": "mathd_numbertheory_198",
+          "sha256": "9af99a1032d2fd47611a2063730d08ca49182ecaa33706db33bd8a2da459ca83"
+        },
+        {
+          "id": "mathd_algebra_149",
+          "sha256": "eaa242193eea96ead22bf1292b417270a9706ecdba0c3140c3c8401bdaf7b7ef"
+        },
+        {
+          "id": "mathd_algebra_132",
+          "sha256": "546abbba814dc7a2a98f4b6b39388c0a7d583e04651655a11bc0209583f19780"
+        },
+        {
+          "id": "mathd_numbertheory_37",
+          "sha256": "f1e4c87f4db2092e2cabd26b23f8c3db0e9a770fdc8882c3e454455cd72fbd2c"
+        },
+        {
+          "id": "aime_1983_p9",
+          "sha256": "e44a871af3a0e3f99905676e4ed6352d9b1f16891f845474c60f8145b6210716"
+        },
+        {
+          "id": "mathd_algebra_37",
+          "sha256": "a21b77cdf26c1cb89dc87c515a8543095862e6c5cb61fecea76657a48e28c5b3"
+        },
+        {
+          "id": "mathd_numbertheory_458",
+          "sha256": "9b0b196fac97524aee62c2f24f8819e1f65dd57f1214c0d9bf94f4d36fce26e4"
+        },
+        {
+          "id": "amc12a_2008_p15",
+          "sha256": "1cd9fd0b21740e360a3e76b30f349560384114fc07fc5f64882a12f4c253015b"
+        },
+        {
+          "id": "mathd_numbertheory_301",
+          "sha256": "c79ab25a107fed005f501b7f2d0dbe44803c97a45f0600c50f8e64daf1456bc5"
+        },
+        {
+          "id": "amc12a_2009_p15",
+          "sha256": "3ecb754425f01bc39f90000ebfe7439e64559ae03a5a7f5d883e2f86c45dfaa4"
+        },
+        {
+          "id": "algebra_sqineq_36azm9asqle36zsq",
+          "sha256": "07787225c8416c60e77aa2d87f5643156426b2f2d34c15daddde0add36afcabc"
+        },
+        {
+          "id": "amc12a_2013_p7",
+          "sha256": "68cec7d3bb5b803c43d6683578ebb18f72b33016fe48e34c36eb5df4d50432c2"
+        },
+        {
+          "id": "mathd_algebra_104",
+          "sha256": "ec418acc1fbae260d765dd6d555fdca206f150a1461c8d98f3f153e1ef98e497"
+        },
+        {
+          "id": "mathd_numbertheory_252",
+          "sha256": "8b8d2f1b7792268b9973a1970e0d6ac3a945d5e7b0a18fdc46d11d53569cf458"
+        },
+        {
+          "id": "amc12a_2020_p21",
+          "sha256": "a41b540ab25e5cceaa51914643a6629ca5d19fa88047514c513769931cfcec10"
+        },
+        {
+          "id": "mathd_algebra_493",
+          "sha256": "601c8ebf846d1bdb32d4e583885c0b689718dfab9aee7711d783df34dcfc452a"
+        },
+        {
+          "id": "numbertheory_nckeqnm1ckpnm1ckm1",
+          "sha256": "1bbf518a27b9192ec2585ab4b0517512ed152db5bed0d495f4a371a330d57c3e"
+        },
+        {
+          "id": "algebra_3rootspoly_amdtamctambeqnasqmbpctapcbtdpasqmbpctapcbta",
+          "sha256": "c8e08e023c11d710e08da2a7b4b5cb98c9a16e94b44f97980d58655f585fd35c"
+        },
+        {
+          "id": "mathd_numbertheory_403",
+          "sha256": "de1c60de4d6b5497952bccb911c84a3e553e8120d9b8f069bd78c518d18d3b26"
+        },
+        {
+          "id": "mathd_algebra_190",
+          "sha256": "9aa6a343c772b4236668ef56910325d6459855d7a1c281bfc30a1e5539b32d3b"
+        },
+        {
+          "id": "mathd_numbertheory_269",
+          "sha256": "d6264fc4007e7f23b42c7d7b1f33c14fbdb031cec1fe08c660a4c8bf0c4129bd"
+        },
+        {
+          "id": "aime_1990_p2",
+          "sha256": "35eed5143d1c0362d30beda6abecd977e02027265e3373c0f2895b57f4fa64f8"
+        },
+        {
+          "id": "mathd_numbertheory_101",
+          "sha256": "b66b614a4092379cce0a2e0c0676df235b6639bf8e4dc43de9946b3c76c55948"
+        },
+        {
+          "id": "algebra_sqineq_4bap1lt4bsqpap1sq",
+          "sha256": "537c7e31aa6093a474313a51255f905648cc31e1e4fb73c890b00ee412990402"
+        },
+        {
+          "id": "mathd_numbertheory_156",
+          "sha256": "697cd534b719eaf758fcb2827b6f52eeb92c9ec3113ec877e789a1257d9bd774"
+        },
+        {
+          "id": "mathd_algebra_451",
+          "sha256": "8724b0ad7b1a5160d3fd905343edccd3c89fffaa75ad4afe883626057eb11b51"
+        },
+        {
+          "id": "mathd_algebra_144",
+          "sha256": "29fb697a29f7db9aa1d8a96fd16f30310c8021cd3f73d4114f29c2ea0570f1bc"
+        },
+        {
+          "id": "mathd_algebra_282",
+          "sha256": "353819f4005c23f4c0ec2180172ce1e4be6d77b757455de25c803a42972f0297"
+        },
+        {
+          "id": "mathd_algebra_410",
+          "sha256": "78e972a231c6211a9417af659b55e00023a4f304d8c9055224ab9b6f9a664cd8"
+        },
+        {
+          "id": "mathd_numbertheory_232",
+          "sha256": "d82ba30b0217a454b8e2843fcf5957d8a7d2e24f72cd7e8881b45479b6451b78"
+        },
+        {
+          "id": "mathd_algebra_77",
+          "sha256": "889901ae373903b6a59cbe52baa9d6f646178bf156db487fe3c600fca7cf56c2"
+        },
+        {
+          "id": "imo_1974_p5",
+          "sha256": "d25383e04a75057a8a7a72f719111745e73ad3b22c245ff2ef16d3dff32bb80b"
+        },
+        {
+          "id": "aime_1988_p3",
+          "sha256": "75788ba13e373b2394f3a93cd0d56654a3044958583eb9facae3396d6e576c4d"
+        },
+        {
+          "id": "mathd_numbertheory_530",
+          "sha256": "bf82dc844fd9e91c6caa1aae43a08e284ce9273ee6cef933d71a292b82699295"
+        },
+        {
+          "id": "mathd_algebra_109",
+          "sha256": "31eb537feda733731791af3411c598e099a435d327079fb9e957fb41622014fc"
+        },
+        {
+          "id": "imo_1967_p3",
+          "sha256": "83aa802914bd5cf593dbeba5dfaf2fdb887dc761dddd5805e7c8816570206a62"
+        },
+        {
+          "id": "mathd_algebra_11",
+          "sha256": "e1466444099ea0700573c4c6119e8467af33b6c06c617a89252f5f1287587535"
+        },
+        {
+          "id": "amc12a_2003_p1",
+          "sha256": "0bc7cb488ed0a675d12b31ba018dd2d52fe89fb4905cf31b8fa5dd2e26682236"
+        },
+        {
+          "id": "numbertheory_aneqprodakp4_anmsqrtanp1eq2",
+          "sha256": "62b3bb74258102325744952a06e9c67f5a0e82cef83ee92a386af0228a25b308"
+        },
+        {
+          "id": "algebra_2rootspoly_apatapbeq2asqp2ab",
+          "sha256": "083796b0aac2d73a6c02192ccc484916dc6789b9349afcd49f8366088624a68c"
+        },
+        {
+          "id": "induction_sum_odd",
+          "sha256": "a3d38b42e876beb54bc40e917190e1da2646a78e9ff575b1220a0ea7e264757a"
+        },
+        {
+          "id": "mathd_algebra_568",
+          "sha256": "2cb74cb94217053f880200c192b1d5375b0b60880c3583788e9544a820efd95e"
+        },
+        {
+          "id": "mathd_algebra_616",
+          "sha256": "fecb59966aa4840fd4cc534c82f6a88a1f7ebb40f5fb1005285f563d43edc454"
+        },
+        {
+          "id": "mathd_numbertheory_690",
+          "sha256": "8d40073e80d229458b2fa66888a6ad23cda13f7edb1152a2092b8f35ff941d8c"
+        },
+        {
+          "id": "amc12a_2016_p2",
+          "sha256": "3b5d872c65cc375227a9a90e24440f68dc52b387eec9bc77ae37f83e12fb61f0"
+        },
+        {
+          "id": "mathd_numbertheory_405",
+          "sha256": "f73d9f33b28e78790c34a4a09d0f6ee4527016eed41331151fdf7af09c01076b"
+        },
+        {
+          "id": "mathd_numbertheory_110",
+          "sha256": "00d12b46b2dca5571028d8c4405e10db3e2b4bea5f023722abcd80f90450db24"
+        },
+        {
+          "id": "amc12a_2003_p25",
+          "sha256": "ce1b747b1b37d3849ed5a0bbf12d3973c9e490658daa782edb3ebf1d3255b357"
+        },
+        {
+          "id": "amc12a_2010_p10",
+          "sha256": "695096f08efcfe2ca45595d33c485f696794141444dde80c6f2bf4421e33aa0d"
+        },
+        {
+          "id": "mathd_algebra_509",
+          "sha256": "e99adf7c3bd3115b1a6391ac9ddc32c6fcd106f71aba7cd96bc17c7d287b9a36"
+        },
+        {
+          "id": "mathd_algebra_159",
+          "sha256": "60c993bfd5d587771a8dcecf23eeebf2e7ced91cc5fc8f5d9156e47954927724"
+        },
+        {
+          "id": "aime_1997_p11",
+          "sha256": "3c315ac5a9498a427ffd94bab4c7666ba0ea5a79875316caf884f75210708b3e"
+        },
+        {
+          "id": "aimeI_2000_p7",
+          "sha256": "e7017cad7cd701b8f2d130e1050590784009c724f05695e3d5c507a47d5f0a0d"
+        },
+        {
+          "id": "aime_1988_p4",
+          "sha256": "510a6ea8dcfe3af91b6cb76e43ab4002afdec9283b11b33829c9d4dfb18785f0"
+        },
+        {
+          "id": "induction_divisibility_9div10tonm1",
+          "sha256": "dbfbc67be325d66529e82923c99ced6b48c162566739dfba9f4673ca5cbf7c59"
+        },
+        {
+          "id": "mathd_numbertheory_126",
+          "sha256": "cbbe13696acf677fd19ddf1f9b667afa656f82acccf7214d63b0d014960a376b"
+        },
+        {
+          "id": "mathd_algebra_323",
+          "sha256": "53367b3b1d003f7427cbb29b25664dad0ac54051de439165f9f1d8a3c919551f"
+        },
+        {
+          "id": "mathd_algebra_421",
+          "sha256": "18b0f976240ec76f077f8cd464396a049ef5396ee1da0aff99c56db59a158b75"
+        },
+        {
+          "id": "imo_1987_p6",
+          "sha256": "98095750abc10b672383209ef31db90ffd8c2f470883a25a8117415e9c570539"
+        },
+        {
+          "id": "amc12a_2009_p25",
+          "sha256": "bd312aa609c8f4162adc2ca84b846d0a28a404b600a585f6fbdbb5b872f03580"
+        },
+        {
+          "id": "imo_1961_p1",
+          "sha256": "d80ff4c285aa60e4111127d0102514c0c0cc475067d8ba85d46aab23b2534484"
+        },
+        {
+          "id": "mathd_algebra_31",
+          "sha256": "78399f4b9d147cc8bfea8fc1c7df9255036d1a2effbdaf737822382f03f663e3"
+        },
+        {
+          "id": "algebra_manipexpr_apbeq2cceqiacpbceqm2",
+          "sha256": "17ed053c3bfc862d47ba267e2eed0b2086c6ab04b687eeee05346ed5562d37b4"
+        },
+        {
+          "id": "mathd_numbertheory_370",
+          "sha256": "7f14a7f56a413b0f41577fce1c4130e7203d44b109daf69994570237fd71eb92"
+        },
+        {
+          "id": "mathd_algebra_437",
+          "sha256": "19f825a28e375aae8bb558be361ea640fafdfa9f6d99112602398fd13cdf7567"
+        },
+        {
+          "id": "imo_1966_p5",
+          "sha256": "0c89016885f41b3ea90a7cdfc453390c4331f9543fcb3976df00c8f9a22689e0"
+        },
+        {
+          "id": "mathd_algebra_89",
+          "sha256": "401449d192b67ca8077aa6d75206e75a7b2c7e64762f8fb07aa4dc70fae520b0"
+        },
+        {
+          "id": "imo_1966_p4",
+          "sha256": "32f17a1d6003256c9f8adbaad487732af1e90e8c157b6bf33537306ff7faa7b0"
+        },
+        {
+          "id": "mathd_algebra_67",
+          "sha256": "e121fbc237f4c41d15a52ca783d2677c28df62b42512893c79dfc2848ee6e57d"
+        },
+        {
+          "id": "mathd_numbertheory_326",
+          "sha256": "9e3d36fe8abf87e72b31517cb35b8327f7964ad33ff7231529bbe2e8f5153391"
+        },
+        {
+          "id": "induction_divisibility_3div2tooddnp1",
+          "sha256": "3a2e66fd8b46203fef247809e23a756a3d26042efdf7f523cfbac92b75811fd7"
+        },
+        {
+          "id": "mathd_algebra_123",
+          "sha256": "f69096b4c564f8557548e384410176e01c97d8e1871e3064095013399e00879e"
+        },
+        {
+          "id": "algebra_2varlineareq_xpeeq7_2xpeeq3_eeq11_xeqn4",
+          "sha256": "eb430e4f0b06e4aac6b803d06701dd594d3d3d4134fd25cc5d780d436ed9f4ef"
+        },
+        {
+          "id": "imo_1993_p5",
+          "sha256": "cfc2d46190123df51b349cf289549e67aae1257d9a75ef99b7fb78fd713ff273"
+        },
+        {
+          "id": "numbertheory_prmdvsneqnsqmodpeq0",
+          "sha256": "5cecdd9fcaac2a8c52fee9ce270e4e9c263462bacce41261e644fa078986efc7"
+        },
+        {
+          "id": "imo_1964_p1_1",
+          "sha256": "1e0508ee80e793eedc1372ef512d5573b44997df5b53eb5900a4f9c300f7aba5"
+        },
+        {
+          "id": "imo_1990_p3",
+          "sha256": "93a46a32a7e5a65faf884a1ac96cbd1a67278f97b9c903c6b043ca3e44724e00"
+        },
+        {
+          "id": "induction_ineq_nsqlefactn",
+          "sha256": "ac66232abdff419fd1d9dba28e0158414272778d46f6a42a77a7292306e88950"
+        },
+        {
+          "id": "mathd_numbertheory_30",
+          "sha256": "8580b5c6f56bb244adc66bcae5f77d8716fb180c44f65a209fdcda5e960ca42d"
+        },
+        {
+          "id": "mathd_algebra_267",
+          "sha256": "f9f443e4104e8c49d1d67780ea86ce1bf240bebd45ee7a0571e75ef947a5ff1b"
+        },
+        {
+          "id": "mathd_numbertheory_961",
+          "sha256": "599b678d0d9fcfd8e39b982fd01dfd5b717a9c55665a5b3cb7a457649560624d"
+        },
+        {
+          "id": "induction_seq_mul2pnp1",
+          "sha256": "00eb46c11872c536657fbf887bb04331524df1b9605edf98d7bcd850b5ddcae8"
+        },
+        {
+          "id": "amc12a_2002_p12",
+          "sha256": "51fd5ebd2bd8fa5dd0b30f15cace0ce7ece8f38800396bfb50e1e1f363d684c0"
+        },
+        {
+          "id": "algebra_manipexpr_2erprsqpesqeqnrpnesq",
+          "sha256": "cd014e9fdf052ba1d6a08bd8f55dc64ef64d23a93e087df3619c9e4c9537e89e"
+        },
+        {
+          "id": "mathd_algebra_119",
+          "sha256": "f29ea9efea65916f2927667294d6068f5e5fc6df057c9f4af71a20f1624d5441"
+        },
+        {
+          "id": "amc12a_2020_p13",
+          "sha256": "5ce9e23ebfb5563f7d508b6d36e85cfd4c68f79921dd3949cc983dbe41ff7fe5"
+        },
+        {
+          "id": "imo_1977_p5",
+          "sha256": "c677495daf39182a522988c2a0e5a27921d2c2f717ae84231a6fbd5942321895"
+        },
+        {
+          "id": "numbertheory_2dvd4expn",
+          "sha256": "5faf9b086e3db59eca5f86d8f640c5e275c22a6db35a31dc7ac1e84ad56ecec8"
+        },
+        {
+          "id": "amc12a_2010_p11",
+          "sha256": "85ff6d5f62c3678e2e637ddc188bda90966ed163ef9c740135b222720f3b6437"
+        },
+        {
+          "id": "amc12a_2003_p24",
+          "sha256": "7f2bdee869e5c5111511e3586e9e5881e169589bf3ed2620ca1075e070568139"
+        },
+        {
+          "id": "amc12a_2002_p1",
+          "sha256": "5c7b4486387d9535b6325b3a444f6f7045d7a403177719c3b83facbda5ad6667"
+        },
+        {
+          "id": "mathd_algebra_206",
+          "sha256": "04636e95944e2a7c742cb7f29a50bdb7376cb880b4f74a1031d7037d62991de8"
+        },
+        {
+          "id": "mathd_numbertheory_92",
+          "sha256": "d99fa52c01ffa63699e2244bfbf6efebedbb8578f28076f6d330d85ab0a173e5"
+        },
+        {
+          "id": "mathd_algebra_482",
+          "sha256": "dea0459c039ac6a2132ced608520cb90a599586632c7973ed1b484129cfe21b7"
+        },
+        {
+          "id": "amc12b_2002_p3",
+          "sha256": "b696456daa818d4e38320219d01dc952172557ec790224206726119f64153cf5"
+        },
+        {
+          "id": "mathd_numbertheory_668",
+          "sha256": "422f08a8315274ffbb7ce100c85da1c5df931d9399e8eea13bbbdce6c86e47a6"
+        },
+        {
+          "id": "mathd_algebra_251",
+          "sha256": "58464cf46d41843342c09e6fb3899054b1cdbc053b1770d3bc81b7dbf980fa82"
+        },
+        {
+          "id": "mathd_numbertheory_84",
+          "sha256": "24eb7b9c6b432e45f42e7501d12bc84d5c67efd7edcea1f5580c677715d7d0cf"
+        },
+        {
+          "id": "mathd_numbertheory_412",
+          "sha256": "e045163b94cf9e389f1ba2126f864cc27b4215dd1b3d98f6fa8fcc0f471c2142"
+        },
+        {
+          "id": "mathd_algebra_181",
+          "sha256": "7935701d4affee29371472176905aca8ca42c9620e912490036fe7e215c86aea"
+        },
+        {
+          "id": "amc12a_2016_p3",
+          "sha256": "dfcf6025869b6a19d77956a9b9aa3e64e6ef7f0e3b04b3a5fc64e8e68d9f7edc"
+        },
+        {
+          "id": "mathd_algebra_247",
+          "sha256": "ee536fbc8876fa43f868aaffc280c8f4715cc1d8a0b88708282f7d62b47a70b1"
+        },
+        {
+          "id": "algebra_sqineq_2unitcircatblt1",
+          "sha256": "764c45bcaaa846788d629cd869a617ec1ca96ced9fe8986e3318f6ba6df71440"
+        },
+        {
+          "id": "mathd_numbertheory_629",
+          "sha256": "cc06a80d1da31eb651cdba4c50ff554f3b87c0c99c023ff87fa31d14f39bc783"
+        },
+        {
+          "id": "amc12a_2017_p2",
+          "sha256": "1a938b3b4f5b2f011dc80cd529492a0400ab9136bce2a4a735c16d0c69cda08b"
+        },
+        {
+          "id": "algebra_amgm_sumasqdivbsqgeqsumbdiva",
+          "sha256": "e839b4e1a25cf93b9264db611e584aaf8fe8069db46c7d3c3d1c152d7a52f440"
+        },
+        {
+          "id": "mathd_numbertheory_202",
+          "sha256": "04e30f2c265d5355750d2562492659b720be26b9000f5b1118e1996de57b25c5"
+        },
+        {
+          "id": "imo_1979_p1",
+          "sha256": "49db746b3c22057e484d37caed0e3fd31b9f8ab64a53a76e5dacae65e18a4214"
+        },
+        {
+          "id": "mathd_algebra_51",
+          "sha256": "c27abab10fa31ceee9c4b5e84c1eb32d6b2fbd5d9e8e44f04edfab24cc5ee020"
+        },
+        {
+          "id": "mathd_algebra_10",
+          "sha256": "b2823a5188da5ac5f1fa3ab9ae183f78a7712d44f31de238ee7bef0d51e66dc7"
+        }
+      ]
+    }
+  ]
+}

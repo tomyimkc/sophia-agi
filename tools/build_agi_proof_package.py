@@ -9,7 +9,9 @@ evidence and open proof gaps without claiming Sophia is proven AGI.
 
 from __future__ import annotations
 
+import argparse
 import json
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -122,7 +124,7 @@ def hidden_commitments() -> dict[str, Any]:
     }
 
 
-def build_manifest() -> dict[str, Any]:
+def build_manifest(*, generated: str | None = None) -> dict[str, Any]:
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     models = load_json(ROOT / "models" / "manifest.json", {})
     rag_summary = load_json(ROOT / "benchmark" / "model_runs" / "rag-claude-summary.json", {})
@@ -130,14 +132,52 @@ def build_manifest() -> dict[str, Any]:
     benchmark_total = sum(item["cases"] for item in leaderboards.values())
     hidden_report = latest_hidden_report()
     commitments = hidden_commitments()
+    # Failure-ledger OPEN/CLOSED summary (the most honest artifact — surfaces what still
+    # blocks the AGI claim). tools.validate_failure_ledger is dependency-free stdlib.
+    try:
+        if str(ROOT) not in sys.path:
+            sys.path.insert(0, str(ROOT))
+        from tools.validate_failure_ledger import validate as _validate_ledger
+        ledger_summary = _validate_ledger()
+    except Exception as exc:  # pragma: no cover - never let the ledger break the package build
+        ledger_summary = {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+
+    # Verified-trace recall verdict (the falsification test for the trace logger).
+    # Read from the committed artifact so the manifest reports what the experiment
+    # actually concluded — never a hardcoded value. Absent artifact -> None (honest).
+    recall_path = ROOT / "agi-proof" / "verified-traces" / "verified-trace-recall.public-report.json"
+    recall_artifact = load_json(recall_path, None) if recall_path.exists() else None
+    verified_traces = (
+        {
+            "recallVerdict": recall_artifact.get("verdict"),
+            "traceRecall": recall_artifact.get("trace", {}).get("contradictionRecall"),
+            "compilerRecall": recall_artifact.get("compiler", {}).get("contradictionRecall"),
+            "factLogicAgreement": recall_artifact.get("trace", {}).get("factLogicAgreement"),
+            "candidateOnly": recall_artifact.get("candidateOnly", True),
+            "scope": (
+                "Process-supervision / TRiSM-audit layer: dual (fact+logic) stamped traces, "
+                "tamper-evident chain, faithfulness probe, cross-trace contradiction mining. "
+                "Auditable reasoning substrate — not a capability claim."
+            ),
+        }
+        if isinstance(recall_artifact, dict)
+        else {"recallVerdict": None, "scope": "verified-trace recall artifact not yet generated"}
+    )
 
     return {
         "version": version,
-        "generated": datetime.now().isoformat(timespec="seconds"),
+        "generated": generated or datetime.now().isoformat(timespec="seconds"),
         "claimBoundary": (
             "Sophia is an AGI-candidate proof package and provenance-aware "
             "reasoning system. This repository does not prove true AGI."
         ),
+        "failureLedgerSummary": {
+            "openCount": ledger_summary.get("openCount"),
+            "byStatus": ledger_summary.get("byStatus"),
+            "structurallyValid": ledger_summary.get("ok"),
+            "openItems": ledger_summary.get("openItems", []),
+        },
+        "verifiedTraces": verified_traces,
         "operationalDefinition": {
             "summary": (
                 "For this repo, AGI evidence means broad task competence, transfer, "
@@ -272,15 +312,65 @@ def build_manifest() -> dict[str, Any]:
             "factCheckFlywheelRunner": "tools/run_fact_check_flywheel.py",
             "reflexiveSelfGateRunner": "tools/run_reflexive_self_gate.py",
             "reflexiveSelfGateReport": "agi-proof/self-gate/reflexive-self-gate.public-report.json",
+            # Verified reasoning-trace layer (process-supervision / TRiSM-audit).
+            # The recall experiment is the falsification test; the package README
+            # states the honest scope (auditable != smarter).
+            "verifiedTracePackage": "agi-proof/verified-traces/README.md",
+            "verifiedTraceRecallRunner": "tools/run_verified_trace_recall.py",
+            "verifiedTraceRecallReport": "agi-proof/verified-traces/verified-trace-recall.public-report.json",
+            "verifiedTraceLogger": "agent/verified_trace.py",
+            "verifiedTraceSchema": "schema/verified-trace-1.0.0.json",
+            "verifiedTraceRlvrBridge": "agent/verified_trace_rlvr.py",
+            "verifiedTraceFaithfulnessProbe": "agent/faithfulness_probe.py",
+            "verifiedTraceCrossTraceMiner": "agent/cross_trace_consistency.py",
+            "verifiedTraceMcpQuery": "sophia_mcp/tools_impl.py",
         },
     }
 
 
+def manifest_text(manifest: dict[str, Any]) -> str:
+    """Canonical serialisation of a manifest — the exact bytes written to disk."""
+    return json.dumps(manifest, indent=2, ensure_ascii=False) + "\n"
+
+
+def write_manifest(output: Path = OUTPUT) -> Path:
+    """Build the manifest and write it to ``output`` (default behaviour). Returns
+    the path written."""
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(manifest_text(build_manifest()), encoding="utf-8")
+    return output
+
+
+def check_manifest(output: Path = OUTPUT) -> int:
+    """Verify ``output`` is up to date WITHOUT writing. The volatile ``generated``
+    timestamp is normalised out (a fresh manifest is built with the committed file's
+    own ``generated``) so only real content drift counts. Returns 0 if current, 1
+    on drift/missing (with a ``DRIFT`` message on stderr)."""
+    if not output.exists():
+        print(f"DRIFT: {output} is missing — run tools/build_agi_proof_package.py", file=sys.stderr)
+        return 1
+    existing = output.read_text(encoding="utf-8")
+    try:
+        parsed = json.loads(existing)
+    except json.JSONDecodeError:
+        parsed = None
+    # Fail-closed on any malformed/non-object manifest: a list/scalar/None counts as
+    # drift, not a crash (committed_generated stays None so the rebuild diverges).
+    committed_generated = parsed.get("generated") if isinstance(parsed, dict) else None
+    if manifest_text(build_manifest(generated=committed_generated)) != existing:
+        print(f"DRIFT: {output} is stale — run tools/build_agi_proof_package.py", file=sys.stderr)
+        return 1
+    return 0
+
+
 def main() -> int:
-    AGI_PROOF_DIR.mkdir(parents=True, exist_ok=True)
-    manifest = build_manifest()
-    OUTPUT.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"Wrote {OUTPUT}")
+    parser = argparse.ArgumentParser(description="Build (or --check) the AGI-proof evidence manifest")
+    parser.add_argument("--check", action="store_true", help="verify the committed manifest is current without writing")
+    args = parser.parse_args()
+    if args.check:
+        return check_manifest()
+    output = write_manifest()
+    print(f"Wrote {output}")
     return 0
 
 

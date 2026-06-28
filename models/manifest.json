@@ -1,10 +1,7 @@
 {
   "version": "0.6.0",
-  "baseModel": "Qwen/Qwen2.5-3B-Instruct",
-  "adapterPath": "training/lora/checkpoints/sophia-v1",
   "ollamaModelfile": "models/ollama/Modelfile",
   "hfModelCard": "models/hf-model-card/README.md",
-  "hfModelRepo": "https://huggingface.co/tomyimkc/sophia-agi-lora-v1",
   "benchmarkScore": {
     "model": "sophia-v1",
     "passed": 20,

@@ -59,7 +59,12 @@ CONFIDENCE_RANK = {
 REQUIRED_KEYS = ("id", "pageType")
 
 # Typed edge keys carried in frontmatter (in addition to inline [[wikilinks]]).
-EDGE_KEYS = ("links", "contradicts", "supersedes", "supersededBy", "doNotMergeWith")
+# subClassOf / disjointWith / scopedAnalogy are the concept-TBox edges (see
+# docs/11-Platform/Ontology-Claim-Boundary.md).
+EDGE_KEYS = (
+    "links", "contradicts", "supersedes", "supersededBy", "doNotMergeWith",
+    "subClassOf", "disjointWith", "scopedAnalogy",
+)
 
 # Provenance keys that an attribution-bearing page should carry.
 PROVENANCE_KEYS = ("attributedAuthor", "authorConfidence", "tradition", "sources")

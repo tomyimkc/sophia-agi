@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "sophia/ontology_edge.schema.json",
+  "title": "Sophia concept-TBox ontology edge",
+  "type": "object",
+  "required": ["subject", "object", "edgeType", "sources", "verificationStatus"],
+  "additionalProperties": false,
+  "properties": {
+    "subject": {"type": "string", "minLength": 1},
+    "object": {"type": "string", "minLength": 1},
+    "edgeType": {
+      "type": "string",
+      "enum": ["subClassOf", "disjointWith", "scopedAnalogy", "closeMatch", "sameAs", "equivalentClass", "exactMatch"]
+    },
+    "subjectTradition": {"type": ["string", "null"]},
+    "objectTradition": {"type": ["string", "null"]},
+    "scope": {"type": ["string", "null"], "minLength": 1},
+    "sources": {"type": "array", "items": {"type": "string"}},
+    "derivesFrom": {"type": "array", "items": {"type": "string"}},
+    "sourceSpan": {"type": ["string", "null"]},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "verificationStatus": {
+      "type": "string",
+      "enum": ["candidate", "quarantine", "admitted", "rejected"]
+    },
+    "notPromotable": {"type": "boolean"}
+  }
+}

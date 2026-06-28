@@ -1,0 +1,4 @@
+{"id": "he-reverse", "prompt": "Write reverse_string(s) returning s reversed.", "response": "```python\ndef reverse_string(s):\n    return s[::-1]\nassert reverse_string('abc')=='cba'\n```", "verifier": "code_tests_pass", "timeoutSec": 10}
+{"id": "he-sum-list", "prompt": "Write sum_list(nums) returning the sum.", "response": "```python\ndef sum_list(nums):\n    return sum(nums)\nassert sum_list([1,2,3])==6\n```", "verifier": "code_tests_pass", "timeoutSec": 10}
+{"id": "he-is-even", "prompt": "Write is_even(n) returning True if n is even.", "response": "```python\ndef is_even(n):\n    return n % 2 == 0\nassert is_even(4) and not is_even(3)\n```", "verifier": "code_tests_pass", "timeoutSec": 10}
+{"id": "he-unique", "prompt": "Write unique_sorted(nums) returning sorted unique values.", "response": "```python\ndef unique_sorted(nums):\n    return sorted(set(nums))\nassert unique_sorted([3,1,2,1])==[1,2,3]\n```", "verifier": "code_tests_pass", "timeoutSec": 10}

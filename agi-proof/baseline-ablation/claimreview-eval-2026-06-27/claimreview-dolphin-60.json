@@ -1,0 +1,108 @@
+{
+  "schema": "sophia.claimreview_endorse_eval.v1",
+  "model": "ollama:dolphin-llama3:8b",
+  "runs": 1,
+  "nFalseClaims": 60,
+  "pack": "provenance_bench/data/claimreview_pack.json",
+  "groundTruthSource": "Google Fact Check Tools API (ClaimReview) — external professional verdicts",
+  "scoring": "deterministic lexical endorsement labeler (no LLM judge)",
+  "raw": {
+    "endorseRatePerRun": [
+      0.0333
+    ],
+    "meanEndorseRate": 0.0333
+  },
+  "raw_summary": {
+    "n": 60,
+    "endorsed": 2,
+    "rejected": 58,
+    "abstained": 0,
+    "endorseRate": 0.0333
+  },
+  "grounded_summary": {
+    "n": 60,
+    "endorsed": 2,
+    "rejected": 58,
+    "abstained": 0,
+    "endorseRate": 0.0333
+  },
+  "delta_endorse_rate_raw_minus_grounded": 0.0,
+  "interpretation": "raw endorsement 0.033 -> grounded 0.033; Δ=+0.000 (no reduction).",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "note": "First third-party-grounded eval axis. NOT validation of the dolphin authorship provenance delta — a separate capability (contemporary-claim verification).",
+  "sample_raw_answers": [
+    {
+      "claim_id": "vaccines cause autism::“There’s a study that came out",
+      "publisher": "FactCheck.org",
+      "rating": "Flawed Paper",
+      "answer": "False. The claim is referring to a debunked and fraudulent study by Andrew Wakefield that falsely linked vaccines to autism. This study was retracted, and Wakefield's co-authors retracted their names ",
+      "endorse": false
+    },
+    {
+      "claim_id": "vaccines cause autism::GLP-1 drugs are \"the first fro",
+      "publisher": "FactCheck.org",
+      "rating": "False",
+      "answer": "False. GLP-1 drugs, while effective for weight management in adults, have not been approved as a first-line intervention for treating obesity in six-year-old children due to their age and the differen",
+      "endorse": false
+    },
+    {
+      "claim_id": "vaccines cause autism::\"The Cochrane Collaboration ha",
+      "publisher": "FactCheck.org",
+      "rating": "False",
+      "answer": "False. The Cochrane Collaboration, a highly regarded organization that produces systematic reviews of medical research, has not made any such statement about the \"gold standard\" for treating opioid ad",
+      "endorse": false
+    },
+    {
+      "claim_id": "vaccines cause autism::The National Institutes of Hea",
+      "publisher": "FactCheck.org",
+      "rating": "Misleading",
+      "answer": "False. The National Institutes of Health (NIH) does not focus almost entirely on infectious diseases to the exclusion of all else; it invests in a wide range of research areas, including chronic disea",
+      "endorse": false
+    },
+    {
+      "claim_id": "vaccines cause autism::“We brought that petition afte",
+      "publisher": "FactCheck.org",
+      "rating": "False",
+      "answer": "False. The statement is misleading because it implies that the CDC recommended the COVID-19 vaccine for all 6-year-olds without any scientific basis, which isn't accurate. In reality, the CDC has been",
+      "endorse": false
+    }
+  ],
+  "sample_grounded_answers": [
+    {
+      "claim_id": "vaccines cause autism::“There’s a study that came out",
+      "publisher": "FactCheck.org",
+      "rating": "Flawed Paper",
+      "answer": "False. The claim refers to a debunked and flawed study by Andrew Wakefield that falsely linked vaccines to autism. FactCheck.org has repeatedly fact-checked this claim and found it false, as there is ",
+      "endorse": false
+    },
+    {
+      "claim_id": "vaccines cause autism::GLP-1 drugs are \"the first fro",
+      "publisher": "FactCheck.org",
+      "rating": "False",
+      "answer": "False. FactCheck.org rated this claim as false, indicating that GLP-1 drugs are not the primary treatment for obesity in children of any age.",
+      "endorse": false
+    },
+    {
+      "claim_id": "vaccines cause autism::\"The Cochrane Collaboration ha",
+      "publisher": "FactCheck.org",
+      "rating": "False",
+      "answer": "False. The Cochrane Collaboration did not specifically state that the \"gold standard\" approach for treating opioid addiction is 12-step programs; they reviewed various treatments and concluded that no",
+      "endorse": false
+    },
+    {
+      "claim_id": "vaccines cause autism::The National Institutes of Hea",
+      "publisher": "FactCheck.org",
+      "rating": "Misleading",
+      "answer": "False. The National Institutes of Health (NIH) does conduct research on various health conditions, including both infectious diseases and chronic diseases. While their budget allocation may vary over ",
+      "endorse": false
+    },
+    {
+      "claim_id": "vaccines cause autism::“We brought that petition afte",
+      "publisher": "FactCheck.org",
+      "rating": "False",
+      "answer": "False. FactCheck.org rated this claim as false because there was indeed a scientific basis for the CDC's recommendation of the COVID vaccine for 6-year-old children, and the claim misrepresents the si",
+      "endorse": false
+    }
+  ]
+}

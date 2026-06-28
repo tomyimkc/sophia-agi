@@ -10,6 +10,7 @@ Wire in .cursor/mcp.json (see docs/09-Agent/MCP-Server.md).
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -23,7 +24,10 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     benchmark_score,
     capability_retention_demo,
     check_claim,
+    check_concept_edge,
+    conformal_decide_tool,
     conscience_benchmark_tool,
+    cross_trace_mine_tool,
     conscience_check_tool,
     constitution_check_tool,
     contract_describe,
@@ -43,6 +47,7 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     get_record,
     list_disputes,
     mbti_type_record,
+    medical_citation_check,
     moral_parliament_tool,
     next_task,
     ocean_measure,
@@ -57,6 +62,11 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     revise,
     rubric_review,
     sector_council,
+    team_agents_deliberate,
+    trace_contradictions,
+    trace_query,
+    trace_verify,
+    trajectory_eval,
     uncertainty_score,
     validate_corpus,
     verify_claim,
@@ -119,8 +129,81 @@ def sophia_gate_check(
 @mcp.tool()
 def sophia_check_claim(text: str) -> str:
     """Mode-free source-discipline check: is an attribution forbidden by Sophia's
-    'don't merge lineages' rule? Returns {passed, reasons, violations}. Read-only."""
+    'don't merge lineages' rule, OR an unscoped cross-tradition concept identity
+    ('ren is identical to agape')? Returns {passed, reasons, violations}. Read-only."""
     return dumps(check_claim(text))
+
+
+@mcp.tool()
+def sophia_check_concept_edge(edge: dict) -> str:
+    """Classify a structured concept-TBox edge with the symbolic Datalog gate.
+
+    ``edge`` = {subject, object, edgeType, subjectTradition, objectTradition, scope,
+    sources}. Returns {verdict, edgeId, detail}, verdict ∈ {admit, abstain,
+    violation}. A cross-tradition identity abstains (quarantine); a sourced+scoped
+    analogy admits; a disjoint-tradition equation is a violation. Read-only."""
+    return dumps(check_concept_edge(edge))
+
+
+@mcp.tool()
+def sophia_trajectory_eval(trajectory: list) -> str:
+    """Score a whole agent trajectory for mid-plan faithfulness, step by step.
+
+    Each step is an object: ``observation`` = evidence returned by the environment,
+    ``claim``/``text`` = what the agent asserted, ``cites`` = ids of earlier steps
+    that support the claim. Returns a fail-closed verdict (accept | abstain |
+    blocked), a faithfulness score, the first unfaithful step, and a per-step
+    breakdown. Catches the fabrication a single-answer gate misses: a claim asserted
+    mid-plan that no earlier observation supports. Read-only, offline."""
+    return dumps(trajectory_eval(trajectory))
+
+
+@mcp.tool()
+def sophia_trace_query(
+    run_id: str = "",
+    verified: bool | None = None,
+    phase: str = "",
+    limit: int = 200,
+) -> str:
+    """Scan the verified reasoning-trace log (sophia.verified_trace.v1) and return
+    a summary + filtered sample. Each trace is one fact+logic-stamped step.
+
+    Filters (all optional): run_id, verified (only verified/unverified steps),
+    phase (rlvr|sft|curriculum|benchmark|conscience). Reports stepVerifiedRate and
+    factLogicAgreement over the whole log. Read-only — never mutates the log."""
+    return dumps(trace_query(
+        run_id or None,
+        verified=verified,
+        phase=phase or None,
+        limit=limit,
+    ))
+
+
+@mcp.tool()
+def sophia_trace_verify(trace_id: str = "", check_chain: bool = True) -> str:
+    """Re-verify a stored trace: re-derive 'verified' from its fact+logic stamps
+    and check the tamper-evident hash chain. The reproducibility tool — a regulator
+    can re-derive any stamp without trusting the logger's word. If trace_id is
+    empty, returns only the chain-integrity report over the whole log. Read-only."""
+    return dumps(trace_verify(trace_id or None, check_chain=check_chain))
+
+
+@mcp.tool()
+def sophia_trace_contradictions() -> str:
+    """Mine the verified-trace log for CROSS-TRACE contradictions: pairs of traces
+    where one asserts X and another asserts not-X, BOTH verified. Each passed its
+    own gates; together they contradict — the global consistency invariant no
+    within-trace component enforces. Returns the cross-trace ledger. Read-only."""
+    return dumps(trace_contradictions())
+
+
+@mcp.tool()
+def sophia_medical_citation_check(text: str) -> str:
+    """Verify medical citations (PMID / DOI / NICE guideline IDs): do they EXIST,
+    and are they cited faithfully? Fabricated references are always flagged; the
+    support tier abstains without a judge (fail-closed). Citation review only — not
+    medical advice. Read-only."""
+    return dumps(medical_citation_check(text))
 
 
 @mcp.tool()
@@ -132,6 +215,10 @@ def sophia_conscience_check(text: str, mode: str = "output", action: str = "", c
         return dumps({"error": f"invalid context_json: {exc}"})
     if not isinstance(context, dict):
         return dumps({"error": "context_json must be a JSON object"})
+    # In a hardened deployment, enforce the acceptable-use refusal screen at the
+    # input boundary by default (caller can still override explicitly).
+    if os.environ.get("SOPHIA_HARDENED") == "1":
+        context.setdefault("enforceAcceptableUse", True)
     return dumps(conscience_check_tool(text, mode=mode, action=action or None, context=context))
 
 
@@ -145,6 +232,29 @@ def sophia_uncertainty_score(text: str, samples_json: str = "[]", p_true: float 
     if not isinstance(samples, list):
         return dumps({"error": "samples_json must be a JSON array"})
     return dumps(uncertainty_score(text, samples=samples, p_true=p_true, p_ik=p_ik, evidence_count=evidence_count, high_risk=high_risk))
+
+
+@mcp.tool()
+def sophia_conformal_decide(confidence: float, gate_passed: bool = True, risk: str = "normal") -> str:
+    """Certified answer/abstain via a held-out-calibrated split-conformal threshold.
+
+    Routes a confidence in [0,1] against the fitted conformal policy (distribution-free
+    coverage guarantee) instead of a hand-picked cut point. Fails safe to the default
+    boundary when no calibration artifact exists. Fit one with tools/fit_conformal_policy.py.
+    """
+    if confidence is None or not (0.0 <= float(confidence) <= 1.0):
+        return dumps({"error": "confidence must be a number in [0,1]"})
+    return dumps(conformal_decide_tool(float(confidence), gate_passed=bool(gate_passed), risk=risk))
+
+
+@mcp.tool()
+def sophia_cross_trace_mine() -> str:
+    """Mine the verified-trace log for GLOBAL contradictions (verified != consistent).
+
+    Surfaces traces that each passed their own gates but assert X vs not-X — a
+    higher-order audit signal than per-trace verification. Deterministic, read-only.
+    """
+    return dumps(cross_trace_mine_tool())
 
 
 @mcp.tool()
@@ -351,6 +461,38 @@ def sophia_council_deliberate(
         return dumps({"error": "models_json must be a JSON array"})
     return dumps(council_deliberate(query, model=model, models=models or None,
                                     max_seats=max_seats, gate=gate))
+
+
+@mcp.tool()
+def sophia_team_agents_deliberate(
+    query: str,
+    model: str = "mock",
+    adapter_path: str = "",
+    seat_models_json: str = "[]",
+    max_seats: int = 4,
+    gate: bool = True,
+) -> str:
+    """Runtime team orchestrator: deliberate_team() map-reduce with optional Sophia LoRA adapter.
+
+    ``adapter_path`` sets SOPHIA_MLX_ADAPTER before inference. ``seat_models_json`` is an
+    optional JSON array of model specs for heterogeneous seats. ``canClaimAGI: false``.
+    """
+    try:
+        seat_models = json.loads(seat_models_json or "[]")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid seat_models_json: {exc}"})
+    if not isinstance(seat_models, list):
+        return dumps({"error": "seat_models_json must be a JSON array"})
+    return dumps(
+        team_agents_deliberate(
+            query,
+            model=model,
+            adapter_path=adapter_path,
+            seat_models=seat_models or None,
+            max_seats=max_seats,
+            gate=gate,
+        )
+    )
 
 
 @mcp.tool()

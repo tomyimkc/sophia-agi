@@ -23,6 +23,19 @@ PENDING_PATH = ROOT / "training" / "feedback" / "pending_projection_candidates.j
 
 _FAIL_CLOSED_VERDICTS = frozenset({"block", "abstain", "escalate", "retrieve", "clarify"})
 
+# Source tiers that may NEVER reach the boundary, regardless of human approval —
+# the information-flow invariant for synthetic/counterfactual content (see
+# agent/counterfactual_philosophy.py and docs/11-Platform/Ontology-Claim-Boundary.md).
+_NON_PROMOTABLE_TIERS = frozenset({"counterfactual", "synthetic"})
+
+
+def _candidate_source_tier(row: dict) -> str:
+    """The source tier of a pending row (top-level or in its meta)."""
+    tier = row.get("sourceTier")
+    if not tier:
+        tier = (row.get("meta") or {}).get("sourceTier")
+    return str(tier or "").lower()
+
 
 def _read_jsonl(path: Path) -> list[dict]:
     if not path.exists():
@@ -172,6 +185,21 @@ def commit_approved_candidate(
         break
     if target is None:
         return {"ok": False, "error": f"no pending candidate for nodeId '{node_id}'", "defaultDeny": True}
+
+    # Information-flow invariant: synthetic/counterfactual content is barred from
+    # the boundary EVEN IF a human approved it. "Non-promotable" is a structural
+    # property of the source tier, not a label that approval can override. (Note:
+    # this is the *source* tier of the content, distinct from the wiki ``tier``
+    # destination argument above.)
+    source_tier = _candidate_source_tier(target)
+    if source_tier in _NON_PROMOTABLE_TIERS:
+        return {
+            "ok": False,
+            "error": f"sourceTier '{source_tier}' is non-promotable — barred regardless of approval",
+            "nonPromotableTier": True,
+            "defaultDeny": True,
+            "nodeId": node_id,
+        }
 
     if not target.get("approved") and not target.get("promoted"):
         return {

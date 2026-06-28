@@ -26,6 +26,39 @@ def _ci(xs: list[float], alpha: float = 0.05) -> list[float]:
 KAPPA_FLOOR = 0.40   # "moderate" agreement, the minimum for a validated headline
 
 
+_AGGREGATOR_PROVIDERS = ("openrouter", "openai", "vllm", "sglang", "llamacpp")
+
+
+# llmhub.com.cn serves BARE model ids (no "vendor/" prefix), so its underlying
+# vendor family is recovered from the model NAME rather than a path split. Same
+# independence the gate cares about (vendor family, not gateway): `llmhub:gpt-4o`
+# and `llmhub:claude-sonnet-4-6` are openai vs anthropic — two independent families
+# behind one key, exactly like openrouter. Order matters (most specific first).
+_LLMHUB_FAMILY: list[tuple[str, str]] = [
+    ("claude", "anthropic"),
+    ("gpt-", "openai"), ("o1", "openai"), ("o3", "openai"), ("o4", "openai"),
+    ("gemini", "google"),
+    ("deepseek", "deepseek"),
+    ("qwen", "qwen"),
+    ("glm-", "zhipu"),
+    ("kimi", "moonshot"),
+    ("doubao", "bytedance"),
+    ("grok", "xai"),
+    ("llama", "meta-llama"),
+]
+
+
+def _llmhub_family(model: str) -> str:
+    """Map a bare llmhub model id to its vendor family (lowercased). Falls back
+    to the full model id so an unmapped model is its OWN family (conservative:
+    never collapses two unknown models into one)."""
+    m = model.strip().lower()
+    for prefix, fam in _LLMHUB_FAMILY:
+        if m.startswith(prefix):
+            return fam
+    return m
+
+
 def _distinct_families(judges: "list[str] | None") -> int:
     """Count distinct provider families among judge specs ('anthropic:..' -> 'anthropic').
 
@@ -35,6 +68,17 @@ def _distinct_families(judges: "list[str] | None") -> int:
     OpenRouter key are two independent families — while two models from the SAME
     vendor (e.g. 'openrouter:anthropic/a' and 'openrouter:anthropic/b') collapse to
     one. The independence the gate cares about is the vendor family, not the gateway.
+
+    A self-hosted local server (vllm/sglang/llamacpp) is treated the SAME way: it is an
+    aggregator, and the independence the gate cares about is the MODEL vendor, not the
+    server. So a local "judge farm" of Qwen + Llama served on two vLLM ports counts as
+    TWO distinct families (qwen vs meta-llama) — letting a DGX Spark satisfy the >=2-family
+    no-overclaim gate without metered cloud. The per-server base_url is set via the
+    'provider:model@http://host/v1' spec suffix (see agent.model.resolve_config).
+
+    llmhub.com.cn is an aggregator that serves BARE model ids (no 'vendor/' path), so
+    its family is recovered from the model name via :data:`_LLMHUB_FAMILY`:
+    ``llmhub:gpt-4o`` -> 'openai', ``llmhub:claude-sonnet-4-6`` -> 'anthropic'.
     """
     if not judges:
         return 0
@@ -44,8 +88,13 @@ def _distinct_families(judges: "list[str] | None") -> int:
             continue
         prov, _, model = j.partition(":")
         prov = prov.strip().lower()
-        if prov in ("openrouter", "openai") and "/" in model:
-            fams.add(model.strip().split("/", 1)[0].lower())
+        model = model.strip()
+        # strip a per-spec base_url suffix: "model@https://host/v1" -> "model"
+        model = model.split("@", 1)[0]
+        if prov == "llmhub":
+            fams.add(_llmhub_family(model))
+        elif prov in _AGGREGATOR_PROVIDERS and "/" in model:
+            fams.add(model.split("/", 1)[0].lower())
         else:
             fams.add(prov)
     return len(fams)

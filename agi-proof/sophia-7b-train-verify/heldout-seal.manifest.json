@@ -1,0 +1,465 @@
+{
+  "schema": "sophia.holdout_seal.v1",
+  "experiment": "sophia-7b-train-verify",
+  "baseModel": "Qwen/Qwen2.5-7B-Instruct",
+  "holdoutSource": "training/lora/holdout.jsonl",
+  "rowCount": 89,
+  "contentHash": "84d00bdc36205abdb5a162530d8fc972ee27075c053bfd0615de59d3ed9aeb97",
+  "digestMethod": "sha256(json({id,prompt,holdoutReason}, sort_keys=True)) per row; contentHash = sha256(sorted row digests joined by |)",
+  "assistantGoldPolicy": "withheld from manifest; synthetic builders must not read holdout answers",
+  "allowedReaders": [
+    "provenance_bench/holdout_seal.py",
+    "tools/build_local_sophia_dataset.py",
+    "tools/prepare_lora_dataset.py",
+    "tools/run_training_safety.py",
+    "tools/seal_sophia_7b_holdout.py",
+    "tools/train_lora.py"
+  ],
+  "cases": [
+    {
+      "id": "002-freud-cognitive-dissonance",
+      "holdoutReason": "",
+      "sha256": "c7298ca783df71b8347d744b2a5a18b8de53255fc7351f61ce8c062dc238ada7"
+    },
+    {
+      "id": "003-marco-polo-pasta-myth",
+      "holdoutReason": "",
+      "sha256": "561839883b3d02ecaf3d5eb61c443ea4d83c25af88317c7acd8dd67e2b4b65e1"
+    },
+    {
+      "id": "004-confucian-ritual-council",
+      "holdoutReason": "",
+      "sha256": "e64e256ec1ac2bc37ff40ff24fcfe9c2c7a07cd34b5a65bb390ff8120e2c558b"
+    },
+    {
+      "id": "005-left-brain-right-brain-myth",
+      "holdoutReason": "",
+      "sha256": "3a0b723487c6273a219825c43c2d9790a56753e4850af5394ba2b070f75c9d51"
+    },
+    {
+      "id": "006-chemical-imbalance-nuance",
+      "holdoutReason": "",
+      "sha256": "2f7e4a8b4d9d92270fe1dce00ae169708aaa8cdebfdb309aadaa9e7426794bc3"
+    },
+    {
+      "id": "007-stockholm-syndrome-universal",
+      "holdoutReason": "",
+      "sha256": "ffadd0f6e8280f64f17c56e9c8722dad1c1abb5a090a91aeea7ebafa43f99eff"
+    },
+    {
+      "id": "008-napoleon-height-myth",
+      "holdoutReason": "",
+      "sha256": "9a83e2e691b6bb737acf868d090c475466c3c98eebdf1cd1b67aca021707b365"
+    },
+    {
+      "id": "009-gospel-matthew-council",
+      "holdoutReason": "",
+      "sha256": "b472b33f939c050c7a54b919ab86b2b170e5eb165f54f33535812ed29bbeb6c6"
+    },
+    {
+      "id": "010-islam-early-history-council",
+      "holdoutReason": "",
+      "sha256": "61bc10e0d7d0f7a57d3a9325bc8e85243404acb15c4b14ee359ff4004b3d1782"
+    },
+    {
+      "id": "011-nirvana-pop-myth-council",
+      "holdoutReason": "",
+      "sha256": "1ef86d227f105eb1a251d7aefcf196a73ec55d3d9361b99c5d051a5233d8e4bc"
+    },
+    {
+      "id": "012-flat-earth-medieval-myth",
+      "holdoutReason": "",
+      "sha256": "5c7d5b992646592e06103766a22f45bc5ae5def9c87ee32144edfe78e1aa9cc5"
+    },
+    {
+      "id": "014-dao-de-jing-religion-philosophy",
+      "holdoutReason": "",
+      "sha256": "ec75774073f5f389ca1ebd2d5e9fa7bd639e027eb54f46872d46e6fa70b3866e"
+    },
+    {
+      "id": "021-socrates-republic",
+      "holdoutReason": "",
+      "sha256": "1accbc9e4a7757001f36b7660147a91cc3db484650bc62dca2d3a8b2b9b7ecc7"
+    },
+    {
+      "id": "051-claude-deny-confucius-dao-de-jing-r0",
+      "holdoutReason": "",
+      "sha256": "bb96f585baa08ea7f2cc2414d5bfcf9e60b7805275f8177eab7d3cad06b87269"
+    },
+    {
+      "id": "060-claude-deny-socrates-republic-r0",
+      "holdoutReason": "",
+      "sha256": "24f5d5610c81d0e120878e6c2dd1f5dff852955cd704bce7bcbbdc7069e817bf"
+    },
+    {
+      "id": "066-claude-deny-confucius-mencius-r0",
+      "holdoutReason": "",
+      "sha256": "292678a664ed8217420472e4f29e7b514028590fb55d2beefafcd328838f0ad5"
+    },
+    {
+      "id": "123-claude-deny-socrates-phaedo-r0",
+      "holdoutReason": "",
+      "sha256": "31e0123b404abcf984f2ef194dbcc71ec6a404136f23f8ec110ce62630235aec"
+    },
+    {
+      "id": "130-claude-affirm-plato-for-crito-r0",
+      "holdoutReason": "",
+      "sha256": "edf76bc8957672fa416a401f4b4451bd75f4ba88adc907322bb3feaa0cec0a14"
+    },
+    {
+      "id": "136-claude-deny-socrates-categories-r0",
+      "holdoutReason": "",
+      "sha256": "a4ad0a4b05a3e220c9ff4f5d64b0b982d39d671a4ab5a98f33cee4e2ad58b4cf"
+    },
+    {
+      "id": "138-claude-deny-confucius-i-ching-r0",
+      "holdoutReason": "",
+      "sha256": "478d0ecedb687592616119f8cb2025742fbc9b0fe66c442dfde77777afac1ac3"
+    },
+    {
+      "id": "141-claude-confidence-compiled-for-i-ching-r0",
+      "holdoutReason": "",
+      "sha256": "561031fdd81ffd89e4f06a877a3d2dffb8ca802ba6e1ed07556cd200fe353d5f"
+    },
+    {
+      "id": "143-claude-deny-laozi-zuo-zhuan-r0",
+      "holdoutReason": "",
+      "sha256": "90a9b52afd6c67aeb32fe3b4eb4703029aef6357981fb9674af714defdf60ef7"
+    },
+    {
+      "id": "154-claude-deny-mozi-great-learning-r0",
+      "holdoutReason": "",
+      "sha256": "9873b93070f6a28e6609afb1fa059453ee4b25598d833c3baa738cda1b49d0df"
+    },
+    {
+      "id": "156-claude-affirm-confucian-school-for-great-learni",
+      "holdoutReason": "",
+      "sha256": "2a9db390b83bd95a7651560c87fe1543d374a9c667e8cf97bc05c988c415c3ee"
+    },
+    {
+      "id": "165-claude-deny-parmenides-parmenides-r0",
+      "holdoutReason": "",
+      "sha256": "ac8990bf3fc8535d99136d207a2b91da596f5cc14c6689a80caeb1703df7ba00"
+    },
+    {
+      "id": "167-claude-deny-plato-heraclitus-fragments-r0",
+      "holdoutReason": "",
+      "sha256": "2f68b0d0146aebaf440ef84b30fc958891f32e3e88541dfe86492b915fa3479b"
+    },
+    {
+      "id": "172-claude-trap-confucius-ddj-r0",
+      "holdoutReason": "",
+      "sha256": "e52647fbdac41ad75bd2762e4e219821d3fb6d9c3cb527e60d49e6a5b6bc7f14"
+    },
+    {
+      "id": "173-claude-socrates-republic-r0",
+      "holdoutReason": "",
+      "sha256": "9f9b809affadf6aa529db87f96d63c2c41a2f48865a299819f7aab52a7b74a6a"
+    },
+    {
+      "id": "174-claude-analects-compiled-r0",
+      "holdoutReason": "",
+      "sha256": "eaeb1aed28970221d1177b3df4e9f1f1c1273f81effd75b05cd5a43262025bbc"
+    },
+    {
+      "id": "175-claude-laozi-uncertainty-r0",
+      "holdoutReason": "",
+      "sha256": "842ad35f8d2363cd06a2cd4c511ddefdde381ca3a0963600d072414cd6f5fd41"
+    },
+    {
+      "id": "176-claude-trap-confucius-mencius-r0",
+      "holdoutReason": "",
+      "sha256": "54cafab5fabba91c1b81aa2bdcfa284a3566af3eba527d25c442016cd19c9ba6"
+    },
+    {
+      "id": "177-claude-trap-laozi-zhuangzi-r0",
+      "holdoutReason": "",
+      "sha256": "1ef7671556d16253ed1edb701fcd965ab5d04d403e85f76817a56878aab84b37"
+    },
+    {
+      "id": "178-claude-socrates-symposium-r0",
+      "holdoutReason": "",
+      "sha256": "0d12856042c49b3d0f05c5ee9aaa5d9295e96c3b6c75142dc356f9a21afd23ae"
+    },
+    {
+      "id": "179-claude-zhuangzi-analects-boundary-r0",
+      "holdoutReason": "",
+      "sha256": "27ec2fe9f9cea28d470d085104845a6170029a77114a68f6e2ee55e0945d3079"
+    },
+    {
+      "id": "180-claude-symposium-dialogue-not-autograph-r0",
+      "holdoutReason": "",
+      "sha256": "2802ef73289cb7c63736d9f4fa88105c32721c66d439872da7ee984db2a9e8b9"
+    },
+    {
+      "id": "181-claude-freud-cognitive-dissonance-r0",
+      "holdoutReason": "",
+      "sha256": "b83218886d1afc7067df03b769a8512fffff875380b6f7091ee16a7cd30393cb"
+    },
+    {
+      "id": "182-claude-left-brain-myth-r0",
+      "holdoutReason": "",
+      "sha256": "2e04700f3762f4f1533c5782e0ccfd70de4643c8ddf64d9fb5ace525f5599cc5"
+    },
+    {
+      "id": "183-claude-chemical-imbalance-simplification-r0",
+      "holdoutReason": "",
+      "sha256": "e57a25ef1a09186e0d5a2923047beab8c1fba2ac10d6c90e88d728124fc96562"
+    },
+    {
+      "id": "184-claude-stockholm-every-kidnapping-r0",
+      "holdoutReason": "",
+      "sha256": "25b6991ac7c10d18b98e811fce294d9686f94bdcf0c416e1580b6bdff7c239c4"
+    },
+    {
+      "id": "185-claude-marco-polo-pasta-r0",
+      "holdoutReason": "",
+      "sha256": "e933de8285820f07bd4bb2aea8896d4f1f4e56ac245b0370fb6931b636fe1570"
+    },
+    {
+      "id": "186-claude-flat-earth-medieval-r0",
+      "holdoutReason": "",
+      "sha256": "44f0eb455e58223f0f16249ffd5e1a36bff0f30d745b98c0534f5a2f27d65c5a"
+    },
+    {
+      "id": "187-claude-napoleon-height-r0",
+      "holdoutReason": "",
+      "sha256": "62f31b9f2a751ce5853e1d4747bba6e6f5b3696ca2a513a55a659e2ced39fa41"
+    },
+    {
+      "id": "188-claude-great-wall-space-r0",
+      "holdoutReason": "",
+      "sha256": "e4f5d1286b1b97d26eeda808f90bea012f7f6afddba24eada9bf400b83e1fcc5"
+    },
+    {
+      "id": "189-claude-viking-horns-r0",
+      "holdoutReason": "",
+      "sha256": "821526f2e8d275c2744a00a1f6bfe7785990832a25903b7fe1b0581d423f4da0"
+    },
+    {
+      "id": "190-claude-gospel-authorship-council-r0",
+      "holdoutReason": "",
+      "sha256": "c30f6f4b3756c90a039db73fe1c721e2ebcb596c8d3ee0e13f4913e0e5f440b7"
+    },
+    {
+      "id": "191-claude-ancestor-veneration-split-r0",
+      "holdoutReason": "",
+      "sha256": "17e1ba2b4fe271805e6728cde94da11bc6a38cdb51935e9dbe61dfd1408710fc"
+    },
+    {
+      "id": "192-claude-dao-de-jing-religion-philosophy-r0",
+      "holdoutReason": "",
+      "sha256": "2d109e339551dfcc32ffef6568f29369fde2cb37bddf6da739f09c111a07133b"
+    },
+    {
+      "id": "193-claude-islam-historical-figure-sensitive-r0",
+      "holdoutReason": "",
+      "sha256": "8cf62d7bdea5bb0267546283c6909bb5abbe12f7a697e19a07d5700489ee6876"
+    },
+    {
+      "id": "194-claude-buddha-nirvana-pop-r0",
+      "holdoutReason": "",
+      "sha256": "2a6394e5673976f2d80260483b16d71b7985ad33d6f432f85ee12e62e2826d3c"
+    },
+    {
+      "id": "196-claude-psychology-deny-carl-jung-cognitive-diss",
+      "holdoutReason": "",
+      "sha256": "82da69b34a980ee673fe815310386a7a191751dd04d9d6853164fa16663ab87c"
+    },
+    {
+      "id": "198-claude-psychology-deny-roger-sperry-left-brain",
+      "holdoutReason": "",
+      "sha256": "7b804ecda0234eed0ab9fc485975ed9db9fe6ce3a86a14f4bc8d597a48851aef"
+    },
+    {
+      "id": "337-claude-trap-confucius-ddj-r1",
+      "holdoutReason": "",
+      "sha256": "70458e793a0e1bbec85a392c818463c2436519b3c039bf023fec100d97444758"
+    },
+    {
+      "id": "338-claude-socrates-republic-r1",
+      "holdoutReason": "",
+      "sha256": "84e930f82a510aa3b1fa383ee444d829d0e3a93ca96eda85f267f768d5e95e3c"
+    },
+    {
+      "id": "339-claude-analects-compiled-r1",
+      "holdoutReason": "",
+      "sha256": "10579acbaaa1124c9916fca0d749117da2f1e9095c2567b60512f1dddc3a708d"
+    },
+    {
+      "id": "340-claude-laozi-uncertainty-r1",
+      "holdoutReason": "",
+      "sha256": "fa42169d1fd04c43016869c5351b6c7ac438f092f9af4abe87378aecceaef29a"
+    },
+    {
+      "id": "341-claude-trap-confucius-mencius-r1",
+      "holdoutReason": "",
+      "sha256": "23ec39a7ded1a9fc4f8c5277edfe31aa6a33a45df3b8ed642cac135044786883"
+    },
+    {
+      "id": "342-claude-trap-laozi-zhuangzi-r1",
+      "holdoutReason": "",
+      "sha256": "fdce164bdf748aa0b0c25fbee261b3a1e0f65dc4996f6e525b1f5e252049c155"
+    },
+    {
+      "id": "343-claude-socrates-symposium-r1",
+      "holdoutReason": "",
+      "sha256": "552d29027133f9e7a151626f4bfd90a02cf12dfb50b4fc926ee8de99cfad8420"
+    },
+    {
+      "id": "344-claude-zhuangzi-analects-boundary-r1",
+      "holdoutReason": "",
+      "sha256": "6a007447d87e34246b1be5b5f845cf623891fe32586eb19cf83c6163219b6a8a"
+    },
+    {
+      "id": "345-claude-symposium-dialogue-not-autograph-r1",
+      "holdoutReason": "",
+      "sha256": "23419fe0a70e2dea2c69adae48a145ec7d9a6ea82ec7b30be61f0d71165d4809"
+    },
+    {
+      "id": "346-claude-freud-cognitive-dissonance-r1",
+      "holdoutReason": "",
+      "sha256": "1b6e5dc218a2190184f47f39d20169d39a38d858e77d26c2fc26cd09a2807345"
+    },
+    {
+      "id": "347-claude-left-brain-myth-r1",
+      "holdoutReason": "",
+      "sha256": "0559bb7b752cc173265891141dbd805b9a884435663d2c2d905e0e3bb90d91df"
+    },
+    {
+      "id": "348-claude-chemical-imbalance-simplification-r1",
+      "holdoutReason": "",
+      "sha256": "3c6043b964d1e9ea3d0a8b757de7612beddb5636cbe1e79172fa12f3db72ecc6"
+    },
+    {
+      "id": "349-claude-stockholm-every-kidnapping-r1",
+      "holdoutReason": "",
+      "sha256": "b35909d27924c1b76cc271e4cb6f13526f29718eeabcfa478a9e3b4fcdc21eaf"
+    },
+    {
+      "id": "350-claude-marco-polo-pasta-r1",
+      "holdoutReason": "",
+      "sha256": "8130bcbb276002a1261732f5db1e8d5a32abdae9ac445b5289b8b11d656a104f"
+    },
+    {
+      "id": "351-claude-flat-earth-medieval-r1",
+      "holdoutReason": "",
+      "sha256": "dc2769ca76b0cf577ce3c3ace97223c645a31fe71efe083f46f1de0cfd0f899b"
+    },
+    {
+      "id": "352-claude-napoleon-height-r1",
+      "holdoutReason": "",
+      "sha256": "92d9f101bc182f03e1d1fd0bd14740f379acb775701c38900b96c2cb94717b0d"
+    },
+    {
+      "id": "353-claude-great-wall-space-r1",
+      "holdoutReason": "",
+      "sha256": "c3c393e64e7089a6bca9b3b85c878eb9bb9a74aa3e985a5da126c1c5c33fb1d6"
+    },
+    {
+      "id": "354-claude-viking-horns-r1",
+      "holdoutReason": "",
+      "sha256": "f20864a990c3839f1311fc6dd3f5d6934530b587a63e454785089e1ce914af7d"
+    },
+    {
+      "id": "355-claude-gospel-authorship-council-r1",
+      "holdoutReason": "",
+      "sha256": "7b4e4c2c44025202a05f6cf21f021a3ab0ecbb1cec75eb7251de07b34fee3baa"
+    },
+    {
+      "id": "356-claude-ancestor-veneration-split-r1",
+      "holdoutReason": "",
+      "sha256": "6e16f57195f30143307dc1f761d1763129f95b48f899e7ef6b49227bcc841514"
+    },
+    {
+      "id": "357-claude-dao-de-jing-religion-philosophy-r1",
+      "holdoutReason": "",
+      "sha256": "469784a07a4769479709de66c64cf6c56af556e3affd81977b79cf4fcc7ff80a"
+    },
+    {
+      "id": "358-claude-islam-historical-figure-sensitive-r1",
+      "holdoutReason": "",
+      "sha256": "69bd492c62c0780664a7af07225b896c92b6ea17e19f4b30fd1f05fcd6f7b965"
+    },
+    {
+      "id": "359-claude-buddha-nirvana-pop-r1",
+      "holdoutReason": "",
+      "sha256": "e29cce714363d897a954c34a09ef1467e49d82bd3315948a25bf3a2a72e8ea7b"
+    },
+    {
+      "id": "511-bench-trap-confucius-ddj-v2",
+      "holdoutReason": "",
+      "sha256": "ddeafcdb8a7a150268e3af214f38d8d65bbdf28355148f40b35f3d8e6a4ddd19"
+    },
+    {
+      "id": "512-bench-symposium-not-autograph-v2",
+      "holdoutReason": "",
+      "sha256": "a2c6c2eb28fbd2b07ad32530d1ce72e3db956add6ed62dd7aa6fc9cd28d6266f"
+    },
+    {
+      "id": "513-bench-stockholm-pop-myth-v2",
+      "holdoutReason": "",
+      "sha256": "2d17d53fd07a46de7faff6110eb682a5811414cf7e2545b7e9f7b6ea16333e09"
+    },
+    {
+      "id": "514-bench-ancestor-veneration-council-v2",
+      "holdoutReason": "",
+      "sha256": "1977d89e98356b13d596a66c0de88a983c5dba00ee4ff5c313271453c6a9c527"
+    },
+    {
+      "id": "515-bench-buddha-nirvana-council-v2",
+      "holdoutReason": "",
+      "sha256": "1961d049e5e460da9e7e97cf37b58acd384daa4f188c925613ec73217b9f41d0"
+    },
+    {
+      "id": "519-psych-dunning-kruger",
+      "holdoutReason": "",
+      "sha256": "380c7f19d02d5bb5b9fa2727b50c45bfe6a48642412901936985c70bf82c00e4"
+    },
+    {
+      "id": "520-psych-confirmation-bias-bacon",
+      "holdoutReason": "",
+      "sha256": "3a03146edaf92287d346a35c5adb52ed3028970020d694a297e08b5fc328e34c"
+    },
+    {
+      "id": "521-psych-ten-percent-brain",
+      "holdoutReason": "",
+      "sha256": "7c67f29396162ea1d71cbd6a60ce5b81c6f40295a0b14262b5d8544049841936"
+    },
+    {
+      "id": "522-psych-mozart-effect",
+      "holdoutReason": "",
+      "sha256": "6e23a5aa94516a096dd60f6f6b9c167e25a3999b7ee9ebaa5519c74637146d6d"
+    },
+    {
+      "id": "523-psych-ptsd-clinical",
+      "holdoutReason": "",
+      "sha256": "78beb9d9b5e359f1d8ebd13533b7d7f446006bb25135a58c49d5ab732f5a0449"
+    },
+    {
+      "id": "524-history-magna-carta",
+      "holdoutReason": "",
+      "sha256": "8a7d2031465fdc56a0979794d91df50ba3b397ef212210687ee82e37a42141c1"
+    },
+    {
+      "id": "525-history-boston-tea-party",
+      "holdoutReason": "",
+      "sha256": "ee733f77e707b869b0296d34275dc856952d371fcbbcb460df714537fe8ef459"
+    },
+    {
+      "id": "526-history-first-flight",
+      "holdoutReason": "",
+      "sha256": "4a6ada3eab75d7b262394ee2d244e0b04efa916c4cfa60e1e36c84ebf00a03ef"
+    },
+    {
+      "id": "527-religion-hadith-sect-council",
+      "holdoutReason": "",
+      "sha256": "7ecf534e5079a6326bf4a8c6a5eec32a14c4a9a95edffbdf0278c58dced846c9"
+    },
+    {
+      "id": "528-personality-extraversion",
+      "holdoutReason": "",
+      "sha256": "1cc2eae8a86841c58978528056b6cbd8b8aaed07609808172386fb1daab9f032"
+    }
+  ]
+}

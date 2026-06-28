@@ -1,0 +1,42 @@
+# This CITATION.cff lets GitHub, Zenodo, and reference managers cite this work
+# with a fixed authorship + date record. It is part of the project's defensive
+# publication / provenance strategy: it establishes a citable priority claim.
+#
+# Author of record: Yim Kin Cheong (Hong Kong), ORCID 0009-0005-9520-0033.
+cff-version: 1.2.0
+title: "Sophia — the Wisdom Gate: a provenance-aware, verifier-gated reasoning layer that abstains instead of fabricating"
+message: "If you use this software, dataset, or method, please cite it using this metadata."
+type: software
+authors:
+  - alias: tomyimkc
+    given-names: "Kin Cheong"
+    family-names: "Yim"
+    country: HK
+    orcid: "https://orcid.org/0009-0005-9520-0033"
+repository-code: "https://github.com/tomyimkc/sophia-agi"
+url: "https://tomyimkc.github.io/sophia-agi/"
+abstract: >-
+  Sophia is a provenance-aware, verifier-gated reasoning layer for large language
+  models that abstains instead of fabricating. Given a claim, it verifies the claim
+  against machine-readable sources and then accepts, abstains, or blocks. The system
+  targets attribution hallucination — for example, an LLM falsely crediting an author,
+  merging distinct intellectual traditions, or treating legendary figures as literal
+  authors — and is evaluated under a pre-registered "no-overclaim" measurement gate
+  (≥2 independent judge families, reported inter-judge agreement, ≥3 runs, and
+  confidence intervals). Components include a belief/provenance graph with retraction
+  and counterfactual analysis, deterministic and model-based verifiers, calibrated
+  abstention, and a fail-closed governance contract.
+keywords:
+  - large language models
+  - hallucination
+  - attribution
+  - abstention
+  - selective prediction
+  - provenance
+  - retrieval-augmented generation
+  - verifier-gated reasoning
+  - trustworthy AI
+license: Apache-2.0
+doi: 10.5281/zenodo.20930874
+version: 0.9.1
+date-released: 2026-06-26

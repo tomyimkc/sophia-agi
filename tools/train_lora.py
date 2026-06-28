@@ -48,6 +48,8 @@ if str(ROOT) not in sys.path:
 TRAIN_JSONL = ROOT / "training" / "lora" / "train.jsonl"
 HOLDOUT_JSONL = ROOT / "training" / "lora" / "holdout.jsonl"
 DISTILL_JSONL = ROOT / "training" / "council" / "traces.jsonl"
+MATH_CODE_PACK_DIR = ROOT / "training" / "sophia-math-code-curriculum"
+MATH_CODE_SFT = MATH_CODE_PACK_DIR / "sft_all.jsonl"
 DEFAULT_MODEL = "Qwen/Qwen2.5-3B-Instruct"
 REQUIRED_ADAPTER_FILES = ("adapter_config.json", "adapter_model.safetensors")
 DONE_MARKER = ".train_complete"
@@ -62,6 +64,21 @@ def load_rows(path: Path) -> list[dict]:
         if line.strip():
             rows.append(json.loads(line))
     return rows
+
+
+def resolve_train_path(path: Path) -> Path:
+    """Resolve a training JSONL path or pack directory to a concrete JSONL file.
+
+    When ``path`` is a directory containing ``manifest.json`` with schema
+    ``sophia.math_code_curriculum.v1``, returns ``sft_all.jsonl`` inside that pack.
+    """
+    if path.is_dir():
+        manifest_path = path / "manifest.json"
+        if manifest_path.exists():
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            if manifest.get("schema") == "sophia.math_code_curriculum.v1":
+                return path / "sft_all.jsonl"
+    return path
 
 
 def scaffold_rows(rows: list[dict]) -> int:
@@ -231,6 +248,59 @@ def _resolve_dtype(choice: str) -> Any:
 
 ATTN_MLP_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
 
+# Per-type LoRA sensitivity PRIOR for the moe/adapt rank allocator (--lora-rank-alloc).
+# A transparent, documented heuristic (NOT a measurement): attention query/value are the
+# load-bearing locus for instruction-following adaptation, MLP up/down are the most
+# redundant. Mirrors moe/adapt's quant sensitivity hierarchy (keep the spikes, crush the
+# redundant). Override per-module by editing this dict; the principled alternative is
+# moe.adapt.measure_sensitivity (output-KL probe), which needs calibration forward passes.
+LORA_SENSITIVITY_PRIOR = {
+    "q_proj": 4.0, "v_proj": 4.0,      # attention QV — most sensitive
+    "k_proj": 2.0, "o_proj": 3.0,      # attention KO — mid
+    "gate_proj": 1.5, "up_proj": 1.0, "down_proj": 1.5,  # MLP — redundant
+}
+# Protected types never drop below the uniform rank floor regardless of the budget.
+LORA_PROTECTED_TYPES = ("q_proj", "v_proj")
+
+
+def _compute_lora_rank_pattern(model: Any, target_types: list[str], lora_r: int) -> tuple[dict, dict]:
+    """Scan the model's target Linear modules and allocate per-type LoRA rank via
+    moe.adapt.lora_rank_allocation (same greedy sensitivity-aware budgeted allocator as the
+    quant bit-allocator). Returns (rank_pattern, alpha_pattern) keyed by module-type suffix,
+    preserving the uniform-rank=lora_r parameter budget. Pure plumbing around the allocator;
+    the allocation policy itself is the CI-proven moe/adapt function."""
+    import torch.nn as nn
+    from moe.adapt import lora_rank_allocation
+
+    # Aggregate fan_in/fan_out per type suffix across all layers (per-type allocation keeps
+    # the rank_pattern small and matches PEFT's suffix-keyed rank_pattern semantics).
+    agg: dict[str, list[int]] = {}  # suffix -> [in_sum, out_sum]
+    for name, mod in model.named_modules():
+        if not isinstance(mod, nn.Linear) and type(mod).__name__ not in ("Linear4bit", "Linear8bitLt"):
+            continue
+        suffix = name.rsplit(".", 1)[-1]
+        if suffix not in target_types:
+            continue
+        in_f = int(getattr(mod, "in_features", 0))
+        out_f = int(getattr(mod, "out_features", 0))
+        cur = agg.setdefault(suffix, [0, 0])
+        cur[0] += in_f
+        cur[1] += out_f
+    if not agg:
+        return {}, {}
+    modules = [
+        (suffix, fan[0], fan[1],
+         LORA_SENSITIVITY_PRIOR.get(suffix, 1.0), suffix in LORA_PROTECTED_TYPES)
+        for suffix, fan in agg.items()
+    ]
+    rank_pattern, alpha_pattern = lora_rank_allocation(
+        modules, target_avg_rank=lora_r,
+        min_rank=max(1, lora_r // 2), max_rank=lora_r * 4, protected_rank=lora_r,
+    )
+    print(f"[lora-rank-alloc] uniform r={lora_r} -> per-type rank_pattern={rank_pattern}",
+          flush=True)
+    return rank_pattern, alpha_pattern
+
 
 def _resolve_target_modules(choice: str) -> Any:
     # "all-linear" lets PEFT target every linear layer (the strongest module finding:
@@ -250,6 +320,7 @@ def build_model_and_tokenizer(
     target_modules: str = "attn-mlp",
     attn_impl: str | None = None,
     resume_adapter: Path | None = None,
+    lora_rank_alloc: bool = False,
 ) -> tuple[Any, Any]:
     import torch
     from peft import LoraConfig, PeftModel, get_peft_model, prepare_model_for_kbit_training
@@ -283,6 +354,16 @@ def build_model_and_tokenizer(
         model = PeftModel.from_pretrained(model, str(resume_adapter), is_trainable=True)
         print(f"Resumed adapter from {resume_adapter}")
     else:
+        # moe/adapt sensitivity-aware LoRA rank allocation: redistribute the SAME rank
+        # budget across module types (more rank to load-bearing q/v, less to redundant MLP).
+        # Requires named module types, so it pins target_modules to the explicit attn-mlp list.
+        rank_pattern: dict = {}
+        alpha_pattern: dict = {}
+        resolved_targets = _resolve_target_modules(target_modules)
+        if lora_rank_alloc:
+            resolved_targets = ATTN_MLP_MODULES
+            rank_pattern, alpha_pattern = _compute_lora_rank_pattern(
+                model, ATTN_MLP_MODULES, lora_r)
         lora = LoraConfig(
             r=lora_r,
             lora_alpha=lora_alpha,
@@ -290,7 +371,9 @@ def build_model_and_tokenizer(
             bias="none",
             task_type="CAUSAL_LM",
             use_rslora=use_rslora,
-            target_modules=_resolve_target_modules(target_modules),
+            target_modules=resolved_targets,
+            rank_pattern=rank_pattern,
+            alpha_pattern=alpha_pattern,
         )
         model = get_peft_model(model, lora)
     model.print_trainable_parameters()
@@ -535,10 +618,22 @@ def run_manual_train(
     pad_to: int | None = None,
     weight_decay: float = 0.0,
     pack: bool = False,
+    qat: bool = False,
+    qat_scheme: str = "int8",
+    qat_lambda: float = 1e-3,
 ) -> dict:
     import torch
     from torch.utils.data import DataLoader
     from transformers import get_cosine_schedule_with_warmup
+
+    # QAT: add a quant-pushing penalty so the released weights serve cleanly at low bits
+    # (the fake-quant forward is installed by attach_qat in main(); this is the loss term).
+    qat_penalty_fn = None
+    if qat:
+        from training.qat import qat_penalty as _qat_penalty
+
+        def qat_penalty_fn() -> Any:
+            return _qat_penalty(model, scheme=qat_scheme, lam=qat_lambda)
 
     device = model.get_input_embeddings().weight.device
     # Packing concatenates short rows into one flat sequence (no padding) and relies on
@@ -590,6 +685,8 @@ def run_manual_train(
             batch = {k: v.to(device) for k, v in batch.items()}
             outputs = model(**batch)
             loss = outputs.loss / grad_accum
+            if qat_penalty_fn is not None:
+                loss = loss + qat_penalty_fn() / grad_accum
             loss.backward()
             if (step + 1) % grad_accum == 0:
                 torch.nn.utils.clip_grad_norm_(trainable, max_grad_norm)
@@ -670,7 +767,11 @@ def verify_checkpoint(output: Path) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="LoRA fine-tune on Sophia corpus")
     parser.add_argument("--model", default=DEFAULT_MODEL)
-    parser.add_argument("--train", type=Path, default=TRAIN_JSONL)
+    parser.add_argument(
+        "--train", "--data", type=Path, default=TRAIN_JSONL, dest="train",
+        help="Training JSONL or math-code curriculum pack directory "
+             f"(default: {TRAIN_JSONL.relative_to(ROOT)}; pack dir → sft_all.jsonl)",
+    )
     parser.add_argument("--output", type=Path, default=ROOT / "training" / "lora" / "checkpoints" / "sophia-v1")
     parser.add_argument(
         "--resume-adapter",
@@ -700,11 +801,31 @@ def main() -> int:
                         help="all-linear (default) targets every linear layer — the 2026 'LoRA Without "
                              "Regret' finding: matching full-FT by adapting all linear layers (MLP is the "
                              "dominant locus of adaptation); 'attn-mlp' is the narrower explicit Qwen list")
+    parser.add_argument("--lora-rank-alloc", dest="lora_rank_alloc", action="store_true",
+                        help="Allocate LoRA rank per module type by sensitivity (moe/adapt's greedy "
+                             "budgeted allocator) instead of a uniform --lora-r. Preserves the total adapter "
+                             "param budget; pins target-modules to the explicit attn-mlp list. Sensitivity "
+                             "uses LORA_SENSITIVITY_PRIOR (transparent heuristic, not a measurement).")
     parser.add_argument("--neftune-alpha", type=float, default=0.0,
                         help="NEFTune embedding-noise regularizer (try 5); helps instruction tuning on small data")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--dtype", choices=("auto", "bf16", "fp16"), default="auto")
     parser.add_argument("--4bit", dest="four_bit", action="store_true", help="QLoRA 4-bit load")
+    parser.add_argument("--qat", action="store_true",
+                        help="Quantization-aware training: fake-quant the forward (STE) and add a "
+                             "quant-pushing penalty so the RELEASED weights serve cleanly at low bits "
+                             "(training/qat.py). Pairs with serving/layer_stream.py + serving/lowram_eval.py.")
+    parser.add_argument("--qat-scheme", choices=("int8", "nvfp4"), default="int8",
+                        help="Deployment quantization grid the model co-adapts to (default: int8).")
+    parser.add_argument("--qat-lambda", type=float, default=1e-3,
+                        help="Weight on the quant-pushing penalty term (default: 1e-3).")
+    parser.add_argument("--shard", choices=("none", "fsdp"), default="none",
+                        help="Multi-GPU param sharding for high/top-tier MoE bases (training/sharding.py). "
+                             "'fsdp' shards the frozen base across torch.distributed ranks; launch with torchrun.")
+    parser.add_argument("--expert-parallel", dest="expert_parallel", action="store_true",
+                        help="Distribute MoE experts across ranks (expert parallelism). Requires --shard fsdp.")
+    parser.add_argument("--world-size", dest="world_size", type=int, default=0,
+                        help="Override torch.distributed world size for the shard plan (0 = auto-detect).")
     parser.add_argument("--attn", choices=("auto", "flash_attention_2", "sdpa", "eager"), default="auto",
                         help="Attention impl; flash_attention_2 is required for --pack")
     parser.add_argument("--pack", action="store_true",
@@ -753,8 +874,12 @@ def main() -> int:
             flush=True,
         )
 
+    args.train = resolve_train_path(args.train)
     if not args.train.exists():
-        print(f"Missing {args.train}. Run: python tools/prepare_lora_dataset.py")
+        hint = "python tools/prepare_lora_dataset.py"
+        if MATH_CODE_PACK_DIR.exists():
+            hint += f" or point --data at {MATH_CODE_SFT.relative_to(ROOT)}"
+        print(f"Missing {args.train}. Run: {hint}")
         return 1
 
     rows = load_rows(args.train)
@@ -840,11 +965,35 @@ def main() -> int:
             target_modules=args.target_modules,
             attn_impl=attn_impl,
             resume_adapter=args.resume_adapter,
+            lora_rank_alloc=args.lora_rank_alloc,
         )
 
     neftune_handle = attach_neftune(model, args.neftune_alpha)
     if neftune_handle:
         print(f"NEFTune enabled (alpha={args.neftune_alpha})", flush=True)
+
+    if args.qat:
+        if args.backend == "mlx":
+            print("NOTE: --qat is ignored on --backend mlx (CUDA/torch path only)", flush=True)
+        else:
+            from training.qat import attach_qat
+
+            wrapped = attach_qat(model, scheme=args.qat_scheme)
+            print(f"QAT enabled (scheme={args.qat_scheme}, lambda={args.qat_lambda}, "
+                  f"fake-quant on {wrapped} linear module(s))", flush=True)
+
+    if args.shard == "fsdp":
+        # High/top-tier multi-GPU path: shard the frozen base across torch.distributed ranks.
+        # The per-rank memory PLAN is training/sharding.py (CI-tested); this wraps the model.
+        import torch
+        from training.sharding import wrap_model_fsdp
+
+        ws = args.world_size or (torch.distributed.get_world_size()
+                                 if torch.distributed.is_initialized() else 1)
+        model = wrap_model_fsdp(model, world_size=ws)
+        print(f"FSDP sharding enabled (world_size={ws}"
+              f"{', expert-parallel' if args.expert_parallel else ''}). Launch with torchrun.",
+              flush=True)
 
     train_records, truncated = build_records(tokenizer, rows, args.max_seq_len, mask_prompt=args.mask_prompt)
     if truncated:
@@ -891,6 +1040,11 @@ def main() -> int:
         "weightDecay": args.weight_decay,
         "packed": args.pack,
         "attn": attn_impl or "default",
+        "qat": args.qat,
+        "qatScheme": args.qat_scheme if args.qat else None,
+        "qatLambda": args.qat_lambda if args.qat else None,
+        "shard": args.shard,
+        "expertParallel": args.expert_parallel if args.shard == "fsdp" else False,
     }
 
     def save_best(extra: dict[str, Any]) -> None:
@@ -917,11 +1071,19 @@ def main() -> int:
         pad_to=args.max_seq_len if args.pad_to_max else None,
         weight_decay=args.weight_decay,
         pack=args.pack,
+        qat=args.qat and args.backend != "mlx",
+        qat_scheme=args.qat_scheme,
+        qat_lambda=args.qat_lambda,
     )
 
     # Remove the NEFTune noise hook before persisting so inference is noise-free.
     if neftune_handle:
         neftune_handle.remove()
+    # Restore fp forwards so the saved master weights are served exactly as trained.
+    if args.qat and args.backend != "mlx":
+        from training.qat import detach_qat
+
+        detach_qat(model)
 
     # If eval never saved a best checkpoint (no holdout, or no improvement window),
     # persist the final-state adapter so we always emit a usable artifact.

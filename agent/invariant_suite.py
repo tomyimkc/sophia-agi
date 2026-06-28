@@ -141,6 +141,44 @@ def provenance_complete(traces: list[dict[str, Any]] | None) -> dict[str, Any]:
     }
 
 
+_NON_PROMOTABLE_TIERS = frozenset({"counterfactual", "synthetic"})
+
+
+def no_synthetic_promotion(committed_rows: list[dict[str, Any]] | None) -> dict[str, Any]:
+    """No committed boundary row may carry a non-promotable source tier
+    (counterfactual / synthetic). This is the structural information-flow invariant
+    backing the promotion choke-point (okf.promotion_loop.commit_approved_candidate).
+
+    ``committed_rows`` are pending-queue rows with ``committed: true``; a row whose
+    ``sourceTier`` (top-level or in ``meta``) is non-promotable is a violation.
+    """
+    if committed_rows is None:
+        return _held("committed rows not supplied")
+    offending: list[str] = []
+    for row in committed_rows:
+        if not row.get("committed"):
+            continue
+        tier = str(row.get("sourceTier") or (row.get("meta") or {}).get("sourceTier") or "").lower()
+        if tier in _NON_PROMOTABLE_TIERS:
+            offending.append(str(row.get("nodeId", "?")))
+    if offending:
+        return {
+            "verdict": "rejected",
+            "backend": "fallback",
+            "status": "contradiction",
+            "reasons": [f"{len(offending)} committed row(s) carry a non-promotable tier: {offending}"],
+            "model": {"offending": offending},
+        }
+    backend = "z3" if z3_available() else "fallback"
+    return {
+        "verdict": "accepted",
+        "backend": backend,
+        "status": "consistent",
+        "reasons": ["no committed row carries a counterfactual/synthetic source tier"],
+        "model": {"offendingCount": 0},
+    }
+
+
 def solver_attestation() -> dict[str, Any]:
     """Optional z3 attestation over the empty constraint set (fail-closed without z3)."""
     return require_z3(check_lattice_consistency, {}, [])
@@ -174,6 +212,7 @@ __all__ = [
     "no_total_regression",
     "contamination_zero",
     "provenance_complete",
+    "no_synthetic_promotion",
     "solver_attestation",
     "run_invariant_suite",
 ]

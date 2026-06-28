@@ -45,6 +45,7 @@ from tools.runpod_rlvr import (  # noqa: E402 — reuse the proven pod lifecycle
     _pod_id,
     _redact,
     _rsync_repo_to_pod,
+    _run,
     _scp_from_pod,
     _ssh_base,
     _startup_cmd,  # noqa: F401 — referenced via _build_create_payload
@@ -52,18 +53,225 @@ from tools.runpod_rlvr import (  # noqa: E402 — reuse the proven pod lifecycle
     _wait_ssh_login,
 )
 
+# Broad fallback list so concurrent seeds don't fail when one GPU type is out of
+# stock — RunPod picks any available type (payload uses gpuTypePriority=availability).
+# All listed cards have >=24 GB VRAM, ample for a 7B QLoRA 4-bit run.
 DEFAULT_GPU_TYPES = [
+    # 24 GB — cheapest, widest availability
     "NVIDIA GeForce RTX 4090",
+    "NVIDIA GeForce RTX 3090",
+    "NVIDIA RTX A5000",
+    # 48 GB — broad availability fallback
+    "NVIDIA RTX A6000",
+    "NVIDIA A40",
+    "NVIDIA L40S",
+    "NVIDIA L40",
+    "NVIDIA RTX 6000 Ada Generation",
+    # 80 GB — last resort (pricier, usually in stock)
     "NVIDIA A100 80GB PCIe",
     "NVIDIA A100-SXM4-80GB",
+    "NVIDIA H100 80GB HBM3",
+    "NVIDIA H100 PCIe",
 ]
 # torch-2.8 base so requirements-lora (pinned <2.9) stays ABI-stable; see runpod_speedup.py.
 DEFAULT_TRAIN_IMAGE = "runpod/pytorch:1.0.7-cu1281-torch280-ubuntu2204"
 ADAPTER_DIR = "/workspace/sophia-runpod/sophia-agi/training/lora/checkpoints/sophia-cuda-v1"
 
 
-def _remote_train_script(args: argparse.Namespace) -> str:
+def _scp_to_pod(conn: PodConnection, key_path: Path, local: Path, remote: str) -> None:
+    cmd = [
+        "scp", "-i", str(key_path), "-P", str(conn.ssh_port),
+        "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null",
+        str(local), f"root@{conn.public_ip}:{remote}",
+    ]
+    proc = _run(cmd, check=False)
+    if proc.returncode != 0:
+        raise RunPodError(f"scp to pod failed ({local} -> {remote})")
+
+
+def _seeds_list(args: argparse.Namespace) -> list[int]:
+    """Seeds to train on a single pod. ``--seeds 0,1,2`` (on-pod multi-seed) wins;
+    otherwise the single ``--seed`` (one seed per pod, the default)."""
+    raw = (getattr(args, "seeds", "") or "").strip()
+    if raw:
+        return [int(s) for s in raw.split(",") if s.strip() != ""]
+    return [int(args.seed)]
+
+
+def _effective_gpu_count(args: argparse.Namespace) -> int:
+    """Mode A (parallel on-pod multi-seed) needs one GPU per seed."""
+    seeds = _seeds_list(args)
+    if len(seeds) > 1 and getattr(args, "on_pod_mode", "parallel") == "parallel":
+        return max(args.gpu_count, len(seeds))
+    return args.gpu_count
+
+
+def _seed_train_cmd(args: argparse.Namespace, seed: int, out_dir: str) -> str:
+    """The ``train_lora.py`` invocation for one seed → one adapter dir.
+
+    Mirrors the single-seed recipes: sealed-pack minimal (``--train-only`` + a
+    pre-built ``--train-data``) vs the full source-discipline recipe.
+    """
+    extra = (" " + args.extra_train_args.strip()) if getattr(args, "extra_train_args", "") else ""
+    if getattr(args, "train_only", False) and args.train_data:
+        return (
+            'python tools/train_lora.py '
+            '--model "$SOPHIA_MODEL" --train ' + shlex.quote(args.train_data) + ' --4bit '
+            '--epochs "$SOPHIA_EPOCHS" --seed ' + str(seed) + ' --output ' + out_dir + extra
+        )
+    train_flag = (" --train " + shlex.quote(args.train_data)) if args.train_data else ""
+    alloc_flag = " --lora-rank-alloc" if getattr(args, "lora_rank_alloc", False) else ""
+    return (
+        'python tools/train_lora.py '
+        '--model "$SOPHIA_MODEL" --4bit --rslora --neftune-alpha 5 --weight-decay 0.05 '
+        '--scaffold --guard --eval-every 25 --patience 4' + train_flag + alloc_flag + ' '
+        '--epochs "$SOPHIA_EPOCHS" --seed ' + str(seed) + ' --output ' + out_dir + extra
+    )
+
+
+def _remote_multiseed_script(args: argparse.Namespace, seeds: list[int]) -> str:
+    """Remote script that trains MULTIPLE seeds on ONE pod.
+
+    - ``--on-pod-mode parallel`` (Mode A): one seed per GPU via
+      ``CUDA_VISIBLE_DEVICES``, all backgrounded then ``wait``-ed (needs
+      ``gpuCount >= len(seeds)`` — main() bumps it). Wall-clock ≈ one seed.
+    - ``--on-pod-mode sequential`` (Mode B): seeds run back-to-back on a single
+      GPU. One pod rented once; cheaper than N pods but ≈ N× wall-clock.
+
+    On-pod eval/promote is skipped — each seed's adapter is tarred and returned
+    for offline (CI) eval. DPO is not supported in multi-seed mode.
+    """
     branch_flag = (" --branch " + shlex.quote(args.branch)) if args.branch else ""
+    mode = getattr(args, "on_pod_mode", "parallel")
+    base = args.adapter_dir
+    data_step = (
+        "python tools/build_local_sophia_dataset.py --check\n"
+        if args.train_data
+        else "python tools/prepare_lora_dataset.py\n"
+    )
+    train_lines: list[str] = []
+    tar_lines: list[str] = []
+    for i, seed in enumerate(seeds):
+        out_dir = shlex.quote(f"{base}-seed{seed}")
+        cmd = _seed_train_cmd(args, seed, out_dir)
+        log = f"/workspace/sophia-runpod/train-seed{seed}.log"
+        if mode == "parallel":
+            train_lines.append(f"CUDA_VISIBLE_DEVICES={i} {cmd} > {log} 2>&1 &")
+        else:
+            train_lines.append(f"{cmd} 2>&1 | tee {log}")
+        tar_lines.append(
+            f"if [ -d {out_dir} ]; then "
+            f"tar -czf /workspace/sophia-runpod/sophia-cuda-v1-seed{seed}.tar.gz "
+            f"-C $(dirname {out_dir}) $(basename {out_dir}); "
+            f"cp {out_dir}/sophia_lora_config.json "
+            f"/workspace/sophia-runpod/sophia_lora_config-seed{seed}.json || true; fi"
+        )
+    train_block = "\n".join(train_lines)
+    wait_line = "wait" if mode == "parallel" else ""
+    tar_block = "\n".join(tar_lines)
+    return f"""
+set -Eeuo pipefail
+export DEBIAN_FRONTEND=noninteractive
+export HF_HOME=/workspace/.cache/huggingface
+export HF_HUB_CACHE=/workspace/.cache/huggingface/hub
+export PIP_CACHE_DIR=/workspace/.cache/pip
+export SOPHIA_MODEL={shlex.quote(args.model)}
+export SOPHIA_EPOCHS={shlex.quote(str(args.epochs))}
+mkdir -p /workspace/sophia-runpod /workspace/.cache/huggingface/hub /workspace/.cache/pip
+cd /workspace/sophia-runpod
+if [ {shlex.quote(args.source)} = "git" ] && [ ! -d sophia-agi/.git ]; then
+  git clone --depth 1{branch_flag} {shlex.quote(args.repo_url)} sophia-agi
+fi
+cd sophia-agi
+(git rev-parse HEAD || true) | tee /workspace/sophia-runpod/repo-head.txt
+nvidia-smi || true
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install -r requirements-lora.txt   # torch pinned <2.9 -> ABI stable
+
+# 1) sealed pack guard / data prep
+{data_step}
+# 2) on-pod multi-seed training ({mode}); one adapter per seed, no on-pod eval/promote
+{train_block}
+{wait_line}
+# 3) tar each seed's adapter for offline eval
+{tar_block}
+echo "Sophia multi-seed run complete ({mode}; seeds {','.join(str(s) for s in seeds)})."
+"""
+
+
+def _remote_train_script(args: argparse.Namespace) -> str:
+    seeds = _seeds_list(args)
+    if len(seeds) > 1:
+        return _remote_multiseed_script(args, seeds)
+    branch_flag = (" --branch " + shlex.quote(args.branch)) if args.branch else ""
+    adapter_dir = shlex.quote(args.adapter_dir)
+    train_only = getattr(args, "train_only", False)
+    alloc_flag = " --lora-rank-alloc" if getattr(args, "lora_rank_alloc", False) else ""
+    data_step = (
+        "# 1) sealed pack guard (holdout never trained)\n"
+        "python tools/build_local_sophia_dataset.py --check\n"
+    )
+    if args.dpo_pairs:
+        train_block = f"""
+mkdir -p {adapter_dir}
+tar -xzf /workspace/sophia-runpod/sft-adapter.tar.gz -C $(dirname {adapter_dir})
+python tools/eval_ladder.py --backend hf --model "$SOPHIA_MODEL" --adapter {adapter_dir} \\
+  || echo "[dpo] pre-DPO eval_ladder failed (non-fatal)"
+cp training/local_sophia_v2/eval_ladder_adapter.json /workspace/sophia-runpod/eval_ladder_sft.json 2>/dev/null || true
+python -m pip install -r requirements-rl.txt
+python tools/train_dpo.py --model "$SOPHIA_MODEL" --4bit --rslora \\
+  --adapter {adapter_dir} --pairs {shlex.quote(args.dpo_pairs)} \\
+  --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" --output {adapter_dir}
+"""
+    elif train_only and args.train_data:
+        # Sealed-curriculum SFT (math-code): minimal recipe on a pre-built pack —
+        # no source-discipline scaffold/guard, just QLoRA on the verified rows.
+        train_block = f"""
+python tools/train_lora.py \\
+  --model "$SOPHIA_MODEL" --train {shlex.quote(args.train_data)} --4bit \\
+  --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" \\
+  --output {adapter_dir}
+"""
+    else:
+        if args.train_data:
+            train_flag = " --train " + shlex.quote(args.train_data)
+        else:
+            data_step = (
+                "# 1) data (decontaminated train/holdout + pre-split)\n"
+                "python tools/prepare_lora_dataset.py\n"
+            )
+            train_flag = ""
+        train_block = f"""
+python tools/train_lora.py \\
+  --model "$SOPHIA_MODEL" --4bit --rslora --neftune-alpha 5 --weight-decay 0.05 \\
+  --scaffold --guard --eval-every 25 --patience 4{train_flag}{alloc_flag} \\
+  --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" \\
+  --output {adapter_dir}
+"""
+    # Eval ladder + W2 promotion gate run after training UNLESS --train-only
+    # (sealed-pack / curriculum SFT just returns the adapter for offline eval).
+    eval_block = ""
+    if not train_only:
+        eval_block = f"""
+# 3) eval ladder: base · base+gate · adapter · adapter+gate (writes eval_ladder_adapter.json)
+python tools/eval_ladder.py --backend hf --model "$SOPHIA_MODEL" --adapter {adapter_dir} \
+  || echo "[train] eval_ladder failed (non-fatal); adapter still returned"
+cp training/local_sophia_v2/eval_ladder_adapter.json /workspace/sophia-runpod/eval_ladder_adapter.json 2>/dev/null || true
+
+# 3b) per-item answer transcripts (base + adapter) for the VALIDATED 2-judge protocol.
+#     eval_local_model writes benchmark/model_runs/local-<label>-<domain>.json (raw answers).
+tar -czf /workspace/sophia-runpod/answers.tar.gz benchmark/model_runs/local-*.json 2>/dev/null \
+  && echo "[train] answer transcripts tarred" || echo "[train] no answer transcripts to tar"
+
+# 4) W2 promotion gate (protected-floor proof; reads the eval ladder + adapter seed)
+python tools/promote_adapter.py \
+  --adapter-config {adapter_dir}/sophia_lora_config.json \
+  --out /workspace/sophia-runpod/promotion.public-report.json \
+  || echo "[train] promote_adapter failed (non-fatal)"
+
+echo "===== sophia_lora_config.json ====="; cat /workspace/sophia-runpod/sophia_lora_config.json 2>/dev/null || true
+echo "===== eval_ladder_adapter.json ====="; cat /workspace/sophia-runpod/eval_ladder_adapter.json 2>/dev/null || true
+echo "===== promotion.public-report.json ====="; cat /workspace/sophia-runpod/promotion.public-report.json 2>/dev/null || true"""
     return f"""
 set -Eeuo pipefail
 export DEBIAN_FRONTEND=noninteractive
@@ -84,35 +292,14 @@ nvidia-smi || true
 python -m pip install --upgrade pip setuptools wheel
 python -m pip install -r requirements-lora.txt   # torch pinned <2.9 -> ABI stable
 
-# 1) data (decontaminated train/holdout + pre-split)
-python tools/prepare_lora_dataset.py
-
-# 2) REAL training — the research-backed gate-disciplined recipe. Adapter is tarred
-#    immediately after so it always comes back even if eval/promote later fail.
-python tools/train_lora.py \
-  --model "$SOPHIA_MODEL" --4bit --rslora --neftune-alpha 5 --weight-decay 0.05 \
-  --scaffold --guard --eval-every 25 --patience 4 \
-  --epochs "$SOPHIA_EPOCHS" --seed "$SOPHIA_SEED" \
-  --output {ADAPTER_DIR}
-if [ -d {ADAPTER_DIR} ]; then
-  tar -czf /workspace/sophia-runpod/sophia-cuda-v1.tar.gz -C $(dirname {ADAPTER_DIR}) $(basename {ADAPTER_DIR})
-  cp {ADAPTER_DIR}/sophia_lora_config.json /workspace/sophia-runpod/sophia_lora_config.json || true
+{data_step}
+# 2) training (SFT or DPO-on-SFT). Adapter tarred immediately after.
+{train_block}
+if [ -d {adapter_dir} ]; then
+  tar -czf /workspace/sophia-runpod/sophia-cuda-v1.tar.gz -C $(dirname {adapter_dir}) $(basename {adapter_dir})
+  cp {adapter_dir}/sophia_lora_config.json /workspace/sophia-runpod/sophia_lora_config.json || true
 fi
-
-# 3) eval ladder: base · base+gate · adapter · adapter+gate (writes eval_ladder_adapter.json)
-python tools/eval_ladder.py --backend hf --model "$SOPHIA_MODEL" --adapter {ADAPTER_DIR} \
-  || echo "[train] eval_ladder failed (non-fatal); adapter still returned"
-cp training/local_sophia_v2/eval_ladder_adapter.json /workspace/sophia-runpod/eval_ladder_adapter.json 2>/dev/null || true
-
-# 4) W2 promotion gate (protected-floor proof; reads the eval ladder + adapter seed)
-python tools/promote_adapter.py \
-  --adapter-config {ADAPTER_DIR}/sophia_lora_config.json \
-  --out /workspace/sophia-runpod/promotion.public-report.json \
-  || echo "[train] promote_adapter failed (non-fatal)"
-
-echo "===== sophia_lora_config.json ====="; cat /workspace/sophia-runpod/sophia_lora_config.json 2>/dev/null || true
-echo "===== eval_ladder_adapter.json ====="; cat /workspace/sophia-runpod/eval_ladder_adapter.json 2>/dev/null || true
-echo "===== promotion.public-report.json ====="; cat /workspace/sophia-runpod/promotion.public-report.json 2>/dev/null || true
+{eval_block}
 echo "Sophia real training run complete."
 """
 
@@ -124,6 +311,19 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--api-key-file", type=Path, default=None)
     ap.add_argument("--yes", action="store_true", help="actually create a RunPod pod (required unless --dry-run)")
     ap.add_argument("--dry-run", action="store_true", help="print payload + remote script; no pod, no cost")
+    ap.add_argument(
+        "--local",
+        action="store_true",
+        help="run LoRA SFT on the LOCAL GPU (e.g. NVIDIA DGX Spark) instead of renting a RunPod pod; "
+             "no SSH/pod/cost. Pairs with --four-bit off (bf16) by default for aarch64/Grace Blackwell "
+             "(bitsandbytes 4-bit wheels are the aarch64 pain point); pass --four-bit to opt into 4-bit.",
+    )
+    ap.add_argument(
+        "--four-bit",
+        action="store_true",
+        help="LOCAL path only: use QLoRA 4-bit (needs a working aarch64 bitsandbytes wheel). "
+             "Off by default on the Spark (bf16 fits in 128 GB unified memory).",
+    )
     ap.add_argument("--keep-pod", action="store_true", help="do NOT delete the pod after the run (debug only)")
     ap.add_argument("--name", default=f"sophia-train-{timestamp}")
     ap.add_argument("--source", choices=["local", "git"], default="git")
@@ -132,8 +332,40 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--model", default="Qwen/Qwen2.5-3B-Instruct")
     ap.add_argument("--epochs", type=int, default=1)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--lora-rank-alloc", dest="lora_rank_alloc", action="store_true",
+                    help="Pass --lora-rank-alloc to train_lora (moe/adapt sensitivity-aware "
+                         "per-type LoRA rank allocation; preserves the param budget)")
+    ap.add_argument("--train-data", default="",
+                    help="path to a pre-built sealed train split (e.g. "
+                         "training/local_sophia_7b/mlx/train.jsonl or "
+                         "training/sophia-math-code-curriculum/sft_all.jsonl). Empty = regenerate "
+                         "on-pod via prepare_lora_dataset.py (legacy 3B path).")
+    ap.add_argument("--adapter-dir", default=ADAPTER_DIR,
+                    help="remote adapter output directory inside the pod "
+                         "(per-seed dir for curriculum SFT runs)")
+    ap.add_argument("--train-only", action="store_true",
+                    help="skip on-pod eval_ladder + promote_adapter (sealed-pack / curriculum SFT; "
+                         "adapter is returned for offline eval)")
+    ap.add_argument("--seeds", default="",
+                    help="comma-separated seeds to train on ONE pod (e.g. '0,1,2'). Empty = single "
+                         "--seed, one pod per seed (default). Multi-seed skips on-pod eval/promote "
+                         "and returns one adapter tarball per seed.")
+    ap.add_argument("--on-pod-mode", choices=["parallel", "sequential"], default="parallel",
+                    help="with --seeds: 'parallel' = one seed per GPU (Mode A, needs a multi-GPU "
+                         "pod; gpu-count auto-bumped to #seeds); 'sequential' = seeds back-to-back "
+                         "on one GPU (Mode B, cheaper, ~N x wall-clock)")
+    ap.add_argument("--dpo-pairs", default="",
+                    help="if set, run Stage-3 DPO (train_dpo.py) instead of SFT")
+    ap.add_argument("--sft-adapter-archive", type=Path, default=None,
+                    help="local .tar.gz of Stage-2 SFT adapter (required for --dpo-pairs)")
+    ap.add_argument("--ssh-login-timeout-s", type=int, default=600,
+                    help="seconds to wait for SSH login after port mapping")
     ap.add_argument("--gpu-type", default=",".join(DEFAULT_GPU_TYPES))
     ap.add_argument("--gpu-count", type=int, default=1)
+    ap.add_argument("--extra-train-args", default="",
+                    help="extra flags appended verbatim to the train_lora.py invocation "
+                         "(e.g. \"--qat --qat-scheme nvfp4 --shard fsdp\"). Threaded into both "
+                         "the remote pod script and the local (--local) run.")
     ap.add_argument("--cloud-type", choices=["SECURE", "COMMUNITY"], default="SECURE")
     ap.add_argument("--interruptible", action="store_true", help="use cheaper spot/interruptible pod")
     ap.add_argument("--image-name", default=DEFAULT_TRAIN_IMAGE)
@@ -151,11 +383,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return ap.parse_args(argv)
 
 
-def _create_pod_with_ssh(api_key, payload, name, *, attempts, ssh_timeout_s):
-    """Create a pod and wait for SSH; on RunPod's intermittent 'RUNNING but no public
-    IP/ports' provisioning flake, DELETE the unreachable pod and retry (up to `attempts`).
-    Returns (pod_id, conn) for the first reachable pod; raises if every attempt fails.
-    Each failed pod is deleted before the next attempt, so no pod is left billing."""
+def _create_pod_with_ssh(api_key, payload, name, *, attempts, ssh_timeout_s, key_path, login_timeout_s):
+    """Create a pod, wait for SSH port mapping AND login; on flake, delete and retry."""
     last_exc = None
     for attempt in range(1, attempts + 1):
         pod_id = ""
@@ -173,20 +402,101 @@ def _create_pod_with_ssh(api_key, payload, name, *, attempts, ssh_timeout_s):
                   f"costPerHr={pod.get('costPerHr')}, gpu={pod.get('gpu')}")
             conn = _poll_ssh(api_key, pod_id, timeout_s=ssh_timeout_s)
             print(f"[runpod] SSH mapped: root@{conn.public_ip} -p {conn.ssh_port}")
+            _wait_ssh_login(conn, key_path, timeout_s=login_timeout_s)
+            print(f"[runpod] SSH login OK on attempt {attempt}/{attempts}")
             return pod_id, conn
         except RunPodError as exc:
             last_exc = exc
             tail = "; deleting unreachable pod and retrying" if attempt < attempts else ""
-            print(f"[runpod] attempt {attempt}/{attempts} failed to map SSH ({exc}){tail}")
+            print(f"[runpod] attempt {attempt}/{attempts} failed SSH reachability ({exc}){tail}")
             if pod_id:
                 _delete_pod(api_key, pod_id)
     raise RunPodError(f"no SSH-reachable pod after {attempts} attempt(s): {last_exc}")
+
+
+def _local_seed_cmd(args: argparse.Namespace, seed: int, out_dir: str) -> list[str]:
+    """The LOCAL ``train_lora.py`` invocation for one seed (no shell vars, no ``$SOPHIA_MODEL``).
+
+    Mirrors ``_seed_train_cmd``'s branching: ``--train-only`` (sealed-pack minimal — just
+    data + quant, no scaffold/guard/early-stop, since the holdout isn't set up for it) vs the
+    full source-discipline recipe otherwise. bf16 by default (no ``--4bit``) — the
+    Spark/Grace-Blackwell-friendly path; ``--four-bit`` opts into QLoRA 4-bit.
+    """
+    cmd = [sys.executable, str(ROOT / "tools" / "train_lora.py"),
+           "--model", args.model, "--epochs", str(args.epochs), "--seed", str(seed),
+           "--output", out_dir]
+    minimal = bool(getattr(args, "train_only", False)) and bool(args.train_data)
+    if not minimal:
+        cmd += ["--rslora", "--neftune-alpha", "5", "--weight-decay", "0.05",
+                "--scaffold", "--guard", "--eval-every", "25", "--patience", "4"]
+    if getattr(args, "four_bit", False):
+        cmd.append("--4bit")
+    if args.train_data:
+        cmd += ["--train", args.train_data]
+    if getattr(args, "extra_train_args", ""):
+        cmd += shlex.split(args.extra_train_args)
+    return cmd
+
+
+def _run_local(args: argparse.Namespace) -> int:
+    """Run LoRA SFT on the LOCAL GPU (e.g. NVIDIA DGX Spark) instead of renting a RunPod pod.
+
+    Short-circuits pod creation / SSH / scp / RunPod cost entirely: the same
+    ``tools/train_lora.py`` the remote script would invoke runs against the host
+    Python+CUDA stack, once per seed in ``--seeds`` (sequential on the single local GPU).
+    bf16 by default (see ``_local_seed_cmd``). No RunPod API key is required in this mode.
+    """
+    args.artifacts_dir.mkdir(parents=True, exist_ok=True)
+    seeds = _seeds_list(args) or [args.seed]
+    # The default --adapter-dir is the RunPod REMOTE path (/workspace/...); for the local
+    # path, strip the remote prefix and mark the adapter local-distinct so it can't collide
+    # with a cloud-produced adapter of the same name.
+    base = args.adapter_dir
+    marker = "/workspace/sophia-runpod/sophia-agi/"
+    if marker in base:
+        base = base.split(marker, 1)[1]  # e.g. training/lora/checkpoints/sophia-cuda-v1
+    if "checkpoints/" in base:
+        base = base.replace("checkpoints/", "checkpoints/local-", 1)
+    else:
+        base = base.rstrip("/") + "-local"
+    # Resolve relative to ROOT so the adapter lands deterministically regardless of CWD
+    # (train_lora.py resolves --output against ITS cwd).
+    if not Path(base).is_absolute():
+        base = str(ROOT / base)
+    plan: list[tuple[int, list[str], Path]] = []
+    for seed in seeds:
+        out_dir = f"{base.rstrip('/')}-seed{seed}"
+        cmd = _local_seed_cmd(args, seed, out_dir)
+        log = args.artifacts_dir / f"local.train-seed{seed}.log"
+        plan.append((seed, cmd, log))
+    print(f"[runpod] --local: running LoRA SFT on the LOCAL GPU for {len(seeds)} seed(s) "
+          f"(no pod, no SSH, no RunPod cost; bf16 unless --four-bit)")
+    for seed, cmd, log in plan:
+        print(f"[runpod] seed {seed}: {' '.join(cmd)}  (log {log})")
+    if args.dry_run:
+        print("[runpod] dry-run only; nothing executed")
+        return 0
+    if not args.yes:
+        raise RunPodError("Refusing to train locally without --yes. Use --dry-run to inspect the commands first.")
+    overall = 0
+    for seed, cmd, log in plan:
+        exit_code = _stream(cmd, log)
+        print(f"[runpod] seed {seed} exit code: {exit_code}; log={log}")
+        if exit_code != 0:
+            overall = exit_code
+            break
+    return overall
 
 
 def main(argv: list[str] | None = None) -> int:
     import os
 
     args = parse_args(argv)
+    # LOCAL GPU path (e.g. NVIDIA DGX Spark): no pod, no SSH, no RunPod cost.
+    if getattr(args, "local", False):
+        return _run_local(args)
+    # Mode A (parallel on-pod multi-seed) needs one GPU per seed.
+    args.gpu_count = _effective_gpu_count(args)
     api_key = os.environ.get(args.api_key_env, "")
     if not api_key and args.api_key_file:
         api_key = args.api_key_file.read_text(encoding="utf-8").strip()
@@ -227,6 +537,8 @@ def main(argv: list[str] | None = None) -> int:
             raise RunPodError("Refusing to create a paid pod without --yes. Use --dry-run to inspect first.")
         if not api_key:
             raise RunPodError(f"Set {args.api_key_env}=<RunPod API key> before running.")
+        if args.dpo_pairs and not args.sft_adapter_archive:
+            raise RunPodError("--dpo-pairs requires --sft-adapter-archive (Stage-2 SFT tarball).")
 
         pod_id = ""
         conn: PodConnection | None = None
@@ -235,10 +547,15 @@ def main(argv: list[str] | None = None) -> int:
             pod_id, conn = _create_pod_with_ssh(
                 api_key, payload, args.name,
                 attempts=args.ssh_attempts, ssh_timeout_s=args.ssh_timeout_s,
+                key_path=key_path, login_timeout_s=args.ssh_login_timeout_s,
             )
-            _wait_ssh_login(conn, key_path)
             if args.source == "local":
                 _rsync_repo_to_pod(conn, key_path)
+            if args.sft_adapter_archive:
+                _scp_to_pod(
+                    conn, key_path, args.sft_adapter_archive,
+                    "/workspace/sophia-runpod/sft-adapter.tar.gz",
+                )
 
             args.artifacts_dir.mkdir(parents=True, exist_ok=True)
             log_path = args.artifacts_dir / f"{pod_id}.train.log"
@@ -246,14 +563,30 @@ def main(argv: list[str] | None = None) -> int:
             exit_code = _stream(cmd, log_path, input_text=_remote_train_script(args))
             print(f"[runpod] remote command exit code: {exit_code}; log={log_path}")
 
-            for remote, local in (
-                ("sophia-cuda-v1.tar.gz", f"{pod_id}.sophia-cuda-v1.tar.gz"),
-                ("sophia_lora_config.json", f"{pod_id}.sophia_lora_config.json"),
-                ("eval_ladder_adapter.json", f"{pod_id}.eval_ladder_adapter.json"),
-                ("promotion.public-report.json", f"{pod_id}.promotion.public-report.json"),
-                ("repo-head.txt", f"{pod_id}.repo-head.txt"),
+            # (remote, local, required): _scp_from_pod is best-effort (returns False on
+            # failure, never raises). Previously the loop ignored that bool, so a failed
+            # copy-back dropped silently — that is how run #9's W2 promotion.public-report.json
+            # never reached the artifact (the verdict survived only in the run log). Now a
+            # REQUIRED file retries once and, if it still fails, warns loudly; eval_ladder_sft
+            # is DPO-only so it stays optional (no warning on the common SFT path).
+            for remote, local, required in (
+                ("sophia-cuda-v1.tar.gz", f"{pod_id}.sophia-cuda-v1.tar.gz", True),
+                ("sophia_lora_config.json", f"{pod_id}.sophia_lora_config.json", True),
+                ("eval_ladder_adapter.json", f"{pod_id}.eval_ladder_adapter.json", True),
+                ("eval_ladder_sft.json", f"{pod_id}.eval_ladder_sft.json", False),
+                ("promotion.public-report.json", f"{pod_id}.promotion.public-report.json", True),
+                ("answers.tar.gz", f"{pod_id}.answers.tar.gz", False),
+                ("repo-head.txt", f"{pod_id}.repo-head.txt", True),
             ):
-                _scp_from_pod(conn, key_path, f"/workspace/sophia-runpod/{remote}", args.artifacts_dir / local)
+                src = f"/workspace/sophia-runpod/{remote}"
+                dst = args.artifacts_dir / local
+                ok = _scp_from_pod(conn, key_path, src, dst)
+                if not ok and required:
+                    ok = _scp_from_pod(conn, key_path, src, dst)  # one retry
+                if not ok and required:
+                    print(f"[runpod] WARNING: failed to copy back required artifact {remote!r}; "
+                          f"it may exist only in the run log, NOT the uploaded artifact",
+                          file=sys.stderr)
             return exit_code
         finally:
             if pod_id and not args.keep_pod:

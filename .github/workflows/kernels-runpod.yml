@@ -1,0 +1,125 @@
+name: kernels-runpod
+
+# Manual-only RunPod launcher for the HPC operator track (M1): build + roofline-profile
+# the Triton tiled BF16 GEMM on a real CUDA GPU.
+# See docs/06-Roadmap/HPC-Operator-Compiler-Roadmap.md and kernels/README.md.
+#
+# Dispatch-only: never runs on push/PR/schedule. On dispatch it uses the orchestrator
+# tools/runpod_kernels.py to rent a pod via the RunPod REST API, run the roofline
+# self-test + the timed kernel + an ncu profile over SSH, copy kernels/reports/* back, and
+# ALWAYS delete the pod (finally block + remote watchdog). The secret is read from
+# RUNPOD_API_KEY and never printed.
+#
+# PREREQUISITES (only the maintainer can do these):
+#   1. Repo secret RUNPOD_API_KEY (Settings -> Secrets and variables -> Actions).
+#   2. RunPod account GPU credit. A pod costs real money while it runs (~minutes here).
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type RUN to confirm you accept renting a paid GPU pod'
+        required: true
+        default: ''
+      gpu_type:
+        description: 'Comma-separated RunPod GPU type preference (first available wins)'
+        required: false
+        default: 'NVIDIA H100 80GB HBM3,NVIDIA A100-SXM4-80GB,NVIDIA A100 80GB PCIe'
+      m:
+        description: 'GEMM M'
+        required: false
+        default: '4096'
+      n:
+        description: 'GEMM N'
+        required: false
+        default: '4096'
+      k:
+        description: 'GEMM K'
+        required: false
+        default: '4096'
+      iters:
+        description: 'Timed kernel iterations (>=3; 50 is a quick, stable bench)'
+        required: false
+        default: '50'
+      interruptible:
+        description: 'Use cheaper spot/interruptible pod'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['true', 'false']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kernels-runpod
+  cancel-in-progress: false
+
+jobs:
+  runpod:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Preflight — confirm + secret present
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "RUN" ]; then
+            echo "::error::Dispatch input 'confirm' must be exactly RUN to acknowledge GPU cost. Aborting (no pod created)."
+            exit 1
+          fi
+          if [ -z "$RUNPOD_API_KEY" ]; then
+            echo "::error::Repo secret RUNPOD_API_KEY is not set (or empty). Add a VALID key in Settings -> Secrets and variables -> Actions. Aborting (no pod created)."
+            exit 1
+          fi
+          echo "Preflight OK: confirmed, secret present. GPU runs on the rented pod, not this runner."
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Dry-run remote script (no pod, no cost — sanity check the request)
+        run: |
+          python tools/runpod_kernels.py --dry-run \
+            --branch "${{ github.ref_name }}" \
+            --gpu-type "${{ github.event.inputs.gpu_type }}" \
+            --m "${{ github.event.inputs.m }}" \
+            --n "${{ github.event.inputs.n }}" \
+            --k "${{ github.event.inputs.k }}" \
+            --iters "${{ github.event.inputs.iters }}"
+
+      - name: Launch RunPod kernel bench (rents GPU, runs over SSH, deletes pod)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          INTERRUPTIBLE=""
+          if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
+          python tools/runpod_kernels.py --yes \
+            --branch "${{ github.ref_name }}" \
+            --gpu-type "${{ github.event.inputs.gpu_type }}" \
+            --m "${{ github.event.inputs.m }}" \
+            --n "${{ github.event.inputs.n }}" \
+            --k "${{ github.event.inputs.k }}" \
+            --iters "${{ github.event.inputs.iters }}" \
+            $INTERRUPTIBLE
+
+      - name: Show the roofline report in the run log
+        if: always()
+        run: |
+          for f in kernels/reports/kernel_roofline.txt kernels/reports/roofline_selftest.txt; do
+            if [ -f "$f" ]; then
+              echo "===== $f ====="
+              cat "$f"
+            fi
+          done
+
+      - name: Upload kernel reports (roofline + ncu profile)
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: kernels-runpod-reports
+          path: kernels/reports/**
+          if-no-files-found: warn

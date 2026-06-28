@@ -20,8 +20,10 @@ independence, entailment, confidence-floor, and learning-candidate rules.
 from __future__ import annotations
 
 import csv
+import hashlib
 import io
 import json
+import os
 import re
 import time
 from dataclasses import dataclass
@@ -35,6 +37,8 @@ from agent.fact_check_gate import AtomicClaim, EvidenceSource
 
 DEFAULT_TIMEOUT = 8.0
 USER_AGENT = "sophia-agi fact-check gate (keyless; contact: github.com/tomyimkc/sophia-agi)"
+DEFAULT_WIKIDATA_CACHE_DIR = Path(__file__).resolve().parents[1] / "eval" / "external" / ".cache" / "wikidata"
+_RETRYABLE_HTTP = {429, 503}
 
 _AUTHOR_WROTE_RE = re.compile(
     r"^(?P<author>[A-Z][A-Za-z0-9 .,'’\-]+?)\s+(?:wrote|authored|penned|composed)\s+(?P<work>.+)$",
@@ -97,6 +101,7 @@ def ranked_sources(sources: list[EvidenceSource]) -> list[EvidenceSource]:
         "scholarly": 88,
         "official_data": 86,
         "openalex": 84,
+        "google_factcheck": 83,
         "wikipedia": 75,
         "web": 40,
         "fixture": 30,
@@ -174,10 +179,21 @@ class LiveFactBackend:
     gate holds fail-closed rather than accepting from a broken backend.
     """
 
-    def __init__(self, *, timeout: float = DEFAULT_TIMEOUT, sleep_s: float = 0.05):
+    def __init__(
+        self,
+        *,
+        timeout: float = DEFAULT_TIMEOUT,
+        sleep_s: float = 0.05,
+        cache_dir: str | Path | None = DEFAULT_WIKIDATA_CACHE_DIR,
+        opener: Any | None = None,
+        sleep_fn: Any | None = None,
+    ):
         self.timeout = timeout
         self.sleep_s = sleep_s
         self._label_cache: dict[str, str] = {}
+        self._cache_dir = Path(cache_dir) if cache_dir is not None else None
+        self._opener = opener
+        self._sleep_fn = sleep_fn or time.sleep
 
     def doi_resolver(self, doi: str) -> bool:
         doi = (doi or "").strip().lower()
@@ -225,6 +241,8 @@ class LiveFactBackend:
         work = parsed["work"]
         try:
             qids = self._wikidata_search(work, limit=3)
+        except (RateLimited, URLError, TimeoutError):
+            raise
         except Exception:
             return []
         sources: list[EvidenceSource] = []
@@ -232,6 +250,8 @@ class LiveFactBackend:
             try:
                 entity = self._wikidata_entity(qid)
                 authors = self._wikidata_authors(entity)
+            except (RateLimited, URLError, TimeoutError):
+                raise
             except Exception:
                 continue
             if not authors:
@@ -249,7 +269,7 @@ class LiveFactBackend:
                 retrieved_at=_utc_now(),
                 source_type="wikidata",
             ))
-            time.sleep(self.sleep_s)
+            self._sleep_fn(self.sleep_s)
         return sources
 
     def macro_economics(self, claim: AtomicClaim) -> list[EvidenceSource]:
@@ -382,22 +402,42 @@ class LiveFactBackend:
         return out
 
     def _wikidata_search(self, query: str, *, limit: int = 3) -> list[str]:
-        params = urlencode({
-            "action": "wbsearchentities",
-            "search": query,
-            "language": "en",
-            "format": "json",
-            "limit": str(limit),
-            "type": "item",
-        })
-        data = _get_json(f"https://www.wikidata.org/w/api.php?{params}", timeout=self.timeout)
+        def fetch() -> Any:
+            params = urlencode({
+                "action": "wbsearchentities",
+                "search": query,
+                "language": "en",
+                "format": "json",
+                "limit": str(limit),
+                "type": "item",
+            })
+            return _get_json(
+                f"https://www.wikidata.org/w/api.php?{params}",
+                timeout=self.timeout,
+                opener=self._opener,
+                sleep_fn=self._sleep_fn,
+            )
+
+        data = self._cached_json("search", {"query": query, "limit": limit}, fetch)
         return [row["id"] for row in data.get("search", []) if row.get("id")]
 
     def _wikidata_entity(self, qid: str) -> dict[str, Any]:
-        data = _get_json(f"https://www.wikidata.org/wiki/Special:EntityData/{qid}.json", timeout=self.timeout)
+        def fetch() -> Any:
+            return _get_json(
+                f"https://www.wikidata.org/wiki/Special:EntityData/{qid}.json",
+                timeout=self.timeout,
+                opener=self._opener,
+                sleep_fn=self._sleep_fn,
+            )
+
+        data = self._cached_json("entity", {"qid": qid}, fetch)
         return data.get("entities", {}).get(qid, {})
 
     def _wikidata_authors(self, entity: dict[str, Any]) -> list[str]:
+        cache_key = {"entity": str(entity.get("id") or _cache_digest(entity))}
+        cached = self._cache_read("authors", cache_key)
+        if isinstance(cached, list):
+            return [str(x) for x in cached if x]
         claims = entity.get("claims", {}).get("P50", [])  # P50 = author
         labels: list[str] = []
         for claim in claims:
@@ -405,7 +445,41 @@ class LiveFactBackend:
             qid = value.get("id")
             if qid:
                 labels.append(self._label(qid))
-        return [x for x in labels if x]
+        authors = [x for x in labels if x]
+        self._cache_write("authors", cache_key, authors)
+        return authors
+
+    def _cached_json(self, prefix: str, key: Any, fetch: Any) -> Any:
+        cached = self._cache_read(prefix, key)
+        if cached is not None:
+            return cached
+        data = fetch()
+        self._cache_write(prefix, key, data)
+        return data
+
+    def _cache_read(self, prefix: str, key: Any) -> Any | None:
+        path = self._cache_path(prefix, key)
+        if path is None or not path.exists():
+            return None
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return None
+
+    def _cache_write(self, prefix: str, key: Any, data: Any) -> None:
+        path = self._cache_path(prefix, key)
+        if path is None:
+            return
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        except OSError:
+            return
+
+    def _cache_path(self, prefix: str, key: Any) -> Path | None:
+        if self._cache_dir is None:
+            return None
+        return self._cache_dir / f"{prefix}-{_cache_digest(key)}.json"
 
     def _entity_label(self, entity: dict[str, Any], fallback_qid: str) -> str:
         labels = entity.get("labels", {}) or {}
@@ -423,6 +497,173 @@ class LiveFactBackend:
             label = qid
         self._label_cache[qid] = label
         return label
+
+
+# --------------------------------------------------------------------------- #
+# Google Fact Check Tools backend (ClaimReview) — the first backend that reads
+# GOOGLE_FACTCHECK_API_KEY. Keyed because Google's Fact Check Tools API requires
+# an enabled API key (see .env.example). Offline-deterministic via an injectable
+# fetcher so CI never needs the key or the network.
+# --------------------------------------------------------------------------- #
+
+# Clean-negative ClaimReview ratings. We normalize ONLY unambiguous false-style
+# verdicts (which CONTRADICT a claim asserting the rated proposition) and a small
+# set of true-style verdicts (which ENTAIL it). Everything else — "Misleading",
+# "Not the Whole Story", prose like "We have abundant evidence..." — is dropped
+# (treated as "irrelevant") rather than guessed, because fact-checker rating
+# vocabularies are heterogeneous prose and a wrong normalization would silently
+# flip the gate. This is the fail-closed rule the README's plan specified.
+_NEGATIVE_RATINGS = {
+    # universal clear-false across publishers
+    "false", "incorrect", "wrong", "untrue", "fabrication", "fake",
+    # AFP / PolitiFact / Snopes
+    "pants on fire", "pants fire", "mostly false", "false!", "scam", "hoax",
+    # Washington Post (publisher-scoped below — "Pinocchios" is WaPo-only)
+}
+_POSITIVE_RATINGS = {"true", "correct", "accurate", "mostly true", "half true"}
+# Publisher-scoped ratings: a string that is a clear verdict from ONE publisher but
+# ambiguous from another. Keyed by lowercased publisher name substring.
+_PUBLISHER_RATINGS = {
+    "washington post": {"four pinocchios": "false", "three pinocchios": "false", "two pinocchios": "false"},
+    "snopes": {"false": "false", "mixture": "irrelevant", "mostly false": "false", "true": "true"},
+    "politifact": {"pants on fire!": "false", "pants on fire": "false", "mostly false": "false"},
+    "fullfact": {"incorrect": "false", "false": "false", "true": "true"},
+}
+
+
+def normalize_claimreview_rating(rating: str, publisher: str) -> str:
+    """Map a ClaimReview ``textualRating`` to ``true`` | ``false`` | ``irrelevant``.
+
+    Conservative by design: returns ``irrelevant`` (drop) for anything not a clean
+    binary verdict. A wrong normalization would silently flip the gate; an unknown
+    rating leaves the gate to hold on its other evidence, which is fail-closed."""
+    r = (rating or "").strip().lower()
+    p = (publisher or "").lower()
+    if not r:
+        return "irrelevant"
+    # 1) Publisher-scoped vocabulary first (most specific).
+    for pub_fragment, mapping in _PUBLISHER_RATINGS.items():
+        if pub_fragment in p:
+            mapped = mapping.get(r)
+            if mapped:
+                return mapped
+    # 2) Universal clean verdicts.
+    if r in _POSITIVE_RATINGS:
+        return "true"
+    if r in _NEGATIVE_RATINGS:
+        return "false"
+    return "irrelevant"
+
+
+class GoogleFactCheckBackend:
+    """Google Fact Check Tools (ClaimReview) backend for the out-of-wiki gate.
+
+    Queries ``factchecktools.googleapis.com`` for professional fact-checker
+    verdicts on a claim, maps each ClaimReview to an :class:`EvidenceSource`, and
+    derives entailment from the normalized rating. Fail-closed: a missing key, a
+    network error, or an unnormalizable rating yields ``[]`` / ``irrelevant`` so
+    the gate holds rather than accepting from a broken or ambiguous backend.
+
+    The API key is read from ``GOOGLE_FACTCHECK_API_KEY`` (or passed explicitly).
+    It must NEVER be committed; this class only holds it in memory. Offline-
+    testable via the injected ``fetcher`` (a callable taking the full URL and
+    returning a parsed dict) so CI runs without a key or network.
+    """
+
+    BASE_URL = "https://factchecktools.googleapis.com/v1alpha1/claims:search"
+
+    def __init__(
+        self,
+        *,
+        api_key: str | None = None,
+        timeout: float = DEFAULT_TIMEOUT,
+        max_pages: int = 2,
+        fetcher: Any | None = None,
+        page_size: int = 20,
+        language_code: str = "en",
+    ) -> None:
+        self.api_key = api_key if api_key is not None else os.environ.get("GOOGLE_FACTCHECK_API_KEY", "")
+        self.timeout = timeout
+        self.max_pages = max(1, max_pages)
+        self.page_size = page_size
+        self.language_code = language_code
+        # fetcher(url) -> parsed-JSON dict. Default hits the network via _get_json.
+        self._fetcher = fetcher
+
+    def _fetch(self, url: str) -> dict[str, Any]:
+        if self._fetcher is not None:
+            return self._fetcher(url) or {}
+        return _get_json(url, timeout=self.timeout)
+
+    def _search(self, query: str) -> list[dict[str, Any]]:
+        """Page through ClaimReview claims for ``query`` up to ``max_pages``."""
+        claims: list[dict[str, Any]] = []
+        page_token: str | None = None
+        for _ in range(self.max_pages):
+            params = {
+                "key": self.api_key,
+                "query": query,
+                "languageCode": self.language_code,
+                "pageSize": str(self.page_size),
+            }
+            if page_token:
+                params["pageToken"] = page_token
+            url = f"{self.BASE_URL}?{urlencode(params)}"
+            try:
+                data = self._fetch(url)
+            except Exception:
+                break
+            claims.extend(data.get("claims") or [])
+            page_token = data.get("nextPageToken")
+            if not page_token:
+                break
+        return claims
+
+    def retriever(self, claim: AtomicClaim) -> list[EvidenceSource]:
+        if not self.api_key:
+            return []  # fail-closed: no key => no Google evidence (not an error)
+        out: list[EvidenceSource] = []
+        for entry in self._search(claim.text):
+            claim_text = entry.get("text") or claim.text
+            for cr in entry.get("claimReview") or []:
+                publisher = (cr.get("publisher") or {}).get("name", "")
+                rating = cr.get("textualRating", "")
+                normalized = normalize_claimreview_rating(rating, publisher)
+                # Fail-closed: DROP ClaimReviews whose rating we cannot map to a clean
+                # true/false verdict (per the README spec). An unmappable rating is NOT
+                # weak evidence — it is no signal, so the gate holds on its other
+                # evidence rather than acting on a guessed entailment.
+                if normalized == "irrelevant":
+                    continue
+                relation = "contradicts" if normalized == "false" else "entails"
+                # Encode the normalized relation in the id so entailment() recovers
+                # it deterministically (same convention as FixtureFactBackend).
+                sid = f"google_factcheck:{normalize_text(publisher)}:{_cache_digest({'url': cr.get('url', ''), 'rating': rating})}"
+                out.append(EvidenceSource(
+                    id=f"{sid}#rel={relation}",
+                    url=str(cr.get("url", "")),
+                    title=str(cr.get("title", "") or f"{publisher} fact check"),
+                    snippet=f"ClaimReview by {publisher}: rating='{rating}' (normalized: {normalized}). Reviewed claim: \"{(claim_text or '')[:200]}\".",
+                    publisher=publisher,
+                    retrieved_at=_utc_now(),
+                    source_type="google_factcheck",
+                ))
+        return ranked_sources(out)
+
+    def entailment(self, claim: AtomicClaim, source: EvidenceSource) -> str:
+        # The retriever encoded the normalized rating as #rel=... in the id.
+        marker = (source.id or "").split("#rel=", 1)
+        if len(marker) == 2 and marker[1] in {"entails", "contradicts", "irrelevant"}:
+            return marker[1]
+        return "irrelevant"
+
+    # A ClaimReview backend resolves neither DOIs nor arbitrary URLs; delegate to
+    # the keyless resolvers so this backend can stand alone in the CLI wiring.
+    def doi_resolver(self, doi: str) -> bool:
+        return LiveFactBackend().doi_resolver(doi)
+
+    def url_resolver(self, url: str) -> bool:
+        return LiveFactBackend().url_resolver(url)
 
 
 def extract_macro_claim(text: str) -> dict[str, Any] | None:
@@ -568,11 +809,56 @@ def _title_match(query: str, candidate_text: str) -> bool:
     return (len(q & c) / len(q)) >= 0.75
 
 
-def _get_json(url: str, *, timeout: float = DEFAULT_TIMEOUT) -> dict[str, Any]:
+class RateLimited(RuntimeError):
+    """Raised when a live source keeps returning retryable throttling errors."""
+
+
+def _cache_digest(value: Any) -> str:
+    raw = json.dumps(value, sort_keys=True, ensure_ascii=False, default=str)
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:32]
+
+
+def _retry_after_seconds(exc: HTTPError, fallback: float) -> float:
+    value = ""
+    try:
+        value = str(exc.headers.get("Retry-After", "") or "")
+    except AttributeError:
+        value = ""
+    if value:
+        try:
+            return max(0.0, float(value))
+        except ValueError:
+            return fallback
+    return fallback
+
+
+def _get_json(
+    url: str,
+    *,
+    timeout: float = DEFAULT_TIMEOUT,
+    opener: Any | None = None,
+    sleep_fn: Any | None = None,
+    max_attempts: int = 5,
+) -> dict[str, Any]:
     req = Request(url, headers={"Accept": "application/json", "User-Agent": USER_AGENT})
-    with urlopen(req, timeout=timeout) as resp:  # noqa: S310 - fixed keyless public endpoints
-        raw = resp.read().decode("utf-8")
-    return json.loads(raw)
+    open_fn = opener or urlopen
+    sleep = sleep_fn or time.sleep
+    last: HTTPError | None = None
+    for attempt in range(max_attempts):
+        try:
+            with open_fn(req, timeout=timeout) as resp:  # noqa: S310 - fixed keyless public endpoints
+                raw = resp.read().decode("utf-8")
+            return json.loads(raw)
+        except HTTPError as exc:
+            if exc.code not in _RETRYABLE_HTTP:
+                raise
+            last = exc
+            if attempt == max_attempts - 1:
+                break
+            delay = _retry_after_seconds(exc, float(2 ** attempt))
+            sleep(delay)
+    code = getattr(last, "code", "unknown")
+    raise RateLimited(f"HTTP {code} persisted after {max_attempts} attempts for {url[:120]}")
 
 
 def _utc_now() -> str:
@@ -580,6 +866,7 @@ def _utc_now() -> str:
 
 
 __all__ = [
-    "FixtureFactBackend", "LiveFactBackend", "extract_authorship_claim", "extract_macro_claim",
-    "macro_structured_entailment", "normalize_text", "ranked_sources", "structured_entailment",
+    "FixtureFactBackend", "LiveFactBackend", "GoogleFactCheckBackend", "RateLimited",
+    "extract_authorship_claim", "extract_macro_claim", "macro_structured_entailment",
+    "normalize_claimreview_rating", "normalize_text", "ranked_sources", "structured_entailment",
 ]

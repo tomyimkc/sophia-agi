@@ -24,9 +24,21 @@ from provenance_bench.code_exec import check_answer
 REWARD_MIN, REWARD_MAX = -1.0, 1.0
 
 
-def reward_for_task(answer: str, test_code: str, *, timeout_sec: int = 15) -> "tuple[float, dict]":
-    """Deterministic code reward: +1 iff the answer's code passes ``test_code``."""
+def reward_for_task(
+    answer: str,
+    test_code: str,
+    *,
+    timeout_sec: int = 15,
+    spy: dict | None = None,
+) -> "tuple[float, dict]":
+    """Deterministic code reward: +1 iff the answer's code passes ``test_code``.
+
+    ``spy`` is an optional mutable dict incremented on each verifier call, so a
+    test can prove the tests-pass seam was actually invoked.
+    """
     res = check_answer(answer, test_code, timeout_sec=timeout_sec)
+    if spy is not None:
+        spy["verifier_calls"] = spy.get("verifier_calls", 0) + 1
     score = REWARD_MAX if res["passed"] else REWARD_MIN
     return (score, {"passed": res["passed"], "reason": res["reason"], "executed": res.get("executed")})
 
@@ -65,3 +77,68 @@ def make_grpo_reward(*, timeout_sec: int = 15) -> Callable:
 
     reward_fn.__name__ = "sophia_code_tests_reward"
     return reward_fn
+
+
+def exec_enabled() -> bool:
+    """Whether ``code_exec`` will actually execute (vs syntax-only fallback)."""
+    from provenance_bench.code_exec import _exec_on
+
+    return _exec_on()
+
+
+def offline_invariants() -> "tuple[bool, dict]":
+    """Assert the code reward-machinery invariants (no torch, no GPU).
+
+    Mirrors ``math_reward.offline_invariants`` for the code task: deterministic,
+    monotone in the right direction, a wrong solution scores negative, the
+    tests-pass seam is actually invoked, the reward is bounded, and the family
+    split is contamination-free. The correctness checks require the executor to
+    actually run (``SOPHIA_ALLOW_CODE_EXEC=1``); when execution is off they are
+    reported skipped (the structural checks still run) rather than failing CI,
+    because syntax-only cannot decide correctness.
+    """
+    from provenance_bench import code_dataset
+
+    can_exec = exec_enabled()
+    spy = {"verifier_calls": 0}
+
+    # A correct and a wrong solution to the SAME hidden test.
+    test_code = "assert scale(3, 4) == 12\nassert scale(0, 5) == 0\n"
+    good = "```python\ndef scale(n, k):\n    return n * k\n```"
+    bad = "```python\ndef scale(n, k):\n    return n + k\n```"
+
+    r_good, d_good = reward_for_task(good, test_code, spy=spy)
+    r_bad, d_bad = reward_for_task(bad, test_code, spy=spy)
+    r_repeat, _ = reward_for_task(good, test_code, spy=spy)
+
+    data = code_dataset.build_code_rl_dataset(eval_frac=0.34, seed=0)
+
+    checks = {
+        "deterministic": r_good == r_repeat,
+        "codeSeamInvoked": spy["verifier_calls"] >= 3,
+        "bounded": all(REWARD_MIN <= r <= REWARD_MAX for r in (r_good, r_bad)),
+        "contaminationFree": len(data["family_intersection"]) == 0,
+        "trainNonEmpty": len(data["train_rows"]) > 0,
+        "evalNonEmpty": len(data["eval_rows"]) > 0,
+    }
+    # Execution-dependent invariants (only meaningful when the interpreter runs).
+    if can_exec:
+        checks["correctPositive"] = r_good == REWARD_MAX
+        checks["wrongNegative"] = r_bad == REWARD_MIN
+        checks["monotone"] = r_good > r_bad
+    else:
+        checks["execSkipped"] = True
+
+    detail = {
+        "exec": can_exec,
+        "rewards": {"good": d_good, "bad": d_bad},
+        "checks": checks,
+        "trainTasks": len(data["train_tasks"]),
+        "evalTasks": len(data["eval_tasks"]),
+        "trainFamilies": sorted({t["family"] for t in data["train_tasks"]}),
+        "evalFamilies": sorted({t["family"] for t in data["eval_tasks"]}),
+        "trainSealed": data["train_sealed"],
+        "evalSealed": data["eval_sealed"],
+        "familyIntersection": data["family_intersection"],
+    }
+    return all(v for v in checks.values()), detail

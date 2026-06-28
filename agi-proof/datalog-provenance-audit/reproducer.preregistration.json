@@ -1,0 +1,24 @@
+{
+  "schema": "sophia.datalog_reproducer.preregistration.v1",
+  "claim": "The Datalog port of provenance_faithful returns byte-identical {passed, violations} to the Python gate on every committed provenance case x 3 answer variants. PASS = 0 divergences.",
+  "dataFiles": {
+    "misattributions": {
+      "path": "provenance_bench/data/misattributions.json",
+      "sha256": "b2b101d0553b550049ad365865f129897873d00a74629410f3f8a2774f2b320e"
+    },
+    "wikidata_snapshot": {
+      "path": "provenance_bench/data/wikidata_snapshot.json",
+      "sha256": "977e786d17e1e2ffad3587e328683bc36c46d3e1372f3a0cb37774fc45ed7660"
+    }
+  },
+  "expected": {
+    "nCases": 319,
+    "nVariants": 3,
+    "nComparisons": 957,
+    "verdict": "PASS",
+    "maxDivergences": 0
+  },
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "note": "Gate-faithfulness claim; not a capability claim, not the -12.5pt delta."
+}

@@ -32,6 +32,8 @@ jobs:
         run: |
           python tools/build_agi_proof_package.py
           python tools/build_web_data.py
+      - name: Web privacy guard (block training/architecture leaks before publish)
+        run: python tools/lint_web_privacy.py
       - name: Add .nojekyll for GitHub Pages
         run: touch web/.nojekyll
       - name: Read site version

@@ -1,0 +1,99 @@
+{
+  "benchmark": "graded-confidence discrimination (live provenance signal over OKF wiki)",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "hops": 1,
+  "thresholds": {
+    "hi": 0.7,
+    "lo": 0.4
+  },
+  "perTier": {
+    "attributed": {
+      "n": 31,
+      "meanConfidence": 0.7852,
+      "actions": {
+        "answer": 23,
+        "hedge": 8
+      }
+    },
+    "disputed": {
+      "n": 19,
+      "meanConfidence": 0.4553,
+      "actions": {
+        "hedge": 19
+      }
+    },
+    "consensus": {
+      "n": 3,
+      "meanConfidence": 0.7967,
+      "actions": {
+        "answer": 3
+      }
+    },
+    "legendary": {
+      "n": 7,
+      "meanConfidence": 0.4321,
+      "actions": {
+        "hedge": 7
+      }
+    },
+    "anachronism_risk": {
+      "n": 1,
+      "meanConfidence": 0.35,
+      "actions": {
+        "abstain": 1
+      }
+    },
+    "none_extant": {
+      "n": 1,
+      "meanConfidence": 0.425,
+      "actions": {
+        "hedge": 1
+      }
+    },
+    "layered": {
+      "n": 2,
+      "meanConfidence": 0.625,
+      "actions": {
+        "hedge": 2
+      }
+    },
+    "compiled": {
+      "n": 12,
+      "meanConfidence": 0.7075,
+      "actions": {
+        "hedge": 6,
+        "answer": 6
+      }
+    },
+    "unspecified": {
+      "n": 8,
+      "meanConfidence": 0.55,
+      "actions": {
+        "hedge": 8
+      }
+    }
+  },
+  "strongSources": {
+    "tiers": [
+      "consensus",
+      "attributed",
+      "compiled",
+      "layered"
+    ],
+    "n": 48,
+    "keepRate": 0.6667
+  },
+  "weakSources": {
+    "tiers": [
+      "disputed",
+      "legendary",
+      "anachronism_risk",
+      "none_extant"
+    ],
+    "n": 28,
+    "downgradeRate": 1.0
+  },
+  "honestBound": "Scores how well-sourced the routed page is and that the router reacts monotonically to it — NOT whether a generated sentence is true. Self-authored over the OKF wiki; deterministic; candidate."
+}

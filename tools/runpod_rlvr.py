@@ -129,11 +129,20 @@ def _startup_cmd(auto_exit_seconds: int) -> list[str]:
 set -Eeuo pipefail
 cleanup() {{
   code=$?
-  if [ "${{SOPHIA_REMOTE_DELETE_WATCHDOG:-0}}" = "1" ] && [ -n "${{RUNPOD_API_KEY:-}}" ] && [ -n "${{RUNPOD_POD_ID:-}}" ]; then
-    echo "Sophia watchdog deleting RunPod Pod $RUNPOD_POD_ID after startup command exit."
-    curl -fsS --request DELETE \\
-      --url "https://rest.runpod.io/v1/pods/${{RUNPOD_POD_ID}}" \\
-      --header "Authorization: Bearer $RUNPOD_API_KEY" || true
+  # Derive our own pod id robustly: prefer RunPod's injected RUNPOD_POD_ID, but
+  # fall back to the container hostname (RunPod sets it to the pod id). Relying on
+  # RUNPOD_POD_ID alone silently leaked EXITED pods when it was absent.
+  POD_ID="${{RUNPOD_POD_ID:-$(hostname)}}"
+  if [ "${{SOPHIA_REMOTE_DELETE_WATCHDOG:-0}}" = "1" ] && [ -n "${{RUNPOD_API_KEY:-}}" ] && [ -n "$POD_ID" ]; then
+    echo "Sophia watchdog deleting RunPod Pod $POD_ID after startup command exit (code $code)."
+    if ! curl -fsS --request DELETE \\
+      --url "https://rest.runpod.io/v1/pods/${{POD_ID}}" \\
+      --header "Authorization: Bearer $RUNPOD_API_KEY"; then
+      # Non-fatal, but never silent: a swallowed failure here is exactly how pods leak.
+      echo "[sophia-watchdog] WARNING: failed to delete pod $POD_ID; it may linger and bill — reap it with tools/runpod_connect.py --reap-exited" >&2
+    fi
+  else
+    echo "[sophia-watchdog] WARNING: watchdog not armed (watchdog=${{SOPHIA_REMOTE_DELETE_WATCHDOG:-0}}, key=$([ -n "${{RUNPOD_API_KEY:-}}" ] && echo set || echo unset), pod_id=$([ -n "$POD_ID" ] && echo "$POD_ID" || echo empty)); pod will NOT self-delete." >&2
   fi
   exit "$code"
 }}
@@ -356,7 +365,12 @@ PY
 
     live_cmd = ""
     if args.remote_mode == "live":
-        live_cmd = """
+        # --capability-panel threads through to eval_rlvr_adapter.py (provenance task).
+        # When set, the capability-delta panel runs as part of the held-out eval and is
+        # embedded in the .adapter-eval.json (additive; legacy numbers unchanged). The
+        # leading space (or empty string) keeps the bash line well-formed either way.
+        capability_flag = " --capability-panel" if getattr(args, "capability_panel", False) else ""
+        live_cmd = f"""
 # vLLM colocate/server runs through vLLM's external-launcher executor, which reads
 # the distributed env (RANK/WORLD_SIZE/LOCAL_RANK) that `accelerate launch` sets.
 # Plain `python` leaves RANK unset -> KeyError: 'RANK'. --vllm none has no such
@@ -382,12 +396,14 @@ if [ -d /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 ]; then
     | tee /workspace/sophia-runpod/sophia-rlvr-v1.tar.gz.sha256
   # Produce the held-out before/after adapter-eval the SSIL Layer-1 gate ingests.
   # Non-fatal: if eval OOMs or fails, the training artifacts are still copied back.
+  # --capability-panel (provenance task) runs the capability-delta panel as part of
+  # this eval and embeds it in the .adapter-eval.json (additive; legacy unchanged).
   python tools/eval_rlvr_adapter.py --mode real \\
     --task "$SOPHIA_TASK" \\
     --model "$SOPHIA_MODEL" \\
     --adapter /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 \\
     --seed "$SOPHIA_SEED" \\
-    --out /workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.json \\
+    --out /workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.json{capability_flag} \\
     || echo "[runpod] adapter-eval failed (non-fatal); no SSIL gate input produced"
 fi
 """
@@ -441,6 +457,12 @@ python -m pip install --upgrade pip setuptools wheel
 # offline smoke's math invariants and the live reward can run.
 if [ "$SOPHIA_TASK" = "math" ]; then
   python -m pip install -r requirements-math.txt
+fi
+# The code task's reward executes model-generated code (provenance_bench.code_exec);
+# opt in on this ephemeral GPU pod (the executor is time-boxed + process-group-isolated).
+# Needed for BOTH the offline smoke (code_reward.offline_invariants) and the live reward.
+if [ "$SOPHIA_TASK" = "code" ]; then
+  export SOPHIA_ALLOW_CODE_EXEC=1
 fi
 if [ {shlex.quote(args.remote_mode)} = "live" ]; then
 {req_cmd}
@@ -548,17 +570,28 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--yes", action="store_true", help="actually create a RunPod pod (required unless --dry-run)")
     ap.add_argument("--dry-run", action="store_true", help="print sanitized payload and remote command without creating a pod")
     ap.add_argument("--keep-pod", action="store_true", help="do NOT delete the pod after the run; use only for debugging")
+    ap.add_argument(
+        "--local",
+        action="store_true",
+        help="run RLVR on the LOCAL GPU (e.g. NVIDIA DGX Spark) instead of renting a RunPod pod; "
+             "no SSH/pod/cost. For aarch64/Grace Blackwell pair with --quant bf16 --vllm none to "
+             "sidestep the flash-attn/bitsandbytes/vLLM-colocate/unsloth wheel blockers.",
+    )
     ap.add_argument("--name", default=f"sophia-rlvr-{timestamp}")
     ap.add_argument("--source", choices=["local", "git"], default="local", help="upload current working tree or clone GitHub")
     ap.add_argument("--repo-url", default=DEFAULT_REPO_URL)
     ap.add_argument("--branch", default="", help="optional git branch/tag to clone")
     ap.add_argument("--model", default="zai-org/glm-4-9b-chat-hf")
     ap.add_argument("--remote-mode", choices=["offline", "live"], default="live", help="run only remote offline smoke test or full live GRPO")
-    ap.add_argument("--task", choices=["provenance", "math"], default="provenance", help="RLVR reward task: provenance (provenance_faithful) or math (sympy math_equivalent)")
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept"], default="provenance", help="RLVR reward task: provenance (provenance_faithful), math (sympy math_equivalent), code (hidden-tests-pass via code_exec), or concept (concept-TBox gate; no extra deps)")
     ap.add_argument("--quant", choices=["bf16", "4bit"], default="bf16")
     ap.add_argument("--vllm", choices=["none", "server", "colocate"], default="none")
     ap.add_argument("--epochs", type=float, default=1.0)
     ap.add_argument("--seed", type=int, default=0, help="training+eval seed; vary across runs for independent replications")
+    ap.add_argument("--capability-panel", action="store_true",
+                    help="also run the capability-delta panel (attribution/hallucination/calibration) "
+                         "as part of the held-out adapter eval and embed it in the .adapter-eval.json. "
+                         "Provenance task only; additive evidence (legacy numbers unchanged).")
     ap.add_argument("--gpu-type", default=",".join(DEFAULT_GPU_TYPES), help="comma-separated RunPod GPU type preference list")
     ap.add_argument("--gpu-count", type=int, default=1)
     ap.add_argument("--cloud-type", choices=["SECURE", "COMMUNITY"], default="SECURE")
@@ -578,8 +611,44 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return ap.parse_args(argv)
 
 
+def _run_local(args: argparse.Namespace) -> int:
+    """Run RLVR on the LOCAL GPU (e.g. NVIDIA DGX Spark) instead of renting a RunPod pod.
+
+    Short-circuits pod creation / SSH / scp / RunPod cost entirely: the same
+    ``tools/run_rlvr.py`` the remote script would invoke is run against the host
+    Python+CUDA stack. For aarch64 / Grace Blackwell use ``--quant bf16 --vllm none``
+    to avoid the flash-attn / bitsandbytes / vLLM-colocate / unsloth aarch64-wheel
+    blockers (the 128 GB unified memory makes bf16 feasible where rented pods needed
+    4-bit). No RunPod API key is required in this mode.
+    """
+    args.artifacts_dir.mkdir(parents=True, exist_ok=True)
+    out_path = args.artifacts_dir / "local.rlvr.public-report.json"
+    cmd = [
+        sys.executable, str(ROOT / "tools" / "run_rlvr.py"),
+        "--task", args.task, "--model", args.model, "--quant", args.quant,
+        "--vllm", args.vllm, "--epochs", str(args.epochs), "--seed", str(args.seed),
+        "--out", str(out_path),
+    ]
+    if args.remote_mode == "offline":
+        # run_rlvr's own --dry-run is the offline reward-wiring check (no GPU, no model load).
+        cmd.append("--dry-run")
+    print("[runpod] --local: running RLVR on the LOCAL GPU (no pod, no SSH, no RunPod cost)")
+    print("[runpod] local command: " + " ".join(cmd))
+    if args.dry_run:
+        print("[runpod] dry-run only; nothing executed")
+        return 0
+    if not args.yes:
+        raise RunPodError("Refusing to run RLVR locally without --yes. Use --dry-run to inspect the command first.")
+    log_path = args.artifacts_dir / "local.train.log"
+    exit_code = _stream(cmd, log_path)
+    print(f"[runpod] local command exit code: {exit_code}; log={log_path}; report={out_path}")
+    return exit_code
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
+    if args.local:
+        return _run_local(args)
     api_key = os.environ.get(args.api_key_env, "")
     if not api_key and args.api_key_file:
         api_key = args.api_key_file.read_text(encoding="utf-8").strip()

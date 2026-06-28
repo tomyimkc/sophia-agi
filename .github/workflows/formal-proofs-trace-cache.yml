@@ -1,0 +1,112 @@
+name: formal-proofs-trace-cache
+
+# One-off (manual) job: trace a miniF2F-v2 Lean 4 project and PERSIST the trace cache
+# (~/.cache/lean_dojo) so the Phase-1 eval can verify against it cheaply. This is option
+# (b) of agi-proof/formal-proofs-curriculum/preregistration.json -> tracedProject
+# .cacheMatchRisk, for when the port's mathlib4 dep is NOT in lean-dojo's remote cache.
+#
+# It is NOT an eval and produces NO capability number — it populates a cache and (best
+# effort) confirms the traced project resolves a Theorem through the real kernel without
+# fabricating. canClaimAGI stays false.
+#
+# COST/SIZE WARNING: a mathlib-scale trace needs ~1 hr and ~32 GB RAM (lean-dojo docs).
+# The default ubuntu-latest (2-core, ~16 GB) will likely OOM/timeout — set `runner_label`
+# to a >=32 GB runner you have configured. The macOS-arm64 box CANNOT do this at all
+# (trace() deadlocks — Lean-L0-Trace-Deadlock.md §1); Linux only.
+on:
+  workflow_dispatch:
+    inputs:
+      runner_label:
+        description: "Runner label (NEEDS >=32 GB RAM; ubuntu-latest will likely OOM)"
+        required: true
+        default: "ubuntu-latest"
+      minif2f_repo:
+        description: "miniF2F-v2 Lean 4 repo URL"
+        required: true
+        default: "https://github.com/yangky11/miniF2F-lean4"
+      minif2f_commit:
+        description: "Pinned commit SHA of the miniF2F-v2 Lean 4 repo"
+        required: true
+      lean_toolchain:
+        description: "Lean toolchain to install (match the repo's lean-toolchain)"
+        required: true
+        default: "leanprover/lean4:v4.24.0"
+      verify_file:
+        description: "(optional) a .lean file in the repo for the no-fabrication sanity check"
+        required: false
+        default: ""
+      verify_theorem:
+        description: "(optional) a theorem full-name in verify_file for the sanity check"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  trace-cache:
+    runs-on: ${{ inputs.runner_label }}
+    timeout-minutes: 350   # under GitHub's 360-min job cap; a cold mathlib trace is slow
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Report runner resources (warn if under-provisioned)
+        run: |
+          echo "CPUs: $(nproc)"; free -h; df -h /
+          mem_gb=$(free -g | awk '/^Mem:/{print $2}')
+          if [ "${mem_gb:-0}" -lt 30 ]; then
+            echo "::warning::runner has ${mem_gb}GB RAM (<30GB) — a mathlib-scale trace may OOM. Use a larger runner_label."
+          fi
+
+      - name: Free disk space (trace dir + mathlib build are many GB)
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android /usr/local/.ghcup \
+                      /opt/hostedtoolcache/CodeQL || true
+          df -h /
+
+      - name: Install Lean 4 toolchain (elan + lean + lake)
+        env:
+          LEAN_VERSION: ${{ inputs.lean_toolchain }}
+        run: |
+          bash scripts/install_lean.sh
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Install pytest + the lean-dojo extra (requirements-theorem.txt)
+        run: |
+          pip install --quiet pytest
+          pip install --quiet -r requirements-theorem.txt
+
+      # Restore-then-save split: only SAVE the cache after a successful trace, so a
+      # partial/failed trace never poisons the cache for later runs.
+      - name: Restore lean-dojo trace cache (if any)
+        id: restore-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.cache/lean_dojo
+          key: lean-dojo-minif2f-${{ inputs.minif2f_commit }}-${{ inputs.lean_toolchain }}
+
+      - name: Trace the miniF2F-v2 project (populates ~/.cache/lean_dojo)
+        env:
+          MINIF2F_REPO: ${{ inputs.minif2f_repo }}
+          MINIF2F_COMMIT: ${{ inputs.minif2f_commit }}
+          VERIFY_FILE: ${{ inputs.verify_file }}
+          VERIFY_THEOREM: ${{ inputs.verify_theorem }}
+          VERBOSE: "1"
+          PYTHONUNBUFFERED: "1"
+        run: |
+          python tools/trace_minif2f_project.py
+
+      - name: Save lean-dojo trace cache (only on success)
+        if: success()
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.cache/lean_dojo
+          key: lean-dojo-minif2f-${{ inputs.minif2f_commit }}-${{ inputs.lean_toolchain }}
+
+      - name: Report cache size
+        if: always()
+        run: du -sh ~/.cache/lean_dojo 2>/dev/null || echo "no cache dir"

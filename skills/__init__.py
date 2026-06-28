@@ -29,6 +29,8 @@ from skills.deception_scan import deception_scan
 from skills.contradiction_audit import contradiction_audit
 from skills.council_adjudicate import council_adjudicate
 from skills.self_extend_probe import self_extend_probe
+from skills.trajectory_eval import agent_trajectory_eval
+from skills.sentinel_watch import sentinel_watch
 
 __all__ = [
     # registry / bridge
@@ -40,4 +42,8 @@ __all__ = [
     # v2 skills
     "belief_revision_explore", "wiki_grounded_answer", "moral_public_standard_review",
     "deception_scan", "contradiction_audit", "council_adjudicate", "self_extend_probe",
+    # v3 skills
+    "agent_trajectory_eval",
+    # SophiaArk skills
+    "sentinel_watch",
 ]

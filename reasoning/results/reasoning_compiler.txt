@@ -1,0 +1,15 @@
+Reasoning-compiler experiment  (graphs=400, seed=2026)
+Each graph: a grounded source->derived->goal chain with planted duplicates (CSE),
+dead branches (DCE), and — in half — a live contradiction (¬X wired into the goal).
+
+  mean verification-cost reduction (CSE+DCE):  52.9%
+  semantics preserved (goal conf + grounded):  100.0%
+  DCE kept exactly the live ground-truth set:  100.0%
+  contradiction recall (caught in live cone):  100.0%   over 200 planted
+  fail-closed on contradicted goals:           100.0%
+  FALSE contradictions on clean graphs:        0.0%   over 200 clean
+
+THEORY VERDICT
+  H1 cost down:            52.9% fewer claims to verify  -> CONFIRMED
+  H2 semantics preserved:  100% invariant goal  -> CONFIRMED
+  H3 fail-closed + clean:  100% refuse-on-contradiction, 0% false alarms  -> CONFIRMED

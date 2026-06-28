@@ -1,0 +1,49 @@
+{
+  "benchmark": "retrieval-recall (self-authored attribution probes)",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "topK": 5,
+  "probes": 60,
+  "vector_local": {
+    "backend": "auto",
+    "n": 60,
+    "exact": {
+      "recall@1": 0.2167,
+      "recall@5": 0.5167,
+      "mrr": 0.3281
+    },
+    "topical": {
+      "recall@1": 0.7833,
+      "recall@5": 0.95,
+      "mrr": 0.8597
+    }
+  },
+  "keyword": {
+    "backend": "keyword",
+    "n": 60,
+    "exact": {
+      "recall@1": 0.1,
+      "recall@5": 0.5,
+      "mrr": 0.2314
+    },
+    "topical": {
+      "recall@1": 0.6,
+      "recall@5": 0.8333,
+      "mrr": 0.6958
+    }
+  },
+  "vectorMinusKeyword": {
+    "exact": {
+      "recall@1": 0.1167,
+      "recall@5": 0.0167,
+      "mrr": 0.0967
+    },
+    "topical": {
+      "recall@1": 0.1833,
+      "recall@5": 0.1167,
+      "mrr": 0.1639
+    }
+  },
+  "honestBound": "Self-authored probe set over the existing live corpus; exact-match scorer (no LLM judge). 'exact' gold = the canonical record; 'topical' = any chunk about it (robust to the corpus being dominated by teacher examples that bury the record). Validates the retrieval delta + harness, not a headline capability. Both backends search the SAME index."
+}

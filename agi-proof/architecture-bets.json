@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "canClaimAGI": false,
+  "note": "Tracks integration status of AGI-shaped modules against the live per-case pipeline (tools/run_hidden_eval_sophia.py:run_case). status=wired requires a non-null live_caller verifiable by grep of the run_case path; status=measured additionally requires a recorded ablation delta whose CI excludes 0 in agi-proof/failure-ledger.md. A registry tracks intent; it proves nothing about capability. The long-context measurement-target registry (verifier-gated-long-context, council-small-models, ...) lives separately in agi-proof/long-context-bets.json; see docs/11-Platform/Architecture-Bets-Schema.md.",
+  "bets": [
+    {
+      "id": "claim_router",
+      "module": "agent/claim_router.py",
+      "status": "scaffold",
+      "live_caller": null,
+      "ablation_flag": "use_claim_router",
+      "closing_experiment": "W4 Option A: thread route_claims into run_case behind use_claim_router; ablation routing/abstention delta CI excludes 0 on the W2 calibration pack.",
+      "ledger_id": null
+    },
+    {
+      "id": "graded_decision",
+      "module": "agent/graded_decision.py",
+      "status": "scaffold",
+      "live_caller": null,
+      "ablation_flag": "use_graded_decision",
+      "closing_experiment": "W4 Option B: graft graded_decision.decide() as a post-gate confidence grade behind use_graded_decision; ablation delta vs binary gate CI excludes 0. Callers today are agent/grounded_agent.py + calibration tools + tests, NOT run_case.",
+      "ledger_id": null
+    },
+    {
+      "id": "layered_memory",
+      "module": "agent/layered_memory.py",
+      "status": "scaffold",
+      "live_caller": null,
+      "ablation_flag": "use_layered_memory",
+      "closing_experiment": "Wire layered_memory into run_case behind use_layered_memory and show a recall/abstention delta CI excludes 0. SSIL-only today, not on the run_case path.",
+      "ledger_id": null
+    },
+    {
+      "id": "planner_mcts",
+      "module": "agent/planner_mcts.py",
+      "status": "scaffold",
+      "live_caller": null,
+      "ablation_flag": "use_planner_mcts",
+      "closing_experiment": "Wire planner_mcts into run_case behind use_planner_mcts and show a task-success delta CI excludes 0. Only caller today is tools/run_agi_missing_pillars.py (offline toy harness).",
+      "ledger_id": null
+    },
+    {
+      "id": "predictive_world_model",
+      "module": "agent/predictive_world_model.py",
+      "status": "scaffold",
+      "live_caller": null,
+      "ablation_flag": "use_predictive_world_model",
+      "closing_experiment": "Wire predictive_world_model into run_case behind use_predictive_world_model and show a planning/accuracy delta CI excludes 0. Only caller today is tools/run_agi_missing_pillars.py (offline toy harness).",
+      "ledger_id": null
+    },
+    {
+      "id": "selective_tool_router",
+      "module": "gateway/verify_router.py",
+      "status": "scaffold",
+      "live_caller": null,
+      "ablation_flag": "use_selective_tool_router",
+      "closing_experiment": "Route tool outputs through gateway/verify_router.py on the run_case path behind use_selective_tool_router and show a tool-trust/abstention delta CI excludes 0. verify_router and claim_router exist but are not invoked by run_case today.",
+      "ledger_id": null
+    },
+    {
+      "id": "hybrid_memory",
+      "module": "agent/memory_consolidation.py",
+      "status": "scaffold",
+      "live_caller": null,
+      "ablation_flag": "use_hybrid_memory",
+      "closing_experiment": "Combine append-only runtime memory with consolidated/semantic memory on the run_case path behind use_hybrid_memory and show a recall delta CI excludes 0 at no trap-safety cost. The live path uses append-only JSONL only today; memory_consolidation.py is not invoked by run_case.",
+      "ledger_id": null
+    },
+    {
+      "id": "ontology_concept_discipline",
+      "module": "agent/datalog_ontology.py",
+      "status": "scaffold",
+      "live_caller": null,
+      "ablation_flag": "use_ontology_gate",
+      "closing_experiment": "Concept-TBox discipline. WIRED surfaces today: agent/guarded.py::check_claim composes ontology_edge_faithful (live MCP/CLI path), agent/policies.py 'ontology' policy AND-s it into the guarded loop, agent/ssil_ontology_seat.py::run_ontology_admission injects G_ontology into run_ssil, okf/linker.py treats subclass-cycle/disjointness as hard wiki failures, and sophia_mcp exposes check_concept_edge. CLOSING the bet requires a MEASURED uplift: (a) inference A/B (provenance_bench/ontology_improvement.py) — guarded(ontology) vs raw on the philosopher_reasoning + concept-merge evals shows concept-merge-violation rate down and abstention-precision up with a 95% bootstrap CI excluding 0 over >=3 seeds and >=2 model families; and (b) RLVR (tools/run_rlvr.py --task concept) — held-out grounded-correct/abstention rises vs the base adapter at no over-abstention regression, passing the spurious-reward ablation (provenance_bench/spurious_ablation.py) and the no-overclaim gate (provenance_bench.aggregate._is_validated). canClaimAGI stays false; this adds structural consistency + trained abstention, not conceptual reasoning.",
+      "ledger_id": null
+    },
+    {
+      "id": "verifier_synthesis_over_proof_kernel",
+      "module": "selfextend/proof_verifier.py",
+      "status": "scaffold",
+      "live_caller": null,
+      "ablation_flag": "use_kernel_proof_verifier",
+      "closing_experiment": "Run selfextend.proof_verifier.close_loop_on_proofs on the formal_proofs/eval split (tools/run_formal_proofs_eval.py) with a live Lean 4 toolchain: show the smoke split closes (held-out proof reward >= threshold, competence abstain->answer) AND every Millennium-class open problem abstains at reward 0.0 (the wisdom-before-intelligence output). Kernel is the held-out sound oracle, so the anti-gaming check is structurally near-vacuous. The verifier (agent/lean_verifier.py) is fail-closed without Lean, so without a toolchain the smoke loop correctly stays abstained (tested). Closing this bet requires the no-overclaim gate: >=3 seeds, CI excludes 0, independent review before any capability claim. The loop wiring + fail-closed contract are in place today; the closing_experiment is a live-kernel run + multi-seed, not new code.",
+      "ledger_id": null
+    }
+  ]
+}

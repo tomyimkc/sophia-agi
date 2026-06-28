@@ -1,0 +1,201 @@
+{
+  "agent": "autonomous pretraining-experiment runner",
+  "canClaimAGI": false,
+  "honesty_note": "Real closed-loop search over toy nano experiments. Every score is measured, diverged runs are recorded as failures, nothing is simulated. Not an AGI agent and not a capability claim.",
+  "objective": "held_loss",
+  "n_trials": 6,
+  "n_diverged": 0,
+  "stop_reason": "patience_exhausted",
+  "best": {
+    "trial": 1,
+    "config": {
+      "vocab": 8,
+      "order": 2,
+      "context": 2,
+      "hidden": 16,
+      "D": 1200,
+      "epochs": 12,
+      "seed": 0,
+      "target": "blend",
+      "mix": 0.6667
+    },
+    "result": {
+      "held_loss": 1.23048,
+      "train_loss": 1.14597,
+      "diverged": false,
+      "params": 408,
+      "compute_proxy": 489600,
+      "floor_E": 0.90938,
+      "excess": 0.3211
+    },
+    "score": 1.23048,
+    "diverged": false,
+    "is_best_so_far": true,
+    "rationale": "new best 1.23048 at {hidden=16, D=1200, mix=0.6667} -> keep exploring nearby"
+  },
+  "history": [
+    {
+      "trial": 0,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 12,
+        "seed": 0,
+        "target": "blend",
+        "mix": 0.3333
+      },
+      "result": {
+        "held_loss": 1.27924,
+        "train_loss": 0.99397,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": 0.36986
+      },
+      "score": 1.27924,
+      "diverged": false,
+      "is_best_so_far": true,
+      "rationale": "new best 1.27924 at {hidden=16, D=1200, mix=0.3333} -> keep exploring nearby"
+    },
+    {
+      "trial": 1,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 12,
+        "seed": 0,
+        "target": "blend",
+        "mix": 0.6667
+      },
+      "result": {
+        "held_loss": 1.23048,
+        "train_loss": 1.14597,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": 0.3211
+      },
+      "score": 1.23048,
+      "diverged": false,
+      "is_best_so_far": true,
+      "rationale": "new best 1.23048 at {hidden=16, D=1200, mix=0.6667} -> keep exploring nearby"
+    },
+    {
+      "trial": 2,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 12,
+        "seed": 0,
+        "target": "blend",
+        "mix": 0.5555
+      },
+      "result": {
+        "held_loss": 1.37946,
+        "train_loss": 1.08793,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": 0.47008
+      },
+      "score": 1.37946,
+      "diverged": false,
+      "is_best_so_far": false,
+      "rationale": "no improvement over best 1.23048 -> narrowing / counting toward patience"
+    },
+    {
+      "trial": 3,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 12,
+        "seed": 0,
+        "target": "blend",
+        "mix": 0.7778
+      },
+      "result": {
+        "held_loss": 1.34227,
+        "train_loss": 1.27378,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": 0.43289
+      },
+      "score": 1.34227,
+      "diverged": false,
+      "is_best_so_far": false,
+      "rationale": "no improvement over best 1.23048 -> narrowing / counting toward patience"
+    },
+    {
+      "trial": 4,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 12,
+        "seed": 0,
+        "target": "blend",
+        "mix": 0.7037
+      },
+      "result": {
+        "held_loss": 1.36554,
+        "train_loss": 1.21618,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": 0.45616
+      },
+      "score": 1.36554,
+      "diverged": false,
+      "is_best_so_far": false,
+      "rationale": "no improvement over best 1.23048 -> narrowing / counting toward patience"
+    },
+    {
+      "trial": 5,
+      "config": {
+        "vocab": 8,
+        "order": 2,
+        "context": 2,
+        "hidden": 16,
+        "D": 1200,
+        "epochs": 12,
+        "seed": 0,
+        "target": "blend",
+        "mix": 0.8518
+      },
+      "result": {
+        "held_loss": 1.53765,
+        "train_loss": 1.24397,
+        "diverged": false,
+        "params": 408,
+        "compute_proxy": 489600,
+        "floor_E": 0.90938,
+        "excess": 0.62827
+      },
+      "score": 1.53765,
+      "diverged": false,
+      "is_best_so_far": false,
+      "rationale": "no improvement over best 1.23048 -> narrowing / counting toward patience"
+    }
+  ],
+  "task": "mixture"
+}

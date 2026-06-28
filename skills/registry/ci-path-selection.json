@@ -1,0 +1,36 @@
+{
+  "name": "ci-path-selection",
+  "whenToUse": "Decide which CI lanes a change actually needs so heavy runs can be skipped for irrelevant diffs — to cut CI time/cost without weakening correctness. Maps changed paths to required vs skippable lanes, fail-open.",
+  "triggers": ["ci", "ci time", "skip ci", "path filter", "paths-filter", "which ci", "speed up ci", "ci lanes", "minimize ci", "ci selection", "faster ci", "ci cost", "needless ci"],
+  "requiredTools": ["ci_path_select", "filesystem", "github_actions"],
+  "workflow": [
+    "Get the changed paths: git diff --name-only <base>... (or the PR file list).",
+    "Run: git diff --name-only origin/main... | python3 tools/ci_path_select.py --stdin --json",
+    "Read 'required' (must run) vs 'skippable' (safe to skip). fast-ci is ALWAYS required.",
+    "FAIL-OPEN: any .py / data / requirements / unknown path forces the full heavy suite; only pure docs, skill-registry JSON, or workflow-YAML diffs skip heavy lanes.",
+    "To act on it: drive the ci.yml dorny/paths-filter outputs from the same path rules, or gate each heavy job's `if:` on the matching filter — but keep fast-ci + lint_claims + the required status gate always-on, and keep the gate green-on-skip.",
+    "Never skip a lane that a changed path could affect; when unsure, run it. Report time saved as best-effort, not guaranteed coverage."
+  ],
+  "ioSchema": {
+    "input": {"paths": "array", "base": "string"},
+    "output": {"lanes": "object", "required": "array", "skippable": "array", "full": "boolean", "categories": "object"}
+  },
+  "verification": [
+    "fast-ci (lint_claims, attribution, compileall, dependency-free unit tests) is in 'required' for every input, including empty.",
+    "Any .py / requirements / pyproject / data path yields full=true (no skippable).",
+    "Unknown/unrecognised paths and an empty diff fail open to the full suite.",
+    "Only docs / skills/registry/*.json / .github/workflows/*.yml diffs mark heavy lanes skippable.",
+    "The required status check still passes when skipped lanes are intentionally not run (green-on-skip)."
+  ],
+  "commonFailures": [
+    "Fail-closed misconfig: skipping a lane a change actually affects → false-green merge (the cardinal sin here).",
+    "Skipping the cheap fast-ci / lint gate to save trivial time.",
+    "Path globs that don't match (e.g. leading ./ or .github dot) so nothing is classified.",
+    "Letting a 'docs-only' PR that also touches a .py file skip heavy lanes (union must force full)."
+  ],
+  "examples": [
+    {"input": "docs/Home.md, README.md", "output": "required: fast-ci; skippable: all heavy lanes."},
+    {"input": "skills/registry/x.json", "output": "required: fast-ci, validate-core, test; skip reasoning/build/safety."},
+    {"input": "tools/foo.py + docs/x.md", "output": "full suite (python forces all heavy lanes)."}
+  ]
+}

@@ -1,0 +1,34 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
+[package]
+name = "sophia-lsm"
+description = "Log-structured local storage engine (WAL + memtable + SSTable + compaction) — the durable engine that replaces Sophia's JSONL stores."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+categories.workspace = true
+keywords.workspace = true
+readme = "README.md"
+
+[lib]
+name = "sophia_lsm"
+
+[[bench]]
+name = "engine_bench"
+path = "../../benches/engine_bench.rs"
+harness = false
+
+[dependencies]
+# Optional: only pulled in when the `io_uring` feature is on, so the default
+# build stays std-only and offline-buildable.
+io-uring = { version = "0.7", optional = true }
+
+[features]
+default = []
+# When enabled (Linux 5.1+), routes WAL/SSTable I/O through a real io_uring
+# backend (io::IoUringIo) that submits Write/Read/Fsync SQEs and batches the
+# group commit. Off by default so the crate builds everywhere on the std backend.
+io_uring = ["dep:io-uring"]

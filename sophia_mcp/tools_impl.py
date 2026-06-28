@@ -89,6 +89,68 @@ def check_claim(text: str) -> dict:
     return _check_claim(text)
 
 
+def check_concept_edge(edge: "dict | None") -> dict:
+    """Classify a structured concept-TBox edge with the symbolic Datalog gate.
+
+    ``edge`` is an ``ontology_edge`` object (subject, object, edgeType,
+    subjectTradition, objectTradition, scope, sources, ...). Returns
+    ``{verdict, edgeId, detail}`` where verdict ∈ {admit, abstain, violation}:
+      - ``admit``     — intra-tradition, or a sourced + scoped analogy;
+      - ``abstain``   — unverifiable cross-tradition / unscoped / unsourced
+                        (quarantine; the only honest verdict — no truth oracle);
+      - ``violation`` — equates two concepts whose traditions are declared disjoint.
+    Read-only, offline. See docs/11-Platform/Ontology-Claim-Boundary.md.
+    """
+    from agent.datalog_ontology import check_edge
+
+    if not isinstance(edge, dict):
+        return {"error": "edge must be an object with subject/object/edgeType"}
+    if not (edge.get("subject") and edge.get("object") and edge.get("edgeType")):
+        return {"error": "edge requires subject, object, and edgeType"}
+    return check_edge(edge)
+
+
+def trajectory_eval(trajectory: "list | None") -> dict:
+    """Score a whole agent trajectory for mid-plan faithfulness, step by step.
+
+    ``trajectory`` is an ordered list of step dicts (``observation`` = evidence the
+    environment returned; ``claim``/``text`` = what the agent asserted; ``cites`` =
+    ids of earlier steps that support the claim). Returns the
+    ``sophia.trajectory_eval.v1`` record: a fail-closed ``verdict``
+    (accept | abstain | blocked), a ``faithfulnessScore``, the first unfaithful
+    step, and a per-step breakdown. Read-only, offline (deterministic lexical
+    judge). See ``agent.trajectory_eval``.
+    """
+    from agent.trajectory_eval import evaluate_trajectory
+
+    if not isinstance(trajectory, list):
+        return {"error": "trajectory must be a list of step objects"}
+    return evaluate_trajectory(trajectory)
+
+
+def medical_citation_check(text: str) -> dict:
+    """Verify medical citations in ``text``: do the PMIDs / DOIs / guideline IDs
+    EXIST (deterministic, against the bundled register), and — with a judge —
+    whether each is cited faithfully. Without a judge the support tier abstains
+    (fail-closed); fabricated citations are always flagged. Not clinical advice.
+    See ``agent.medical_faithfulness``.
+    """
+    from agent.medical_faithfulness import assess_text, medical_citation_exists
+
+    existence = medical_citation_exists()(text, None, {})
+    assessment = assess_text(text)
+    return {
+        "passed": existence["passed"],
+        "violations": [f"unverifiable medical citation: {c}" for c in existence["detail"]["missing"]],
+        "checked": existence["detail"]["checked"],
+        "fabricated": assessment["fabricated"],
+        "abstained": assessment["abstained"],
+        "contradicted": assessment["contradicted"],
+        "supported": assessment["supported"],
+        "notAdvice": "Citation review only — not medical advice; verify against the primary source.",
+    }
+
+
 def _belief_graph():
     """Build the belief graph from the store tiers + dispute lineage pages."""
     import okf
@@ -317,6 +379,48 @@ def council_deliberate(query: str, *, model: str = "mock", models: list | None =
     out = d.to_dict()
     out["heterogeneous"] = bool(seat_clients)
     out["notAdvice"] = "Decision support only — not professional legal/financial advice."
+    return out
+
+
+def team_agents_deliberate(
+    query: str,
+    *,
+    model: str = "mock",
+    adapter_path: str = "",
+    seat_models: list | None = None,
+    max_seats: int = 4,
+    gate: bool = True,
+) -> dict:
+    """Runtime team orchestrator: deliberate_team() with optional Sophia LoRA adapter.
+
+    Decision support only — not professional advice. ``canClaimAGI: false`` always.
+    """
+    if not query.strip():
+        return {"error": "query is required"}
+    import os
+
+    from agent.model import default_client
+    from agent.team_agents import deliberate_team
+
+    if adapter_path:
+        os.environ["SOPHIA_MLX_ADAPTER"] = adapter_path
+    client = default_client(model)
+    seat_clients = [default_client(m) for m in seat_models] if seat_models else None
+    d = deliberate_team(
+        query,
+        client=client,
+        seat_clients=seat_clients,
+        max_seats=max_seats,
+        gate=gate,
+    )
+    out = d.to_dict()
+    out.update(
+        adapterPath=adapter_path or None,
+        heterogeneous=bool(seat_clients),
+        candidateOnly=True,
+        canClaimAGI=False,
+        notAdvice="Decision support only — not professional legal/financial advice.",
+    )
     return out
 
 
@@ -651,6 +755,36 @@ def uncertainty_score(text: str, *, samples=None, p_true=None, p_ik=None, fact_v
     from agent.metacognition import assess_uncertainty
     return assess_uncertainty(text, samples=samples, p_true=p_true, p_ik=p_ik, fact_verdict=fact_verdict, fact_confidence=fact_confidence, evidence_count=evidence_count, high_risk=high_risk).to_dict()
 
+def cross_trace_mine_tool() -> dict:
+    """Mine the verified-trace log for GLOBAL contradictions (C4 audit signal).
+
+    Two traces that each passed their own gates but assert X vs not-X — the
+    difference between "each step is verified" (local) and "the body of recorded
+    reasoning is globally consistent" (global). Deterministic, read-only, no model.
+    """
+    from agent.cross_trace_consistency import mine_log
+    out = mine_log()
+    out["candidateOnly"] = True
+    out["level3Evidence"] = False
+    return out
+
+
+def conformal_decide_tool(confidence: float, *, gate_passed: bool = True, risk: str = "normal") -> dict:
+    """Certified answer/abstain decision via the fitted split-conformal policy (C1).
+
+    Routes ``confidence`` against a held-out-calibrated nonconformity threshold instead
+    of a hand-picked cut point. Fails safe to the default boundary when no calibration
+    artifact is present (``policySource: fallback-default-threshold``).
+    """
+    from agent.graded_decision import decide_conformal, load_conformal_policy
+    policy = load_conformal_policy()
+    out = decide_conformal(gate_passed=bool(gate_passed), confidence=float(confidence), policy=policy)
+    out["riskBucket"] = risk
+    out["candidateOnly"] = True
+    out["level3Evidence"] = False
+    return out
+
+
 def constitution_check_tool(text: str, *, context=None) -> dict:
     from agent.constitutional_gate import check_constitution
     from agent.constitutional_classifier import classify_constitutional
@@ -675,6 +809,128 @@ def public_standard_check_tool(text: str, *, context=None) -> dict:
 def conscience_benchmark_tool() -> dict:
     from agent.conscience import run_conscience_benchmark
     return run_conscience_benchmark()
+
+
+# --------------------------------------------------------------------------- #
+# Verified reasoning-trace tools (read-only query + tamper-evidence re-verify).
+# These surface the verified_trace.v1 log: sophia_trace_query scans/summarizes it,
+# sophia_trace_verify re-runs the fact+logic derivation against a stored trace and
+# checks the hash chain. Both are low-risk/read-only — they never mutate the log.
+# --------------------------------------------------------------------------- #
+def trace_query(
+    run_id: str | None = None,
+    *,
+    verified: bool | None = None,
+    phase: str | None = None,
+    limit: int = 200,
+) -> dict:
+    """Scan the verified-trace log and return a summary + filtered sample.
+
+    Filters (all optional): ``run_id`` (runId), ``verified`` (only verified/
+    unverified steps), ``phase``. Returns aggregate counts
+    (``stepVerifiedRate``, ``factLogicAgreement``) and up to ``limit`` trace rows.
+    Read-only — never mutates the log.
+    """
+    from agent.verified_trace import TRACE_LOG, verify_chain
+    from sophia_contract.stores import _read_jsonl
+
+    rows = _read_jsonl(TRACE_LOG)
+    if run_id is not None:
+        rows = [r for r in rows if r.get("runId") == run_id]
+    if verified is not None:
+        rows = [r for r in rows if bool(r.get("verified")) == bool(verified)]
+    if phase is not None:
+        rows = [r for r in rows if r.get("phase") == phase]
+
+    # Aggregate metrics over the FULL log (not the filtered slice) so a filtered
+    # query still reports the honest global verification rate.
+    all_rows = _read_jsonl(TRACE_LOG)
+    n_all = len(all_rows) or 1
+    n_verified = sum(1 for r in all_rows if r.get("verified"))
+    # fact-logic agreement: steps where fact-OK and logic-OK agree (both pass or
+    # both fail). Divergence = one gate passed while the other failed — the
+    # highest-signal events for auditor review.
+    def _fact_ok(r: dict) -> bool:
+        return r.get("fact", {}).get("verdict") in {"allow", "retrieve"}
+
+    agree = sum(
+        1 for r in all_rows
+        if _fact_ok(r) == bool(r.get("logic", {}).get("emittable"))
+    )
+
+    chain = verify_chain(TRACE_LOG)
+    return {
+        "schema": "sophia.trace_query.v1",
+        "nFiltered": len(rows),
+        "nTotal": len(all_rows),
+        "metrics": {
+            "stepVerifiedRate": round(n_verified / n_all, 4),
+            "factLogicAgreement": round(agree / n_all, 4),
+        },
+        "chainIntact": chain.get("chainIntact"),
+        "rows": [{k: v for k, v in r.items() if k != "_selfHash"} for r in rows[:limit]],
+        "boundary": (
+            "Sophia is an AGI-candidate verifier-gated epistemic framework; "
+            "these metrics are not proof of AGI."
+        ),
+    }
+
+
+def trace_verify(trace_id: str | None = None, *, check_chain: bool = True) -> dict:
+    """Re-verify a stored trace: re-derive ``verified`` from its fact+logic stamps
+    and check the hash chain. This is the reproducibility tool — a regulator can
+    re-derive any stamp without trusting the logger's word.
+
+    If ``trace_id`` is given, returns that one record's re-derivation; otherwise
+    returns the chain-integrity report over the whole log. Read-only.
+    """
+    from agent.verified_trace import TRACE_LOG, verify_chain
+    from sophia_contract.stores import _read_jsonl
+
+    rows = _read_jsonl(TRACE_LOG)
+    out: dict = {"schema": "sophia.trace_verify.v1", "check_chain": check_chain}
+
+    if trace_id is not None:
+        match = next((r for r in rows if r.get("traceId") == trace_id), None)
+        if match is None:
+            return {**out, "error": f"no trace with traceId={trace_id!r}"}
+        # re-derive verified from the stored fact+logic (never trust the stored flag)
+        fact_ok = match.get("fact", {}).get("verdict") in {"allow", "retrieve"}
+        logic_ok = bool(match.get("logic", {}).get("emittable"))
+        out["traceId"] = trace_id
+        out["storedVerified"] = bool(match.get("verified"))
+        out["rederivedVerified"] = fact_ok and logic_ok
+        out["recheckMatches"] = out["storedVerified"] == out["rederivedVerified"]
+        out["row"] = {k: v for k, v in match.items() if k != "_selfHash"}
+
+    if check_chain:
+        out["chain"] = verify_chain(TRACE_LOG)
+
+    out["boundary"] = (
+        "Sophia is an AGI-candidate verifier-gated epistemic framework; "
+        "this re-verification is not proof of AGI."
+    )
+    return out
+
+
+def trace_contradictions() -> dict:
+    """Mine the verified-trace log for CROSS-TRACE contradictions (extension E4).
+
+    A cross-trace contradiction is a pair of traces where one asserts X and
+    another asserts not-X — and BOTH were recorded as verified. Each passed its
+    own fact+logic gates; together they contradict. This is the global
+    consistency invariant no within-trace component enforces. Returns the
+    cross-trace ledger (schema sophia.cross_trace_ledger.v1). Read-only.
+    """
+    from agent.cross_trace_consistency import mine_log
+    ledger = mine_log()
+    return {
+        **ledger,
+        "boundary": (
+            "Sophia is an AGI-candidate verifier-gated epistemic framework; "
+            "structural mining over logged claim text is not proof of AGI."
+        ),
+    }
 
 
 def dumps(payload: dict) -> str:

@@ -22,6 +22,7 @@ jobs:
     timeout-minutes: 3
     outputs:
       code: ${{ steps.filter.outputs.code }}
+      heavy: ${{ steps.filter.outputs.heavy }}
     steps:
       - uses: actions/checkout@v7
       - uses: dorny/paths-filter@v3
@@ -37,6 +38,7 @@ jobs:
               - 'sophia_contract/**'
               - 'sophia_mcp/**'
               - 'gateway/**'
+              - 'clustersim/**'
               - 'skills/**'
               - 'okf/**'
               - 'data/**'
@@ -49,6 +51,34 @@ jobs:
               - 'requirements*.txt'
               - 'pyproject.toml'
               - '.github/workflows/**'
+            # Paths that REQUIRE the heavy reasoning/build/safety lanes. Mirrors
+            # `code` but EXCLUDES skills/registry/*.json and .github/workflows/*.yml
+            # (and docs): a PR touching only skill-registry JSON or workflow YAML
+            # still runs fast-ci + validate-core + test (gated on `code`) but skips
+            # the heavy lanes. Any .py / data / requirements change keeps `heavy`
+            # true → full suite (fail-open). See tools/ci_path_select.py.
+            heavy:
+              - 'agent/**'
+              - 'tools/**'
+              - 'tests/**'
+              - 'provenance_bench/**'
+              - 'selfextend/**'
+              - 'sophia_contract/**'
+              - 'sophia_mcp/**'
+              - 'gateway/**'
+              - 'clustersim/**'
+              - 'skills/*.py'
+              - 'skills/**/*.py'
+              - 'okf/**'
+              - 'data/**'
+              - 'training/**'
+              - 'benchmark/**'
+              - 'constitution/**'
+              - 'eval/**'
+              - 'scripts/**'
+              - 'wiki/**'
+              - 'requirements*.txt'
+              - 'pyproject.toml'
 
   validate-core:
     # Provenance, OKF, contract, gateway, skills, discipline
@@ -70,6 +100,10 @@ jobs:
         run: python tools/validate_attribution.py
       - name: Claims linter (no-overclaim copy gate)
         run: python tools/lint_claims.py
+      - name: Failure-ledger structural validity (no rot)
+        run: |
+          python tools/validate_failure_ledger.py --check
+          python tests/test_failure_ledger.py
       - name: Validate OKF wiki (drift, links, provenance)
         run: |
           python tools/wiki_sync.py check
@@ -87,6 +121,7 @@ jobs:
           python tools/build_local_sophia_dataset.py --check
           python tools/build_religion_repair_traces.py
           python tests/test_religion_repair_traces.py
+          python tools/build_local_sophia_dataset.py --check
           python tests/test_personality.py
           python tests/test_steering.py
           python tests/test_personality_steering.py
@@ -114,10 +149,17 @@ jobs:
           python tests/test_continual_qa_hybrid.py
           python tests/test_grounded_answer_policy.py
           python tests/test_grounded_agent.py
+          python tests/test_grounded_agent_graded.py
+          python tests/test_grounded_confidence.py
+          python tests/test_calibrate_graded_thresholds.py
+          python tests/test_check_version_consistency.py
           python tests/test_temporal_validity.py
           python tests/test_knowledge_gap_log.py
           python tests/test_forgetting_curve.py
           python tests/test_belief_revision_scaling.py
+          python tests/test_pretraining.py
+          python tests/test_pretraining_agent.py
+          python tests/test_pretraining_autopilot.py
           python tests/test_symbol_identity.py
           python tests/test_competence_model.py
           python tests/test_proof_carrying_reasoning.py
@@ -125,9 +167,15 @@ jobs:
           python tests/test_incremental_revision.py
           python tests/test_skill_library.py
           python tests/test_governed_rsi.py
+          python tests/test_lifelong_accumulation.py
           python tests/test_run_cls_consolidation.py
           python tests/test_wiki_proof.py
           python tests/test_agent_harness.py
+          python tests/test_context_manager.py
+          python tests/test_subagent.py
+          python tests/test_long_horizon_engine.py
+          python tests/test_uplift.py
+          python tests/test_trace_distill.py
       - name: Governance contract conformance (golden vectors + schema)
         run: |
           python tests/test_contract_conformance.py
@@ -140,6 +188,18 @@ jobs:
           python tests/test_gateway_roadmap.py
           python tools/run_gateway_demo.py
           python tests/test_hf_space.py
+      - name: Cluster scheduler/observability/fault simulator + network-tax calibration
+        run: |
+          python tests/test_cluster_scheduler.py
+          python tests/test_cluster_observability.py
+          python tests/test_cluster_faults.py
+          python tests/test_cluster_netcalib.py
+          python tools/calibrate_network_tax.py --no-write
+          python tools/bench_nccl_allreduce.py --dry-run --gpus 8
+          python tools/runpod_nccl_bench.py --dry-run --gpu-count 2
+          python tools/runpod_nccl_bench.py --ssh-endpoint root@h:22 --gpu-count 2 --branch main --dry-run
+          python tools/run_cluster_sim.py --jobs 120 --seed 1
+          python tools/run_cluster_faultsim.py --jobs 80 --seed 1
       - name: Skills layer (MCP-matched, fail-closed) + registry
         run: |
           python tests/test_skills.py
@@ -177,7 +237,7 @@ jobs:
     # or when a PR carries the 'full-ci' label. Docs-only PRs skip it.
     if: >-
       github.event_name == 'push' ||
-      needs.changes.outputs.code == 'true' ||
+      needs.changes.outputs.heavy == 'true' ||
       contains(github.event.pull_request.labels.*.name, 'full-ci')
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -211,6 +271,7 @@ jobs:
           python tests/test_predictive_world_model.py
           python tests/test_continual_plasticity.py
           python tests/test_promote_adapter.py
+          python tests/test_external_validation.py
           python tests/test_layered_memory.py
           python tests/test_agi_missing_pillars_bundle.py
           python tools/run_agi_missing_pillars.py
@@ -228,6 +289,16 @@ jobs:
           python tests/test_selfextend.py
           python tools/run_selfextend.py
           python tools/run_selfextend_loop.py
+      - name: Self-evolving agent (evolve→no-hack→promote→retain→commit, fail-closed)
+        run: |
+          python tests/test_self_evolving_agent.py
+          python tools/run_self_evolving_agent.py
+          python tools/export_self_evolve_distill.py
+      - name: Auto-research loop + live-optimizer wiring (no-overclaim, gate-clean dispatch)
+        run: |
+          python tests/test_auto_research.py
+          python tools/run_auto_research.py
+          python tools/run_selfevolve_live.py --backend plan
       - name: Runtime policies + model-in-loop + dataset fetcher (offline)
         run: |
           python tests/test_policies.py
@@ -260,7 +331,7 @@ jobs:
     # or when a PR carries the 'full-ci' label. Docs-only PRs skip it.
     if: >-
       github.event_name == 'push' ||
-      needs.changes.outputs.code == 'true' ||
+      needs.changes.outputs.heavy == 'true' ||
       contains(github.event.pull_request.labels.*.name, 'full-ci')
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -344,7 +415,7 @@ jobs:
     # or when a PR carries the 'full-ci' label. Docs-only PRs skip it.
     if: >-
       github.event_name == 'push' ||
-      needs.changes.outputs.code == 'true' ||
+      needs.changes.outputs.heavy == 'true' ||
       contains(github.event.pull_request.labels.*.name, 'full-ci')
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -353,6 +424,11 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+      - name: Version consistency (VERSION ↔ CHANGELOG ↔ README badge)
+        # Stops the drift that left VERSION at 0.8.0 while the last tag was v0.5.3:
+        # a VERSION bump must carry a matching CHANGELOG section + synced README badge.
+        # The release workflow then auto-tags + publishes on push to main.
+        run: python tools/check_version_consistency.py
       - name: Council deliberation (map-reduce + per-seat gate) + small-LLM uplift
         run: |
           python tests/test_council_deliberate.py
@@ -412,7 +488,12 @@ jobs:
       needs.changes.outputs.code == 'true' ||
       contains(github.event.pull_request.labels.*.name, 'full-ci')
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # The full suite (2200+ tests) includes index-building retrieval/search-quality
+    # integration evals that take minutes each; at ~12-18 min it was brushing the old
+    # 20-min ceiling and a slow runner could tip it over. 30 gives honest headroom — the
+    # primary speed fix (dropping a redundant full search-quality eval from the hybrid
+    # do-no-harm test) lives in the tests; this is the belt-and-braces margin.
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
@@ -423,7 +504,11 @@ jobs:
       - name: Install test dependencies
         # z3-solver so the formal-verifier / invariant-suite z3 backend is
         # actually exercised in CI (the fallback-only path once hid a crash).
-        run: python -m pip install --upgrade pip numpy pytest z3-solver
+        # sympy so the math/code curriculum verifier tests run instead of erroring
+        # out at import-time collection.
+        run: python -m pip install --upgrade pip numpy pytest z3-solver sympy
+      - name: RAG index is reproducible (committed local embeddings match a fresh build)
+        run: python tools/build_rag_index.py --verify
       - name: Full pytest suite
         run: python -m pytest -q
 

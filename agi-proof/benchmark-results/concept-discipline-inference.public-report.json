@@ -1,0 +1,184 @@
+{
+  "schema": "sophia.concept_discipline_inference.v1",
+  "benchmark": "concept-discipline-inference-ab",
+  "model": "mock",
+  "reference": "naive",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "nItems": 29,
+  "seeds": 3,
+  "headline": {
+    "schema": "sophia.concept_metrics_compare.v1",
+    "candidateOnly": true,
+    "level3Evidence": false,
+    "canClaimAGI": false,
+    "baseline": {
+      "n": 29,
+      "nAnswerable": 25,
+      "nIllPosed": 4,
+      "conceptMergeViolationRate": 0.20689655172413793,
+      "groundedCorrectRate": 0.32,
+      "confidentWrongRate": 0.68,
+      "overAbstainRate": 0.0,
+      "abstentionPrecision": null,
+      "abstentionRecall": 0.0,
+      "ece": null,
+      "brier": null,
+      "riskCoverage": [
+        {
+          "coverage": 1.0,
+          "risk": 0.68,
+          "answered": 25
+        },
+        {
+          "coverage": 1.0,
+          "risk": 0.68,
+          "answered": 25
+        },
+        {
+          "coverage": 1.0,
+          "risk": 0.68,
+          "answered": 25
+        },
+        {
+          "coverage": 1.0,
+          "risk": 0.68,
+          "answered": 25
+        },
+        {
+          "coverage": 1.0,
+          "risk": 0.68,
+          "answered": 25
+        }
+      ]
+    },
+    "treatment": {
+      "n": 29,
+      "nAnswerable": 25,
+      "nIllPosed": 4,
+      "conceptMergeViolationRate": 0.0,
+      "groundedCorrectRate": 0.56,
+      "confidentWrongRate": 0.44,
+      "overAbstainRate": 0.0,
+      "abstentionPrecision": null,
+      "abstentionRecall": 0.0,
+      "ece": null,
+      "brier": null,
+      "riskCoverage": [
+        {
+          "coverage": 1.0,
+          "risk": 0.44,
+          "answered": 25
+        },
+        {
+          "coverage": 1.0,
+          "risk": 0.44,
+          "answered": 25
+        },
+        {
+          "coverage": 1.0,
+          "risk": 0.44,
+          "answered": 25
+        },
+        {
+          "coverage": 1.0,
+          "risk": 0.44,
+          "answered": 25
+        },
+        {
+          "coverage": 1.0,
+          "risk": 0.44,
+          "answered": 25
+        }
+      ]
+    },
+    "deltas": {
+      "conceptMergeViolationRate": {
+        "delta": -0.2069,
+        "ciLow": -0.3793,
+        "ciHigh": -0.069,
+        "excludesZero": true,
+        "nBoot": 1000
+      },
+      "groundedCorrectRate": {
+        "delta": 0.24,
+        "ciLow": -0.04,
+        "ciHigh": 0.48,
+        "excludesZero": false,
+        "nBoot": 1000
+      },
+      "confidentWrongRate": {
+        "delta": -0.24,
+        "ciLow": -0.48,
+        "ciHigh": 0.04,
+        "excludesZero": false,
+        "nBoot": 1000
+      },
+      "overAbstainRate": {
+        "delta": 0.0,
+        "ciLow": 0.0,
+        "ciHigh": 0.0,
+        "excludesZero": false,
+        "nBoot": 1000
+      }
+    },
+    "arm": {
+      "baseline": "raw policy",
+      "treatment": "policy + concept gate (guard)"
+    }
+  },
+  "violationDeltaPerSeed": [
+    {
+      "delta": -0.2069,
+      "ciLow": -0.3793,
+      "ciHigh": -0.069,
+      "excludesZero": true,
+      "nBoot": 1000
+    },
+    {
+      "delta": -0.2069,
+      "ciLow": -0.3793,
+      "ciHigh": -0.069,
+      "excludesZero": true,
+      "nBoot": 1000
+    },
+    {
+      "delta": -0.2069,
+      "ciLow": -0.3793,
+      "ciHigh": -0.069,
+      "excludesZero": true,
+      "nBoot": 1000
+    }
+  ],
+  "overAbstentionTripwire": {
+    "schema": "sophia.over_abstention_tripwire.v1",
+    "candidateOnly": true,
+    "baselineOverAbstainRate": 0.0,
+    "treatmentOverAbstainRate": 0.0,
+    "delta": 0.0,
+    "tolerance": 0.15,
+    "absoluteCap": 0.6,
+    "tripped": false
+  },
+  "spuriousAblation": {
+    "discriminates": true,
+    "trueRewardDelta": {
+      "delta": 1.9697,
+      "ciLow": 1.9394,
+      "ciHigh": 1.9924,
+      "excludesZero": true,
+      "nBoot": 1000
+    },
+    "spuriousRewardDelta": {
+      "delta": 0.047,
+      "ciLow": -0.1387,
+      "ciHigh": 0.2349,
+      "excludesZero": false,
+      "nBoot": 1000
+    }
+  },
+  "upliftReported": true,
+  "decisionRule": "violation-rate delta CI excludes 0 (<0) on ALL seeds AND over-abstention tripwire not tripped AND spurious ablation discriminates",
+  "claimStatus": "Inference uplift SUPPORTED by this run (candidate evidence; not an AGI claim)"
+}

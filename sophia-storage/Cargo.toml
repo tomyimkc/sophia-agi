@@ -1,0 +1,43 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
+#
+# sophia-storage — an isolated, optional Rust workspace for the high-performance
+# storage layer that sits *underneath* Sophia's Python trust layer. Nothing in the
+# Python codebase depends on this; it is feature-gated and built separately.
+#
+# See docs/DESIGN.md for the why, and the per-crate docs for the how.
+
+[workspace]
+resolver = "3"
+members = [
+    "crates/sophia-lsm",
+    "crates/sophia-kvcache",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+# edition = "2024" + let-chains require rustc >= 1.85 (Feb 2025). Declaring the
+# MSRV lets crates.io consumers get a clear "rustc too old" error instead of a
+# mysterious syntax error on the let-chain.
+rust-version = "1.85"
+license = "Apache-2.0"
+authors = ["tomyimkc"]
+repository = "https://github.com/tomyimkc/sophia-agi"
+categories = ["database-implementations", "caching", "data-structures"]
+keywords = ["lsm", "kv-store", "llm", "inference-cache", "storage"]
+
+# NOTE: no `panic = "abort"` here. This workspace publishes library crates; a
+# `panic = "abort"` release profile would be inherited by any downstream crate
+# that depends on them, which is inappropriate for an embeddable library and
+# breaks `catch_unwind` users. The perf-relevant code is exercised through the
+# benches below, which keep thin-LTO + opt-level 3. If a future binary consumer
+# wants abort-on-panic they set it in their own profile.
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+
+[profile.bench]
+opt-level = 3
+lto = "thin"

@@ -17,6 +17,8 @@ links: []
 
 # DNA double helix structure (DNA雙螺旋結構)
 
+DNA double helix structure (DNA雙螺旋結構) is a science concept, in the biology subfield, attributed to watson_and_crick (authorship confidence: attributed), dated to 1953.
+
 - **Attributed author:** watson_and_crick (confidence: `attributed`)
 - **Domain:** science
 

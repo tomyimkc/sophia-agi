@@ -62,3 +62,14 @@ def kill_switch_engaged() -> bool:
 def gateway_enabled() -> bool:
     """Whether served write/external tools route through the fail-closed gateway."""
     return _flag("SOPHIA_MCP_GATEWAY")
+
+
+def output_verify_enabled() -> bool:
+    """Whether served-tool OUTPUT is re-verified through the epistemic gate before return.
+
+    Defense-in-depth on the served surface (opt-in: ``SOPHIA_MCP_OUTPUT_VERIFY=1``; default
+    off): a governed tool's returned text is re-checked for fabricated attributions / bad
+    citations so external or model-generated content cannot be laundered back to the caller
+    even if a tool's own internal gate missed it. Fail-closed — a violating payload is
+    withheld. Independent of (and additional to) ``gateway_enabled``."""
+    return _flag("SOPHIA_MCP_OUTPUT_VERIFY")

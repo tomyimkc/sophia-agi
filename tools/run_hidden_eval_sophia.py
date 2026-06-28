@@ -35,6 +35,14 @@ if str(TOOLS_DIR) not in sys.path:
 
 from agent.gate import check_response  # noqa: E402
 from agent.coding_council import format_coding_council, route_coding_council  # noqa: E402
+from agent.intake import (  # noqa: E402
+    append_intake_audit,
+    audit_entry,
+    compose_harness_prompt,
+    role_for_case,
+    run_intake,
+    validate_execution_within_contract,
+)
 from agent.llm import complete  # noqa: E402
 from agent.prompts import MODE_PROMPTS, MODE_PROMPTS_NO_COUNCIL  # noqa: E402
 from agent.retrieval import format_context, retrieve  # noqa: E402
@@ -339,6 +347,39 @@ def run_deepseek(system: str, user: str, *, timeout_sec: int) -> dict[str, Any]:
     }
 
 
+def run_mock_model(system: str, user: str, *, timeout_sec: int) -> dict[str, Any]:
+    """Deterministic offline backend for proof-harness plumbing tests."""
+    started = time.time()
+    marker = "SOPHIA_PREFLIGHT_OK"
+    if marker in user:
+        answer = f"{marker}\nDecision: ok\n中文摘要: mock backend ready."
+    else:
+        tokens = sorted(set(re.findall(r"The only accepted answer token is (LC_NEEDLE_[A-Z0-9_]+)", user)))
+        if tokens:
+            answer = (
+                "Decision: answer from packed verifier context.\n"
+                f"Recovered tokens: {', '.join(tokens)}.\n"
+                "中文摘要: 离线模拟后端只复述已打包上下文中的验证针。"
+            )
+        else:
+            answer = (
+                "Decision: abstain.\n"
+                "No verified long-context needle token was present in the packed context.\n"
+                "中文摘要: 未找到可验证针。"
+            )
+    return {
+        "backend": "mock",
+        "returncode": 0,
+        "elapsedSec": round(time.time() - started, 6),
+        "answer": answer,
+        "stderrTail": "",
+        "promptTokens": estimate_tokens(system) + estimate_tokens(user),
+        "completionTokens": estimate_tokens(answer),
+        "costUsd": 0.0,
+        "timeoutSec": timeout_sec,
+    }
+
+
 def call_model(
     system: str,
     user: str,
@@ -348,6 +389,8 @@ def call_model(
     grok_cwd: Path | None = None,
 ) -> dict[str, Any]:
     started = time.time()
+    if backend == "mock":
+        return run_mock_model(system, user, timeout_sec=timeout_sec)
     if backend == "anthropic":
         try:
             answer = complete(system, user)
@@ -789,6 +832,218 @@ NEUTRAL_GATE: dict[str, Any] = {
 }
 
 
+def estimate_tokens(text: str) -> int:
+    """Cheap deterministic token estimate for offline harness accounting."""
+    words = re.findall(r"\S+", text)
+    return max(1, len(words)) if text.strip() else 0
+
+
+def _long_passage_tokens(passage: dict[str, Any]) -> int:
+    token_estimate = passage.get("tokenEstimate")
+    if isinstance(token_estimate, int) and token_estimate >= 0:
+        return token_estimate
+    return estimate_tokens(str(passage.get("text", "")))
+
+
+def _pack_long_context(
+    case: dict[str, Any],
+    *,
+    use_kb: bool,
+    use_gate: bool,
+    use_context_packing: bool,
+    context_packing_policy: str = "score",
+) -> dict[str, Any]:
+    passages = list(case.get("longContextPassages", []))
+    budget = int(case.get("contextBudgetTokens") or 2048)
+    answer_tokens = set(str(token) for token in case.get("answerTokens", []))
+    valid_policies = {"score", "broken", "oracle"}
+    if context_packing_policy not in valid_policies:
+        raise ValueError(f"unknown context_packing_policy: {context_packing_policy}")
+
+    # Relevance source for the retrieval signal that feeds packing. "synthetic" uses the
+    # case's hand-set relevanceScore (default, deterministic); "lexical" computes it with the
+    # offline lexical-vector retriever — a real, derived signal instead of a planted one.
+    relevance_source = str(case.get("relevanceSource", "synthetic"))
+    _lex = None
+    if use_kb and relevance_source == "lexical":
+        from agent.lexical_embed import cosine as _cos, embed as _embed
+
+        _lex = (_embed, _cos, _embed(str(case.get("prompt", ""))))
+
+    considered: list[dict[str, Any]] = []
+    for index, passage in enumerate(passages):
+        raw_relevance = float(passage.get("relevanceScore", 0.0))
+        if not use_kb:
+            relevance = 0.0
+        elif _lex is not None:
+            embed_fn, cos_fn, query_vec = _lex
+            relevance = max(0.0, cos_fn(query_vec, embed_fn(str(passage.get("text", "")))))
+        else:
+            relevance = raw_relevance
+        verifier = float(passage.get("verifierScore", 0.5 if use_gate else 0.0)) if use_gate else 0.0
+        contains_answer = bool(set(passage.get("answerTokens", [])) & answer_tokens)
+        considered.append(
+            {
+                "passageId": str(passage.get("id", f"passage-{index}")),
+                "sourceId": str(passage.get("sourceId", passage.get("id", f"passage-{index}"))),
+                "depthPct": int(passage.get("depthPct", case.get("needleDepthPct", 0))),
+                "tokenEstimate": _long_passage_tokens(passage),
+                "relevanceScore": round(relevance, 6),
+                "verifierScore": round(verifier, 6),
+                "containsAnswerBearingSpan": contains_answer,
+                "selected": False,
+                "selectionReason": "not selected",
+                "evictionReason": "low_score",
+                "_text": str(passage.get("text", "")),
+                "_rankScore": relevance + verifier,
+                "_passageIndex": index,
+            }
+        )
+
+    if context_packing_policy == "broken":
+        ordered = sorted(
+            considered,
+            key=lambda item: (bool(item["containsAnswerBearingSpan"]), -float(item["_rankScore"]), item["passageId"]),
+        )
+        strategy = "broken_packer_excludes_answer"
+    elif context_packing_policy == "oracle":
+        ordered = sorted(
+            considered,
+            key=lambda item: (not bool(item["containsAnswerBearingSpan"]), -float(item["_rankScore"]), item["passageId"]),
+        )
+        strategy = "oracle_answer_span_first"
+    elif use_context_packing:
+        ordered = sorted(considered, key=lambda item: (-float(item["_rankScore"]), item["passageId"]))
+        strategy = "relevance_plus_verifier_score"
+    else:
+        ordered = considered
+        strategy = "raw_original_order_truncation"
+
+    packed: list[dict[str, Any]] = []
+    used = 0
+    for item in ordered:
+        if context_packing_policy == "broken" and item["containsAnswerBearingSpan"]:
+            item["selectionReason"] = strategy
+            item["evictionReason"] = "low_score"
+            continue
+        token_count = int(item["tokenEstimate"])
+        if used + token_count > budget and packed:
+            item["evictionReason"] = "budget"
+            continue
+        if token_count > budget:
+            item["evictionReason"] = "budget"
+            continue
+        item["selected"] = True
+        item["selectionReason"] = strategy
+        item["evictionReason"] = None
+        used += token_count
+        packed.append(item)
+
+    selected_ids = {item["passageId"] for item in packed}
+    packed_passages = [
+        {
+            "passageId": item["passageId"],
+            "rank": index,
+            "tokenEstimate": item["tokenEstimate"],
+            "reason": item["selectionReason"],
+        }
+        for index, item in enumerate(packed, 1)
+    ]
+    answer_ids = [
+        item["passageId"]
+        for item in considered
+        if item["containsAnswerBearingSpan"]
+    ]
+    answer_positions = [
+        int(item["_passageIndex"])
+        for item in considered
+        if item["containsAnswerBearingSpan"]
+    ]
+    answer_included = any(item["passageId"] in selected_ids for item in considered if item["containsAnswerBearingSpan"])
+    answer_span_tokens = sum(
+        estimate_tokens(" ".join(str(token) for token in passage.get("answerTokens", [])))
+        for passage in passages
+        if set(passage.get("answerTokens", [])) & answer_tokens
+    )
+    context_parts = [
+        f"### Synthetic Source {index}: {item['sourceId']} (relevance {item['relevanceScore']:.2f}, verifier {item['verifierScore']:.2f})\n{item['_text']}"
+        for index, item in enumerate(packed, 1)
+    ]
+    public_considered = [
+        {key: value for key, value in item.items() if not key.startswith("_")}
+        for item in considered
+    ]
+    candidates_considered = [
+        {
+            "passage_id": item["passageId"],
+            "source_id": item["sourceId"],
+            "depth_pct": item["depthPct"],
+            "token_estimate": item["tokenEstimate"],
+            "relevance_score": item["relevanceScore"],
+            "verifier_score": item["verifierScore"],
+            "contains_answer_bearing_span": item["containsAnswerBearingSpan"],
+            "included": item["selected"],
+            "eviction_reason": item["evictionReason"],
+        }
+        for item in considered
+    ]
+    card = {
+        "schema": "sophia.context_pack_card.v1",
+        "schemaVersion": "1.0.0",
+        "cardId": f"context-pack-{case['id']}",
+        "caseId": case["id"],
+        "status": "candidate",
+        "claimStatus": "candidate",
+        "candidateOnly": True,
+        "canClaimAGI": False,
+        "budgetTokens": budget,
+        "budget_tokens": budget,
+        "tokensUsed": used,
+        "tokens_used": used,
+        "tokensOfAnswerSpan": answer_span_tokens,
+        "tokens_of_answer_span": answer_span_tokens,
+        "needlePosition": {
+            "passageIndexes": answer_positions,
+            "depthPct": int(case.get("needleDepthPct", 0)),
+        },
+        "needle_position": {
+            "passage_indexes": answer_positions,
+            "depth_pct": int(case.get("needleDepthPct", 0)),
+        },
+        "needleDepthPct": int(case.get("needleDepthPct", 0)),
+        "needle_depth": int(case.get("needleDepthPct", 0)),
+        "packingPolicy": context_packing_policy if use_context_packing else "raw_original_order_truncation",
+        "packing_policy": context_packing_policy if use_context_packing else "raw_original_order_truncation",
+        "retrievalPolicy": "score_retrieval" if use_kb else "raw_order_no_retrieval",
+        "retrieval_policy": "score_retrieval" if use_kb else "raw_order_no_retrieval",
+        "relevanceSource": relevance_source,
+        "candidatePassagesConsidered": public_considered,
+        "candidates_considered": candidates_considered,
+        "packedPassages": packed_passages,
+        "answerBearingSpanIds": answer_ids,
+        "answerBearingSpanIncluded": answer_included,
+        "answer_span_present_in_corpus": bool(answer_ids),
+        "answer_span_present_in_pack": answer_included,
+        "ablationFlags": {
+            "use_kb": use_kb,
+            "use_gate": use_gate,
+            "use_context_packing": use_context_packing,
+            "context_packing_policy": context_packing_policy,
+        },
+        "claimBoundary": (
+            "Synthetic self-authored context-packing card for candidate measurement only; "
+            "not validated evidence and not an AGI/capability claim."
+        ),
+    }
+    return {
+        "context": "\n\n".join(context_parts) if context_parts else "(No packed long-context passages.)",
+        "sources": [item["sourceId"] for item in packed],
+        "card": card,
+        "packedTokenEstimate": used,
+        "candidateTokenEstimate": sum(int(item["tokenEstimate"]) for item in considered),
+    }
+
+
 @dataclass(frozen=True)
 class RunConfig:
     """Backend/runtime configuration shared by every case in a run."""
@@ -801,13 +1056,14 @@ class RunConfig:
     web_provider: str = "off"
     web_search_top_k: int = 5
     local_evidence_top_k: int = 3
+    intake_audit_path: Path | None = None
 
 
 @dataclass(frozen=True)
 class Ablation:
     """Which Sophia components are active for a case.
 
-    Maps 1:1 onto the seven modes in agi-proof/baseline-ablation/README.md.
+    Maps 1:1 onto the ablation modes in agi-proof/baseline-ablation/README.md.
     """
 
     label: str = "sophia-full"
@@ -819,6 +1075,10 @@ class Ablation:
     use_memory: bool = True  # append-only learning probe + memory diff
     use_tools: bool = True  # operational tool logs
     allow_repair: bool = True  # bounded Sophia repair attempt
+    use_claim_router: bool = False  # route atomic claims to claim-type verifiers (W4)
+    use_context_packing: bool = True  # scored long-context packing when cases provide passages
+    context_packing_policy: str = "score"  # score | broken | oracle
+    use_intake: bool = True  # Request Triage + Intake Contract front gate
 
 
 SOPHIA_FULL = Ablation()
@@ -834,6 +1094,7 @@ ABLATION_MODES: dict[str, Ablation] = {
         use_memory=False,
         use_tools=False,
         allow_repair=False,
+        use_intake=False,
     ),
     "raw-model-plus-tools": Ablation(
         label="raw-model-plus-tools",
@@ -845,16 +1106,21 @@ ABLATION_MODES: dict[str, Ablation] = {
         use_memory=False,
         use_tools=True,
         allow_repair=False,
+        use_intake=False,
     ),
     "sophia-full": SOPHIA_FULL,
+    "sophia-no-intake": Ablation(label="sophia-no-intake", use_intake=False),
     "sophia-no-kb": Ablation(label="sophia-no-kb", use_kb=False, use_evidence=False),
     "sophia-no-gate": Ablation(label="sophia-no-gate", use_gate=False),
     "sophia-no-memory": Ablation(label="sophia-no-memory", use_memory=False),
     "sophia-no-council": Ablation(label="sophia-no-council", use_council=False),
+    # W4 (opt-in A/B lever; not part of the canonical --modes all set): turns on the
+    # dormant per-claim routing seam (check_response(route_claims=True)).
+    "sophia-claim-router": Ablation(label="sophia-claim-router", use_claim_router=True),
 }
 
 
-def build_raw_user_prompt(case: dict[str, Any], *, operational_evidence: str = "") -> str:
+def build_raw_user_prompt(case: dict[str, Any], *, operational_evidence: str = "", context: str = "") -> str:
     """Minimal task prompt with no Sophia source-discipline contract.
 
     Used by the raw-model baselines so the comparison does not leak Sophia
@@ -864,11 +1130,15 @@ def build_raw_user_prompt(case: dict[str, Any], *, operational_evidence: str = "
     tool_block = ""
     if operational_evidence:
         tool_block = f"\n\n## Tool output available to you\n{operational_evidence}\n"
+    context_block = ""
+    if context:
+        context_block = f"\n\n## Context at the same token budget\n{context}\n"
     return f"""Task ({case["domain"]}):
 {case["prompt"]}
 
 Materials:
 {materials}
+{context_block}
 {tool_block}"""
 
 
@@ -885,8 +1155,76 @@ def run_case(
     identical payload shape for score_pack/sanitized_report.
     """
     case_id = case["id"]
+    intake: dict[str, Any] = {}
+    intake_contract: dict[str, Any] = {}
+    intake_audit_entry: dict[str, Any] = {}
+    if ablation.use_intake:
+        role = role_for_case(case, use_tools=ablation.use_tools)
+        intake = run_intake(
+            case["prompt"],
+            role=role,
+            default_blp_level=str(case.get("blp_level", "UNCLASSIFIED")),
+            domain=str(case.get("domain", "")),
+        )
+        intake_contract = intake.get("contract", {})
+        if intake_contract:
+            intake_audit_entry = audit_entry(case_id, intake_contract)
+            append_intake_audit(config.intake_audit_path, intake_audit_entry)
+        action = intake_contract.get("recommended_action")
+        if intake.get("errors") or action in {"clarify", "escalate", "abstain"}:
+            held_reason = "needs_human" if intake.get("errors") or action in {"clarify", "escalate"} else "no_source"
+            reasons = intake.get("errors") or [f"intake recommended {action}; execution held fail-closed"]
+            gate = {
+                "gateApplied": True,
+                "passed": False,
+                "verdict": "held",
+                "held_reason": held_reason,
+                "reasons": reasons,
+            }
+            answer = (
+                "I cannot execute this request yet because the Request Triage + Intake Contract "
+                f"returned `{action or 'invalid'}`. Policy rule: {held_reason}."
+            )
+            return {
+                "answer": answer,
+                "sources": [],
+                "gate": gate,
+                "modelLog": {"intake": intake, "intakeAudit": intake_audit_entry},
+                "toolLog": {},
+                "memoryDiff": {},
+                "repairAttempts": 0,
+                "codingCouncilRoute": {},
+                "webEvidence": {},
+                "rubricReview": {},
+                "contextPackCard": {},
+                "contextPacking": {},
+                "intakeContract": intake_contract,
+                "intakeExecutionGate": gate,
+                "returncode": None,
+                "elapsedSec": 0.0,
+                "ablation": ablation.label,
+            }
 
-    if ablation.use_kb:
+    context_pack_card: dict[str, Any] = {}
+    context_packing_summary: dict[str, Any] = {}
+    if case.get("longContextPassages"):
+        packed_context = _pack_long_context(
+            case,
+            use_kb=ablation.use_kb,
+            use_gate=ablation.use_gate,
+            use_context_packing=ablation.use_context_packing,
+            context_packing_policy=ablation.context_packing_policy,
+        )
+        context = packed_context["context"]
+        case_sources = packed_context["sources"]
+        context_pack_card = packed_context["card"]
+        context_packing_summary = {
+            "packedTokenEstimate": packed_context["packedTokenEstimate"],
+            "candidateTokenEstimate": packed_context["candidateTokenEstimate"],
+            "budgetTokens": context_pack_card.get("budgetTokens"),
+            "answerBearingSpanIncluded": context_pack_card.get("answerBearingSpanIncluded"),
+        }
+    elif ablation.use_kb:
         chunks = retrieve(case["prompt"], top_k=8)
         context = format_context(chunks)
         case_sources = [chunk.path for chunk in chunks]
@@ -948,6 +1286,7 @@ def run_case(
         user = build_raw_user_prompt(
             case,
             operational_evidence=operational_evidence if ablation.use_tools else "",
+            context=context,
         )
     else:
         user = build_user_prompt(
@@ -957,6 +1296,8 @@ def run_case(
             evidence_context=evidence_context,
             operational_evidence=operational_evidence,
         )
+    if intake_contract:
+        user = compose_harness_prompt(case["prompt"], user, intake_contract)
 
     first = call_model(
         system,
@@ -967,7 +1308,13 @@ def run_case(
     )
     answer = first["answer"]
     if ablation.use_gate:
-        gate = check_response(answer, mode=mode, question=case["prompt"], domain=None)
+        gate = check_response(
+            answer,
+            mode=mode,
+            question=case["prompt"],
+            domain=None,
+            route_claims=ablation.use_claim_router,
+        )
     else:
         gate = dict(NEUTRAL_GATE)
 
@@ -1007,14 +1354,30 @@ def run_case(
         }
         second = call_model(
             system,
-            build_user_prompt(
-                case,
-                context,
-                repair=repair,
-                coding_council=council_context,
-                evidence_context=evidence_context,
-                operational_evidence=operational_evidence,
-                rubric_review_context=format_rubric_review(review),
+            (
+                compose_harness_prompt(
+                    case["prompt"],
+                    build_user_prompt(
+                        case,
+                        context,
+                        repair=repair,
+                        coding_council=council_context,
+                        evidence_context=evidence_context,
+                        operational_evidence=operational_evidence,
+                        rubric_review_context=format_rubric_review(review),
+                    ),
+                    intake_contract,
+                )
+                if intake_contract
+                else build_user_prompt(
+                    case,
+                    context,
+                    repair=repair,
+                    coding_council=council_context,
+                    evidence_context=evidence_context,
+                    operational_evidence=operational_evidence,
+                    rubric_review_context=format_rubric_review(review),
+                )
             ),
             backend=config.backend,
             timeout_sec=config.timeout_sec,
@@ -1024,7 +1387,13 @@ def run_case(
             answer = second["answer"]
             first["repair"] = second
             if ablation.use_gate:
-                gate = check_response(answer, mode=mode, question=case["prompt"], domain=None)
+                gate = check_response(
+                    answer,
+                    mode=mode,
+                    question=case["prompt"],
+                    domain=None,
+                    route_claims=ablation.use_claim_router,
+                )
             final_score = _score_one(answer)
             review = build_rubric_review(
                 case,
@@ -1040,6 +1409,35 @@ def run_case(
     model_log = {k: v for k, v in first.items() if k != "answer"}
     if learning_probe:
         model_log["learningProbe"] = learning_probe
+    if intake:
+        model_log["intake"] = intake
+    if intake_audit_entry:
+        model_log["intakeAudit"] = intake_audit_entry
+    intake_execution_gate: dict[str, Any] = {}
+    if intake_contract:
+        used_ops = ["enqueue_task"] if tool_log.get("commands") else []
+        intake_execution_gate = validate_execution_within_contract(
+            intake_contract,
+            {
+                "executed": True,
+                "used_ops": used_ops,
+                "blp_level": intake_contract.get("blp_level", "UNCLASSIFIED"),
+            },
+        )
+        model_log["intakeExecutionGate"] = intake_execution_gate
+        if intake_execution_gate.get("verdict") == "held":
+            answer = (
+                "I am holding this response because execution exceeded the Request Triage + "
+                "Intake Contract. "
+                f"Policy rule: {intake_execution_gate.get('held_reason')}."
+            )
+            gate = {
+                "gateApplied": True,
+                "passed": False,
+                "verdict": "held",
+                "held_reason": intake_execution_gate.get("held_reason"),
+                "reasons": intake_execution_gate.get("reasons", []),
+            }
 
     return {
         "answer": answer,
@@ -1052,6 +1450,10 @@ def run_case(
         "codingCouncilRoute": council_route,
         "webEvidence": evidence,
         "rubricReview": review,
+        "contextPackCard": context_pack_card,
+        "contextPacking": context_packing_summary,
+        "intakeContract": intake_contract,
+        "intakeExecutionGate": intake_execution_gate,
         "returncode": first.get("returncode"),
         "elapsedSec": first.get("elapsedSec"),
         "ablation": ablation.label,
@@ -1063,7 +1465,7 @@ def main() -> int:
     parser.add_argument("pack", type=Path)
     parser.add_argument(
         "--backend",
-        choices=["anthropic", "grok", "deepseek", "adapter"],
+        choices=["anthropic", "grok", "deepseek", "adapter", "mock"],
         default=os.environ.get("SOPHIA_HIDDEN_BACKEND", "grok"),
     )
     parser.add_argument("--responses-out", type=Path, required=True)
@@ -1101,6 +1503,12 @@ def main() -> int:
     )
     parser.add_argument("--web-search-top-k", type=int, default=5)
     parser.add_argument("--local-evidence-top-k", type=int, default=3)
+    parser.add_argument(
+        "--intake-audit-out",
+        type=Path,
+        default=ROOT / "private" / "hidden-evals" / "intake_audit.jsonl",
+        help="Append-only Request Triage + Intake Contract audit log.",
+    )
     parser.add_argument(
         "--skip-preflight",
         action="store_true",
@@ -1154,6 +1562,7 @@ def main() -> int:
         web_provider=args.web_provider,
         web_search_top_k=args.web_search_top_k,
         local_evidence_top_k=args.local_evidence_top_k,
+        intake_audit_path=args.intake_audit_out,
     )
 
     for index, case in enumerate(pack["cases"], 1):

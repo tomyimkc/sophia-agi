@@ -1,0 +1,23 @@
+{
+  "domain": "coding",
+  "version": 1,
+  "source": "derived from eval/coding/smoke.jsonl",
+  "scorerKind": "coding",
+  "claimBoundary": "Executable-verifier smoke pack; committed responses are harness evidence, not a model run.",
+  "cases": [
+    {
+      "id": "python-addition-smoke",
+      "kind": "coding",
+      "question": "Return Python code that asserts 2 + 2 == 4.",
+      "response": "```python\nassert 2 + 2 == 4\n```",
+      "timeoutSec": 5
+    },
+    {
+      "id": "python-function-smoke",
+      "kind": "coding",
+      "question": "Return Python code defining add(a,b) and testing add(3, 5) == 8.",
+      "response": "```python\ndef add(a, b):\n    return a + b\nassert add(3, 5) == 8\n```",
+      "timeoutSec": 5
+    }
+  ]
+}

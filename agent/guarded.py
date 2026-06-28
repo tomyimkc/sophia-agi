@@ -34,12 +34,15 @@ from dataclasses import dataclass, field
 from typing import Callable
 
 from agent.retrieval import format_context, retrieve
-from agent.verifiers import provenance_faithful
+from agent.verifiers import ontology_edge_faithful, provenance_faithful
 
 # Generation strategies when the gate fails. "repair" is the default spine.
 # "graded" routes hedge-vs-abstain on a calibrated confidence curve (see
 # agent/graded_decision.py) using bounded self-consistency sampling.
-ON_FAIL_MODES = ("repair", "abstain", "hedge", "passthrough", "graded")
+# "conformal" routes hedge-vs-abstain on a *certified* split-conformal threshold
+# (agent/conformal_gate.py) instead of the hand-picked hi/lo cut points; it
+# fails safe to the default boundary when no calibration artifact is present.
+ON_FAIL_MODES = ("repair", "abstain", "hedge", "passthrough", "graded", "conformal")
 
 DEFAULT_SYSTEM = (
     "You answer strictly from the provided sources and practice source discipline: "
@@ -74,7 +77,14 @@ class GuardedResult:
         }
 
 
-def check_claim(text: str, *, records: "dict | None" = None, ground: bool = False) -> dict:
+def check_claim(
+    text: str,
+    *,
+    records: "dict | None" = None,
+    ground: bool = False,
+    backend: str = "regex",
+    ontology: bool = True,
+) -> dict:
     """Mode-free provenance check: ``{passed, reasons, violations}`` for any text.
 
     No question, mode, or style scoring — just Sophia's "don't merge lineages"
@@ -86,7 +96,25 @@ def check_claim(text: str, *, records: "dict | None" = None, ground: bool = Fals
     do-not-attribute spec, so the gate can fire on works outside the frozen
     corpus. Opt-in (default off) so the deterministic frozen-record path is
     unchanged. See agent/grounded_gate.py.
+
+    ``backend`` selects how the verdict is DERIVED from the same ground facts:
+      - ``"regex"`` (default): the production ``provenance_faithful`` pattern
+        matcher. Unchanged behaviour; the path every existing caller uses.
+      - ``"datalog"``: the embedded logic engine (:mod:`agent.datalog_provenance`).
+        Same ground facts (the gate's OWN compiled patterns extract them), but
+        the verdict is a Datalog derivation — a machine-checkable theorem rather
+        than a regex side-effect. Byte-identical to ``"regex"`` on all 319
+        committed provenance cases (957/957 audit). Opt-in so the default path
+        is untouched; when the Datalog backend is unavailable for any reason it
+        falls back to ``"regex"`` fail-closed (never fabricates a verdict).
     """
+    if backend == "datalog":
+        try:
+            from agent.datalog_provenance import check_claim_datalog
+
+            return check_claim_datalog(text, records=records)
+        except Exception:  # the logic backend is opt-in; never break the core gate
+            pass
     if ground:
         try:
             from agent.grounded_gate import synth_records_for_claim
@@ -100,11 +128,25 @@ def check_claim(text: str, *, records: "dict | None" = None, ground: bool = Fals
     verify = provenance_faithful(records)
     result = verify(text or "", None, {})
     detail = result.get("detail") or {}
-    return {
-        "passed": bool(result.get("passed")),
-        "reasons": list(result.get("reasons") or []),
-        "violations": list(detail.get("violations") or []),
-    }
+    passed = bool(result.get("passed"))
+    reasons = list(result.get("reasons") or [])
+    violations = list(detail.get("violations") or [])
+
+    # Compose the concept-TBox gate: an UNSCOPED cross-tradition identity
+    # ("ren is identical to agape") is a violation the attribution gate cannot
+    # see. It abstains (passes) when nothing is asserted, so benign/attribution
+    # text is unaffected. Opt-out via ontology=False keeps the legacy path exact.
+    if ontology:
+        try:
+            onto = ontology_edge_faithful()(text or "", None, {})
+            if not onto.get("passed", True):
+                passed = False
+                reasons += list(onto.get("reasons") or [])
+                violations += list((onto.get("detail") or {}).get("violations") or [])
+        except Exception:  # the concept gate is additive; never break the core gate
+            pass
+
+    return {"passed": passed, "reasons": reasons, "violations": sorted(set(violations))}
 
 
 def _cited_abstention(query: str, context: str, violations: list) -> str:
@@ -194,6 +236,12 @@ def guarded_complete(
     **abstains** otherwise (``thresholds`` overrides the ``hi``/``lo`` cut points).
     With fewer than two generations self-consistency is undefined, so it abstains
     (fail-closed). The default ``repair`` path is unchanged.
+
+    ``on_fail="conformal"`` is the same flow but routes on a *certified*
+    split-conformal threshold (:func:`agent.graded_decision.decide_conformal`)
+    instead of the hand-picked ``hi``/``lo`` cut points. It loads the fitted policy
+    artifact written by ``tools/fit_conformal_policy.py`` and falls back to the
+    default boundary (a safe no-op) when no calibration artifact is present.
     """
     mode = (on_fail or os.environ.get("SOPHIA_ON_FAIL") or "repair").strip().lower()
     if mode not in ON_FAIL_MODES:
@@ -267,9 +315,9 @@ def guarded_complete(
     violations = verdict["violations"]
     reasons = verdict["reasons"]
 
-    # --- gate failed: graded route (calibrated hedge-vs-abstain) ----------- #
-    if mode == "graded":
-        from agent.graded_decision import answer_confidence, decide
+    # --- gate failed: graded/conformal route (calibrated hedge-vs-abstain) - #
+    if mode in ("graded", "conformal"):
+        from agent.graded_decision import answer_confidence, decide, decide_conformal
 
         sample_texts = [text]
         for _ in range(max(0, samples - 1)):
@@ -283,9 +331,14 @@ def guarded_complete(
             answer_confidence(self_consistency_samples=sample_texts)
             if len(sample_texts) >= 2 else answer_confidence()
         )
-        graded = decide(gate_passed=False, confidence=confidence, violations=violations,
-                        thresholds=thresholds)
-        note = f"graded confidence={confidence:.3f} -> {graded['action']} ({graded['reason']})"
+        if mode == "conformal":
+            graded = decide_conformal(gate_passed=False, confidence=confidence)
+            note = (f"conformal confidence={confidence:.3f} -> {graded['action']} "
+                    f"({graded['reason']})")
+        else:
+            graded = decide(gate_passed=False, confidence=confidence, violations=violations,
+                            thresholds=thresholds)
+            note = f"graded confidence={confidence:.3f} -> {graded['action']} ({graded['reason']})"
         if graded["action"] == "hedge":
             return GuardedResult(
                 text=_hedged(text, violations), ok=True, passed=False, action="hedged",

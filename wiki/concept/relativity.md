@@ -17,6 +17,8 @@ links: []
 
 # theory of relativity (相對論)
 
+Theory of relativity (相對論) is a science concept, in the physics subfield, attributed to albert_einstein (authorship confidence: attributed), dated to 1905-1915.
+
 - **Attributed author:** albert_einstein (confidence: `attributed`)
 - **Domain:** science
 

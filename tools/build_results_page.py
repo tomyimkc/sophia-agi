@@ -165,6 +165,33 @@ def render(doc: dict) -> str:
                 L += [f"- _{e.get('method')} vs {e.get('baseline')}:_ {e['note']}"]
         L.append("")
 
+    ext_cal = doc.get("externalBenchmarkCalibration")
+    if ext_cal and ext_cal.get("rows"):
+        status = "**VALIDATED**" if ext_cal.get("validated") else "recorded but **not validated**"
+        L += [
+            "## External-benchmark calibration (selective prediction) — " + status,
+            "",
+            f"On a **public, human-authored, external** benchmark ({ext_cal.get('benchmark')}), "
+            "graded by " + str(ext_cal.get("graders")) + ". The first Sophia calibration result "
+            "validated on **non-self-authored** data — the selective-accuracy lift's 95% CI excludes "
+            "zero on two independent subject models. A **calibration / selective-prediction** result, "
+            "**not** an AGI claim.",
+            "",
+            "| Subject | Dataset | N (attempted) | Signal | AUROC | Selective-acc lift @20% cov (95% CI) | Inter-grader κ | Date |",
+            "|---|---|---|---|---|---|---|---|",
+        ]
+        for r in ext_cal["rows"]:
+            lift = r.get("liftAt20Coverage", {})
+            L.append(
+                f"| {r.get('subject')} | {r.get('dataset')} | {r.get('n')} ({r.get('attempted')}) | "
+                f"{r.get('signal')} | {r.get('auroc')} | "
+                f"+{_pct(lift.get('mean'))} [{_pct(lift.get('ciLow'))}, {_pct(lift.get('ciHigh'))}] | "
+                f"{r.get('kappa')} | {r.get('date', '—')} |"
+            )
+        L.append("")
+        if ext_cal.get("note"):
+            L += [f"- {ext_cal['note']}", ""]
+
     semantic = doc.get("semanticEvals")
     if semantic:
         _v = semantic.get("validated")
@@ -260,6 +287,30 @@ def render(doc: dict) -> str:
                 f"  - {tf.get('note', '')}",
             ]
         L += [f"- ⚠ {cg.get('note', '')}", ""]
+
+    systems = doc.get("systemsBenchmarks") or []
+    if systems:
+        L += [
+            "## Systems benchmarks (performance — candidate, host-dependent)",
+            "",
+            "Throughput/latency micro-benchmarks for the systems components. These are "
+            "**candidate** engineering numbers (single host, vary by machine), not "
+            "no-overclaim accuracy results — reproduce with the command in each note.",
+            "",
+        ]
+        for s in systems:
+            L += [f"### {s.get('name')} (`{s.get('component')}`)", "", s.get("description", ""), ""]
+            if s.get("config"):
+                L += [f"_Representative run — {s['config']}:_", ""]
+            cols, rows = s.get("columns") or [], s.get("rows") or []
+            if cols and rows:
+                L.append("| " + " | ".join(cols) + " |")
+                L.append("|" + "|".join(["---"] * len(cols)) + "|")
+                for r in rows:
+                    L.append("| " + " | ".join(str(c) for c in r) + " |")
+                L.append("")
+            if s.get("note"):
+                L += [f"- {s['note']}", ""]
 
     L += [
         "## Reproduce",

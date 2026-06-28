@@ -7,6 +7,7 @@
   "realModelRun": false,
   "preflightOk": null,
   "modelSpec": "deterministic-offline",
+  "adapterPath": null,
   "judgeSpecs": [],
   "judgeFamilies": [],
   "judgeAgreement": null,
@@ -57,13 +58,13 @@
     },
     "raw+gate": {
       "n": 100,
-      "provenanceAccuracy": 0.52,
+      "provenanceAccuracy": 0.53,
       "falseAttributionRate": 0.0,
-      "fabricationRateOnContested": 0.96,
-      "qualificationRateOnContested": 0.04,
+      "fabricationRateOnContested": 0.94,
+      "qualificationRateOnContested": 0.06,
       "traditionMergeRate": 0.0,
       "falsePositiveCost": 0.02,
-      "sourceCitationRate": 0.51
+      "sourceCitationRate": 0.52
     },
     "sophia_full": {
       "n": 100,
@@ -78,7 +79,7 @@
   },
   "deltas": {
     "raw_to_mcp_accuracy_delta": 0.79,
-    "raw_to_gate_accuracy_delta": 0.31,
+    "raw_to_gate_accuracy_delta": 0.32,
     "raw_to_prompt_accuracy_delta": 0.79,
     "raw_to_full_accuracy_delta": 0.79,
     "prompt_to_full_citation_delta": 1.0,
@@ -8773,29 +8774,29 @@
       "condition": "raw+gate",
       "label": "qualify_or_abstain",
       "kind": "disputed_or_uncertain_fact",
-      "answer": "Arrian (recording Epictetus) wrote Enchiridion.",
+      "answer": "With provenance nuance, Enchiridion is associated with Arrian (recording Epictetus), but the attribution should be treated as compiled, traditional, disputed, or otherwise not over-stated where the sources require it. Compiled by Arrian from Epictetus's teachings; Epictetus wrote nothing himself. Source: https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus.",
       "modelMeta": {
         "ok": true,
         "provider": "deterministic",
         "model": "offline"
       },
       "deterministicScore": {
-        "correct": false,
+        "correct": true,
         "falseAttribution": false,
-        "fabricated": true,
-        "qualified": false,
+        "fabricated": false,
+        "qualified": true,
         "traditionMerge": false,
         "namesGold": true,
-        "citesSource": false
+        "citesSource": true
       },
       "score": {
-        "correct": false,
+        "correct": true,
         "falseAttribution": false,
-        "fabricated": true,
-        "qualified": false,
+        "fabricated": false,
+        "qualified": true,
         "traditionMerge": false,
         "namesGold": true,
-        "citesSource": false
+        "citesSource": true
       },
       "llmJudgeVotes": {},
       "llmJudgeErrors": []

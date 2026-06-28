@@ -11,6 +11,8 @@ name: wisdom-pilot-runpod
 # using this run's GITHUB_TOKEN, then self-deletes. The launcher runs with --wait so the job
 # stays alive (keeping GITHUB_TOKEN valid) until the pod is gone. No SSH session to drop.
 #
+# Anti-wastage: prefer the pre-baked image (input `image`) + registry_auth_id for a private
+# pull — see the wisdom-gpu-prebaked skill.
 # Secrets required: RUNPOD_API_KEY (GPU) and HF_TOKEN (gemma-3 is gated). Never printed.
 
 on:
@@ -83,7 +85,7 @@ jobs:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           GH_PILOT_PAT: ${{ github.token }}
-        run: python tools/runpod_wisdom_pilot_selfreport.py --dry-run --branch "${{ github.ref_name }}" --runs "${{ github.event.inputs.runs }}"
+        run: python tools/runpod_wisdom_pilot_selfreport.py --dry-run --branch "${{ github.ref_name }}" --mode "${{ github.event.inputs.mode }}" --runs "${{ github.event.inputs.runs }}"
 
       - name: Launch SSH-free pilot on RunPod (pod self-reports via git push; waits until done)
         env:
@@ -108,9 +110,4 @@ jobs:
         if: always()
         run: |
           git pull --no-edit origin "${{ github.ref_name }}" || true
-          if [ -f agi-proof/benchmark-results/wisdom-market/M3-pilot-eval.json ]; then
-            echo "===== M3-pilot-eval.json ====="
-            cat agi-proof/benchmark-results/wisdom-market/M3-pilot-eval.json
-          else
-            echo "no eval report on the branch yet — see agi-proof/benchmark-results/runpod-wisdom-pilot/pod-selfreport.log on the branch"
-          fi
+          echo "Results (if pushed) are on the branch under agi-proof/benchmark-results/wisdom-market/"

@@ -1,0 +1,111 @@
+{
+  "study": "synthetic-data scaling & collapse",
+  "honesty_note": "Toy. Drifted Markov source stands in for an imperfect synthesizer; demonstrates the fidelity-bounded scaling lesson, not a recipe.",
+  "analytic_floor_E": 0.90938,
+  "config": {
+    "real_budget": 300,
+    "synth_multiples": [
+      0,
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "epochs": 14,
+    "seeds": 2
+  },
+  "results": {
+    "high_fidelity": {
+      "drift": 0.15,
+      "curve": [
+        {
+          "synth_multiple": 0,
+          "total_examples": 300,
+          "real_held_loss": 1.1085,
+          "sd": 0.00216
+        },
+        {
+          "synth_multiple": 1,
+          "total_examples": 600,
+          "real_held_loss": 1.07418,
+          "sd": 0.03511
+        },
+        {
+          "synth_multiple": 2,
+          "total_examples": 900,
+          "real_held_loss": 0.97961,
+          "sd": 0.02431
+        },
+        {
+          "synth_multiple": 4,
+          "total_examples": 1500,
+          "real_held_loss": 0.97847,
+          "sd": 0.03006
+        },
+        {
+          "synth_multiple": 8,
+          "total_examples": 2700,
+          "real_held_loss": 0.98294,
+          "sd": 0.03234
+        },
+        {
+          "synth_multiple": 16,
+          "total_examples": 5100,
+          "real_held_loss": 0.90856,
+          "sd": 0.02399
+        }
+      ],
+      "best_multiple": 16,
+      "best_loss": 0.90856,
+      "collapsed": false,
+      "collapse_note": "monotone-or-saturating in tested range"
+    },
+    "low_fidelity": {
+      "drift": 0.6,
+      "curve": [
+        {
+          "synth_multiple": 0,
+          "total_examples": 300,
+          "real_held_loss": 1.1085,
+          "sd": 0.00216
+        },
+        {
+          "synth_multiple": 1,
+          "total_examples": 600,
+          "real_held_loss": 1.1971,
+          "sd": 0.06991
+        },
+        {
+          "synth_multiple": 2,
+          "total_examples": 900,
+          "real_held_loss": 1.25095,
+          "sd": 0.03866
+        },
+        {
+          "synth_multiple": 4,
+          "total_examples": 1500,
+          "real_held_loss": 1.28635,
+          "sd": 0.08045
+        },
+        {
+          "synth_multiple": 8,
+          "total_examples": 2700,
+          "real_held_loss": 1.38851,
+          "sd": 0.03596
+        },
+        {
+          "synth_multiple": 16,
+          "total_examples": 5100,
+          "real_held_loss": 1.46712,
+          "sd": 0.05667
+        }
+      ],
+      "best_multiple": 0,
+      "best_loss": 1.1085,
+      "collapsed": true,
+      "collapse_note": "loss rose after the optimum -> synthetic past best hurts"
+    }
+  },
+  "lesson": "High-fidelity synthetic data scales and saturates near the floor; low-fidelity synthetic data collapses the model once it dominates the mix. Quantity cannot substitute for distributional fidelity."
+}

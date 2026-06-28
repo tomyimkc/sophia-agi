@@ -141,22 +141,27 @@ def test_long_horizon_recovers_then_drifts() -> None:
 
 
 # --------------------------------------------------- closed loop (the capstone)
-def _danger_domain(n: int = 12):
-    objs = ["the database", "user files", "records", "everything", "the backups", "the logs",
-            "all accounts", "the cache", "the index", "the config", "the queue", "the secrets"]
-    out = []
-    for o in objs[:n]:
-        out += [(f"delete {o} now", True), (f"read {o} now", False)]
-    return out
+def _divisibility_domain():
+    """Non-trivial held-out domain: signal is divisibility-by-5 (numeric), NOT a single
+    lexical token. The real agent.verifier_synthesis engine composes a `divisible_by_5`
+    verifier and validates it on a disjoint split; a single-token stump provably cannot
+    express this (it plateaus near chance)."""
+    valid = [str(n) for n in range(5, 101, 5)]  # 20 multiples of 5
+    invalid = ["7", "13", "22", "31", "44", "48", "52", "61", "77", "88",
+               "99", "103", "ab", "3x", "12", "19"]  # none divisible by 5
+    return [(v, True) for v in valid] + [(i, False) for i in invalid]
 
 
 def test_loop_closes_on_heldout_domain() -> None:
     from selfextend import close_loop
-    r = close_loop("danger", _danger_domain())
+    r = close_loop("divisible_by_5", _divisibility_domain())
     assert r["loop_closed"] is True
     assert r["promoted"] and r["postAccuracy"] > r["preAccuracy"]
     assert r["routeBefore"] == "abstain" and r["routeAfter"] == "answer"
     assert all(r["invariants"].values())
+    # the real engine synthesized a compositional gate (not a single-token stump)
+    assert r["rule"]["engine"] == "agent.verifier_synthesis"
+    assert "divisible" in r["rule"]["gate"]
 
 
 def test_loop_stays_abstained_when_unlearnable() -> None:

@@ -1,0 +1,745 @@
+{
+  "schema": "sophia.math_code_heldout_seal.v2",
+  "packId": "math-code-curriculum-heldout-2026-06-25",
+  "sealedAt": "2026-06-26T03:52:37.669011+00:00",
+  "visibility": "public-hash-only",
+  "privateCopy": "private/math-code-heldout/ (gitignored)",
+  "generatorPolicy": "Curriculum generators MUST NOT read sealed paths; train on sympy/exec-verified synthetic packs only.",
+  "pretrainingContaminationPolicy": "Public-benchmark-style items inherit the field's pretraining-contamination problem: a model may have seen similar items during pretraining, so a held-out gain on these is suggestive, NOT contamination-free proof. A clean external claim requires the third-party-authored pack (agi-proof/third-party-heldout/).",
+  "cleanExternalClaimPath": "agi-proof/third-party-heldout/ (third-party-authored, salted; currently EMPTY)",
+  "files": [
+    {
+      "path": "eval/external/math-style-sample.jsonl",
+      "sha256": "00fde065814f0d5a0a2a4f9e71f5c8c33d8ae53bac77a94b565697eaeae0871a",
+      "itemCount": 12,
+      "items": [
+        {
+          "id": "m1",
+          "sha256": "b40fc1ba2fe74621760814594f3cd927b13cd422ec675c1668aa140cdc88ba9b"
+        },
+        {
+          "id": "m2",
+          "sha256": "9e4f2728dcb65e270e93d1b39686e8783ac056f4de51944946592b2c741b6653"
+        },
+        {
+          "id": "m3",
+          "sha256": "b9c192b3d1c81906c8c2828fecad5815af9a52a5016e7678e97b0a85da3ece95"
+        },
+        {
+          "id": "m4",
+          "sha256": "c683184cd32a5c141a0ad094a625ed87bbb0c107381c134b051945d34bc95ae3"
+        },
+        {
+          "id": "m5",
+          "sha256": "f6d7b4992e41d2a452d17229919b640e1693906fbf8ade877d7100f5cd452fd9"
+        },
+        {
+          "id": "m6",
+          "sha256": "f7b626c355bf214b44d1e475049fc93fa881e2fde5d84771c65d40783bad3aa7"
+        },
+        {
+          "id": "m7",
+          "sha256": "81b5a6a1d747a123c92fc1cc3e766780c000bcecc447d59e2377c28f500eebdb"
+        },
+        {
+          "id": "m8",
+          "sha256": "c0a4ebe43d04f37b726d31319ae0446fe5dfade511fa57a2043515ade6ff2622"
+        },
+        {
+          "id": "m9",
+          "sha256": "70b92fb71a36abbe5733f62ab57c607fc9b183138dbe3f6904645f6971e9dde9"
+        },
+        {
+          "id": "m10",
+          "sha256": "56c175539954709ae5ff01b96c560ae0a1151801783726d806d092ab0ddf1365"
+        },
+        {
+          "id": "m11",
+          "sha256": "d6c427f3084b4d7c07e71920c37ee3e1c2f9d28cdb7855489860c1490d7acb8f"
+        },
+        {
+          "id": "m12",
+          "sha256": "718c50da22b8152baf21523e91a0a4bc5ae41f190d2a7bd893516e4007820110"
+        }
+      ],
+      "provenance": {
+        "sourceBenchmark": "MATH (Hendrycks et al., 2021)",
+        "sourceLicense": "MIT",
+        "authorship": "repo-authored style-sample (NOT official MATH)",
+        "pretrainingContaminationCaveat": "Public-benchmark-style items inherit the field's pretraining-contamination problem: a model may have seen similar items during pretraining, so a held-out gain on these is suggestive, NOT contamination-free proof. A clean external claim requires the third-party-authored pack (agi-proof/third-party-heldout/)."
+      }
+    },
+    {
+      "path": "eval/external/gsm8k-style-sample.jsonl",
+      "sha256": "6b1a1b94f46972558a6edb95084d91c3bdf5982de64521e05ae688e63438993e",
+      "itemCount": 10,
+      "items": [
+        {
+          "id": "s1",
+          "sha256": "106995f8c27ca3f413bef70997b81751c41eee4364114e2c811b72803378026e"
+        },
+        {
+          "id": "s2",
+          "sha256": "38615a746396d65b885116711f53ab445a2ecabcb75f58b6f5a29df35b1f3b99"
+        },
+        {
+          "id": "s3",
+          "sha256": "f86e752c03af5d232bbb576ea614fa2d8beda3820e77f315062caa369c480abc"
+        },
+        {
+          "id": "s4",
+          "sha256": "15aacd22ddc0e1cd8011e92766a936a5f38811ab1325d04614a97130994f8f2e"
+        },
+        {
+          "id": "s5",
+          "sha256": "5ffd4aef0aeedafaf6ba21646e5a730b488fcdac29ea30fad49e106b69a9cf73"
+        },
+        {
+          "id": "s6",
+          "sha256": "5f9b99ed1cea4eab5f5c2d13b92b8561dd9d0dc0166a4c5868f41cabe273021f"
+        },
+        {
+          "id": "s7",
+          "sha256": "0e65954adf0b53cc96580d897abfc894112da5d27a449a7c14c916b6b4be50ce"
+        },
+        {
+          "id": "s8",
+          "sha256": "d85ddbe8d6cf874ccf5fe7fd0c5fa4671a627f4fc50742f1ff76a84e41848d73"
+        },
+        {
+          "id": "s9",
+          "sha256": "30b13959d04a2ecbb3c6f89392a706bee27b6286042c9584ce4660dddec10bed"
+        },
+        {
+          "id": "s10",
+          "sha256": "04e96bb9a8d80369a9a7d30deb19d61163d157ef105f1403e231079945028381"
+        }
+      ],
+      "provenance": {
+        "sourceBenchmark": "GSM8K (OpenAI, 2021)",
+        "sourceLicense": "MIT",
+        "authorship": "repo-authored style-sample (NOT official GSM8K)",
+        "pretrainingContaminationCaveat": "Public-benchmark-style items inherit the field's pretraining-contamination problem: a model may have seen similar items during pretraining, so a held-out gain on these is suggestive, NOT contamination-free proof. A clean external claim requires the third-party-authored pack (agi-proof/third-party-heldout/)."
+      }
+    },
+    {
+      "path": "eval/coding/mbpp-style-sample.jsonl",
+      "sha256": "2609043e724eb737d8fa665c1a509146be577390e6c76edf8c6dffdc7435eeda",
+      "itemCount": 8,
+      "items": [
+        {
+          "id": "mbpp-min-cost",
+          "sha256": "8207b5279fe64d906e63a6202af9be497f4d7e965371cd9def5339d8aed2fbd4"
+        },
+        {
+          "id": "mbpp-is-prime",
+          "sha256": "3729ae76e2bb5a0c9ca1ae5154f6dca36f66dbab160f9e18cdaa3d3ea12220db"
+        },
+        {
+          "id": "mbpp-gcd",
+          "sha256": "3fbdf22f26ddbe60a0b2452908919af90415529ec6516d442c2f528ccba2fa2e"
+        },
+        {
+          "id": "mbpp-factorial",
+          "sha256": "b1e9c0c154a4930be20e77a5adbdecaa6bf9c5c044788beb478d8013887a3a81"
+        },
+        {
+          "id": "mbpp-count-words",
+          "sha256": "fe3a3ef4d4b725982ac907278ced6c8d6d1b22455a432ca875ad0cef182b5a4f"
+        },
+        {
+          "id": "mbpp-flatten",
+          "sha256": "31de922e115652b203c95adc66f905615337579c361c2512c42ff7daa7872435"
+        },
+        {
+          "id": "mbpp-second-largest",
+          "sha256": "921270ece75e8d9f3dcc3d02ea0e27c14b4ad40049087830c9713532485f3484"
+        },
+        {
+          "id": "mbpp-is-anagram",
+          "sha256": "67e87a8ed0deff7b82242e3e9eb091ede6750562d3d13f7bebf731d5ddeb2532"
+        }
+      ],
+      "provenance": {
+        "sourceBenchmark": "MBPP (Google, 2021)",
+        "sourceLicense": "CC-BY-4.0",
+        "authorship": "repo-authored style-sample (NOT official MBPP)",
+        "pretrainingContaminationCaveat": "Public-benchmark-style items inherit the field's pretraining-contamination problem: a model may have seen similar items during pretraining, so a held-out gain on these is suggestive, NOT contamination-free proof. A clean external claim requires the third-party-authored pack (agi-proof/third-party-heldout/)."
+      }
+    },
+    {
+      "path": "eval/coding/humaneval-style-sample.jsonl",
+      "sha256": "82cf67375bc8211b8af91f7510b5d33fda15887557a317bb4b934a1aec2239df",
+      "itemCount": 4,
+      "items": [
+        {
+          "id": "he-reverse",
+          "sha256": "74d968c203f90585c0719d462532ee3d3368cec9250fbdd8e1ff2b4bfae82c0d"
+        },
+        {
+          "id": "he-sum-list",
+          "sha256": "3a81fb6722573079ccb40ae9ae3a2eb87260e14cecf774dfa5de888ed9aa5d41"
+        },
+        {
+          "id": "he-is-even",
+          "sha256": "27e57962f0f40828102017f8736eb4b4b3473ae6deb1c0c03d15a5b9754def1f"
+        },
+        {
+          "id": "he-unique",
+          "sha256": "bdc00f33f8221b11b22ad8b826e383ad73fe3b17e2f1de89734bc8a24ff5f2e0"
+        }
+      ],
+      "provenance": {
+        "sourceBenchmark": "HumanEval (OpenAI, 2021)",
+        "sourceLicense": "MIT",
+        "authorship": "repo-authored style-sample (NOT official HumanEval)",
+        "pretrainingContaminationCaveat": "Public-benchmark-style items inherit the field's pretraining-contamination problem: a model may have seen similar items during pretraining, so a held-out gain on these is suggestive, NOT contamination-free proof. A clean external claim requires the third-party-authored pack (agi-proof/third-party-heldout/)."
+      }
+    },
+    {
+      "path": "benchmark/code_tasks.json",
+      "sha256": "52de2e8fa3a9df8dc2cc51d170c4cc0727a81d358c49bbd40882bceb45ca3e0f",
+      "itemCount": 20,
+      "items": [
+        {
+          "id": "is-palindrome",
+          "sha256": "d903031cdd3d0db7f57d76ff04fba01c46c9e7889bdeef0af027209811e04652"
+        },
+        {
+          "id": "count-vowels",
+          "sha256": "83257301c5e620afd96f31edcb3da0dc8b72c258353a5a82533275d35a49f1ec"
+        },
+        {
+          "id": "fizzbuzz-list",
+          "sha256": "62fc8757f9f34718ccf68778e358039687508f9dedc0367326cb4bf7bc91563b"
+        },
+        {
+          "id": "title-case",
+          "sha256": "89aff1248f9341cf127cd798d6ceab1f1f2bab60d08498f93e964c091dbbe927"
+        },
+        {
+          "id": "dedupe-preserve-order",
+          "sha256": "1c13595c872713406f8a1dc17eb3ef31c02c943b7b713d7baf2793865e14d754"
+        },
+        {
+          "id": "reverse-words",
+          "sha256": "bc1d2fdc92b0d753ed895c7c4c2daaab096df1d86b6448e7674a351c13100c6b"
+        },
+        {
+          "id": "sum-of-digits",
+          "sha256": "3cba3e29cd87454b78d0fb0d0fc5925a5666c9436046ab137f24ac2ad8adf7b3"
+        },
+        {
+          "id": "two-sum",
+          "sha256": "cc03304942d57f2415ed0ca2358716e72ba89c22a13aa1169b203ea3017eca68"
+        },
+        {
+          "id": "word-frequency",
+          "sha256": "c7fe432606dc350f7507665afc6a6dcaba3acd3bb7b5cf46c3799e728b497421"
+        },
+        {
+          "id": "merge-sorted-lists",
+          "sha256": "83772cef38a887d79a912344268e199bf67956dd622bcd0145222be7e98beb64"
+        },
+        {
+          "id": "gcd",
+          "sha256": "8695d4002e21bbd2e80ba27ef6d8c0800c0e248468561bc7fe52ac337029f9c0"
+        },
+        {
+          "id": "binary-search",
+          "sha256": "37bdf4964b3e5cc528c2051db6e4161c67254cfd09aa204e7bc037d21d4841fd"
+        },
+        {
+          "id": "roman-to-int",
+          "sha256": "a24308ff3af9142cab9e64e447d000275d0d5b71f4e4f70468a7b320d3158461"
+        },
+        {
+          "id": "longest-common-prefix",
+          "sha256": "b7e2826bf35121b02e1a5e424ba53061d49b7bf5ec85e9fb8059264d10e68072"
+        },
+        {
+          "id": "valid-parentheses",
+          "sha256": "8094e995fdf307850b81c7323876de8f44056c103122eeba348702fd264a6e52"
+        },
+        {
+          "id": "group-anagrams",
+          "sha256": "ead45e6cfa1a0320699bc28a0ec67ea215670b6e6fb08bf06f537e2c60b4d689"
+        },
+        {
+          "id": "max-subarray-sum",
+          "sha256": "371a6a58c7a3d7acfd8a914d800e3236648b29b7f726c8ec24b93a24cce07855"
+        },
+        {
+          "id": "fibonacci-memoized",
+          "sha256": "07e3132137fd4385efadcaf52845eb9c9e97b5930e15269ae7535a8a5ad86871"
+        },
+        {
+          "id": "climb-stairs",
+          "sha256": "f9cd4ea769c3c6042d20b8fc3689e92d9c841cc60a1204e74bc59570969e35e1"
+        },
+        {
+          "id": "flatten-nested-list",
+          "sha256": "fb534714258e3587a9068bbe5c67d7fe9c1418438df6231c4d98785916c0d50f"
+        }
+      ],
+      "provenance": {
+        "authorship": "repo-authored",
+        "pretrainingContaminationCaveat": "low (repo-authored, not from a public pretraining corpus)"
+      }
+    },
+    {
+      "path": "provenance_bench/data/math_problems.json",
+      "sha256": "0600117946212e2f0c43481c06e8f6ab709839567aac2a72830b155d64434a79",
+      "itemCount": 60,
+      "items": [
+        {
+          "id": "dchain-0",
+          "sha256": "61822a8cb1c595be398db625bee118d432c183114d0ea8ff96c24429aba4b64e"
+        },
+        {
+          "id": "dchain-1",
+          "sha256": "9ffaf708f28cfe3be814758cc80903bb6e14779ab43d1368d9e6dfb8cec86825"
+        },
+        {
+          "id": "dchain-2",
+          "sha256": "d8c99018d02ec1c660f59f2ce45955e53b4f7e2c7f07ef8e0d9e0dbba161d707"
+        },
+        {
+          "id": "dchain-3",
+          "sha256": "dac1ca428ed415dff19710848f054a7c3ed51378aa93049ee2ed5957f398f3a6"
+        },
+        {
+          "id": "dchain-4",
+          "sha256": "77b9f9c8c92db8545e4737245ee27aa9d0509e3a96c95773d969af40cc3f0a16"
+        },
+        {
+          "id": "dchain-5",
+          "sha256": "e8fcb8a70fbd32fd72064f823506a6a37726a55fee76150275f54e19bd57073f"
+        },
+        {
+          "id": "dchain-6",
+          "sha256": "4608bc762228ad5ba9a170327f34c102487ec2261a43f14e6315d4cd5c817d6a"
+        },
+        {
+          "id": "dchain-7",
+          "sha256": "8fa39210425588547c03e8879a4a4f83b8ab7df5d3e4fae9dcd33c93523e069d"
+        },
+        {
+          "id": "dchain-8",
+          "sha256": "c21ca930538178fa65f814287fb69e077b0248348ff58a467a152e780b655933"
+        },
+        {
+          "id": "dchain-9",
+          "sha256": "ef9082307a6e8fc61851fc6f1beecffeefbf09b9952e13f98526bb60f12cb5fc"
+        },
+        {
+          "id": "dchain-10",
+          "sha256": "9fc78728fdd185827c15560e39f3bf691b7a2b9db5b1ac425462c44a62335dc3"
+        },
+        {
+          "id": "dchain-11",
+          "sha256": "68bdb722fc2ca7a4b624f778a7368a41d440d056d72ea20dcf656fa7bbd768e9"
+        },
+        {
+          "id": "dchain-12",
+          "sha256": "934663ee54c66e0b8b5e377828586925a263f77039173eae8b9c38bc9060e425"
+        },
+        {
+          "id": "dchain-13",
+          "sha256": "43ea32f4babea323a66aa3340ef76abee4b3607ff5edc5360a8ce6b590a99f28"
+        },
+        {
+          "id": "dchain-14",
+          "sha256": "26e478513950da80835c7ba01f0fa9432aeb0904fb15e20020948fe5be3c5b3b"
+        },
+        {
+          "id": "dchain-15",
+          "sha256": "b5ebbabfcf1c4ef878747ded183c074ba2851545f5ec3b01977b8f496d8afc7a"
+        },
+        {
+          "id": "dchain-16",
+          "sha256": "2bfdfbdde6c9e3bd96849565973ede6bbd5e89d4f98a78497c77806388ed9009"
+        },
+        {
+          "id": "dchain-17",
+          "sha256": "7ea44afcff3c5b2fc84aaddabaf55376a1ef62b283914b38c3f65cc90b0045b7"
+        },
+        {
+          "id": "dchain-18",
+          "sha256": "92e06049fdd7d2a759d6d1c47eb36baaa4b74db033902ea8ebd39b0a24efa8e5"
+        },
+        {
+          "id": "dchain-19",
+          "sha256": "27a0539660b115dbe8328b6f93b43948b4c3b0f8ddcfbc00317bea96b9ee1d6d"
+        },
+        {
+          "id": "ifunc-0",
+          "sha256": "2686e118cbc9d62172fc7861196f2d759bdb63a5f23ad0a780645bff04d24fd1"
+        },
+        {
+          "id": "ifunc-1",
+          "sha256": "56ba3572429bcd5d5a4a0a99fac84e08878c7b3a42fe819a85da9aa7c6b7c8af"
+        },
+        {
+          "id": "ifunc-2",
+          "sha256": "878fef139a4afad9f48acf007b9089082dc20ac05198f1c387fa4ca46cef2a5b"
+        },
+        {
+          "id": "ifunc-3",
+          "sha256": "e6a68daf7ae54efebfa379fa4f42e2d969b052bbec806885ffb4118143e3146f"
+        },
+        {
+          "id": "ifunc-4",
+          "sha256": "3a65ac81078045a1a0939caf92a576e2b76cd5719940ec09525b9b51d1ddb904"
+        },
+        {
+          "id": "ifunc-5",
+          "sha256": "6262d30608c6277c1aacb1fff93765d666223553f76b5b8c25db7f3dc2d91fad"
+        },
+        {
+          "id": "ifunc-6",
+          "sha256": "e21d22787695447485533c3f37f763755f43c017c3d3e160944bf26c46f54a7d"
+        },
+        {
+          "id": "ifunc-7",
+          "sha256": "ba87501e9694697dcdc5583b3dcf1dc4d04295858ccd3a6ee5cf6cc6d60759a0"
+        },
+        {
+          "id": "ifunc-8",
+          "sha256": "fba74d0c1ee723954b571f8df7aa2d30f96da8c91c8a9693be0fa42d97d7f0ec"
+        },
+        {
+          "id": "ifunc-9",
+          "sha256": "6c6754833b7f1c39eabdd5eabf28416f60f0f3dae5b65616f40eb9cf8bf112d3"
+        },
+        {
+          "id": "ifunc-10",
+          "sha256": "182b09b77fb9694887b11d8f3b2cb6cfd266f330269821db028b46b296e96790"
+        },
+        {
+          "id": "ifunc-11",
+          "sha256": "d8a7f95f79288257e06fce98f7b2fd7dbe15cff02023e151d1e7164a8bc0dcaf"
+        },
+        {
+          "id": "ifunc-12",
+          "sha256": "dfbccd0841237f7dd217456790942df6eea67daa72fc7583fa30c71a252f80cb"
+        },
+        {
+          "id": "ifunc-13",
+          "sha256": "c10d06a5cecc83019fea282842195dea6847ed68d4cf996f8b1054ee4241f41f"
+        },
+        {
+          "id": "ifunc-14",
+          "sha256": "ae734b1845c0ba63b9d7051ad2d10ae37e1aae991dd739a4a2deebabd3b3aa5b"
+        },
+        {
+          "id": "ifunc-15",
+          "sha256": "9310777d21c35cee70946f7ce5735017bcad162f67f64de8a86234c454318f19"
+        },
+        {
+          "id": "ifunc-16",
+          "sha256": "4ef04d7d0deadcccf6b6c11fd49624c1afbe22c8b8a2b3a814ca102c80384820"
+        },
+        {
+          "id": "ifunc-17",
+          "sha256": "6f5f88cc8004ee202cd8ad32e2f9ee93a95f8b53e0e05cc0f89d5a4080fb876d"
+        },
+        {
+          "id": "ifunc-18",
+          "sha256": "a845075ba3c9767d5677cea0cba0a873062f0b3458cfcfb3618913412f98bf31"
+        },
+        {
+          "id": "ifunc-19",
+          "sha256": "7e9e71a5857434910a09218614a8725b00f0e30fd4d39f983cdfc7d9171d076a"
+        },
+        {
+          "id": "d2-4-6-0-2",
+          "sha256": "c76379f5d4cb90f7d0838f212e892c39bc92e9d726443a9c3e1fb0048ec93b35"
+        },
+        {
+          "id": "d2-5-1-3-3",
+          "sha256": "f8281b33bf973c3e3ace72244bb88140726c6f73c5530f3689c466ebd55fb8c2"
+        },
+        {
+          "id": "d2-6-2-6-5",
+          "sha256": "01500f5e7ff5851e079de139ad7f4f53a1a6c26d81c25fb7a3c937c0c4c4169c"
+        },
+        {
+          "id": "d2-1-3-2-5",
+          "sha256": "784f21905d7482ad018ea387e202b17aaf76c39c5ec42b2b4f42965a4ee1b8c1"
+        },
+        {
+          "id": "d2-2-3-5-5",
+          "sha256": "30d67214dd687c11b44d271fe8a54de60fe736c737cb5533b0d61edb8a4229b9"
+        },
+        {
+          "id": "d2-6-2-0-5",
+          "sha256": "45915fd2102dddcd02a842a18d214ebc53046505518fd76a3af571d2ed972cf3"
+        },
+        {
+          "id": "d2-6-4-1-2",
+          "sha256": "f57d5e715c254601891a4820c2128db9c2f7941da84ab00f92c0a259737e33b5"
+        },
+        {
+          "id": "d2-5-4-3-4",
+          "sha256": "7123c8975cb58d826c78762d0bc59531e4b01bf8f008b2466707d407a093fe3d"
+        },
+        {
+          "id": "d2-2-1-6-5",
+          "sha256": "130b3ce4ae856b6e491cc8341482c4d65f318a62a12edae36c52535e8017928a"
+        },
+        {
+          "id": "d2-5-1-2-4",
+          "sha256": "36788df06042ce3ab4cb2b3ce909d5ebde62e843ddb30890e0b602988c11b25b"
+        },
+        {
+          "id": "d2-3-4-6-4",
+          "sha256": "3f5e036d63703b8cf393d0ae6bd52990857e8e9977688e40e1a29cb7c71b68c4"
+        },
+        {
+          "id": "d2-5-2-3-5",
+          "sha256": "025f29c9658d45488b42ce8a983e69c54c063af77d3aaab9c3776dbd3c17122d"
+        },
+        {
+          "id": "d2-5-2-6-5",
+          "sha256": "0768edf91992d4c3250e61a04775e541f7c92530c9007b3fc81d6c446602848c"
+        },
+        {
+          "id": "d2-2-2-2-4",
+          "sha256": "31b3a9c117237ef0867a7317a2c5983b5fc3f882fae410903f9bfa892d41766d"
+        },
+        {
+          "id": "d2-5-3-3-3",
+          "sha256": "ba3dd92cb5a4bcbcebad9add5f2d33ada1dde0838689bb625c98e1209caeea04"
+        },
+        {
+          "id": "d2-1-5-5-2",
+          "sha256": "57236e11a5a8da408d505cf73b07adbf11e44240ace38a9e4c0495bf44d2b489"
+        },
+        {
+          "id": "d2-4-1-4-5",
+          "sha256": "4edf2cf1e12176b6b37dd64f3c5793457956fcd41f8b16505d9007d515f33796"
+        },
+        {
+          "id": "d2-2-4-5-5",
+          "sha256": "33e1b2744389248a7a83ba2ad0f65f62a12e7e8eb41a544ee8208a670caa76aa"
+        },
+        {
+          "id": "d2-1-6-3-2",
+          "sha256": "21c99725d09c0639fb674708057672e47735c744e422380dfc17db5653a2a0e7"
+        },
+        {
+          "id": "d2-2-5-5-4",
+          "sha256": "7ed212bcb96b166c4942a5ed0beb7d02a6c96c942c9ed780308d58621de8ab31"
+        }
+      ],
+      "provenance": {
+        "authorship": "repo-authored (sympy-generated, family-disjoint eval split)",
+        "pretrainingContaminationCaveat": "low (synthetic)"
+      }
+    },
+    {
+      "path": "provenance_bench/data/code_tasks.json",
+      "sha256": "c3334edfac7cef2eefb793aab8d66e74f7420f7674c185b7b9a37ec0cf25215c",
+      "itemCount": 48,
+      "items": [
+        {
+          "id": "palin-59201",
+          "sha256": "79fe967741c3a78682f032fa7d0bd2b87ef34567f7de65adba53d40cef20d25c"
+        },
+        {
+          "id": "palin-25147",
+          "sha256": "afa147932119ba6652101a04cc2d17cc84e777c1adf1b84bc206f04ad75d705a"
+        },
+        {
+          "id": "palin-27379",
+          "sha256": "2bbb18a450688c7903101cb1600f3596c55007c7328da2093e5ddbd16fa01a24"
+        },
+        {
+          "id": "palin-3851",
+          "sha256": "b52fe66c39dd7f053eca16adca838c696270850855cdb43239b48b2cc0384339"
+        },
+        {
+          "id": "palin-97184",
+          "sha256": "1e202033f0f09fd14d9094df2f40192d8c7330db5baac539aacc01d7250b63d2"
+        },
+        {
+          "id": "palin-34190",
+          "sha256": "b9318e491c48d49aafec1b7acc889da835caa48c3c8748ad5a22c1dce7325b01"
+        },
+        {
+          "id": "palin-2054",
+          "sha256": "4e9fdb28040610ee207f11ef99b5de46c97238f8c62ebb0b19e16f4e41596c62"
+        },
+        {
+          "id": "palin-28321",
+          "sha256": "ea01adcc488130c2744960cdc1b09859ce8af6abc6fa1783c5c8658b8da887cc"
+        },
+        {
+          "id": "palin-73051",
+          "sha256": "41fb01d37b0acf0c6261c600785a8bcbb0e35a7b4111b8328c4913d8c84cb67a"
+        },
+        {
+          "id": "palin-75465",
+          "sha256": "a92f1fb6cbf4fedcd9cd7537f4bdce9f22ddcd2d0970ce69db25ebbd94d808c2"
+        },
+        {
+          "id": "palin-29814",
+          "sha256": "5188222acf059505ae5f866e8eac273188775611ea327b5f40dd5a4eb1c339c5"
+        },
+        {
+          "id": "palin-98471",
+          "sha256": "19ec1f4991df8816e07d4563a82bc345e7c5f64a2bd0de74d368ee3e5916a6c5"
+        },
+        {
+          "id": "palin-85451",
+          "sha256": "e5770429763c2246676208bd1953fc143f6164b41eb643e544bfc9320a0fda7f"
+        },
+        {
+          "id": "palin-1898",
+          "sha256": "6e26bdfa68123e7ce2636828488e1e9bb62135bef04bda41b665a3866ca69bc1"
+        },
+        {
+          "id": "palin-43189",
+          "sha256": "13e416ef22e9821fc4b7651e09b6e29a01354607940d35c29e28b057a04869ee"
+        },
+        {
+          "id": "palin-34813",
+          "sha256": "206adb10453dcd39297fab27cbdc6db8a3c30165edd4bef3e349254dcce7b067"
+        },
+        {
+          "id": "dedupe-19615",
+          "sha256": "1aee8472b70d3989f6c010b1cebfdb214771e17f2a763f62a94b373a80c3ca93"
+        },
+        {
+          "id": "dedupe-26505",
+          "sha256": "9ea5848b88673ac719a7ad63fbad43303872784dbd7549bf6789860ffd5d9bd0"
+        },
+        {
+          "id": "dedupe-55237",
+          "sha256": "7fa65ee20a7ae897a65fefa5ae01ebbaf58783f1b09181bba47e3e236d6ed8ef"
+        },
+        {
+          "id": "dedupe-57438",
+          "sha256": "935cdf00bb5c208d74f83c71ba1dd04942c2821101dcb03a79a4cf1acab8f4f9"
+        },
+        {
+          "id": "dedupe-19813",
+          "sha256": "c4d9d2147da68cc5d27eb443554437d2699554dd50c34426b8dcad349536fcab"
+        },
+        {
+          "id": "dedupe-57099",
+          "sha256": "1ce717e0ee6b8d86fd4fc3bd230b0aaa8b8cc2ba5d198a17767a6386e6a523ab"
+        },
+        {
+          "id": "dedupe-77868",
+          "sha256": "0545a65bb90e2599cbfc578692e968388fbf3fa87955130b4249c39473fc5b1a"
+        },
+        {
+          "id": "dedupe-87475",
+          "sha256": "2d1b099692c99054bfd1ad32203adef635a44b07456c83b5d74fbd3e707497c2"
+        },
+        {
+          "id": "dedupe-1083",
+          "sha256": "9b00bb6ecee817c7108b0b7b89cff07e93cc53f8d40bd8957dd8b45923403174"
+        },
+        {
+          "id": "dedupe-27950",
+          "sha256": "99e581845b817f570c052d699423828e753c100066aa34b884d57b39b8b5d9ec"
+        },
+        {
+          "id": "dedupe-96181",
+          "sha256": "2d4385a070ab544578bc413031a32e9c0395513da5893a98e5b4392bb6afd88b"
+        },
+        {
+          "id": "dedupe-99449",
+          "sha256": "96832afe24ef5dd7e6ff61006e2a535db41bc0e489c8500d14a902893a113d0d"
+        },
+        {
+          "id": "dedupe-60283",
+          "sha256": "a960e06b1939a8122966501dd6d2a971f70afc933bd57073ae9fba99b9faddfe"
+        },
+        {
+          "id": "dedupe-4827",
+          "sha256": "e67b8e28077535d94fd4557ebd301fec181f5954607d6934e9a4052f7d7cd0f6"
+        },
+        {
+          "id": "dedupe-53554",
+          "sha256": "892ec35cc99cc8c18c1c76b99fce1e5e3a2ac38967d35761511cac5a286194a2"
+        },
+        {
+          "id": "dedupe-13529",
+          "sha256": "3c1f48ea7fa96c569ce85e64e6cc812cc462aad2d18c58e2804390b224510213"
+        },
+        {
+          "id": "merge-77365",
+          "sha256": "dd6a25f422b65961cdf0c6c6b10b65c882f893b14abb81394d0a43d37231a769"
+        },
+        {
+          "id": "merge-15243",
+          "sha256": "837763294c6c9a6380520946c24185c9860b1cacd3846d3939ce21bfcb724a63"
+        },
+        {
+          "id": "merge-24232",
+          "sha256": "5bf9cce42d72c19ed2a28a3e2bf92d0164227254b865cf9c93b680d6db246f84"
+        },
+        {
+          "id": "merge-45285",
+          "sha256": "cc1bef9a7b27cbdf11f5722328af1abea99d522e553687d99bc8ee41eb0231ed"
+        },
+        {
+          "id": "merge-20185",
+          "sha256": "fbfbd2cf533441f9e8e7dc3068655dcc7ddcdbcba4a3f45c9fb99e5f92ed9ff7"
+        },
+        {
+          "id": "merge-39289",
+          "sha256": "cbd1c1b541b394ade51fe0040f5d12e34759d031c32180bc7025565bae4820f0"
+        },
+        {
+          "id": "merge-70640",
+          "sha256": "59691b585dc3d298b008360c52c26db8c02ef31413ef864a00988526951bf0de"
+        },
+        {
+          "id": "merge-29918",
+          "sha256": "d4e0246863260c9b1730f3b33b7dc7b9293c10bba5d73bab3ae2d55a65fcc77e"
+        },
+        {
+          "id": "merge-18165",
+          "sha256": "b62be8d4cfab380a6ab14b97839205c9f88df662749389668952e8ecded09d8d"
+        },
+        {
+          "id": "merge-83536",
+          "sha256": "343b2efce16bd584bd9bf20a12988a60fba95f32d7005dbd344e07c450323522"
+        },
+        {
+          "id": "merge-28426",
+          "sha256": "ae874278e29f0cdd060948fd4bc434715e8b342cec0deb2ba34f8b46ea8a9187"
+        },
+        {
+          "id": "merge-90225",
+          "sha256": "9e273454131e31db98762c4041efa79d976da6e2be8f1897f35f790405f51d0c"
+        },
+        {
+          "id": "merge-39009",
+          "sha256": "b0e2e08d3a0705b405a0747b3478afda4832cf26e38db4fea337dda7ba6271f6"
+        },
+        {
+          "id": "merge-9211",
+          "sha256": "17ba452fa8cea98e24b61248fc5b76376131696246f2ca20b7cd003b0c21acf1"
+        },
+        {
+          "id": "merge-41973",
+          "sha256": "78faead678c30f66e04d3da4dbc682a726acab5e5a2d0aeb946661421b6f0a66"
+        },
+        {
+          "id": "merge-4297",
+          "sha256": "f6157d1353848267878c7c850b36bca4f7313aa2289925da968c6d6312647d81"
+        }
+      ],
+      "provenance": {
+        "authorship": "repo-authored (exec-verified, family-disjoint eval split)",
+        "pretrainingContaminationCaveat": "low (synthetic)"
+      }
+    }
+  ]
+}

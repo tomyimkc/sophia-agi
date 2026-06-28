@@ -21,11 +21,52 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent.continual_plasticity import EvalMetric, UpdateCandidate, evaluate_update  # noqa: E402
+from agent.continual_plasticity import (  # noqa: E402
+    EvalMetric,
+    Goal,
+    RetentionEvidence,
+    UpdateCandidate,
+    evaluate_update,
+    evaluate_update_multigoal,
+)
 from agent.formal_verifier import check_lattice_consistency  # noqa: E402
 from agent.godel_oracle import evaluate_for_promotion  # noqa: E402
 
 DEFAULT_PROTECTED = ("religion", "history")
+
+
+def _parse_goals(raw: list[str], *, default_min_delta: float) -> tuple[Goal, ...]:
+    """Parse repeated --goal "suite[:min_delta]" flags into a Goal tuple.
+
+    A goal with no explicit delta inherits --min-target-delta; use ":0" for a hold-steady
+    goal (must not regress, need not improve).
+    """
+    goals: list[Goal] = []
+    for item in raw:
+        suite, _, delta = item.partition(":")
+        suite = suite.strip()
+        if not suite:
+            raise SystemExit(f"invalid --goal {item!r}: empty suite")
+        try:
+            min_delta = float(delta) if delta.strip() else default_min_delta
+        except ValueError:
+            raise SystemExit(f"invalid --goal {item!r}: min_delta must be a number")
+        goals.append(Goal(suite=suite, min_delta=min_delta))
+    return tuple(goals)
+
+
+def _retention_from_shift_report(report: dict[str, Any], *, source: str) -> RetentionEvidence:
+    """Build a RetentionEvidence from a learning-under-shift public report.
+
+    Reads the old-task stability the shift protocol already measured so the
+    promotion gate can refuse to reward catastrophic forgetting.
+    """
+    return RetentionEvidence(
+        old_benchmark_delta_pct=report.get("oldBenchmarkDeltaPct"),
+        passing_signal=report.get("passingSignal"),
+        evaluable=str(report.get("stabilityEvaluable", "evaluated")),
+        source=source,
+    )
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -184,8 +225,20 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--protected", default=",".join(DEFAULT_PROTECTED),
                     help="comma-separated suites that may not regress beyond tolerance on CONTENT")
     ap.add_argument("--min-target-delta", type=float, default=0.03)
+    ap.add_argument("--goal", action="append", default=[], metavar="SUITE[:MIN_DELTA]",
+                    help="multi-goal mode: a suite that must improve by >= MIN_DELTA (default "
+                         "--min-target-delta); repeatable. Promotion requires every goal to clear "
+                         "its floor with no regression on any goal or protected suite (Pareto).")
     ap.add_argument("--max-protected-regression", type=float, default=0.01)
     ap.add_argument("--require-artifacts", type=int, default=2)
+    ap.add_argument("--shift-report", default=None,
+                    help="learning-under-shift public report; its old-task stability gates "
+                         "promotion so an adapter that catastrophically forgets cannot promote")
+    ap.add_argument("--max-retention-regression", type=float, default=5.0,
+                    help="max tolerated old-task regression in percentage points (default 5.0, "
+                         "matching the learning-under-shift stability rule)")
+    ap.add_argument("--require-retention", action="store_true",
+                    help="quarantine unless a verifiable old-task retention signal is supplied")
     ap.add_argument("--extra-artifact", action="append", default=[],
                     help="extra verifier-artifact identifiers (e.g. a SEIB report path)")
     ap.add_argument("--fail-on-reject", action="store_true",
@@ -221,8 +274,20 @@ def main(argv: list[str] | None = None) -> int:
         except Exception:  # noqa: BLE001 - config provenance is best-effort
             training_seed = None
 
+    # Old-task retention from a learning-under-shift report (if supplied). This lets the
+    # gate fail closed on catastrophic forgetting instead of rewarding a target-suite gain
+    # that was bought by destroying previously-learned knowledge.
+    retention: RetentionEvidence | None = None
+    if args.shift_report:
+        shift_path = ROOT / args.shift_report
+        if shift_path.exists():
+            retention = _retention_from_shift_report(_load(shift_path), source=args.shift_report)
+        elif args.require_retention:
+            raise SystemExit(f"--shift-report not found: {args.shift_report}")
+
+    # Collect real, on-disk artifacts so the artifact count reflects genuine evidence.
     extra: list[str] = []
-    for cand in (args.adapter_ladder, args.baseline_ladder, args.manifest, args.adapter_config, *args.extra_artifact):
+    for cand in (args.adapter_ladder, args.baseline_ladder, args.manifest, args.adapter_config, args.shift_report, *args.extra_artifact):
         if cand and (ROOT / cand).exists():
             extra.append(cand)
     if training_seed is not None:
@@ -282,13 +347,28 @@ def main(argv: list[str] | None = None) -> int:
         proof_tag=proof_tag,
     )[0]
 
-    decision = evaluate_update(
-        candidate,
-        target_suite=args.target_suite,
-        min_target_delta=args.min_target_delta,
-        max_protected_regression=args.max_protected_regression,
-        require_artifacts=args.require_artifacts,
-    )
+    goals = _parse_goals(args.goal, default_min_delta=args.min_target_delta)
+    if goals:
+        decision = evaluate_update_multigoal(
+            candidate,
+            goals=goals,
+            max_regression=args.max_protected_regression,
+            require_artifacts=args.require_artifacts,
+            retention=retention,
+            max_retention_regression_pct=args.max_retention_regression,
+            require_retention=args.require_retention,
+        )
+    else:
+        decision = evaluate_update(
+            candidate,
+            target_suite=args.target_suite,
+            min_target_delta=args.min_target_delta,
+            max_protected_regression=args.max_protected_regression,
+            require_artifacts=args.require_artifacts,
+            retention=retention,
+            max_retention_regression_pct=args.max_retention_regression,
+            require_retention=args.require_retention,
+        )
 
     final_verdict = decision.verdict
     if not oracle_ok and final_verdict == "promote":
@@ -318,12 +398,24 @@ def main(argv: list[str] | None = None) -> int:
             **legacy_proof,
         },
         "invariantOracle": oracle_bundle,
+        "retention": {
+            "invariant": "old-task score may not regress below baseline by more than tolerance "
+                         "(no catastrophic forgetting)",
+            "tolerancePct": args.max_retention_regression,
+            "required": args.require_retention,
+            "shiftReport": args.shift_report if retention else None,
+            "oldBenchmarkDeltaPct": retention.old_benchmark_delta_pct if retention else None,
+            "passingSignal": retention.passing_signal if retention else None,
+            "evaluable": retention.evaluable if retention else "not-provided",
+            "forgetting": bool(retention and retention.forgot(args.max_retention_regression)),
+        },
         "decision": decision.to_dict(),
         "inputs": {
             "adapterLadder": args.adapter_ladder,
             "baselineLadder": args.baseline_ladder if baseline_ladder else None,
             "manifest": args.manifest if manifest_path.exists() else None,
             "traces": args.traces if traces_path.exists() else None,
+            "shiftReport": args.shift_report if retention else None,
             "datasetContaminated": contaminated,
             "trainingSeed": training_seed,
             "protectedChannel": "content",
@@ -331,8 +423,22 @@ def main(argv: list[str] | None = None) -> int:
     }
 
     print(f"candidate:        {args.candidate_id}")
-    print(f"target suite:     {args.target_suite}  delta={decision.metrics['targetDelta']:+.4f}")
-    print(f"max protected reg:{decision.metrics['maxProtectedRegression']:+.4f} (CONTENT channel)")
+    if goals:
+        print(f"mode:             multigoal ({len(goals)} goals; Pareto, max reg -{args.max_protected_regression:.4f})")
+        for g in decision.metrics["goals"]:
+            d = "n/a" if g["delta"] is None else f"{g['delta']:+.4f}"
+            print(f"  goal {g['suite']:<14} delta={d}  floor>={g['minDelta']:+.4f}  cleared={g['clearedFloor']}")
+        if decision.metrics["paretoViolations"]:
+            print(f"  Pareto violations: {', '.join(decision.metrics['paretoViolations'])}")
+    else:
+        print(f"target suite:     {args.target_suite}  delta={decision.metrics['targetDelta']:+.4f}")
+        print(f"max protected reg:{decision.metrics['maxProtectedRegression']:+.4f} (CONTENT channel)")
+    ret = decision.metrics["retention"]
+    if ret["evaluable"] == "not-provided":
+        print("old-task retention:no shift report supplied (retention unverified)")
+    else:
+        print(f"old-task retention:{ret['oldBenchmarkDeltaPct']:+.2f}pp (tol -{args.max_retention_regression:.2f}pp) "
+              f"forgetting={ret['forgetting']}")
     print(f"oracle promote:   {oracle_ok}  breaching={oracle_bundle.get('breachingInvariants')}")
     print(f"solver checked:   {oracle_bundle.get('solverChecked')}")
     if oracle_bundle.get("solverNotes"):
