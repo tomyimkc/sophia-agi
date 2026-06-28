@@ -1,0 +1,118 @@
+{
+  "schema": "sophia.debunk_gate_bench.v1",
+  "backend": "fake",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "n_cases": 21,
+  "debunk_recall": 1.0,
+  "verified_debunks": 21,
+  "per_case": [
+    {
+      "id": "yale_voynich",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "bacon_voynich",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "einstein_nobel_relativity",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "great_wall_space",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "edison_lightbulb_invented",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "napoleon_short",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "human_brain_ten_percent",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "everest_tallest_mountain",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "goldfish_memory",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "columbus_flat_earth",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "shakespeare_sonnet_154_dedication",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "pluto_largest_planet",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "wall_china_built_one_dynasty",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "lightning_never_strikes_twice",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "vikings_horned_helmets",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "mozart_twinkle_composed",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "blood_blue_in_veins",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "bats_blind",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "sushi_means_raw_fish",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "tongue_taste_map",
+      "verdict": "debunk",
+      "verified_debunk": true
+    },
+    {
+      "id": "chameleon_color_camouflage",
+      "verdict": "debunk",
+      "verified_debunk": true
+    }
+  ]
+}
