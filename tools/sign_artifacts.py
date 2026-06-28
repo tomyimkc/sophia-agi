@@ -65,12 +65,17 @@ def verify_sums(sums_path: Path) -> dict:
     bad: list[str] = []
     missing: list[str] = []
     ok = 0
+    # Resolve manifest entries relative to the SHA256SUMS file's directory, not the
+    # caller's CWD, so `verify` works from anywhere (matching `sha256sum -c`).
+    base = sums_path.resolve().parent
     for line in sums_path.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if not line:
             continue
         digest, _, path = line.partition("  ")
         p = Path(path)
+        if not p.is_absolute():
+            p = base / p
         if not p.is_file():
             missing.append(path)
         elif sha256_file(p) != digest:

@@ -23,14 +23,23 @@ import re
 # reasonably close. Patterns are intentionally narrow to keep precision high.
 _INTENT = r"(?:how (?:do|can|to)|steps? to|give me|provide|write|create|build|make|synthesi[sz]e|produce|manufactur|instructions? (?:for|to)|help me)"
 
+# CSAM-specific solicitation verbs — generation/sharing only, deliberately
+# EXCLUDING "how to"/"report" so benign prevention/reporting queries don't match.
+_CSAM_INTENT = r"(?:generate|create|produce|make|draw|render|write|share|send|trade|distribute|download|post|find me|show me|requesting)"
+
 _RULES: list[tuple[str, str]] = [
     ("cbrn_weapons",
      rf"{_INTENT}\b.{{0,40}}\b(nerve agent|sarin|vx gas|mustard gas|anthrax|ricin|botulinum|bioweapon|biological weapon|chemical weapon|dirty bomb|nuclear (?:weapon|device)|weapons?[- ]grade|enrich(?:ing)? uranium)"),
     ("explosives",
      rf"{_INTENT}\b.{{0,40}}\b(bomb|i\.?e\.?d\.?|explosive device|detonator|pipe bomb|pressure cooker bomb|c-?4|tnt|napalm)"),
+    # CSAM uses a generation/sharing intent set (NOT the generic _INTENT, which
+    # includes "how to" and would block benign "how to report…" queries). This
+    # keeps the high-precision design: an explicit produce/share verb AND the
+    # minor+sexual combination, so prevention/reporting/policy discussion is not
+    # blocked.
     ("csam",
-     r"(?:child|minor|underage|pre[- ]?teen|toddler|kid)\b.{0,30}\b(?:sexual|porn|nude|naked|explicit|erotica)"
-     r"|(?:sexual|porn|nude|naked|explicit|erotica)\b.{0,30}\b(?:child|minor|underage|pre[- ]?teen|toddler)"),
+     rf"{_CSAM_INTENT}\b.{{0,40}}\b(?:child|minor|underage|pre[- ]?teen|toddler)\b.{{0,25}}\b(?:sexual|porn|nude|naked|explicit|erotica)"
+     rf"|{_CSAM_INTENT}\b.{{0,40}}\b(?:sexual|porn|nude|naked|explicit|erotica)\b.{{0,25}}\b(?:child|minor|underage|pre[- ]?teen|toddler)"),
     ("malware",
      rf"{_INTENT}\b.{{0,40}}\b(ransomware|keylogger|spyware|rootkit|botnet|computer virus|worm that|trojan that|malware that|exploit (?:for|targeting)|sql injection payload|reverse shell)"),
     ("fraud_phishing",

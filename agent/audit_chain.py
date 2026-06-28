@@ -38,12 +38,36 @@ def _read_records(path: Path) -> "list[dict]":
     return out
 
 
+def _last_record(path: Path) -> "dict | None":
+    """Read only the final JSONL record (O(1) tail seek), not the whole log.
+
+    append() only needs the previous record's seq/hash, so reading the entire
+    file on every write would make logging O(n) per call. We seek from the end
+    and scan back to the last newline.
+    """
+    if not path.exists() or path.stat().st_size == 0:
+        return None
+    with path.open("rb") as fh:
+        fh.seek(0, 2)
+        size = fh.tell()
+        block = min(size, 65536)
+        fh.seek(size - block)
+        tail = fh.read(block).rstrip(b"\n")
+        nl = tail.rfind(b"\n")
+        last = tail[nl + 1:] if nl != -1 else tail
+    last = last.strip()
+    return json.loads(last.decode("utf-8")) if last else None
+
+
 def append(path: "str | Path", payload: dict[str, Any], *, ts: "float | None" = None) -> dict:
-    """Append ``payload`` as the next hash-chained record. Returns the record."""
+    """Append ``payload`` as the next hash-chained record. Returns the record.
+
+    O(1) per call: only the tail record is read to chain from (not the whole log).
+    """
     path = Path(path)
-    records = _read_records(path)
-    seq = len(records)
-    prev = records[-1]["hash"] if records else GENESIS
+    prev_rec = _last_record(path)
+    seq = (prev_rec["seq"] + 1) if prev_rec else 0
+    prev = prev_rec["hash"] if prev_rec else GENESIS
     rec = {"seq": seq, "ts": ts, "prev": prev, "payload": payload,
            "hash": _entry_hash(prev, seq, payload, ts)}
     path.parent.mkdir(parents=True, exist_ok=True)

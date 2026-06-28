@@ -54,7 +54,10 @@ def _git_crypt_encrypted(path: Path) -> bool:
             head = fh.read(10)
         return head.startswith(b"\x00GITCRYPT")
     except OSError:
-        return True  # unreadable → treat as out of scope, fail-safe to skip
+        # Fail CLOSED: an unreadable tracked file must NOT be silently skipped.
+        # Return False so it proceeds to scan_file, which emits an 'unreadable'
+        # finding (a permission/IO glitch should surface, not bypass the gate).
+        return False
 
 
 def _relpath(path: Path) -> str:
@@ -87,6 +90,10 @@ def collect_files(globs: "list[str]") -> "list[Path]":
         if p.is_absolute() or p.exists():
             if p.is_file():
                 seen.setdefault(p.resolve(), None)
+            elif p.is_dir():                      # scan the whole tree under a dir
+                for hit in sorted(p.rglob("*")):
+                    if hit.is_file():
+                        seen.setdefault(hit.resolve(), None)
             continue
         for hit in ROOT.glob(pattern):
             if hit.is_file():

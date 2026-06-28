@@ -34,8 +34,11 @@ def hardened_gateway(*, system_prompt: "str | None" = None,
     hash-chained audit trail).
 
     ``system_prompt`` enables verbatim-echo detection; ``canaries`` (the minted
-    private canary set) enables confirmed-leak blocking; ``audit_log`` enables the
-    tamper-evident trail (pass ``None`` to disable). All optional.
+    private canary set) restricts confirmed-leak blocking to those EXACT tokens
+    (preventing attacker-forced false-positive blocks). If ``canaries`` is left
+    None, any ``SOPHIA-CANARY-*``-shaped token is treated as a leak — the
+    conservative default. ``audit_log`` enables the tamper-evident trail (pass
+    ``None`` to disable). All optional.
     """
     return Gateway(
         output_guard=True,

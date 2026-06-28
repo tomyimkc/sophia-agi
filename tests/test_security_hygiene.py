@@ -98,10 +98,11 @@ def test_scrub_corpus_drops_canary_records():
 def test_prompt_hygiene_flags_a_planted_secret(tmp_path):
     bad = tmp_path / "evil_prompt.py"
     bad.write_text('SYSTEM = "you are sophia. internal key sk-ABCDEFGHIJKLMNOPQRSTUVWX"\n')
-    report = check_prompt_hygiene.run([str(bad)])
-    # tmp file is not git-tracked; run() skips untracked files, so scan directly:
+    # run() skips untracked tmp files, so scan directly to exercise detection:
     findings = check_prompt_hygiene.scan_file(bad)
     assert any(f["kind"].startswith("secret:") for f in findings)
+    # the finding must NOT echo the raw secret (clear-text-logging safe):
+    assert all("ABCDEFGHIJKLMNOPQRSTUVWX" not in str(f) for f in findings)
 
 
 def test_prompt_hygiene_passes_on_clean_string(tmp_path):
