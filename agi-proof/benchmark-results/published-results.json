@@ -518,12 +518,28 @@
           }
         },
         "finding": "the 2 reliable judges (lexical, independent LLM) AGREE the structure DEGRADED an already-disciplined solo pass (0.95->0.75); the stance family is an outlier (solo base 0.30 is a scorer artifact on verbose 3B outputs). No consistent benefit."
+      },
+      {
+        "subject": "meta-llama/llama-3.2-3b-instruct",
+        "mode": "decomposition/coverage (forced facets + merge, fair 512-tok)",
+        "n": 15,
+        "deltas": {
+          "aspect-coverage": {
+            "delta": 0.0,
+            "ci": [
+              -0.12,
+              0.12
+            ]
+          }
+        },
+        "finding": "aspect coverage swarm == solo (0.24 == 0.24), delta 0.0, CI includes zero \u2014 even after removing the token-truncation confound. Perspective-based fan-out + synthesis adds NO coverage over a single 'answer completely' pass (75 held-out gold aspects, DeepSeek-judged)."
       }
     ],
-    "conclusion": "On ATOMIC false-claim assessment, the multi-agent swarm provides no source-discipline benefit over a single disciplined pass \u2014 and can degrade it (synthesis dilutes a direct refutation). This is the expected nuance: multi-agent helps tasks that need DECOMPOSITION (multi-hop research, broad coverage), not tasks a single pass already nails. A fair positive test needs a decomposition-heavy pack (untested here). The benchmark + measurement are validated; the result for this task type is an honest null/negative.",
+    "conclusion": "Tested on BOTH task types the swarm should plausibly help \u2014 atomic false-claim assessment AND decomposition/coverage \u2014 this swarm design (router + perspective-based facet-agents + fail-closed synthesis) shows NO measured benefit over a single well-prompted pass, and can degrade it. Honest read: a MoA-style perspective swarm + synthesis does not beat a strong solo prompt on these tasks; the multi-agent value likely needs (a) true sub-question DECOMPOSITION with per-agent TOOLS (real retrieval), (b) stronger base models, or (c) tasks whose work genuinely exceeds one context \u2014 none of which this design+pack provided. The benchmark harness, packs, and multi-judge measurement are validated and reusable; the swarm-structure result is a published null/negative (failure-ledger spirit). The router's instinct to keep simple claims solo is, in this light, CORRECT \u2014 it avoids paying for a swarm that doesn't help.",
     "artifacts": [
       "training/swarm_router/swarm_live_router_gated.json",
-      "training/swarm_router/swarm_live_forced.json"
+      "training/swarm_router/swarm_live_forced.json",
+      "training/swarm_router/swarm_coverage_live.json"
     ]
   }
 }
