@@ -206,10 +206,13 @@ def probe_hf(*, model_id: str, prompt: str, draft: str = "fakequant",
         rl = getattr(out, "router_logits", None)
         if rl:
             is_moe = True
-            # rl: tuple over layers of (tokens, experts); stack → (T, L*E)
+            # rl: tuple over layers of (tokens, experts); stack → (T, L*E).
+            # Zero the non-top-k experts so contribs reflect the TRUE read-set of a
+            # top-k MoE (else every expert looks "read" and ρ is overcounted).
+            top_k = getattr(model.config, "num_experts_per_tok", None)
             mats = [r.detach().float().cpu().numpy() for r in rl if r is not None]
             contribs = np.concatenate(
-                [gate_probs_to_contribs(mt) for mt in mats], axis=1
+                [gate_probs_to_contribs(mt, top_k=top_k) for mt in mats], axis=1
             )
     except TypeError:
         out = None
