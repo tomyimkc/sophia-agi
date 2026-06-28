@@ -59,6 +59,22 @@ deployment artifact, out of scope for the CI reference.
   *which layers are resident when*; **`lowram_eval.py`** decides *whether the result is allowed
   to claim it kept quality*. Mechanism → mechanism → measurement.
 
+## Track B — making the *trained artifact* intrinsically cheaper (not just streamable)
+
+Layer streaming runs a big model in little memory but does **not** shrink the artifact. The
+training-side levers that do — so the *released* weights need less RAM *at quality* — live
+alongside it:
+
+| Lever | Module | What it buys |
+|---|---|---|
+| **QAT** — co-adapt weights to their serving quantization | `training/qat.py` (+ `tools/train_lora.py --qat`) | The released checkpoint serves at INT8/NVFP4 with little measured loss (fake-quant STE forward + quant-pushing penalty built on `moe/quant.py`). |
+| **Distillation into sparsity** — teacher quality at small *active* cost | `pretraining/distill/study.py` | Nano-substrate, known-floor evidence that a sparse MoE student distilled from a dense teacher beats an equally-active dense student — the "large total params / small active RAM" thesis, measured. |
+| **Calibration** — quantize on the deployment distribution, decontaminated | `tools/run_calibration.py` (plan stage `calibrate`, `moe/calibrate.py`) | The audit trail (datasheet + disjoint-from-eval proof) a quantized artifact must carry before any capability-retention claim. |
+
+These are the B1/B2/B3 artifacts of `Cheap-Compute-Boundary.md` Boundaries 1–3. QAT + distillation
+shrink the artifact; layer streaming + calibration + `lowram_eval` make the *served* result
+cheap *and certified*. None of them claims cheap frontier pretraining.
+
 ## Boundary-3 placement (no overclaim)
 
 This delivers the **mechanism** for "low RAM at release," and the **measurement gate** that a

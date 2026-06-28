@@ -618,10 +618,22 @@ def run_manual_train(
     pad_to: int | None = None,
     weight_decay: float = 0.0,
     pack: bool = False,
+    qat: bool = False,
+    qat_scheme: str = "int8",
+    qat_lambda: float = 1e-3,
 ) -> dict:
     import torch
     from torch.utils.data import DataLoader
     from transformers import get_cosine_schedule_with_warmup
+
+    # QAT: add a quant-pushing penalty so the released weights serve cleanly at low bits
+    # (the fake-quant forward is installed by attach_qat in main(); this is the loss term).
+    qat_penalty_fn = None
+    if qat:
+        from training.qat import qat_penalty as _qat_penalty
+
+        def qat_penalty_fn() -> Any:
+            return _qat_penalty(model, scheme=qat_scheme, lam=qat_lambda)
 
     device = model.get_input_embeddings().weight.device
     # Packing concatenates short rows into one flat sequence (no padding) and relies on
@@ -673,6 +685,8 @@ def run_manual_train(
             batch = {k: v.to(device) for k, v in batch.items()}
             outputs = model(**batch)
             loss = outputs.loss / grad_accum
+            if qat_penalty_fn is not None:
+                loss = loss + qat_penalty_fn() / grad_accum
             loss.backward()
             if (step + 1) % grad_accum == 0:
                 torch.nn.utils.clip_grad_norm_(trainable, max_grad_norm)
@@ -797,6 +811,14 @@ def main() -> int:
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--dtype", choices=("auto", "bf16", "fp16"), default="auto")
     parser.add_argument("--4bit", dest="four_bit", action="store_true", help="QLoRA 4-bit load")
+    parser.add_argument("--qat", action="store_true",
+                        help="Quantization-aware training: fake-quant the forward (STE) and add a "
+                             "quant-pushing penalty so the RELEASED weights serve cleanly at low bits "
+                             "(training/qat.py). Pairs with serving/layer_stream.py + serving/lowram_eval.py.")
+    parser.add_argument("--qat-scheme", choices=("int8", "nvfp4"), default="int8",
+                        help="Deployment quantization grid the model co-adapts to (default: int8).")
+    parser.add_argument("--qat-lambda", type=float, default=1e-3,
+                        help="Weight on the quant-pushing penalty term (default: 1e-3).")
     parser.add_argument("--attn", choices=("auto", "flash_attention_2", "sdpa", "eager"), default="auto",
                         help="Attention impl; flash_attention_2 is required for --pack")
     parser.add_argument("--pack", action="store_true",
@@ -943,6 +965,16 @@ def main() -> int:
     if neftune_handle:
         print(f"NEFTune enabled (alpha={args.neftune_alpha})", flush=True)
 
+    if args.qat:
+        if args.backend == "mlx":
+            print("NOTE: --qat is ignored on --backend mlx (CUDA/torch path only)", flush=True)
+        else:
+            from training.qat import attach_qat
+
+            wrapped = attach_qat(model, scheme=args.qat_scheme)
+            print(f"QAT enabled (scheme={args.qat_scheme}, lambda={args.qat_lambda}, "
+                  f"fake-quant on {wrapped} linear module(s))", flush=True)
+
     train_records, truncated = build_records(tokenizer, rows, args.max_seq_len, mask_prompt=args.mask_prompt)
     if truncated:
         print(
@@ -988,6 +1020,9 @@ def main() -> int:
         "weightDecay": args.weight_decay,
         "packed": args.pack,
         "attn": attn_impl or "default",
+        "qat": args.qat,
+        "qatScheme": args.qat_scheme if args.qat else None,
+        "qatLambda": args.qat_lambda if args.qat else None,
     }
 
     def save_best(extra: dict[str, Any]) -> None:
@@ -1014,11 +1049,19 @@ def main() -> int:
         pad_to=args.max_seq_len if args.pad_to_max else None,
         weight_decay=args.weight_decay,
         pack=args.pack,
+        qat=args.qat and args.backend != "mlx",
+        qat_scheme=args.qat_scheme,
+        qat_lambda=args.qat_lambda,
     )
 
     # Remove the NEFTune noise hook before persisting so inference is noise-free.
     if neftune_handle:
         neftune_handle.remove()
+    # Restore fp forwards so the saved master weights are served exactly as trained.
+    if args.qat and args.backend != "mlx":
+        from training.qat import detach_qat
+
+        detach_qat(model)
 
     # If eval never saved a best checkpoint (no holdout, or no improvement window),
     # persist the final-state adapter so we always emit a usable artifact.

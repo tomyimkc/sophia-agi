@@ -14,9 +14,10 @@ from typing import Iterable
 from sophia.trainer.config import ExperimentConfig
 
 TRAINING_STAGES = ("data", "sft", "dpo", "rlvr")
+CALIBRATION_STAGES = ("calibrate",)
 EVAL_STAGES = ("eval",)
 PROMOTION_STAGES = ("promotion",)
-ALL_STAGES = (*TRAINING_STAGES, *EVAL_STAGES, *PROMOTION_STAGES)
+ALL_STAGES = (*TRAINING_STAGES, *CALIBRATION_STAGES, *EVAL_STAGES, *PROMOTION_STAGES)
 
 
 @dataclass(frozen=True)
@@ -206,6 +207,28 @@ def build_experiment_plan(
                 description="Run verifier-as-reward/RLVR wiring or live GRPO via tools/run_rlvr.py.",
                 dry_run=use_dry_run,
                 gpu_required_when_live=True,
+            )
+        )
+
+    if "calibrate" in requested and config.calibrate.enabled:
+        command = [
+            *_python(config.calibrate.script),
+            "--out",
+            config.calibrate.out,
+            "--target-bits",
+            str(config.calibrate.target_bits),
+        ]
+        if config.calibrate.sources:
+            command += ["--sources", *config.calibrate.sources]
+        command += list(config.calibrate.extra_args)
+        _append_flag(command, "--dry-run", use_dry_run)
+        plan.append(
+            CommandSpec(
+                stage="calibrate",
+                command=tuple(command),
+                description="Build a decontaminated low-RAM quantization calibration datasheet "
+                            "via tools/run_calibration.py.",
+                dry_run=use_dry_run,
             )
         )
 
