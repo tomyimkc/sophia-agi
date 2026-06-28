@@ -1,0 +1,106 @@
+{
+  "pilot": "sophia-wisdom-4b-m3-retention",
+  "criterion": "learning-shift stability: adapter general-capability >= base - 5pts",
+  "baseModel": "google/gemma-3-4b-it",
+  "adapter": "training/adapters/sophia-wisdom-4b-pilot",
+  "probe": "data/generality_tasks.json",
+  "nTasks": 970,
+  "scoring": "deterministic (numeric/exact/regex) — NO LLM judge",
+  "contaminationLeaks": [],
+  "base_accuracy": 0.4887,
+  "adapter_accuracy": 0.4876,
+  "delta": -0.001,
+  "delta_ci95": [
+    -0.0196,
+    0.0175
+  ],
+  "retains": true,
+  "retains_ci": true,
+  "forgetting_established": false,
+  "byCategoryBase": {
+    "abstraction_pattern": {
+      "correct": 142,
+      "n": 194,
+      "acc": 0.732
+    },
+    "multistep_arithmetic": {
+      "correct": 13,
+      "n": 194,
+      "acc": 0.067
+    },
+    "logic_wordproblem": {
+      "correct": 190,
+      "n": 194,
+      "acc": 0.979
+    },
+    "analogy": {
+      "correct": 73,
+      "n": 193,
+      "acc": 0.378
+    },
+    "out_of_domain": {
+      "correct": 56,
+      "n": 195,
+      "acc": 0.287
+    }
+  },
+  "byCategoryAdapter": {
+    "abstraction_pattern": {
+      "correct": 135,
+      "n": 194,
+      "acc": 0.696
+    },
+    "multistep_arithmetic": {
+      "correct": 12,
+      "n": 194,
+      "acc": 0.062
+    },
+    "logic_wordproblem": {
+      "correct": 190,
+      "n": 194,
+      "acc": 0.979
+    },
+    "analogy": {
+      "correct": 75,
+      "n": 193,
+      "acc": 0.389
+    },
+    "out_of_domain": {
+      "correct": 61,
+      "n": 195,
+      "acc": 0.313
+    }
+  },
+  "boundary": "Held-out generality probe (N=970); deterministic scoring; paired bootstrap 95% CI on delta. 'retains' is the point-estimate criterion; 'forgetting_established' requires the whole CI below -0.05.",
+  "looks": [
+    {
+      "n": 34,
+      "delta": -0.118,
+      "note": "underpowered (MDE 0.34) — no verdict"
+    },
+    {
+      "n": 70,
+      "delta": -0.014,
+      "ci95": [
+        -0.071,
+        0.043
+      ],
+      "note": "overturned -0.118; lower tail still past -0.05"
+    },
+    {
+      "n": 970,
+      "delta": -0.001,
+      "ci95": [
+        -0.0196,
+        0.0175
+      ],
+      "note": "powered; final"
+    }
+  ],
+  "peeked": true,
+  "anytime_ci95": [
+    -0.0301,
+    0.0281
+  ],
+  "anytime_note": "Time-uniform (Robbins) confidence sequence — VALID under the 3 peeks above, unlike the fixed-n bootstrap delta_ci95. sigma backed out of the fixed-n CI. Retention holds even under the peeking-robust interval (|bounds| < 0.05 tolerance)."
+}

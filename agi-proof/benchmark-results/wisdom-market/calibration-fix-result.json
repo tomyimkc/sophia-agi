@@ -1,0 +1,112 @@
+{
+  "experiment": "calibration fix (settled_facts corpus) — does it reduce over-qualification on clear-cut cases?",
+  "fix": "data/settled_facts.json (36 records) + gen_settled_facts -> 204 settled_fact rows (5.8% of 3510)",
+  "recalibrated_seed8": {
+    "clearcut_adapter_hedge": 0.5526,
+    "clearcut_lift": 0.3684,
+    "contested_adapter_hedge": 0.9722,
+    "benchmark": "calibration_probe.jsonl (74 cases; 38 clear-cut, 36 contested)"
+  },
+  "prefix_baselines": {
+    "seed1": {
+      "clearcut_adapter_hedge": 0.3684,
+      "clearcut_lift": 0.2368
+    },
+    "seed2": {
+      "clearcut_adapter_hedge": 0.6842,
+      "clearcut_lift": 0.6053
+    }
+  },
+  "verdict": "v1 no effect; v2 partial (authorship only); v3 SUCCESS (authorship + history, generalizes to novel entities)",
+  "reading": "recalibrated lift +0.368 sits INSIDE the pre-fix seed range (+0.237 to +0.605); the 5.8% settled-fact slice did not measurably reduce reflexive hedging. Contested hedging stayed high (0.972) so nothing broke.",
+  "power_caveat": "clear-cut n=38 with seed-to-seed variance 0.368->0.684 means the probe CANNOT resolve a modest fix effect — this is 'no detectable improvement', NOT 'proven no effect'. A powered verdict needs a larger clear-cut probe + multiple recalibrated seeds.",
+  "next_if_pursued": [
+    "raise settled_fact share to ~15-20%",
+    "add settled-fact PREFERENCE pairs (chosen=direct, rejected=hedged)",
+    "the admission gate warns 'missing source-discipline framing' on direct answers — it structurally favors hedging; relax it for settled facts",
+    "bigger clear-cut probe + >=2 seeds for a powered calibration verdict"
+  ],
+  "boundary": "candidate_only; canClaimAGI:false",
+  "v2_seed9": {
+    "settled_rows_share": "11.5% (431/3737); settled_facts corpus 36->76 records",
+    "probe": "calibration_probe.jsonl (122 cases; 90 clear-cut incl 52 NOVEL settled works + 38 protected; 32 contested)",
+    "by_subfamily": {
+      "settled_clearcut": {
+        "n": 52,
+        "base": 0.558,
+        "adapter": 0.0
+      },
+      "protected_history": {
+        "n": 36,
+        "base": 0.139,
+        "adapter": 0.806
+      },
+      "protected_religion": {
+        "n": 2,
+        "base": 0.0,
+        "adapter": 1.0
+      },
+      "authorship_boundary": {
+        "n": 12,
+        "base": 0.75,
+        "adapter": 1.0
+      },
+      "false_attribution": {
+        "n": 12,
+        "base": 0.5,
+        "adapter": 1.0
+      },
+      "contested_religion": {
+        "n": 8,
+        "base": 0.5,
+        "adapter": 0.5
+      }
+    },
+    "verdict": "PARTIAL SUCCESS — mechanism validated, domain-specific",
+    "reading": "Fix WORKS on settled AUTHORSHIP (the trained pattern): novel settled works 0.558->0.000 over-hedging, generalizing to 52 unseen works. Fix does NOT transfer to settled HISTORICAL EVENTS (protected_history 0.139->0.806) — the corpus is all book-authorship. Contested hedging stays high (good). The aggregate lift (-0.033 -> 'calibrated') is a MEASUREMENT ARTIFACT: 52 fixed novel cases dilute 36 still-broken protected_history cases — disaggregate.",
+    "next_step": "Add settled HISTORICAL-EVENT records (same direct-answer pattern) so the fix covers protected_history; re-verify per-subfamily."
+  },
+  "v3_seed10": {
+    "change": "added 50 settled HISTORICAL-EVENT records + gen_settled_events; settled rows 17.1% (681/3987)",
+    "probe": "calibration_probe.jsonl (140 cases; 108 clear-cut incl 70 novel works+events + 38 protected; 32 contested)",
+    "by_subfamily": {
+      "settled_clearcut": {
+        "n": 70,
+        "base": 0.429,
+        "adapter": 0.0
+      },
+      "protected_history": {
+        "n": 36,
+        "base": 0.167,
+        "adapter": 0.0
+      },
+      "protected_religion": {
+        "n": 2,
+        "base": 0.0,
+        "adapter": 0.5
+      },
+      "authorship_boundary": {
+        "n": 12,
+        "base": 0.833,
+        "adapter": 0.917
+      },
+      "false_attribution": {
+        "n": 12,
+        "base": 0.5,
+        "adapter": 1.0
+      },
+      "contested_religion": {
+        "n": 8,
+        "base": 0.375,
+        "adapter": 0.375
+      }
+    },
+    "verdict": "SUCCESS — calibration tax RESOLVED across settled authorship AND history",
+    "reading": "protected_history over-hedging 0.806 (v2) -> 0.000 (v3); settled_clearcut (70 novel works+events) base 0.429 -> adapter 0.000; overall clear-cut lift -0.324 (adapter 0.009 vs base 0.333). Contested hedging stays high (0.813) -> core habit intact. The fix generalizes to NOVEL entities, so it is a learned discrimination, not memorization.",
+    "caveats": [
+      "single seed (seed10), but effect magnitude (~0.8) far exceeds seed noise (~0.32)",
+      "protected_religion n=2 went 0->0.5 (one case) — noise at n=2, not meaningful",
+      "contested_religion qualification unchanged from base (0.375) — a separate, pre-existing item, not a calibration regression"
+    ]
+  }
+}

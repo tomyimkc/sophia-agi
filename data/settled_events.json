@@ -1,0 +1,402 @@
+{
+  "settled_event_001": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the Battle of Hastings",
+    "year": "1066",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1066)."
+  },
+  "settled_event_002": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the signing of the US Constitution",
+    "year": "1787",
+    "region": "Americas",
+    "provenance": "Undisputed, well-documented historical event (1787)."
+  },
+  "settled_event_003": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the October Revolution in Russia",
+    "year": "1917",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1917)."
+  },
+  "settled_event_004": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the end of the American Civil War",
+    "year": "1865",
+    "region": "Americas",
+    "provenance": "Undisputed, well-documented historical event (1865)."
+  },
+  "settled_event_005": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the discovery of the double-helix structure of DNA",
+    "year": "1953",
+    "region": "global",
+    "provenance": "Undisputed, well-documented historical event (1953)."
+  },
+  "settled_event_006": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the Chernobyl nuclear disaster",
+    "year": "1986",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1986)."
+  },
+  "settled_event_007": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the sinking of the Titanic",
+    "year": "1912",
+    "region": "global",
+    "provenance": "Undisputed, well-documented historical event (1912)."
+  },
+  "settled_event_008": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the Wall Street Crash",
+    "year": "1929",
+    "region": "Americas",
+    "provenance": "Undisputed, well-documented historical event (1929)."
+  },
+  "settled_event_009": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the atomic bombing of Hiroshima",
+    "year": "1945",
+    "region": "Asia",
+    "provenance": "Undisputed, well-documented historical event (1945)."
+  },
+  "settled_event_010": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the reunification of Germany",
+    "year": "1990",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1990)."
+  },
+  "settled_event_011": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the dissolution of the Soviet Union",
+    "year": "1991",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1991)."
+  },
+  "settled_event_012": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "Yuri Gagarin becoming the first human in space",
+    "year": "1961",
+    "region": "global",
+    "provenance": "Undisputed, well-documented historical event (1961)."
+  },
+  "settled_event_013": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the founding of the United Nations",
+    "year": "1945",
+    "region": "global",
+    "provenance": "Undisputed, well-documented historical event (1945)."
+  },
+  "settled_event_014": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "Luther posting the Ninety-five Theses",
+    "year": "1517",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1517)."
+  },
+  "settled_event_015": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the defeat of the Spanish Armada",
+    "year": "1588",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1588)."
+  },
+  "settled_event_016": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the Great Fire of London",
+    "year": "1666",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1666)."
+  },
+  "settled_event_017": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the Battle of Waterloo",
+    "year": "1815",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1815)."
+  },
+  "settled_event_018": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the Congress of Vienna",
+    "year": "1815",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1815)."
+  },
+  "settled_event_019": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the Xinhai Revolution ending the Qing dynasty",
+    "year": "1911",
+    "region": "Asia",
+    "provenance": "Undisputed, well-documented historical event (1911)."
+  },
+  "settled_event_020": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the founding of the People's Republic of China",
+    "year": "1949",
+    "region": "Asia",
+    "provenance": "Undisputed, well-documented historical event (1949)."
+  },
+  "settled_event_021": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the Cuban Missile Crisis",
+    "year": "1962",
+    "region": "global",
+    "provenance": "Undisputed, well-documented historical event (1962)."
+  },
+  "settled_event_022": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the assassination of Archduke Franz Ferdinand",
+    "year": "1914",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1914)."
+  },
+  "settled_event_023": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the outbreak of the First World War",
+    "year": "1914",
+    "region": "global",
+    "provenance": "Undisputed, well-documented historical event (1914)."
+  },
+  "settled_event_024": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the D-Day Normandy landings",
+    "year": "1944",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1944)."
+  },
+  "settled_event_025": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the attack on Pearl Harbor",
+    "year": "1941",
+    "region": "global",
+    "provenance": "Undisputed, well-documented historical event (1941)."
+  },
+  "settled_event_026": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the Emancipation Proclamation",
+    "year": "1863",
+    "region": "Americas",
+    "provenance": "Undisputed, well-documented historical event (1863)."
+  },
+  "settled_event_027": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the California Gold Rush",
+    "year": "1848",
+    "region": "Americas",
+    "provenance": "Undisputed, well-documented historical event (1848)."
+  },
+  "settled_event_028": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the opening of the Suez Canal",
+    "year": "1869",
+    "region": "Africa",
+    "provenance": "Undisputed, well-documented historical event (1869)."
+  },
+  "settled_event_029": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "Edison demonstrating a practical incandescent light bulb",
+    "year": "1879",
+    "region": "Americas",
+    "provenance": "Undisputed, well-documented historical event (1879)."
+  },
+  "settled_event_030": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "Einstein publishing special relativity",
+    "year": "1905",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1905)."
+  },
+  "settled_event_031": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the eruption of Vesuvius destroying Pompeii",
+    "year": "79",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (79)."
+  },
+  "settled_event_032": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the Battle of Marathon",
+    "year": "-490",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (-490)."
+  },
+  "settled_event_033": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the death of Alexander the Great",
+    "year": "-323",
+    "region": "Asia",
+    "provenance": "Undisputed, well-documented historical event (-323)."
+  },
+  "settled_event_034": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the assassination of Julius Caesar",
+    "year": "-44",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (-44)."
+  },
+  "settled_event_035": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the coronation of Charlemagne",
+    "year": "800",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (800)."
+  },
+  "settled_event_036": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the start of the First Crusade",
+    "year": "1096",
+    "region": "global",
+    "provenance": "Undisputed, well-documented historical event (1096)."
+  },
+  "settled_event_037": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the peak of the Black Death in Europe",
+    "year": "1348",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1348)."
+  },
+  "settled_event_038": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the fall of Constantinople",
+    "year": "1453",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1453)."
+  },
+  "settled_event_039": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the completion of the Panama Canal",
+    "year": "1914",
+    "region": "Americas",
+    "provenance": "Undisputed, well-documented historical event (1914)."
+  },
+  "settled_event_040": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the first successful human heart transplant",
+    "year": "1967",
+    "region": "Africa",
+    "provenance": "Undisputed, well-documented historical event (1967)."
+  },
+  "settled_event_041": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the launch of Sputnik 1",
+    "year": "1957",
+    "region": "global",
+    "provenance": "Undisputed, well-documented historical event (1957)."
+  },
+  "settled_event_042": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the Great Chicago Fire",
+    "year": "1871",
+    "region": "Americas",
+    "provenance": "Undisputed, well-documented historical event (1871)."
+  },
+  "settled_event_043": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the ratification of the US Bill of Rights",
+    "year": "1791",
+    "region": "Americas",
+    "provenance": "Undisputed, well-documented historical event (1791)."
+  },
+  "settled_event_044": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the Battle of Gettysburg",
+    "year": "1863",
+    "region": "Americas",
+    "provenance": "Undisputed, well-documented historical event (1863)."
+  },
+  "settled_event_045": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the signing of the Treaty of Versailles",
+    "year": "1919",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1919)."
+  },
+  "settled_event_046": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the Spanish flu pandemic",
+    "year": "1918",
+    "region": "global",
+    "provenance": "Undisputed, well-documented historical event (1918)."
+  },
+  "settled_event_047": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the abolition of the Atlantic slave trade by Britain",
+    "year": "1807",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1807)."
+  },
+  "settled_event_048": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the unification of Italy",
+    "year": "1871",
+    "region": "Europe",
+    "provenance": "Undisputed, well-documented historical event (1871)."
+  },
+  "settled_event_049": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the first transatlantic telegraph cable",
+    "year": "1858",
+    "region": "global",
+    "provenance": "Undisputed, well-documented historical event (1858)."
+  },
+  "settled_event_050": {
+    "recordType": "settled_event",
+    "domain": "history",
+    "canonicalTitleEn": "the Wright-independent founding of NASA",
+    "year": "1958",
+    "region": "Americas",
+    "provenance": "Undisputed, well-documented historical event (1958)."
+  }
+}

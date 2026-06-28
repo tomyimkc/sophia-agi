@@ -28,6 +28,8 @@ SCAN: list[str] = [
     "GOOD_FIRST_ISSUES.md",
     "SPONSORS.md",
     "agi-proof/README.md",
+    "agi-proof/sophia-wisdom-4b-method-note.md",
+    "agi-proof/measurement-thesis.md",
     "docs/00-Index/Home.md",
 ]
 SCAN_GLOBS: list[str] = ["docs/07-Growth/**/*.md", "docs/07-Growth/**/*.txt"]
@@ -52,6 +54,85 @@ FORBIDDEN: list[tuple[str, str]] = [
 ]
 
 ALLOW_MARKER = "claim-ok"
+
+# Adapter registry: a candidate PROMOTED past candidate_only must carry a passing measurement
+# receipt (tools/claim_gate.py). This makes "no claim beyond what the instrument resolves"
+# machine-enforced. candidate_only entries are exempt (they make no external claim).
+REGISTRY = "training/adapters/registry.jsonl"
+
+
+def _check_registry_receipts() -> list[str]:
+    import json
+    v: list[str] = []
+    reg = ROOT / REGISTRY
+    if not reg.exists():
+        return v
+    for ln in reg.read_text(encoding="utf-8").splitlines():
+        ln = ln.strip()
+        if not ln:
+            continue
+        try:
+            e = json.loads(ln)
+        except Exception:
+            continue
+        promoted = e.get("validated_external") is True or e.get("canClaimAGI") is True \
+            or e.get("candidate_only") is False
+        generalizes = e.get("generalizes") is True
+        if not (promoted or generalizes):
+            continue  # candidate_only / no-generalization-claim -> no receipt required
+
+        def _receipt_go(rcpt: str, kind: str) -> None:
+            if not rcpt or not (ROOT / rcpt).exists():
+                v.append(f"{REGISTRY}: {e.get('id')} requires a {kind} but has none "
+                         f"(run tools/claim_gate.py and reference its GO receipt)")
+                return
+            try:
+                r = json.loads((ROOT / rcpt).read_text(encoding="utf-8"))
+            except Exception:
+                v.append(f"{REGISTRY}: {e.get('id')} {kind} {rcpt} is unreadable")
+                return
+            if r.get("verdict") != "GO":
+                v.append(f"{REGISTRY}: {e.get('id')} {kind} {rcpt} is {r.get('verdict')} "
+                         f"(critical failures: {r.get('criticalFailures')}) — cannot back the claim")
+
+        # A promotion past candidate_only needs a primary measurement receipt.
+        if promoted:
+            _receipt_go(e.get("measurement_receipt"), "measurement_receipt")
+        # ANY 'generalizes' claim (habit, not memorized format) needs an EXTERNAL-VALIDITY
+        # transfer receipt on novel entities — markers alone cannot establish generalization.
+        if generalizes:
+            _receipt_go(e.get("transfer_receipt"), "transfer_receipt (external-validity)")
+    return v
+
+
+def _check_recipe_receipt() -> list[str]:
+    """A recipe-ranking artifact that names a 'best' recipe must be backed by a GO superiority
+    receipt (tools/benchmark_recipes.py --emit-receipt) — principle #9: no 'recipe X wins' claim
+    without a powered ranking + the simple baseline in the table."""
+    import json
+    v: list[str] = []
+    wm = ROOT / "agi-proof" / "benchmark-results" / "wisdom-market"
+    bench = wm / "recipe-benchmark.json"
+    if not bench.exists():
+        return v
+    try:
+        b = json.loads(bench.read_text(encoding="utf-8"))
+    except Exception:
+        return ["recipe-benchmark.json is unreadable"]
+    if not b.get("best"):
+        return v
+    rcpt = wm / "recipe-benchmark.gate.json"
+    if not rcpt.exists():
+        return [f"recipe-benchmark.json names best='{b['best']}' but has no superiority receipt "
+                f"(run tools/benchmark_recipes.py --emit-receipt)"]
+    try:
+        r = json.loads(rcpt.read_text(encoding="utf-8"))
+        if r.get("verdict") != "GO":
+            v.append(f"recipe-benchmark.gate.json is {r.get('verdict')} — ranking is not powered/"
+                     f"baselined; cannot claim a 'best' recipe ({[c for c in r.get('checks',[]) if not c.get('ok')]})")
+    except Exception:
+        v.append("recipe-benchmark.gate.json is unreadable")
+    return v
 
 
 def _files() -> list[Path]:
@@ -119,6 +200,8 @@ def main() -> int:
                     rel = path.relative_to(ROOT)
                     violations.append(f"{rel}:{i}: «{line.strip()[:90]}» — {why}")
 
+    violations.extend(_check_registry_receipts())
+    violations.extend(_check_recipe_receipt())
     violations.extend(_check_architecture_bets())
 
     if violations:

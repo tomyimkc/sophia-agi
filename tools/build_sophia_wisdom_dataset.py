@@ -77,6 +77,7 @@ SYSTEM = MODE_PROMPTS["advisor"] + ROUTE_INSTRUCTION
 # Target mix (fractions) from the plan. Reported against actuals; not enforced by truncation.
 TARGET_MIX = {
     "source_discipline": (0.20, 0.25),
+    "settled_fact": (0.12, 0.20),
     "hard_provenance_negatives": (0.15, 0.15),
     "council": (0.10, 0.15),
     "moral_gate": (0.10, 0.10),
@@ -188,6 +189,90 @@ def gen_source_discipline(attr: dict) -> list:
                                      assistant=_route_answer("revise", 0.9, "false-attribution",
                                                              [f"attributions:{tid}"], ["false_attribution"], body, zh),
                                      source_ids=[f"attributions:{tid}"], extra={"forbidden_author": bad}))
+    return out
+
+
+_SETTLED_WHO = ["Who wrote {t}?", "Who is the author of {t}?", "Who wrote {t}, and is that settled?"]
+_SETTLED_DISPUTE = ["Is the authorship of {t} disputed or uncertain?",
+                    "Should I hedge about who wrote {t}?", "Is it contested who wrote {t}?"]
+
+
+def gen_settled_facts(settled: dict) -> list:
+    """CALIBRATION rows. The source-discipline corpus is ALL hedge-warranting (attributed/legendary/
+    compiled), so the adapter learned to hedge reflexively — over-qualifying even settled facts
+    (see agi-proof/benchmark-results/wisdom-market/calibration-check.json). These rows teach the
+    COMPLEMENT: when authorship is genuinely undisputed, answer DIRECTLY and confidently, and say so
+    when asked if it is contested. Targets carry NO hedge markers by construction."""
+    out = []
+    for rid, rec in settled.items():
+        t = rec["canonicalTitleEn"]
+        a = rec["attributedAuthor"]
+        yr = rec.get("year", "")
+        dom = rec.get("domain", "history")
+        # direct "who wrote" — confident, no hedging. Source discipline = matching confidence to
+        # the evidence; with a documented single author the correct move is a DIRECT answer.
+        for tmpl in _SETTLED_WHO:
+            body = (f"{a} wrote {t}" + (f" ({yr})" if yr else "") + ". The author is documented and "
+                    f"singular. Source discipline means matching confidence to the evidence: here the "
+                    f"evidence is settled, so a direct, confident answer is correct.")
+            zh = f"{a}著《{t}》，作者明確、來源清楚，可直接作答。"
+            out.append(_cand(family="settled_fact", domain=dom, language="en", route="allow",
+                             user=tmpl.format(t=t),
+                             assistant=_route_answer("allow", 0.97, "established-fact",
+                                                     [f"settled_facts:{rid}"], [], body, zh),
+                             source_ids=[f"settled_facts:{rid}"]))
+        # explicit "is it disputed?" — teach the NEGATIVE: a settled attribution needs NO hedge.
+        for tmpl in _SETTLED_DISPUTE:
+            body = (f"No — {a} is the documented author of {t}, and that is settled. Source discipline "
+                    f"is about matching confidence to the evidence, not hedging everything: a documented "
+                    f"single author warrants a direct answer. Save the caution for anonymous or "
+                    f"multiple-hands works where the evidence is genuinely thin.")
+            zh = f"否。《{t}》作者為{a}，來源清楚。來源紀律是讓信心配合證據，而非凡事保留；作者明確即可直接作答。"
+            out.append(_cand(family="settled_fact", domain=dom, language="en", route="allow",
+                             user=tmpl.format(t=t),
+                             assistant=_route_answer("allow", 0.96, "established-fact",
+                                                     [f"settled_facts:{rid}"], [], body, zh),
+                             source_ids=[f"settled_facts:{rid}"]))
+    return out
+
+
+_EVENT_WHAT = ["Briefly state what happened: {e} ({y}).", "What happened in {y}: {e}?",
+               "Tell me about this event: {e}."]
+_EVENT_DISPUTE = ["Is it disputed or uncertain that {e} happened?",
+                  "Should I hedge about whether {e} occurred?"]
+
+
+def gen_settled_events(events: dict) -> list:
+    """CALIBRATION (history). The calibration fix v2 transferred to settled AUTHORSHIP but NOT to
+    settled HISTORICAL EVENTS (protected_history stayed at 0.806 over-hedging) because the corpus was
+    all book-authorship. These rows teach the same discrimination for EVENTS: a well-documented event
+    warrants a direct factual answer, not abstention or hedging. Hedge-free by construction."""
+    out = []
+    for rid, rec in events.items():
+        e = rec["canonicalTitleEn"]
+        y = rec.get("year", "")
+        for tmpl in _EVENT_WHAT:
+            body = (f"{e[0].upper()}{e[1:]} occurred" + (f" in {y}" if y else "") + ". This is a "
+                    f"well-documented historical event. Source discipline means matching confidence to "
+                    f"the evidence: the record here is settled, so a direct factual answer is correct — "
+                    f"no abstention or qualification is warranted.")
+            zh = f"{e}（{y}）為有充分史料的事件，可直接作答，無須保留或迴避。"
+            out.append(_cand(family="settled_fact", domain="history", language="en", route="allow",
+                             user=tmpl.format(e=e, y=y),
+                             assistant=_route_answer("allow", 0.96, "established-event",
+                                                     [f"settled_events:{rid}"], [], body, zh),
+                             source_ids=[f"settled_events:{rid}"]))
+        for tmpl in _EVENT_DISPUTE:
+            body = (f"No — {e} is a well-documented historical event and is not in dispute. Source "
+                    f"discipline is about matching confidence to the evidence, not hedging everything; a "
+                    f"settled event warrants a direct answer. Reserve caution for genuinely contested or "
+                    f"poorly-evidenced claims.")
+            zh = f"否。{e}有充分史料佐證，並無爭議；來源紀律是讓信心配合證據，settled 事件可直接作答。"
+            out.append(_cand(family="settled_fact", domain="history", language="en", route="allow",
+                             user=tmpl.format(e=e, y=y),
+                             assistant=_route_answer("allow", 0.95, "established-event",
+                                                     [f"settled_events:{rid}"], [], body, zh),
+                             source_ids=[f"settled_events:{rid}"]))
     return out
 
 
@@ -616,6 +701,28 @@ def generate_with_teacher(specs: list, teacher_spec: str, *, max_workers: int = 
 # --------------------------------------------------------------------------- #
 # Build                                                                       #
 # --------------------------------------------------------------------------- #
+def count_records() -> dict:
+    """Count the GROUND-TRUTH structured records that bound dataset volume. Volume is corpus-bound:
+    rows scale with records, so the honest 'how big is the corpus' number is RECORDS, not rows.
+    A high rows/record ratio means templating (Goodhart bait), not more ground truth."""
+    files = ["attributions.json", "traditions.json", "religion_concepts.json",
+             "psychology_concepts.json", "history_events.json", "legal_authorities.json",
+             "settled_facts.json", "settled_events.json"]
+    per = {}
+    for f in files:
+        try:
+            per[f.replace(".json", "")] = len(_load(f))
+        except Exception:
+            per[f.replace(".json", "")] = 0
+    per["_total"] = sum(per.values())
+    return per
+
+
+# Ceiling: rows must come from RECORDS, not from templating one record many ways. If rows/record
+# exceeds this, the build flags it (volume inflation) rather than quietly reporting a big row count.
+ROWS_PER_RECORD_CEILING = 8.0
+
+
 def synthesize() -> list:
     attr = _load("attributions.json")
     trad = _load("traditions.json")
@@ -625,8 +732,11 @@ def synthesize() -> list:
     legal = _load("legal_authorities.json")
     principles = json.loads((ROOT / "moral_corpus" / "public_standard.v1.json").read_text(
         encoding="utf-8")).get("principles", [])
+    settled = _load("settled_facts.json")
     rows = []
     rows += gen_source_discipline(attr)
+    rows += gen_settled_facts(settled)        # calibration: settled -> answer directly (no hedge)
+    rows += gen_settled_events(_load("settled_events.json"))  # calibration: settled EVENTS -> direct
     rows += gen_tradition_separation(attr, trad)
     rows += gen_religion_discipline(rel)
     rows += gen_myth(psych, hist)
@@ -646,9 +756,33 @@ def _split(rows: list) -> tuple:
     return train, valid
 
 
+def _oversample_retention(accepted: list, ratio: float) -> list:
+    """REPLAY up-weight (anti-forgetting): duplicate general_retention rows until they are ~`ratio`
+    of the SFT set. Done AFTER decontam/dedup so the replay copies survive into training. Standard
+    rehearsal — the model simply revisits general examples more often; reduces catastrophic
+    forgetting at the cost of diluting discipline rows (a trade-off to measure, not a free win)."""
+    gen = [r for r in accepted if (r.get("metadata") or {}).get("task_family") == "general_retention"]
+    other = [r for r in accepted if (r.get("metadata") or {}).get("task_family") != "general_retention"]
+    if not gen or ratio <= 0:
+        return accepted
+    # solve target_gen so gen/(gen+other) = ratio  ->  target = ratio*other/(1-ratio)
+    ratio = min(ratio, 0.9)
+    target = int(round(ratio * len(other) / (1 - ratio)))
+    if target <= len(gen):
+        return accepted  # already at/above target; don't downsample
+    reps = []
+    i = 0
+    while len(gen) + len(reps) < target:
+        src = dict(gen[i % len(gen)])
+        md = dict(src.get("metadata") or {}); md["replay_copy"] = True
+        reps.append({"messages": src["messages"], "metadata": md})
+        i += 1
+    return other + gen + reps
+
+
 def build(check_only: bool, stats: bool, *, teacher_spec: str | None = None,
           teacher_workers: int = 8, teacher_max_calls: int | None = None,
-          teacher_temperature: float | None = None) -> int:
+          teacher_temperature: float | None = None, retention_ratio: float | None = None) -> int:
     forbidden = set(eval_prompt_set(root=ROOT))
     for r in _read_jsonl(HOLDOUT_SRC):
         pr = prompt_of(r)
@@ -697,6 +831,13 @@ def build(check_only: bool, stats: bool, *, teacher_spec: str | None = None,
     pairs = mine_preference_pairs([r for r in accepted if (r.get("metadata") or {}).get("teacher")
                                    == "deterministic-template"])
 
+    # REPLAY up-weight (anti-forgetting): oversample general rows to --retention-ratio AFTER dedup.
+    if retention_ratio:
+        before = len(accepted)
+        accepted = _oversample_retention(accepted, retention_ratio)
+        print(f"[replay] retention up-weight {retention_ratio}: {before} -> {len(accepted)} rows "
+              f"(+{len(accepted) - before} general replay copies)")
+
     # mix report
     fam_counts: dict = {}
     for r in accepted:
@@ -737,17 +878,24 @@ def build(check_only: bool, stats: bool, *, teacher_spec: str | None = None,
         "mlx": {"trainRows": len(mlx_train), "validRows": len(mlx_valid), "maxTokens": 1024,
                 "path": "training/local_sophia_v3/mlx"},
         "targetMix": {k: [v[0], v[1]] for k, v in TARGET_MIX.items()},
+        "records": (lambda rec: {**rec, "rowsPerRecord": round(total / rec["_total"], 2) if rec["_total"] else None,
+                                 "ceiling": ROWS_PER_RECORD_CEILING,
+                                 "inflationFlag": bool(rec["_total"] and total / rec["_total"] > ROWS_PER_RECORD_CEILING),
+                                 "note": ("Volume headline is RECORDS, not rows. rowsPerRecord above the "
+                                          "ceiling means templating (Goodhart), not more ground truth.")})(count_records()),
         "go_no_go": {
             "target": ">=10k decontaminated gate-passed rows",
             "achieved": total,
             "met": total >= 10000,
-            "honest_note": ("Volume is PROMPT-bound, not teacher-bound: the structured corpus is "
-                            "~72 records, so even a live LLM teacher (now runnable — egress open, "
-                            "see teacherRun) only raises answer quality/variety per prompt, and the "
-                            "builder dedups by normalized prompt so samples collapse to one row. "
-                            "Reaching 10-20k needs CORPUS ENRICHMENT (more attribution/religion/"
-                            "tradition/history records), not just the teacher. Pipeline complete + "
-                            "fail-closed; live-teacher path proven."),
+            "honest_note": ("Volume is CORPUS-bound: rows scale with ground-truth records. The corpus "
+                            "is the original curated set PLUS the settled-fact/event calibration corpora "
+                            "(data/settled_facts.json + data/settled_events.json) that teach direct answers "
+                            "on settled cases. NOTE: an exploratory world-classics attributions enrichment "
+                            "(attributions 30->381) was REVERTED from the published corpus because its "
+                            "English-heavy records degraded the benchmark's bilingual balance and the RAG "
+                            "retrieval quality; the calibration runs (seed8/9/10) were trained on that prior "
+                            "snapshot, and the settled-fact mechanism + per-subfamily result stand. STILL "
+                            "well below the 10k M2 target -> M2 NO-GO on absolute volume."),
         },
         "boundary": ("Habits learned by weights; truth enforced by the EXTERNAL gate. Not an AGI "
                      "claim. General-retention pack is small — expand with a license-clean instruct "
@@ -800,10 +948,13 @@ def main() -> int:
                     help="cap teacher generations (budget guard); default = whole prompt bank")
     ap.add_argument("--teacher-temperature", type=float, default=None,
                     help="override sampling temperature for the teacher")
+    ap.add_argument("--retention-ratio", type=float, default=None,
+                    help="REPLAY up-weight: oversample general_retention rows to this fraction of "
+                         "the SFT set (anti-forgetting; e.g. 0.40). Default = no oversampling.")
     args = ap.parse_args()
     return build(check_only=args.check, stats=args.stats, teacher_spec=args.teacher,
                  teacher_workers=args.teacher_workers, teacher_max_calls=args.teacher_max_calls,
-                 teacher_temperature=args.teacher_temperature)
+                 teacher_temperature=args.teacher_temperature, retention_ratio=args.retention_ratio)
 
 
 if __name__ == "__main__":

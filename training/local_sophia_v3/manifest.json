@@ -2,25 +2,22 @@
   "schema": "sophia.local_sophia_dataset.v3",
   "datasetId": "local_sophia_v3",
   "baseModel": "EXPERIMENT — selected by M1 (do not hard-commit; see training plan)",
-  "teacher": "deterministic-template + human-curated-reuse + live-LLM:openrouter:deepseek/deepseek-chat",
+  "teacher": "deterministic-template + human-curated-reuse (no live LLM this run)",
   "teacherRun": {
-    "used": true,
-    "spec": "openrouter:deepseek/deepseek-chat",
-    "seedPrompts": 156,
-    "generated": 156
+    "used": false
   },
   "admission": "agent.gate.check_response (advisor) + public_standard; reject -> preference/hard-neg",
   "totals": {
-    "candidates": 1483,
-    "accepted": 965,
-    "rejected": 411,
-    "decontaminationDrops": 90,
-    "acceptanceRate": 0.651
+    "candidates": 2033,
+    "accepted": 1560,
+    "rejected": 364,
+    "decontaminationDrops": 92,
+    "acceptanceRate": 0.767
   },
   "byFamily": {
     "council": {
-      "rows": 125,
-      "pct": 13.0,
+      "rows": 124,
+      "pct": 7.9,
       "targetPct": [
         10.0,
         15.0
@@ -28,7 +25,7 @@
     },
     "general_retention": {
       "rows": 270,
-      "pct": 28.0,
+      "pct": 17.3,
       "targetPct": [
         25.0,
         30.0
@@ -36,7 +33,7 @@
     },
     "hk_bilingual": {
       "rows": 8,
-      "pct": 0.8,
+      "pct": 0.5,
       "targetPct": [
         10.0,
         10.0
@@ -44,15 +41,23 @@
     },
     "moral_gate": {
       "rows": 37,
-      "pct": 3.8,
+      "pct": 2.4,
       "targetPct": [
         10.0,
         10.0
       ]
     },
+    "settled_fact": {
+      "rows": 681,
+      "pct": 43.7,
+      "targetPct": [
+        12.0,
+        20.0
+      ]
+    },
     "source_discipline": {
-      "rows": 516,
-      "pct": 53.5,
+      "rows": 431,
+      "pct": 27.6,
       "targetPct": [
         20.0,
         25.0
@@ -60,7 +65,7 @@
     },
     "tool_mcp": {
       "rows": 9,
-      "pct": 0.9,
+      "pct": 0.6,
       "targetPct": [
         10.0,
         10.0
@@ -68,13 +73,13 @@
     }
   },
   "byLanguage": {
-    "en": 785,
-    "zh": 180
+    "en": 1400,
+    "zh": 160
   },
   "preferencePairs": 233,
   "mlx": {
-    "trainRows": 927,
-    "validRows": 38,
+    "trainRows": 1491,
+    "validRows": 69,
     "maxTokens": 1024,
     "path": "training/local_sophia_v3/mlx"
   },
@@ -82,6 +87,10 @@
     "source_discipline": [
       0.2,
       0.25
+    ],
+    "settled_fact": [
+      0.12,
+      0.2
     ],
     "hard_provenance_negatives": [
       0.15,
@@ -112,11 +121,26 @@
       0.3
     ]
   },
+  "records": {
+    "attributions": 30,
+    "traditions": 8,
+    "religion_concepts": 8,
+    "psychology_concepts": 10,
+    "history_events": 23,
+    "legal_authorities": 5,
+    "settled_facts": 76,
+    "settled_events": 50,
+    "_total": 210,
+    "rowsPerRecord": 7.43,
+    "ceiling": 8.0,
+    "inflationFlag": false,
+    "note": "Volume headline is RECORDS, not rows. rowsPerRecord above the ceiling means templating (Goodhart), not more ground truth."
+  },
   "go_no_go": {
     "target": ">=10k decontaminated gate-passed rows",
-    "achieved": 965,
+    "achieved": 1560,
     "met": false,
-    "honest_note": "Volume is PROMPT-bound, not teacher-bound: the structured corpus is ~72 records, so even a live LLM teacher (now runnable — egress open, see teacherRun) only raises answer quality/variety per prompt, and the builder dedups by normalized prompt so samples collapse to one row. Reaching 10-20k needs CORPUS ENRICHMENT (more attribution/religion/tradition/history records), not just the teacher. Pipeline complete + fail-closed; live-teacher path proven."
+    "honest_note": "Volume is CORPUS-bound: rows scale with ground-truth records. The corpus is the original curated set PLUS the settled-fact/event calibration corpora (data/settled_facts.json + data/settled_events.json) that teach direct answers on settled cases. NOTE: an exploratory world-classics attributions enrichment (attributions 30->381) was REVERTED from the published corpus because its English-heavy records degraded the benchmark's bilingual balance and the RAG retrieval quality; the calibration runs (seed8/9/10) were trained on that prior snapshot, and the settled-fact mechanism + per-subfamily result stand. STILL well below the 10k M2 target -> M2 NO-GO on absolute volume."
   },
   "boundary": "Habits learned by weights; truth enforced by the EXTERNAL gate. Not an AGI claim. General-retention pack is small — expand with a license-clean instruct slice before any real SFT or the model becomes a narrow refusal machine."
 }

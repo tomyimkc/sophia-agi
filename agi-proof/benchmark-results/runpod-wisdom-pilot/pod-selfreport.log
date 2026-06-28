@@ -1,5 +1,5 @@
-[pod] M3 pilot self-report job starting Thu Jun 25 22:16:31 UTC 2026
-Thu Jun 25 22:16:35 2026       
+[pod] M3 pilot self-report job starting Sun Jun 28 07:23:12 UTC 2026
+Sun Jun 28 07:23:16 2026       
 +-----------------------------------------------------------------------------------------+
 | NVIDIA-SMI 580.126.09             Driver Version: 580.126.09     CUDA Version: 13.0     |
 +-----------------------------------------+------------------------+----------------------+
@@ -7,8 +7,8 @@ Thu Jun 25 22:16:35 2026
 | Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
 |                                         |                        |               MIG M. |
 |=========================================+========================+======================|
-|   0  NVIDIA H100 80GB HBM3          On  |   00000000:3B:00.0 Off |                    0 |
-| N/A   30C    P0             69W /  700W |       0MiB /  81559MiB |      0%      Default |
+|   0  NVIDIA H100 80GB HBM3          On  |   00000000:AB:00.0 Off |                    0 |
+| N/A   36C    P0             72W /  700W |       0MiB /  81559MiB |      0%      Default |
 |                                         |                        |             Disabled |
 +-----------------------------------------+------------------------+----------------------+
 
@@ -19,5 +19,324 @@ Thu Jun 25 22:16:35 2026
 |=========================================================================================|
 |  No running processes found                                                             |
 +-----------------------------------------------------------------------------------------+
-fatal: destination path 'sophia-agi' already exists and is not an empty directory.
-[pod] job exit code=128
+Cloning into 'sophia-agi'...
+Updating files:   2% (51/2059)Updating files:   3% (62/2059)Updating files:   4% (83/2059)Updating files:   4% (86/2059)Updating files:   5% (103/2059)Updating files:   6% (124/2059)Updating files:   6% (135/2059)Updating files:   7% (145/2059)Updating files:   8% (165/2059)Updating files:   9% (186/2059)Updating files:   9% (195/2059)Updating files:  10% (206/2059)Updating files:  11% (227/2059)Updating files:  11% (236/2059)Updating files:  12% (248/2059)Updating files:  12% (260/2059)Updating files:  13% (268/2059)Updating files:  14% (289/2059)Updating files:  14% (303/2059)Updating files:  15% (309/2059)Updating files:  16% (330/2059)Updating files:  16% (337/2059)Updating files:  17% (351/2059)Updating files:  18% (371/2059)Updating files:  19% (392/2059)Updating files:  19% (408/2059)Updating files:  20% (412/2059)Updating files:  21% (433/2059)Updating files:  22% (453/2059)Updating files:  22% (470/2059)Updating files:  23% (474/2059)Updating files:  24% (495/2059)Updating files:  25% (515/2059)Updating files:  25% (530/2059)Updating files:  26% (536/2059)Updating files:  27% (556/2059)Updating files:  28% (577/2059)Updating files:  29% (598/2059)Updating files:  29% (612/2059)Updating files:  30% (618/2059)Updating files:  31% (639/2059)Updating files:  31% (656/2059)Updating files:  32% (659/2059)Updating files:  33% (680/2059)Updating files:  34% (701/2059)Updating files:  35% (721/2059)Updating files:  35% (729/2059)Updating files:  36% (742/2059)Updating files:  37% (762/2059)Updating files:  38% (783/2059)Updating files:  39% (804/2059)Updating files:  39% (810/2059)Updating files:  40% (824/2059)Updating files:  41% (845/2059)Updating files:  41% (857/2059)Updating files:  42% (865/2059)Updating files:  43% (886/2059)Updating files:  44% (906/2059)Updating files:  44% (911/2059)Updating files:  45% (927/2059)Updating files:  46% (948/2059)Updating files:  47% (968/2059)Updating files:  47% (982/2059)Updating files:  48% (989/2059)Updating files:  49% (1009/2059)Updating files:  50% (1030/2059)Updating files:  50% (1038/2059)Updating files:  51% (1051/2059)Updating files:  52% (1071/2059)Updating files:  53% (1092/2059)Updating files:  53% (1107/2059)Updating files:  54% (1112/2059)Updating files:  55% (1133/2059)Updating files:  56% (1154/2059)Updating files:  57% (1174/2059)Updating files:  57% (1183/2059)Updating files:  58% (1195/2059)Updating files:  59% (1215/2059)Updating files:  60% (1236/2059)Updating files:  61% (1256/2059)Updating files:  62% (1277/2059)Updating files:  63% (1298/2059)Updating files:  64% (1318/2059)Updating files:  65% (1339/2059)Updating files:  65% (1348/2059)Updating files:  66% (1359/2059)Updating files:  67% (1380/2059)Updating files:  68% (1401/2059)Updating files:  69% (1421/2059)Updating files:  69% (1434/2059)Updating files:  70% (1442/2059)Updating files:  71% (1462/2059)Updating files:  72% (1483/2059)Updating files:  73% (1504/2059)Updating files:  73% (1505/2059)Updating files:  74% (1524/2059)Updating files:  75% (1545/2059)Updating files:  75% (1548/2059)Updating files:  76% (1565/2059)Updating files:  76% (1577/2059)Updating files:  77% (1586/2059)Updating files:  78% (1607/2059)Updating files:  78% (1623/2059)Updating files:  79% (1627/2059)Updating files:  80% (1648/2059)Updating files:  80% (1659/2059)Updating files:  81% (1668/2059)Updating files:  81% (1688/2059)Updating files:  82% (1689/2059)Updating files:  83% (1709/2059)Updating files:  83% (1728/2059)Updating files:  84% (1730/2059)Updating files:  85% (1751/2059)Updating files:  86% (1771/2059)Updating files:  87% (1792/2059)Updating files:  88% (1812/2059)Updating files:  88% (1826/2059)Updating files:  89% (1833/2059)Updating files:  90% (1854/2059)Updating files:  91% (1874/2059)Updating files:  92% (1895/2059)Updating files:  93% (1915/2059)Updating files:  93% (1927/2059)Updating files:  94% (1936/2059)Updating files:  95% (1957/2059)Updating files:  95% (1963/2059)Updating files:  96% (1977/2059)Updating files:  97% (1998/2059)Updating files:  98% (2018/2059)Updating files:  98% (2029/2059)Updating files:  99% (2039/2059)Updating files: 100% (2059/2059)Updating files: 100% (2059/2059), done.
+[pod] HEARTBEAT PUSH OK — delivery channel works
+[pod] ENV PROBE PUSH OK
+[pod] deps pre-baked — skipping pip (no long install to die during)
+{
+  "totals": {
+    "candidates": 4459,
+    "accepted": 3987,
+    "rejected": 364,
+    "decontaminationDrops": 91,
+    "acceptanceRate": 0.894
+  },
+  "preferencePairs": 1851,
+  "go_no_go": {
+    "target": ">=10k decontaminated gate-passed rows",
+    "achieved": 3987,
+    "met": false,
+    "honest_note": "Volume is CORPUS-bound: rows scale with ground-truth records. ENRICHMENT 2026-06-27 (tools/enrich_corpus.py, fail-closed on accuracy + provenance; auto-decontaminated vs heldout_v1 + transfer_v1; independently fact-verified): attributions 30 -> 381, history 23 -> 51, religion 8 -> 21. Dataset 880 -> 3306 gate-passed rows (+275%, 3.75x); preference pairs 233 -> 1851 (8x); decontam drops held at 90 (zero new eval contamination). STILL BELOW 10k -> M2 stays NO-GO on absolute volume (~1030 more records at the measured ~6.5 rows/record). Sustained curation, now tooled + accuracy-disciplined + decontaminated."
+  }
+}
+
+=== MIX vs TARGET ===
+{
+  "byFamily": {
+    "council": {
+      "rows": 125,
+      "pct": 3.1,
+      "targetPct": [
+        10.0,
+        15.0
+      ]
+    },
+    "general_retention": {
+      "rows": 270,
+      "pct": 6.8,
+      "targetPct": [
+        25.0,
+        30.0
+      ]
+    },
+    "hk_bilingual": {
+      "rows": 8,
+      "pct": 0.2,
+      "targetPct": [
+        10.0,
+        10.0
+      ]
+    },
+    "moral_gate": {
+      "rows": 37,
+      "pct": 0.9,
+      "targetPct": [
+        10.0,
+        10.0
+      ]
+    },
+    "settled_fact": {
+      "rows": 681,
+      "pct": 17.1,
+      "targetPct": [
+        12.0,
+        20.0
+      ]
+    },
+    "source_discipline": {
+      "rows": 2857,
+      "pct": 71.7,
+      "targetPct": [
+        20.0,
+        25.0
+      ]
+    },
+    "tool_mcp": {
+      "rows": 9,
+      "pct": 0.2,
+      "targetPct": [
+        10.0,
+        10.0
+      ]
+    }
+  },
+  "byLanguage": {
+    "en": 3561,
+    "zh": 426
+  }
+}
+
+WROTE training/local_sophia_v3: 3987 gate-passed rows, 1851 preference pairs, 91 decontam drops.
+3808 training/local_sophia_v3/mlx/train.jsonl
+[pod] SMOKE (sft)
+[pilot 07:29:06] SMOKE: train 2 steps then eval 2 cases x1 run
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.14s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.11it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.07it/s]
+[pilot 07:29:57] loaded base via AutoModelForImageTextToText
+[pilot 07:30:00] trainable params: 29,802,496 (rank=16 alpha=32 rslora=False kl_coef=0.0)
+[pilot 07:30:00] training rows: 8 (0 general_retention — KL-anchored if kl_coef>0)
+`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+[pilot 07:30:01] step 1/2 loss=4.0761 kl=0.0000
+[pilot 07:30:01] step 2/2 loss=3.4087 kl=0.0000
+[pilot 07:30:05] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
+[pilot 07:30:05] eval cases: 2 x 1 runs x (base, adapter)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.13s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.13it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.09it/s]
+[pilot 07:30:10] loaded base via AutoModelForImageTextToText
+[pilot 07:30:22]   gen 2/2
+[pilot 07:30:34]   gen 2/2
+[pilot 07:30:42]   run 1/1 done
+[pilot 07:30:42] loading adapter onto base ...
+[pilot 07:31:05]   gen 2/2
+[pilot 07:31:24]   gen 2/2
+[pilot 07:31:32]   run 1/1 done
+[pilot 07:31:32] wrote eval report -> /workspace/sophia-agi/agi-proof/benchmark-results/wisdom-market/M3-pilot-smoke.json
+[pilot 07:31:32] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
+[pilot 07:31:32]   tradition_merge_rate               Δ None ci=[None, None]  
+[pilot 07:31:32]   qualification_rate_on_contested    Δ 0.0 ci=[0.0, 0.0]  
+[pilot 07:31:32]   false_attribution_rate             Δ None ci=[None, None]  
+[pilot 07:31:32]   citation_fidelity                  Δ None ci=[None, None]  
+[pilot 07:31:32]   adapter protected_history_regression       None
+[pilot 07:31:32]   adapter protected_religion_regression      None
+[pilot 07:31:32]   adapter over_abstention_rate               0.0
+[pilot 07:31:32] PRIMARY habit-transfer signal present: False
+[pilot 07:31:32] SMOKE OK
+[pod] FULL sft seed=10
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.32s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.16s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.18s/it]
+[pilot 07:31:43] loaded base via AutoModelForImageTextToText
+[pilot 07:31:46] trainable params: 29,802,496 (rank=16 alpha=32 rslora=False kl_coef=0.0)
+[pilot 07:31:46] training rows: 3808 (260 general_retention — KL-anchored if kl_coef>0)
+`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+[pilot 07:31:52] step 25/3808 loss=2.5114 kl=0.0000
+[pilot 07:31:57] step 50/3808 loss=0.7167 kl=0.0000
+[pilot 07:32:02] step 75/3808 loss=0.1056 kl=0.0000
+[pilot 07:32:07] step 100/3808 loss=0.2821 kl=0.0000
+[pilot 07:32:12] step 125/3808 loss=2.9146 kl=0.0000
+[pilot 07:32:17] step 150/3808 loss=0.1613 kl=0.0000
+[pilot 07:32:22] step 175/3808 loss=0.1875 kl=0.0000
+[pilot 07:32:27] step 200/3808 loss=0.1514 kl=0.0000
+[pilot 07:32:32] step 225/3808 loss=0.0859 kl=0.0000
+[pilot 07:32:37] step 250/3808 loss=0.0246 kl=0.0000
+[pilot 07:32:42] step 275/3808 loss=0.3260 kl=0.0000
+[pilot 07:32:47] step 300/3808 loss=0.0185 kl=0.0000
+[pilot 07:32:52] step 325/3808 loss=0.1415 kl=0.0000
+[pilot 07:32:57] step 350/3808 loss=1.9263 kl=0.0000
+[pilot 07:33:02] step 375/3808 loss=1.0139 kl=0.0000
+[pilot 07:33:07] step 400/3808 loss=0.0044 kl=0.0000
+[pilot 07:33:12] step 425/3808 loss=0.2502 kl=0.0000
+[pilot 07:33:17] step 450/3808 loss=0.0776 kl=0.0000
+[pilot 07:33:21] step 475/3808 loss=0.0165 kl=0.0000
+[pilot 07:33:26] step 500/3808 loss=0.1103 kl=0.0000
+[pilot 07:33:31] step 525/3808 loss=0.9976 kl=0.0000
+[pilot 07:33:36] step 550/3808 loss=0.0997 kl=0.0000
+[pilot 07:33:41] step 575/3808 loss=0.0264 kl=0.0000
+[pilot 07:33:46] step 600/3808 loss=0.0022 kl=0.0000
+[pilot 07:33:51] step 625/3808 loss=0.2731 kl=0.0000
+[pilot 07:33:56] step 650/3808 loss=0.0337 kl=0.0000
+[pilot 07:34:01] step 675/3808 loss=0.1447 kl=0.0000
+[pilot 07:34:06] step 700/3808 loss=1.5718 kl=0.0000
+[pilot 07:34:11] step 725/3808 loss=0.0800 kl=0.0000
+[pilot 07:34:16] step 750/3808 loss=0.1457 kl=0.0000
+[pilot 07:34:21] step 775/3808 loss=0.0559 kl=0.0000
+[pilot 07:34:26] step 800/3808 loss=0.0844 kl=0.0000
+[pilot 07:34:31] step 825/3808 loss=0.0545 kl=0.0000
+[pilot 07:34:36] step 850/3808 loss=0.0607 kl=0.0000
+[pilot 07:34:41] step 875/3808 loss=0.0014 kl=0.0000
+[pilot 07:34:46] step 900/3808 loss=0.0043 kl=0.0000
+[pilot 07:34:51] step 925/3808 loss=0.1306 kl=0.0000
+[pilot 07:34:56] step 950/3808 loss=1.4245 kl=0.0000
+[pilot 07:35:01] step 975/3808 loss=0.0678 kl=0.0000
+[pilot 07:35:06] step 1000/3808 loss=0.0148 kl=0.0000
+[pilot 07:35:11] step 1025/3808 loss=0.0360 kl=0.0000
+[pilot 07:35:16] step 1050/3808 loss=0.0013 kl=0.0000
+[pilot 07:35:21] step 1075/3808 loss=0.0867 kl=0.0000
+[pilot 07:35:26] step 1100/3808 loss=0.0319 kl=0.0000
+[pilot 07:35:31] step 1125/3808 loss=0.0597 kl=0.0000
+[pilot 07:35:36] step 1150/3808 loss=0.0682 kl=0.0000
+[pilot 07:35:41] step 1175/3808 loss=0.1444 kl=0.0000
+[pilot 07:35:46] step 1200/3808 loss=0.0448 kl=0.0000
+[pilot 07:35:51] step 1225/3808 loss=0.0450 kl=0.0000
+[pilot 07:35:56] step 1250/3808 loss=0.0996 kl=0.0000
+[pilot 07:36:01] step 1275/3808 loss=0.0778 kl=0.0000
+[pilot 07:36:05] step 1300/3808 loss=0.0448 kl=0.0000
+[pilot 07:36:10] step 1325/3808 loss=0.0127 kl=0.0000
+[pilot 07:36:15] step 1350/3808 loss=0.0024 kl=0.0000
+[pilot 07:36:20] step 1375/3808 loss=0.0010 kl=0.0000
+[pilot 07:36:25] step 1400/3808 loss=0.0341 kl=0.0000
+[pilot 07:36:30] step 1425/3808 loss=0.0068 kl=0.0000
+[pilot 07:36:35] step 1450/3808 loss=0.4096 kl=0.0000
+[pilot 07:36:40] step 1475/3808 loss=0.0025 kl=0.0000
+[pilot 07:36:45] step 1500/3808 loss=0.0005 kl=0.0000
+[pilot 07:36:50] step 1525/3808 loss=0.0022 kl=0.0000
+[pilot 07:36:55] step 1550/3808 loss=0.0008 kl=0.0000
+[pilot 07:37:00] step 1575/3808 loss=0.0958 kl=0.0000
+[pilot 07:37:05] step 1600/3808 loss=0.0036 kl=0.0000
+[pilot 07:37:09] step 1625/3808 loss=0.0027 kl=0.0000
+[pilot 07:37:14] step 1650/3808 loss=0.0203 kl=0.0000
+[pilot 07:37:19] step 1675/3808 loss=0.0534 kl=0.0000
+[pilot 07:37:24] step 1700/3808 loss=0.0265 kl=0.0000
+[pilot 07:37:29] step 1725/3808 loss=0.0244 kl=0.0000
+[pilot 07:37:35] step 1750/3808 loss=0.0002 kl=0.0000
+[pilot 07:37:40] step 1775/3808 loss=0.1663 kl=0.0000
+[pilot 07:37:45] step 1800/3808 loss=0.1626 kl=0.0000
+[pilot 07:37:50] step 1825/3808 loss=0.0004 kl=0.0000
+[pilot 07:37:56] step 1850/3808 loss=0.0028 kl=0.0000
+[pilot 07:38:01] step 1875/3808 loss=0.9540 kl=0.0000
+[pilot 07:38:06] step 1900/3808 loss=0.0239 kl=0.0000
+[pilot 07:38:11] step 1925/3808 loss=0.0676 kl=0.0000
+[pilot 07:38:17] step 1950/3808 loss=0.0313 kl=0.0000
+[pilot 07:38:22] step 1975/3808 loss=0.0003 kl=0.0000
+[pilot 07:38:27] step 2000/3808 loss=0.0002 kl=0.0000
+[pilot 07:38:32] step 2025/3808 loss=0.0007 kl=0.0000
+[pilot 07:38:37] step 2050/3808 loss=0.0006 kl=0.0000
+[pilot 07:38:42] step 2075/3808 loss=0.0077 kl=0.0000
+[pilot 07:38:47] step 2100/3808 loss=0.1024 kl=0.0000
+[pilot 07:38:53] step 2125/3808 loss=0.0589 kl=0.0000
+[pilot 07:38:58] step 2150/3808 loss=0.0015 kl=0.0000
+[pilot 07:39:03] step 2175/3808 loss=0.0290 kl=0.0000
+[pilot 07:39:09] step 2200/3808 loss=0.0276 kl=0.0000
+[pilot 07:39:14] step 2225/3808 loss=0.0024 kl=0.0000
+[pilot 07:39:19] step 2250/3808 loss=0.0106 kl=0.0000
+[pilot 07:39:24] step 2275/3808 loss=1.0103 kl=0.0000
+[pilot 07:39:29] step 2300/3808 loss=0.0029 kl=0.0000
+[pilot 07:39:35] step 2325/3808 loss=0.0038 kl=0.0000
+[pilot 07:39:40] step 2350/3808 loss=0.0539 kl=0.0000
+[pilot 07:39:45] step 2375/3808 loss=0.0002 kl=0.0000
+[pilot 07:39:50] step 2400/3808 loss=0.0002 kl=0.0000
+[pilot 07:39:56] step 2425/3808 loss=0.0000 kl=0.0000
+[pilot 07:40:01] step 2450/3808 loss=0.0320 kl=0.0000
+[pilot 07:40:06] step 2475/3808 loss=0.0746 kl=0.0000
+[pilot 07:40:12] step 2500/3808 loss=1.0705 kl=0.0000
+[pilot 07:40:17] step 2525/3808 loss=0.0002 kl=0.0000
+[pilot 07:40:22] step 2550/3808 loss=0.0009 kl=0.0000
+[pilot 07:40:27] step 2575/3808 loss=0.0005 kl=0.0000
+[pilot 07:40:32] step 2600/3808 loss=0.0000 kl=0.0000
+[pilot 07:40:37] step 2625/3808 loss=0.0011 kl=0.0000
+[pilot 07:40:43] step 2650/3808 loss=0.0479 kl=0.0000
+[pilot 07:40:48] step 2675/3808 loss=0.0279 kl=0.0000
+[pilot 07:40:53] step 2700/3808 loss=0.0024 kl=0.0000
+[pilot 07:40:58] step 2725/3808 loss=0.0277 kl=0.0000
+[pilot 07:41:04] step 2750/3808 loss=1.7706 kl=0.0000
+[pilot 07:41:09] step 2775/3808 loss=2.1857 kl=0.0000
+[pilot 07:41:14] step 2800/3808 loss=0.0140 kl=0.0000
+[pilot 07:41:19] step 2825/3808 loss=0.0003 kl=0.0000
+[pilot 07:41:24] step 2850/3808 loss=0.0002 kl=0.0000
+[pilot 07:41:29] step 2875/3808 loss=0.0000 kl=0.0000
+[pilot 07:41:35] step 2900/3808 loss=0.0003 kl=0.0000
+[pilot 07:41:40] step 2925/3808 loss=0.0015 kl=0.0000
+[pilot 07:41:45] step 2950/3808 loss=0.0011 kl=0.0000
+[pilot 07:41:50] step 2975/3808 loss=0.0251 kl=0.0000
+[pilot 07:41:55] step 3000/3808 loss=0.0001 kl=0.0000
+[pilot 07:42:01] step 3025/3808 loss=0.9125 kl=0.0000
+[pilot 07:42:06] step 3050/3808 loss=0.0002 kl=0.0000
+[pilot 07:42:11] step 3075/3808 loss=0.8159 kl=0.0000
+[pilot 07:42:16] step 3100/3808 loss=0.0021 kl=0.0000
+[pilot 07:42:21] step 3125/3808 loss=0.0738 kl=0.0000
+[pilot 07:42:27] step 3150/3808 loss=0.0002 kl=0.0000
+[pilot 07:42:32] step 3175/3808 loss=0.0000 kl=0.0000
+[pilot 07:42:37] step 3200/3808 loss=1.0975 kl=0.0000
+[pilot 07:42:42] step 3225/3808 loss=1.1771 kl=0.0000
+[pilot 07:42:47] step 3250/3808 loss=0.0002 kl=0.0000
+[pilot 07:42:53] step 3275/3808 loss=0.0000 kl=0.0000
+[pilot 07:42:58] step 3300/3808 loss=0.0009 kl=0.0000
+[pilot 07:43:03] step 3325/3808 loss=0.0000 kl=0.0000
+[pilot 07:43:08] step 3350/3808 loss=0.0104 kl=0.0000
+[pilot 07:43:14] step 3375/3808 loss=0.0010 kl=0.0000
+[pilot 07:43:19] step 3400/3808 loss=0.0065 kl=0.0000
+[pilot 07:43:24] step 3425/3808 loss=0.0020 kl=0.0000
+[pilot 07:43:29] step 3450/3808 loss=0.0024 kl=0.0000
+[pilot 07:43:34] step 3475/3808 loss=0.0001 kl=0.0000
+[pilot 07:43:39] step 3500/3808 loss=0.0012 kl=0.0000
+[pilot 07:43:45] step 3525/3808 loss=0.0000 kl=0.0000
+[pilot 07:43:50] step 3550/3808 loss=0.0025 kl=0.0000
+[pilot 07:43:55] step 3575/3808 loss=0.0002 kl=0.0000
+[pilot 07:44:00] step 3600/3808 loss=0.7311 kl=0.0000
+[pilot 07:44:06] step 3625/3808 loss=0.0118 kl=0.0000
+[pilot 07:44:11] step 3650/3808 loss=0.0509 kl=0.0000
+[pilot 07:44:16] step 3675/3808 loss=0.0007 kl=0.0000
+[pilot 07:44:21] step 3700/3808 loss=0.0012 kl=0.0000
+[pilot 07:44:26] step 3725/3808 loss=0.9118 kl=0.0000
+[pilot 07:44:32] step 3750/3808 loss=0.0014 kl=0.0000
+[pilot 07:44:37] step 3775/3808 loss=0.0000 kl=0.0000
+[pilot 07:44:42] step 3800/3808 loss=0.0057 kl=0.0000
+[pilot 07:44:47] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
+[pilot 07:44:47] eval cases: 140 x 1 runs x (base, adapter)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:12<00:12, 12.03s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:20<00:00, 10.10s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:20<00:00, 10.39s/it]
+[pilot 07:45:10] loaded base via AutoModelForImageTextToText
+[pilot 07:45:23]   gen 32/140
+[pilot 07:45:37]   gen 64/140
+[pilot 07:45:50]   gen 96/140
+[pilot 07:46:04]   gen 128/140
+[pilot 07:46:17]   gen 140/140
+[pilot 07:46:31]   gen 32/140
+[pilot 07:46:46]   gen 64/140
+[pilot 07:47:01]   gen 96/140
+[pilot 07:47:15]   gen 128/140
+[pilot 07:47:28]   gen 140/140
+[pilot 07:55:02]   run 1/1 done
+[pilot 07:55:02] loading adapter onto base ...
+[pilot 07:55:29]   gen 32/140
+[pilot 07:55:50]   gen 64/140
+[pilot 07:56:12]   gen 96/140
+[pilot 07:56:34]   gen 128/140
+[pilot 07:56:55]   gen 140/140
+[pilot 07:57:03]   gen 32/140
+[pilot 07:57:12]   gen 64/140
+[pilot 07:57:19]   gen 96/140
+[pilot 07:57:27]   gen 128/140
+[pilot 07:57:36]   gen 140/140
+[pilot 08:04:46]   run 1/1 done
+[pilot 08:04:46] wrote 140 base/adapter answer pairs -> agi-proof/benchmark-results/wisdom-market/M3-pilot-answers-seed10.json
+[pilot 08:04:46] wrote eval report -> agi-proof/benchmark-results/wisdom-market/M3-pilot-eval-seed10.json
+[pilot 08:04:46] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
+[pilot 08:04:46]   tradition_merge_rate               Δ 0.0 ci=[0.0, 0.0]  
+[pilot 08:04:46]   qualification_rate_on_contested    Δ 0.05 ci=[0.05, 0.05] *
+[pilot 08:04:46]   false_attribution_rate             Δ 0.0 ci=[0.0, 0.0]  
+[pilot 08:04:46]   citation_fidelity                  Δ None ci=[None, None]  
+[pilot 08:04:46]   adapter protected_history_regression       0.0278
+[pilot 08:04:46]   adapter protected_religion_regression      0.0
+[pilot 08:04:46]   adapter over_abstention_rate               0.0076
+[pilot 08:04:46] PRIMARY habit-transfer signal present: True
+[pod] result + answers written; finish() will commit + push
+[pod] job exit code=0

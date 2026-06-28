@@ -1,0 +1,57 @@
+{
+  "prefix": "M3-pilot",
+  "verdict": "GO",
+  "ok": true,
+  "criticalFailures": [],
+  "checks": [
+    {
+      "check": "1-uncertainty",
+      "ok": true,
+      "critical": true,
+      "detail": "primary CIs=True retentionCI=[-0.0196, 0.0175]"
+    },
+    {
+      "check": "1b-anytime-valid",
+      "ok": true,
+      "critical": true,
+      "detail": "retention peeked=True anytime_ci95=[-0.0301, 0.0281] (fixed-n CI invalid under peeking)"
+    },
+    {
+      "check": "2-power-primary",
+      "ok": true,
+      "critical": true,
+      "detail": "primary N=1062 mde=0.061 <= 0.105"
+    },
+    {
+      "check": "2-power-retention",
+      "ok": true,
+      "critical": false,
+      "detail": "retention N=970 mde=0.064 vs tolerance 0.05 (coarse if mde>tol)"
+    },
+    {
+      "check": "5-constructs",
+      "ok": true,
+      "critical": true,
+      "detail": "markers=True judge=True(0.815) retention_retains=True -> 3 DISTINCT families agree ['behavioral-retention', 'deterministic-marker', 'llm-judge']"
+    },
+    {
+      "check": "6-decontam",
+      "ok": true,
+      "critical": true,
+      "detail": "retention leaks=[]"
+    },
+    {
+      "check": "8-magnitude",
+      "ok": true,
+      "critical": true,
+      "detail": "primary>=threshold=True protectedRegressions=[] retentionGate=GO"
+    }
+  ],
+  "powerNote": {
+    "primaryMDE": 0.061,
+    "retentionMDE": 0.064,
+    "tolerance": 0.05
+  },
+  "claimCeiling": "candidate_only; canClaimAGI:false; narrow corpus-bound feasibility",
+  "code": 0
+}

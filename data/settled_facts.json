@@ -1,0 +1,610 @@
+{
+  "settled_origin_of_species": {
+    "recordType": "settled_attribution",
+    "domain": "history",
+    "canonicalTitleEn": "On the Origin of Species",
+    "attributedAuthor": "Charles Darwin",
+    "year": "1859",
+    "provenance": "Undisputed single authorship; published under Darwin's name 1859, extensive manuscript record."
+  },
+  "settled_principia": {
+    "recordType": "settled_attribution",
+    "domain": "history",
+    "canonicalTitleEn": "Philosophiae Naturalis Principia Mathematica",
+    "attributedAuthor": "Isaac Newton",
+    "year": "1687",
+    "provenance": "Undisputed; Newton's authorship documented by Royal Society records and Halley's correspondence."
+  },
+  "settled_wealth_of_nations": {
+    "recordType": "settled_attribution",
+    "domain": "history",
+    "canonicalTitleEn": "The Wealth of Nations",
+    "attributedAuthor": "Adam Smith",
+    "year": "1776",
+    "provenance": "Undisputed single authorship, published under Smith's name 1776."
+  },
+  "settled_critique_pure_reason": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "Critique of Pure Reason",
+    "attributedAuthor": "Immanuel Kant",
+    "year": "1781",
+    "provenance": "Undisputed; Kant's authorship documented, first and second editions 1781/1787."
+  },
+  "settled_leviathan": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "Leviathan",
+    "attributedAuthor": "Thomas Hobbes",
+    "year": "1651",
+    "provenance": "Undisputed single authorship, published under Hobbes's name 1651."
+  },
+  "settled_1984": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Nineteen Eighty-Four",
+    "attributedAuthor": "George Orwell",
+    "year": "1949",
+    "provenance": "Undisputed; published 1949 under Orwell (Eric Blair), full manuscript provenance."
+  },
+  "settled_pride_prejudice": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Pride and Prejudice",
+    "attributedAuthor": "Jane Austen",
+    "year": "1813",
+    "provenance": "Undisputed single authorship; published 1813, attribution settled by letters and publisher records."
+  },
+  "settled_das_kapital_v1": {
+    "recordType": "settled_attribution",
+    "domain": "history",
+    "canonicalTitleEn": "Das Kapital, Volume I",
+    "attributedAuthor": "Karl Marx",
+    "year": "1867",
+    "provenance": "Volume I undisputed single authorship by Marx, 1867 (later volumes edited by Engels — this record is Volume I only)."
+  },
+  "settled_interpretation_dreams": {
+    "recordType": "settled_attribution",
+    "domain": "psychology",
+    "canonicalTitleEn": "The Interpretation of Dreams",
+    "attributedAuthor": "Sigmund Freud",
+    "year": "1899",
+    "provenance": "Undisputed single authorship, published under Freud's name 1899/1900."
+  },
+  "settled_thus_spoke_zarathustra": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "Thus Spoke Zarathustra",
+    "attributedAuthor": "Friedrich Nietzsche",
+    "year": "1883",
+    "provenance": "Undisputed single authorship, 1883-1885."
+  },
+  "settled_being_and_time": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "Being and Time",
+    "attributedAuthor": "Martin Heidegger",
+    "year": "1927",
+    "provenance": "Undisputed single authorship, published 1927."
+  },
+  "settled_second_sex": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "The Second Sex",
+    "attributedAuthor": "Simone de Beauvoir",
+    "year": "1949",
+    "provenance": "Undisputed single authorship, 1949."
+  },
+  "settled_silent_spring": {
+    "recordType": "settled_attribution",
+    "domain": "history",
+    "canonicalTitleEn": "Silent Spring",
+    "attributedAuthor": "Rachel Carson",
+    "year": "1962",
+    "provenance": "Undisputed single authorship, 1962."
+  },
+  "settled_selfish_gene": {
+    "recordType": "settled_attribution",
+    "domain": "history",
+    "canonicalTitleEn": "The Selfish Gene",
+    "attributedAuthor": "Richard Dawkins",
+    "year": "1976",
+    "provenance": "Undisputed single authorship, 1976."
+  },
+  "settled_brief_history_time": {
+    "recordType": "settled_attribution",
+    "domain": "history",
+    "canonicalTitleEn": "A Brief History of Time",
+    "attributedAuthor": "Stephen Hawking",
+    "year": "1988",
+    "provenance": "Undisputed single authorship, 1988."
+  },
+  "settled_structure_scientific_revolutions": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "The Structure of Scientific Revolutions",
+    "attributedAuthor": "Thomas Kuhn",
+    "year": "1962",
+    "provenance": "Undisputed single authorship, 1962."
+  },
+  "settled_general_theory": {
+    "recordType": "settled_attribution",
+    "domain": "history",
+    "canonicalTitleEn": "The General Theory of Employment, Interest and Money",
+    "attributedAuthor": "John Maynard Keynes",
+    "year": "1936",
+    "provenance": "Undisputed single authorship, 1936."
+  },
+  "settled_democracy_america": {
+    "recordType": "settled_attribution",
+    "domain": "history",
+    "canonicalTitleEn": "Democracy in America",
+    "attributedAuthor": "Alexis de Tocqueville",
+    "year": "1835",
+    "provenance": "Undisputed single authorship, 1835/1840."
+  },
+  "settled_walden": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Walden",
+    "attributedAuthor": "Henry David Thoreau",
+    "year": "1854",
+    "provenance": "Undisputed single authorship, 1854."
+  },
+  "settled_war_and_peace": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "War and Peace",
+    "attributedAuthor": "Leo Tolstoy",
+    "year": "1869",
+    "provenance": "Undisputed single authorship, serialized 1865-1869."
+  },
+  "settled_crime_punishment": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Crime and Punishment",
+    "attributedAuthor": "Fyodor Dostoevsky",
+    "year": "1866",
+    "provenance": "Undisputed single authorship, 1866."
+  },
+  "settled_origin_totalitarianism": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "The Origins of Totalitarianism",
+    "attributedAuthor": "Hannah Arendt",
+    "year": "1951",
+    "provenance": "Undisputed single authorship, 1951."
+  },
+  "settled_madness_civilization": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "Madness and Civilization",
+    "attributedAuthor": "Michel Foucault",
+    "year": "1961",
+    "provenance": "Undisputed single authorship, 1961."
+  },
+  "settled_gulag_archipelago": {
+    "recordType": "settled_attribution",
+    "domain": "history",
+    "canonicalTitleEn": "The Gulag Archipelago",
+    "attributedAuthor": "Aleksandr Solzhenitsyn",
+    "year": "1973",
+    "provenance": "Undisputed single authorship, 1973."
+  },
+  "settled_sapiens": {
+    "recordType": "settled_attribution",
+    "domain": "history",
+    "canonicalTitleEn": "Sapiens: A Brief History of Humankind",
+    "attributedAuthor": "Yuval Noah Harari",
+    "year": "2011",
+    "provenance": "Undisputed single authorship, Hebrew 2011 / English 2014."
+  },
+  "settled_thinking_fast_slow": {
+    "recordType": "settled_attribution",
+    "domain": "psychology",
+    "canonicalTitleEn": "Thinking, Fast and Slow",
+    "attributedAuthor": "Daniel Kahneman",
+    "year": "2011",
+    "provenance": "Undisputed single authorship, 2011."
+  },
+  "settled_cosmos": {
+    "recordType": "settled_attribution",
+    "domain": "history",
+    "canonicalTitleEn": "Cosmos",
+    "attributedAuthor": "Carl Sagan",
+    "year": "1980",
+    "provenance": "Undisputed single authorship, 1980."
+  },
+  "settled_godel_escher_bach": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "Gödel, Escher, Bach",
+    "attributedAuthor": "Douglas Hofstadter",
+    "year": "1979",
+    "provenance": "Undisputed single authorship, 1979."
+  },
+  "settled_capital_21c": {
+    "recordType": "settled_attribution",
+    "domain": "history",
+    "canonicalTitleEn": "Capital in the Twenty-First Century",
+    "attributedAuthor": "Thomas Piketty",
+    "year": "2013",
+    "provenance": "Undisputed single authorship, French 2013 / English 2014."
+  },
+  "settled_brave_new_world": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Brave New World",
+    "attributedAuthor": "Aldous Huxley",
+    "year": "1932",
+    "provenance": "Undisputed single authorship, 1932."
+  },
+  "settled_moby_dick": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Moby-Dick",
+    "attributedAuthor": "Herman Melville",
+    "year": "1851",
+    "provenance": "Undisputed single authorship, 1851."
+  },
+  "settled_ulysses": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Ulysses",
+    "attributedAuthor": "James Joyce",
+    "year": "1922",
+    "provenance": "Undisputed single authorship, 1922."
+  },
+  "settled_metamorphosis": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "The Metamorphosis",
+    "attributedAuthor": "Franz Kafka",
+    "year": "1915",
+    "provenance": "Undisputed single authorship, 1915."
+  },
+  "settled_phenomenology_spirit": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "The Phenomenology of Spirit",
+    "attributedAuthor": "Georg Wilhelm Friedrich Hegel",
+    "year": "1807",
+    "provenance": "Undisputed single authorship, 1807."
+  },
+  "settled_world_as_will": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "The World as Will and Representation",
+    "attributedAuthor": "Arthur Schopenhauer",
+    "year": "1818",
+    "provenance": "Undisputed single authorship, 1818."
+  },
+  "settled_protestant_ethic": {
+    "recordType": "settled_attribution",
+    "domain": "history",
+    "canonicalTitleEn": "The Protestant Ethic and the Spirit of Capitalism",
+    "attributedAuthor": "Max Weber",
+    "year": "1905",
+    "provenance": "Undisputed single authorship, 1904-1905."
+  },
+  "settled_theory_of_justice": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "A Theory of Justice",
+    "attributedAuthor": "John Rawls",
+    "year": "1971",
+    "provenance": "Undisputed single authorship; John Rawls, 1971."
+  },
+  "settled_road_to_serfdom": {
+    "recordType": "settled_attribution",
+    "domain": "history",
+    "canonicalTitleEn": "The Road to Serfdom",
+    "attributedAuthor": "Friedrich Hayek",
+    "year": "1944",
+    "provenance": "Undisputed single authorship; Friedrich Hayek, 1944."
+  },
+  "settled_open_society": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "The Open Society and Its Enemies",
+    "attributedAuthor": "Karl Popper",
+    "year": "1945",
+    "provenance": "Undisputed single authorship; Karl Popper, 1945."
+  },
+  "settled_tractatus": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "Tractatus Logico-Philosophicus",
+    "attributedAuthor": "Ludwig Wittgenstein",
+    "year": "1921",
+    "provenance": "Undisputed single authorship; Ludwig Wittgenstein, 1921."
+  },
+  "settled_myth_sisyphus": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "The Myth of Sisyphus",
+    "attributedAuthor": "Albert Camus",
+    "year": "1942",
+    "provenance": "Undisputed single authorship; Albert Camus, 1942."
+  },
+  "settled_nausea": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Nausea",
+    "attributedAuthor": "Jean-Paul Sartre",
+    "year": "1938",
+    "provenance": "Undisputed single authorship; Jean-Paul Sartre, 1938."
+  },
+  "settled_hundred_years": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "One Hundred Years of Solitude",
+    "attributedAuthor": "Gabriel García Márquez",
+    "year": "1967",
+    "provenance": "Undisputed single authorship; Gabriel García Márquez, 1967."
+  },
+  "settled_old_man_sea": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "The Old Man and the Sea",
+    "attributedAuthor": "Ernest Hemingway",
+    "year": "1952",
+    "provenance": "Undisputed single authorship; Ernest Hemingway, 1952."
+  },
+  "settled_beloved": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Beloved",
+    "attributedAuthor": "Toni Morrison",
+    "year": "1987",
+    "provenance": "Undisputed single authorship; Toni Morrison, 1987."
+  },
+  "settled_handmaids_tale": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "The Handmaid's Tale",
+    "attributedAuthor": "Margaret Atwood",
+    "year": "1985",
+    "provenance": "Undisputed single authorship; Margaret Atwood, 1985."
+  },
+  "settled_things_fall_apart": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Things Fall Apart",
+    "attributedAuthor": "Chinua Achebe",
+    "year": "1958",
+    "provenance": "Undisputed single authorship; Chinua Achebe, 1958."
+  },
+  "settled_midnights_children": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Midnight's Children",
+    "attributedAuthor": "Salman Rushdie",
+    "year": "1981",
+    "provenance": "Undisputed single authorship; Salman Rushdie, 1981."
+  },
+  "settled_name_of_rose": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "The Name of the Rose",
+    "attributedAuthor": "Umberto Eco",
+    "year": "1980",
+    "provenance": "Undisputed single authorship; Umberto Eco, 1980."
+  },
+  "settled_lolita": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Lolita",
+    "attributedAuthor": "Vladimir Nabokov",
+    "year": "1955",
+    "provenance": "Undisputed single authorship; Vladimir Nabokov, 1955."
+  },
+  "settled_catch22": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Catch-22",
+    "attributedAuthor": "Joseph Heller",
+    "year": "1961",
+    "provenance": "Undisputed single authorship; Joseph Heller, 1961."
+  },
+  "settled_slaughterhouse": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Slaughterhouse-Five",
+    "attributedAuthor": "Kurt Vonnegut",
+    "year": "1969",
+    "provenance": "Undisputed single authorship; Kurt Vonnegut, 1969."
+  },
+  "settled_catcher_rye": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "The Catcher in the Rye",
+    "attributedAuthor": "J.D. Salinger",
+    "year": "1951",
+    "provenance": "Undisputed single authorship; J.D. Salinger, 1951."
+  },
+  "settled_mockingbird": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "To Kill a Mockingbird",
+    "attributedAuthor": "Harper Lee",
+    "year": "1960",
+    "provenance": "Undisputed single authorship; Harper Lee, 1960."
+  },
+  "settled_invisible_man": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Invisible Man",
+    "attributedAuthor": "Ralph Ellison",
+    "year": "1952",
+    "provenance": "Undisputed single authorship; Ralph Ellison, 1952."
+  },
+  "settled_discipline_punish": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "Discipline and Punish",
+    "attributedAuthor": "Michel Foucault",
+    "year": "1975",
+    "provenance": "Undisputed single authorship; Michel Foucault, 1975."
+  },
+  "settled_orientalism": {
+    "recordType": "settled_attribution",
+    "domain": "history",
+    "canonicalTitleEn": "Orientalism",
+    "attributedAuthor": "Edward Said",
+    "year": "1978",
+    "provenance": "Undisputed single authorship; Edward Said, 1978."
+  },
+  "settled_wretched_earth": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "The Wretched of the Earth",
+    "attributedAuthor": "Frantz Fanon",
+    "year": "1961",
+    "provenance": "Undisputed single authorship; Frantz Fanon, 1961."
+  },
+  "settled_vindication_woman": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "A Vindication of the Rights of Woman",
+    "attributedAuthor": "Mary Wollstonecraft",
+    "year": "1792",
+    "provenance": "Undisputed single authorship; Mary Wollstonecraft, 1792."
+  },
+  "settled_on_liberty": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "On Liberty",
+    "attributedAuthor": "John Stuart Mill",
+    "year": "1859",
+    "provenance": "Undisputed single authorship; John Stuart Mill, 1859."
+  },
+  "settled_civilization_discontents": {
+    "recordType": "settled_attribution",
+    "domain": "psychology",
+    "canonicalTitleEn": "Civilization and Its Discontents",
+    "attributedAuthor": "Sigmund Freud",
+    "year": "1930",
+    "provenance": "Undisputed single authorship; Sigmund Freud, 1930."
+  },
+  "settled_beyond_good_evil": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "Beyond Good and Evil",
+    "attributedAuthor": "Friedrich Nietzsche",
+    "year": "1886",
+    "provenance": "Undisputed single authorship; Friedrich Nietzsche, 1886."
+  },
+  "settled_varieties_religious": {
+    "recordType": "settled_attribution",
+    "domain": "psychology",
+    "canonicalTitleEn": "The Varieties of Religious Experience",
+    "attributedAuthor": "William James",
+    "year": "1902",
+    "provenance": "Undisputed single authorship; William James, 1902."
+  },
+  "settled_room_of_ones_own": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "A Room of One's Own",
+    "attributedAuthor": "Virginia Woolf",
+    "year": "1929",
+    "provenance": "Undisputed single authorship; Virginia Woolf, 1929."
+  },
+  "settled_sound_fury": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "The Sound and the Fury",
+    "attributedAuthor": "William Faulkner",
+    "year": "1929",
+    "provenance": "Undisputed single authorship; William Faulkner, 1929."
+  },
+  "settled_paradise_lost": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Paradise Lost",
+    "attributedAuthor": "John Milton",
+    "year": "1667",
+    "provenance": "Undisputed single authorship; John Milton, 1667."
+  },
+  "settled_gullivers_travels": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Gulliver's Travels",
+    "attributedAuthor": "Jonathan Swift",
+    "year": "1726",
+    "provenance": "Undisputed single authorship; Jonathan Swift, 1726."
+  },
+  "settled_robinson_crusoe": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Robinson Crusoe",
+    "attributedAuthor": "Daniel Defoe",
+    "year": "1719",
+    "provenance": "Undisputed single authorship; Daniel Defoe, 1719."
+  },
+  "settled_zarathustra_dup": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "Ecce Homo",
+    "attributedAuthor": "Friedrich Nietzsche",
+    "year": "1888",
+    "provenance": "Undisputed single authorship; Friedrich Nietzsche, 1888."
+  },
+  "settled_gay_science": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "The Gay Science",
+    "attributedAuthor": "Friedrich Nietzsche",
+    "year": "1882",
+    "provenance": "Undisputed single authorship; Friedrich Nietzsche, 1882."
+  },
+  "settled_mrs_dalloway": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Mrs Dalloway",
+    "attributedAuthor": "Virginia Woolf",
+    "year": "1925",
+    "provenance": "Undisputed single authorship; Virginia Woolf, 1925."
+  },
+  "settled_animal_farm": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "Animal Farm",
+    "attributedAuthor": "George Orwell",
+    "year": "1945",
+    "provenance": "Undisputed single authorship; George Orwell, 1945."
+  },
+  "settled_fear_trembling": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "Fear and Trembling",
+    "attributedAuthor": "Søren Kierkegaard",
+    "year": "1843",
+    "provenance": "Undisputed single authorship; Søren Kierkegaard, 1843."
+  },
+  "settled_either_or": {
+    "recordType": "settled_attribution",
+    "domain": "philosophy",
+    "canonicalTitleEn": "Either/Or",
+    "attributedAuthor": "Søren Kierkegaard",
+    "year": "1843",
+    "provenance": "Undisputed single authorship; Søren Kierkegaard, 1843."
+  },
+  "settled_grapes_wrath": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "The Grapes of Wrath",
+    "attributedAuthor": "John Steinbeck",
+    "year": "1939",
+    "provenance": "Undisputed single authorship; John Steinbeck, 1939."
+  },
+  "settled_great_gatsby": {
+    "recordType": "settled_attribution",
+    "domain": "literature",
+    "canonicalTitleEn": "The Great Gatsby",
+    "attributedAuthor": "F. Scott Fitzgerald",
+    "year": "1925",
+    "provenance": "Undisputed single authorship; F. Scott Fitzgerald, 1925."
+  }
+}
