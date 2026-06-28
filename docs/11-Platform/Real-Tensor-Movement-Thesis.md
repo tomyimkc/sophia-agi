@@ -241,11 +241,19 @@ reported `bytes_read_ratio` and `acceptance_rate` always travel **together with*
 equivalence verdict (the `LowRamReport` rule). CI-gated, model-agnostic.
 
 **Tier 2 — Real kernel, real bytes (single Spark/GPU, no rented cluster).**
-Extend `nvfp4_gemm.py` with a **gather-on-read-set** variant: the GEMM reads only the
-selected expert/channel tiles. A/B vs the dense NVFP4 kernel, both **rooflined against
-273 GB/s** with ≥3 runs + dispersion (the `kernels/bench/roofline.py` discipline).
-**Gate:** measured bytes-read reduction at `rel_err < 5e-2` vs the dense reference —
-report **% of the Spark roofline**, never "Nx vs a strawman."
+`kernels/src/gss_gather_gemm.py` — the **gather-on-read-set NVFP4 GEMM**: the contraction
+dim K is tiled (an expert / channel group), a read-set mask selects a subset, and the GEMM
+reads+computes **only the selected tiles** (`out = x[:,K_sel] @ dequant(W_nvfp4[K_sel,:])`).
+The GPU path **gathers the selected tiles into compacted buffers and reuses the validated
+dense `nvfp4_gemm` kernel**, so the matmul is correct-by-construction and only the gather +
+accounting are new. ✅ **Built & CPU-validated** (`tests/test_gss_gather_gemm.py`): a full
+mask reproduces the dense NVFP4 GEMM exactly; a partial mask equals dense-with-non-selected-
+rows-zeroed; and `gather_gemm_bytes` proves **weight+activation traffic scales with ρ**
+(0.10 read-set → ~0.11× traffic on the m=1 decode path) — the bandwidth lever in real bytes.
+**Gate (on Blackwell):** measured bytes-read reduction at `rel_err < 5e-2` vs the reference,
+reported as **% of the device roofline**, ≥3 runs + dispersion. The fp4 roofline denominator
+exists only on Blackwell (Spark GB10 / B200); like `nvfp4_gemm.py` the kernel is CI-validated
+on CPU and its on-silicon roofline awaits a GB10/B200 — never an "Nx vs a strawman."
 
 **Tier 3 — Gated end-to-end (RunPod source-of-record / Spark capability lane).**
 Wire GSS through the low-RAM runtime (#221) and run the §4.3 loop live: dense vs GSS,
@@ -302,5 +310,8 @@ a speedup — a GO greenlights Tier 1, nothing more.
    1e-12) and `verify_drift` makes the pruned-verify error falsifiable; CI-gated
    (`tests/test_gss.py`). Within/across-run CIs in `serving/gss_feasibility.py`
    (`feasibility_with_ci`, `aggregate_runs`).
-3. **Tier 2** gather-on-read-set kernel in `kernels/src/` — the rooflined bandwidth win.
+3. **Tier 2** `kernels/src/gss_gather_gemm.py` — the gather-on-read-set NVFP4 GEMM.
+   ✅ **Built & CPU-validated** (`tests/test_gss_gather_gemm.py`): full-mask==dense,
+   traffic scales with ρ; reuses the validated `nvfp4_gemm` kernel for the matmul. The
+   on-silicon fp4 roofline awaits a Blackwell (Spark GB10 / B200).
 4. Fold the acceptance-rate meter back into `moe/adapt.py` as the online bit-depth loop.
