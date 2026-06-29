@@ -255,8 +255,7 @@ breaker is tripped (opt-in — absent state file = no canary regime = no-op; see
 artifact, it halts the autonomy switch itself.
 
 **Powered offline benchmark (`make aats-benchmark`).** The tiny demos are stress-tested on larger
-controlled batteries with uncertainty (`tools/aats_benchmark.py`, bootstrap CIs + McNemar from
-`eval_stats`). On a 180-item authorship battery (168 misattributions) spanning all four catch-quadrants,
+controlled batteries with uncertainty (`tools/aats_benchmark.py`, CIs + McNemar from `eval_stats`). On a 180-item authorship battery (168 misattributions) spanning all four catch-quadrants,
 the two distinct families each false-approve about half the misattributions (temporal ≈0.58,
 provenance ≈0.50) but **AND-consensus drops false-approval to ≈0.32** and catches significantly more bad
 items than the best single verifier (McNemar c=30, b=0, p≈0) — *and* it honestly still misses the

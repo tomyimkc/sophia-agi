@@ -5,7 +5,8 @@
 
 The harnesses (docs/research/ai-auto-approval-thesis.md §5) ship with tiny demos. This
 benchmark stress-tests their LOAD-BEARING claims on larger, controlled, deterministic
-batteries and attaches uncertainty (bootstrap CIs + McNemar) from tools/eval_stats.py:
+batteries and attaches uncertainty (CIs + McNemar) from tools/eval_stats.py — fixed-n CIs
+for rates, bootstrap CIs for inter-verifier agreement:
 
   exp 1  census        — the auto-approval envelope is stable and every member is
                          deterministic + offline + independent.
@@ -96,7 +97,7 @@ def _build_authorship_battery():
             tc = _temporal_catches(a, w)
             cover = (idx % 2 == 0)          # half of each work's wrong authors get a record
             quad = ("both" if tc and cover else "temporal-only" if tc and not cover
-                    else "prov-only" if (not tc) and cover else "neither")
+                    else "provenance-only" if (not tc) and cover else "neither")
             cid = f"bad::{a}::{w}"
             items.append({"id": cid, "text": f"{a} wrote {w}.", "gold": False})
             intended[cid] = quad
@@ -157,7 +158,7 @@ def benchmark_ensemble() -> dict:
         "bestSingle": best_single,
         "quadrantsCaught": quad_actual,
         "intendedQuadrants": {q: sum(1 for v in intended.values() if v == q)
-                              for q in ("correct", "both", "temporal-only", "prov-only", "neither")},
+                              for q in ("correct", "both", "temporal-only", "provenance-only", "neither")},
         "consensusFalseApprovalCI95": fixed_n_ci_mean(cons_miss),
         "mcnemarConsensusVsBestSingle": mc,
         "consensusCatchesMore": mc["c"] > mc["b"],
@@ -246,16 +247,17 @@ def benchmark_breaker() -> dict:
     detection_complete = True
     for name, approver in scenarios.items():
         br = CircuitBreaker()
-        br.check_canaries(approver, canaries)           # mutates breaker state
-        approved_bad = [it.id for it in canaries if (not it.expect_approve) and approver(it.text)]
-        tripped = br.tripped
-        # the breaker must trip iff at least one known-bad canary was approved
-        should_trip = len(approved_bad) > 0
-        ok = (tripped == should_trip)
+        report = br.check_canaries(approver, canaries)
+        # the breaker must trip iff a canary MISSED — a false-approval (bad approved) OR a
+        # false-rejection (good rejected); read both straight from the report, no recompute.
+        should_trip = bool(report["falseApprovals"] or report["falseRejections"])
+        ok = (br.tripped == should_trip)
         if not ok:
             detection_complete = False
-        results.append({"scenario": name, "approvedBadCount": len(approved_bad),
-                        "tripped": tripped, "shouldTrip": should_trip, "correct": ok})
+        results.append({"scenario": name,
+                        "falseApprovals": len(report["falseApprovals"]),
+                        "falseRejections": len(report["falseRejections"]),
+                        "tripped": br.tripped, "shouldTrip": should_trip, "correct": ok})
     return {"scenarios": results, "detectionComplete": detection_complete,
             "honestBound": "the breaker only catches failure modes its canary set COVERS; "
                            "a bad artifact unlike any canary is invisible to it."}
