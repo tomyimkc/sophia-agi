@@ -46,6 +46,16 @@ on:
         default: 'false'
         type: choice
         options: ['true', 'false']
+      on_pod_seeds:
+        description: 'On-pod multi-seed: comma seeds trained on ONE pod, e.g. 0,1,2,3,4,5. Overrides the single seed. Empty = single-seed (uses `seed`).'
+        required: false
+        default: ''
+      on_pod_mode:
+        description: 'With on_pod_seeds: sequential (Mode B, one GPU back-to-back, cheaper — clean signal-vs-noise) or parallel (one GPU per seed, multi-GPU pod auto-bump)'
+        required: false
+        default: 'sequential'
+        type: choice
+        options: ['sequential', 'parallel']
 
 permissions:
   contents: read
@@ -66,6 +76,8 @@ jobs:
       IN_GPU_TYPE: ${{ github.event.inputs.gpu_type }}
       IN_INTERRUPTIBLE: ${{ github.event.inputs.interruptible }}
       IN_LORA_RANK_ALLOC: ${{ github.event.inputs.lora_rank_alloc }}
+      IN_ON_POD_SEEDS: ${{ github.event.inputs.on_pod_seeds }}
+      IN_ON_POD_MODE: ${{ github.event.inputs.on_pod_mode }}
     steps:
       - uses: actions/checkout@v7
 
@@ -94,12 +106,18 @@ jobs:
         run: |
           ALLOC=""
           if [ "$IN_LORA_RANK_ALLOC" = "true" ]; then ALLOC="--lora-rank-alloc"; fi
+          # On-pod multi-seed (Mode B sequential) only when seeds requested; values stay
+          # in an array so they are never word-split / shell-injected. Empty array = the
+          # original single-seed path is unchanged.
+          SEED_ARGS=()
+          if [ -n "$IN_ON_POD_SEEDS" ]; then SEED_ARGS=(--seeds "$IN_ON_POD_SEEDS" --on-pod-mode "$IN_ON_POD_MODE"); fi
           python tools/runpod_train.py --dry-run \
             --source git --branch "${{ github.ref_name }}" \
             --model "$IN_MODEL" \
             --epochs "$IN_EPOCHS" \
             --seed "$IN_SEED" \
             --gpu-type "$IN_GPU_TYPE" \
+            "${SEED_ARGS[@]}" \
             $ALLOC
 
       - name: Launch RunPod training (rents GPU, runs over SSH, deletes pod)
@@ -110,12 +128,18 @@ jobs:
           if [ "$IN_INTERRUPTIBLE" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
           ALLOC=""
           if [ "$IN_LORA_RANK_ALLOC" = "true" ]; then ALLOC="--lora-rank-alloc"; fi
+          # On-pod multi-seed (Mode B sequential) only when seeds requested; values stay
+          # in an array so they are never word-split / shell-injected. Empty array = the
+          # original single-seed path is unchanged.
+          SEED_ARGS=()
+          if [ -n "$IN_ON_POD_SEEDS" ]; then SEED_ARGS=(--seeds "$IN_ON_POD_SEEDS" --on-pod-mode "$IN_ON_POD_MODE"); fi
           python tools/runpod_train.py --yes \
             --source git --branch "${{ github.ref_name }}" \
             --model "$IN_MODEL" \
             --epochs "$IN_EPOCHS" \
             --seed "$IN_SEED" \
             --gpu-type "$IN_GPU_TYPE" \
+            "${SEED_ARGS[@]}" \
             $INTERRUPTIBLE $ALLOC
 
       - name: Show the eval ladder + promotion report in the run log
