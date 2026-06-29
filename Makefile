@@ -12,6 +12,8 @@ claim-check:
 	python tools/eval_stats.py
 	python tools/claim_gate.py --prefix M3-pilot
 	python tools/claim_gate.py --prefix M3-transfer
+	python tools/build_tool_disclosure.py --check
+	python tools/leiden_receipt.py --check
 
 # Fast subset for the pre-commit hook (skips the ~3s shingle decontam scan).
 claim-check-fast:
