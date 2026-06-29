@@ -24,8 +24,15 @@
   ],
 
   "primaryMetric": "identity-consistency on the M3-transfer split (160 novel entities): graded(prompt) - flat(prompt), paired per case",
-  "primaryN": "TO BE COMPUTED by tools/eval_stats.py power analysis BEFORE the run (power-before-you-run pillar). Basis: existing M3-transfer pack N=160; if MDE(160) > target effect, expand the transfer pack or refuse a verdict. Do NOT invent N/MDE here — a fabricated power number would itself violate the contract.",
-  "primaryMDE": "TO BE COMPUTED (eval_stats.power / required_n). Recorded into this spec by an amended commit BEFORE the result commit, so --assert-prereg still holds.",
+  "primaryN": 160,
+  "primaryMDE": 0.1566,
+  "powerComputed": {
+    "by": "tools/eval_stats.py mde_at_n / required_n_for_mde, run via tools/run_habit_strength_transfer.py",
+    "mde_at_n_160": 0.1566,
+    "paired_rho": 0.0,
+    "note": "Conservative (paired_rho=0) MDE at the existing transfer N=160. The base-vs-adapter harness check (hst-identity-consistency-existing-pack.json) measured a +0.081 in-character delta whose paired bootstrap/CS exclude zero, but +0.081 < MDE 0.1566 -> the conservative power calc flags it UNDERPOWERED. Decision (power-before-you-run): the flagship flat-vs-graded run must EITHER expand the transfer pack toward required_n (~594 at observed effect, less under true paired_rho>0) OR pre-commit to report the paired_rho it actually achieves; a verdict on N=160 alone is refused for the primary claim.",
+    "computedBeforeResult": "These numbers are power-analysis inputs (no flat-vs-graded result exists yet); the spec's ADD commit predates any future result so claim_gate --assert-prereg still holds."
+  },
 
   "guardrails": {
     "abstentionCollapse": {

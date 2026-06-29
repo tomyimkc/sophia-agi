@@ -241,8 +241,32 @@ This experiment, plus all nine ideas, is **pre-registered** at
 (flagship HST fully specified; H1/H3/H4/H6/H7/H8/H9 registered as
 `not-yet-powered` with their falsifiable claim and required metric). The spec is
 committed *before* any run so `claim_gate --assert-prereg` can prove the criteria
-predate the data; `primaryN`/`primaryMDE` are left to-be-computed by `eval_stats`
-(inventing a power number would itself break the contract).
+predate the data.
+
+**Harness built (offline, no GPU).** Two pieces of HST exist and are tested:
+
+- **H2 graded craving** — `agent/gate_reward.py` now takes an optional `temptation`
+  (and `make_grpo_reward(temptation_fn=…)`), scaling a clean refusal across
+  `[REWARD_ABSTAIN, REWARD_ABSTAIN_MAX]`. `temptation=None` reproduces the flat
+  reward exactly, so every existing caller is unchanged; `self_check()` asserts the
+  graded invariants (monotone, strictly positive, strictly below a clean answer).
+- **H5 identity-consistency** — `agent/identity_consistency.py` scores each gated
+  answer as an in-character vote (no forbidden assertion = a vote for
+  "abstain instead of fabricate"). `tools/run_habit_strength_transfer.py` runs it on
+  the existing M3-transfer pack and computes the power analysis the spec needed.
+
+The `eval_stats` power analysis filled `primaryN=160`, `primaryMDE=0.1566`
+(conservative `paired_rho=0`). The base-vs-adapter harness check
+([`hst-identity-consistency-existing-pack.json`](../../agi-proof/benchmark-results/habit-formation/hst-identity-consistency-existing-pack.json))
+measured identity-consistency **0.9125 (base) → 0.9938 (adapter), Δ +0.081**, with a
+paired bootstrap CI and anytime-valid CS both excluding zero (McNemar p≈0.002) — **yet
+the harness flags it `underpowered`** because Δ +0.081 < MDE 0.157 under the conservative
+power assumption. That is the honest IEC verdict, and it *informs the design*: the
+flagship flat-vs-graded run must either expand the transfer pack toward the required N
+(~594 at the observed effect, fewer under the true `paired_rho>0`) or pre-commit to
+reporting the `paired_rho` it achieves. This is base-vs-adapter on one existing pack —
+**not** the pre-registered flat-vs-graded reward arms, which still need GPU training and
+≥2 judge families before any promotion. `candidateOnly: true` throughout.
 
 ---
 
