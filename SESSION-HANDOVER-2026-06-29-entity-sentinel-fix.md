@@ -62,11 +62,12 @@ python -m pytest -q tests/test_data_health_report.py tests/test_build_data_regis
 2. **Third-party entity-disjoint pack** — the only path that advances an external
    generalization claim (`hidden-review-third-party-not-run`). The adopted split is
    maintainer-authored; `canClaimAGI` stays false until a third-party hidden eval is beaten.
-3. **Registry lineage edges** (`data-lineage-graph-partial`) — *first increment landed*
-   (`b8a617dd`): the registry now has a `lineage` block (9 declared-only edges +
-   `registryVersion` anchor, 0.375 upstream coverage). Remaining: backfill upstream
-   declarations in the other 10 manifests (esp. eval surfaces → corpus version + checkpoint),
-   and have eval reports stamp the `registryVersion` they ran against.
+3. **Registry lineage edges** (`data-lineage-graph-partial`) — *advanced* (`b8a617dd`
+   graph + anchor; `6fe56966` truthful backfill → **0.5625 coverage, 13 edges**). The
+   remaining 7 edgeless assets are first-party-authored roots / scaffolds (legitimately no
+   upstream — left edgeless on purpose). Remaining work: have eval reports stamp the
+   `registryVersion` they ran against, and wire checkpoint→eval-result edges when adapters
+   are persisted.
 4. **Rebase onto `origin/main`** before opening any PR (see §0 — contended files).
 
 ## 4. Read-first
