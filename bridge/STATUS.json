@@ -1,0 +1,7 @@
+{
+  "updatedAt": "1970-01-01T00:00:00Z",
+  "host": "spark-2f2d",
+  "trainwatch": {"note": "seed placeholder - overwritten by tools/github_bridge_poll.py on first tick"},
+  "artifacts": [],
+  "pendingCommands": []
+}
