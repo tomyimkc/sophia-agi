@@ -1,0 +1,60 @@
+name: open-judge-regrade
+
+# Leiden value 5 (autonomy), acceptance criterion #2: corroborate a saved result with a judge
+# that runs on a NON-PROPRIETARY path (open weights + self-hosted inference).
+#
+# MANUAL ONLY (workflow_dispatch): this never runs on push/PR and never spends compute on its
+# own. It does NOT provision a GPU. The operator stands up a self-hosted, OpenAI-compatible
+# open-weights endpoint first (e.g. a RunPod job via GitHub Actions per the wisdom-gpu-prebaked
+# runbook — RunPod jobs go through Actions, never local SSH), then sets the repo secrets below
+# and dispatches this workflow. It is fail-closed: with the secrets unset the harness exits 2.
+#
+# Required secrets (never committed):
+#   OPEN_JUDGE_BASE_URL   e.g. https://<endpoint>/v1
+#   OPEN_JUDGE_MODEL      e.g. qwen2.5-32b-instruct
+#   OPEN_JUDGE_API_KEY    optional bearer token for the endpoint
+
+on:
+  # Manual only. No workflow inputs: every parameter is a fixed constant below, so there is
+  # zero untrusted github.event expression anywhere in this workflow (no possible
+  # GitHub Actions expression injection — CodeQL actions/code-injection). To grade a different
+  # saved generation set, edit the constants in the run step (or extend the harness to read a
+  # committed config file) rather than re-introducing free-form dispatch inputs.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regrade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Re-grade with the self-hosted open judge (fail-closed without endpoint)
+        env:
+          OPEN_JUDGE_BASE_URL: ${{ secrets.OPEN_JUDGE_BASE_URL }}
+          OPEN_JUDGE_MODEL: ${{ secrets.OPEN_JUDGE_MODEL }}
+          OPEN_JUDGE_API_KEY: ${{ secrets.OPEN_JUDGE_API_KEY }}
+          # Fixed constants (no workflow inputs) -> no untrusted expression reaches the run
+          # script. Change these here to grade a different saved generation set.
+          RESULT_PATH: training/swarm_router/theta_search_2family_result.json
+          PACK_PATH: data/search_recall/pack_third_party.jsonl
+          OUT_PATH: agi-proof/benchmark-results/wisdom-market/open-judge-regrade.json
+        run: |
+          python tools/run_open_judge_regrade.py \
+            "$RESULT_PATH" \
+            --pack "$PACK_PATH" \
+            --out "$OUT_PATH"
+
+      - name: Upload re-grade receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: open-judge-regrade-receipt
+          path: agi-proof/benchmark-results/wisdom-market/open-judge-regrade.json
+          if-no-files-found: ignore

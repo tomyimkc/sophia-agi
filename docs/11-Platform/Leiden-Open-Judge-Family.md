@@ -39,9 +39,25 @@ agreement reported (Cohen κ ≥ 0.40 or a CI excluding zero).
 ## Remaining acceptance criteria
 
 1. ✅ A self-hostable open judge backend + an openness registry, with offline tests.
-2. ⬜ A headline result re-graded with the open judge as one of the ≥2 families, κ reported.
+2. ◐ Re-grade harness + manual workflow landed (`tools/run_open_judge_regrade.py`,
+   `.github/workflows/open-judge-regrade.yml`), tested offline with an injected transport.
+   **Still required:** an actual run against a self-hosted open endpoint with κ reported.
 3. ✅ The receipt records judge openness (`judge_independence` in `leiden-compliance.json`).
-4. ⬜ A failure-ledger entry opened/closed to reflect the change in reproducibility posture.
+4. ✅ A failure-ledger entry opened (`open-judge-non-proprietary-validation-2026-06-29`); it
+   will be **closed** when criterion 2's real run lands.
 
-Until criteria 2 and 4 hold, the autonomous-direction value stays **partial** in the compliance
-receipt and this gap stays `in_progress`.
+Until criterion 2's real run lands, the autonomous-direction value stays **partial** in the
+compliance receipt and this gap stays `in_progress`.
+
+## The remaining run (operator step — metered, gated)
+
+The real non-proprietary corroboration needs a GPU and therefore is **not** done automatically:
+
+1. Stand up a self-hosted, OpenAI-compatible **open-weights** endpoint (per the
+   `wisdom-gpu-prebaked` runbook; RunPod jobs go through GitHub Actions, never local SSH).
+2. Set repo secrets `OPEN_JUDGE_BASE_URL`, `OPEN_JUDGE_MODEL` (and optional
+   `OPEN_JUDGE_API_KEY`).
+3. Dispatch the `open-judge-regrade` workflow on a saved generation set.
+4. Review the emitted receipt (delta + CI, κ vs the local heuristic families,
+   `non_proprietary_path: true`); if it corroborates, close the ledger entry and upgrade the
+   autonomy value to `operationalized`.
