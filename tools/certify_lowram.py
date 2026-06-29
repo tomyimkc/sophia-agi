@@ -271,7 +271,7 @@ def load_merged_model(base_model: str, adapter_dir: Path, *, dtype_str: str,
         # silently skipped, etc.). Discard it and manual-merge a CLEAN reload instead.
         import gc
         base = None
-        peft_model = None
+        del peft_model        # drop the contaminated ref so gc reclaims it
         gc.collect()
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
@@ -299,7 +299,7 @@ def is_served_param(name: str, *, suffixes: "tuple[str, ...]" = SERVED_LINEAR_SU
     (``...mlp.experts.down_proj`` / ``gate_up_proj``, which have no ``.weight`` child and are
     invisible to a ``type=='Linear'`` scan — the bug that left OLMoE's experts in bf16). Excludes
     embeddings, norms, lm_head, the MoE router gate (``mlp.gate``), and any LoRA tensors."""
-    if any(x in name for x in _QUANT_EXCLUDE) or "lora" in name.lower():
+    if any(x in name.lower() for x in _QUANT_EXCLUDE) or "lora" in name.lower():
         return False
     # Strip PEFT wrapper segments (a half-wrapped model relocates weights under `.base_layer`),
     # so matching works whether or not any wrapping survived the load.
