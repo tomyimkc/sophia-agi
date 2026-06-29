@@ -1,0 +1,36 @@
+{
+  "benchmark": "rlvr-step",
+  "task": "step",
+  "model": "Qwen/Qwen2.5-Math-7B",
+  "visibility": "public-aggregate",
+  "claimStatus": "Open — capability claim requires a gated run (aggregate._is_validated); this artifact records the training config only",
+  "config": {
+    "vllm": "none",
+    "quant": "bf16",
+    "epochs": 1.0,
+    "lr": 1e-05,
+    "beta": 0.04,
+    "num_generations": 8,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ]
+  },
+  "trainCases": 164,
+  "evalCases": 60,
+  "trainSealed": "aef7296970bada5c",
+  "evalSealed": "d4f2f56ae0e5ae00",
+  "baseModelLicense": "glm-4-9b License (NOT MIT; commercial use needs Zhipu registration)",
+  "rewardSelected": "verifier",
+  "collapse": {
+    "steps": 82,
+    "meanGroupStd": 0.291495,
+    "finalGroupStd": 0.181895,
+    "collapsed": false
+  }
+}
