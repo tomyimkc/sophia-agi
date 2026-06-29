@@ -63,8 +63,49 @@ COWARDICE_HARM_FLOOR = 0.50    # psi floor to treat a fear-driven hold as escala
 # Critical deception ids that are genuine prohibitions courage must NOT override.
 _HARD_BLOCK_SIGNALS = {"source_laundering_intent", "reward_or_gate_tampering", "sandbagging_intent"}
 
+# Courage-as-jailbreak: explicit framing that asks to override/ignore a safety gate.
+# Caught locally so courage never endorses a gate-bypass even when the shared
+# deception/constitution gates classify the meta-instruction as benign.
+_GATE_OVERRIDE_RE = re.compile(
+    r"\b(?:ignore|override|bypass|disregard|disable|circumvent|turn off|switch off|suspend)\b"
+    r".{0,40}\b(?:constitution|conscience|gate|guardrail|guard rail|safety|verifier|policy|rule[s]?|threshold)\b",
+    re.I,
+)
+
 _PROSOCIAL_RE = re.compile(r"\b(?:protect|defend|stand up for|speak up|shield|rescue|the vulnerable|the weak|whistleblow|expose (?:the )?(?:fraud|corruption|abuse))\b", re.I)
 _HARM_RE = re.compile(r"\b(?:harm|injustice|wrong|abuse|corruption|fraud|danger|suffer|victim|cover[- ]?up|silence|complicit)\b", re.I)
+
+
+def _hard_prohibited(text: str, *, confidence: float, can_claim_agi: bool) -> bool:
+    """Defer to Sophia's deterministic hard gates so courage NEVER endorses a
+    hard-prohibited claim (AGI overclaim, forbidden/PROTECTED attribution, source
+    laundering, gate tampering) on ANY surface — standalone tool, skill, or direct
+    call — not only inside conscience_check. The fact gate is deliberately NOT
+    consulted here (it routes synthetic/unverified text to retrieve, which is a
+    verification question, not a prohibition); only the cheap deterministic
+    prohibition gates are. Fails open to the other guards on any gate error."""
+    if _GATE_OVERRIDE_RE.search(text or ""):
+        return True
+    try:
+        from agent.constitutional_gate import check_constitution
+        if check_constitution(text, context={"canClaimAGI": can_claim_agi}).to_dict().get("verdict") == "rejected":
+            return True
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        from agent.constitutional_classifier import classify_constitutional
+        if classify_constitutional(text).to_dict().get("verdict") == "block":
+            return True
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        from agent.deception_signals import detect_deception
+        dec = detect_deception(text, context={"confidence": confidence})
+        if any(s.id in _HARD_BLOCK_SIGNALS for s in dec.signals):
+            return True
+    except Exception:  # noqa: BLE001
+        pass
+    return False
 
 
 def _clip(x: float, lo: float = 0.0, hi: float = 1.0) -> float:
@@ -169,15 +210,12 @@ def assess_courage(
 
     cq = round(lam * (1.0 + gamma) + psi - (theta + phi), 4)
 
-    # A hard prohibition is respected first: courage is not recklessness.
-    block_respected = bool(context.get("hardBlock", False))
-    if not block_respected:
-        try:  # cheap, curated set only — never a broad fact gate
-            from agent.deception_signals import detect_deception
-            dec = detect_deception(text, context={"confidence": lam})
-            block_respected = any(s.id in _HARD_BLOCK_SIGNALS for s in dec.signals)
-        except Exception:  # noqa: BLE001 - fail open to the normal courage path
-            block_respected = False
+    # A hard prohibition is respected first: courage is not recklessness, and it
+    # must not become a jailbreak. Defers to Sophia's deterministic prohibition
+    # gates so this holds on every surface, not only inside conscience_check.
+    block_respected = bool(context.get("hardBlock", False)) or _hard_prohibited(
+        text, confidence=lam, can_claim_agi=bool(context.get("canClaimAGI", False))
+    )
 
     fear_attr = {
         "epistemicRisk": theta,
