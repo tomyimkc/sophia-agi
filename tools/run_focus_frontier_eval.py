@@ -335,6 +335,143 @@ def run_mock(*, seed: int = 0) -> dict:
     }
 
 
+# --------------------------------------------------------------------------- #
+# Real-model arm (model-gated). A subject model answers each task from each arm's
+# packed context; >= 2 INDEPENDENT judge families label solved/unsolved against the
+# known key fact (judge != subject). Tokens = the deterministic packed-payload size
+# (the efficiency axis); SOLVED = whether a real model produced the key fact.
+# --------------------------------------------------------------------------- #
+
+# Pre-registered power floor: below this many items the result is an UNDERPOWERED
+# PILOT (MDE >> 0.10), so it can never be a GO no matter how clean the direction.
+MIN_ITEMS_FOR_POWER = 100
+MIN_SEEDS = 3
+
+
+def _task_question(task: dict) -> str:
+    return (f"Using ONLY the context above, explain: {task['goal']}. "
+            "If the context does not contain the answer, reply exactly: INSUFFICIENT CONTEXT.")
+
+
+def _judge_label(judge_complete, question: str, key: str, answer: str) -> str:
+    sysmsg = ("You are a strict grader for a context-retrieval test. Given a QUESTION, the "
+              "REQUIRED FACT a correct answer must convey, and a candidate ANSWER, reply with "
+              "exactly one word: SOLVED if the ANSWER conveys the required fact, or UNSOLVED "
+              "otherwise (including if it says the context is insufficient).")
+    user = f"QUESTION: {question}\nREQUIRED FACT: {key}\nANSWER: {answer}\n\nVerdict (SOLVED or UNSOLVED):"
+    out = (judge_complete(sysmsg, user) or "").strip().upper()
+    return "solved" if out.startswith("SOLVED") or ("SOLVED" in out and "UNSOLVED" not in out) else "unsolved"
+
+
+def run_real(subject, subject_id: str, judges: list, *, seeds: int = 1, cache=None) -> dict:
+    """subject: complete(system,user)->str. judges: list of (family_id, complete). Returns a report.
+
+    A task is SOLVED only on judge CONSENSUS (all judges say solved) — conservative /
+    fail-closed. Inter-judge agreement (kappa/AC1) is reported across the first two
+    families. NO promotion happens here; the gate decides, and a small battery stays
+    NO-GO (underpowered) by the pre-registered power floor.
+    """
+    from tools.eval_stats import cohen_kappa, gwet_ac1
+
+    tasks = build_battery()
+    families = [fid for fid, _ in judges]
+    distinct_families = len({f.split(":")[0] if ":" in f else f for f in families} | {subject_id.split(":")[0]})
+    judge_families = len(set(families))
+
+    arm_rows: dict[str, list] = {a: [] for a in ARMS}
+    j0_labels: list[str] = []
+    j1_labels: list[str] = []
+
+    def _ask(role, model, system, user):
+        if cache is not None:
+            ckey = f"{role}|{model}|{hash((system, user)) & 0xffffffff}"
+            if ckey in cache:
+                return cache[ckey]
+        out = (subject if role == "subject" else dict(judges)[model])(system, user)
+        if cache is not None:
+            cache[ckey] = out
+        return out
+
+    for seed in range(seeds):
+        for t in tasks:
+            q = _task_question(t)
+            key = next((s["text"] for s in t["segments"] if s.get("key")), "")
+            for arm in ARMS:
+                packed = _pack(arm, t)
+                ctx = packed["text"]
+                subj_sys = ("Answer the user's question using ONLY the provided context. Be concise. "
+                            "If the context lacks the answer, reply exactly: INSUFFICIENT CONTEXT.")
+                answer = _ask("subject", subject_id, subj_sys, f"CONTEXT:\n{ctx}\n\n{q}")
+                votes = []
+                for fid, jfn in judges:
+                    lbl = _judge_label(jfn, q, key, answer)
+                    votes.append(lbl)
+                solved = all(v == "solved" for v in votes)
+                if arm == "prosoche-anchored" and len(votes) >= 2:
+                    j0_labels.append(votes[0]); j1_labels.append(votes[1])
+                arm_rows[arm].append({"id": f"{t['id']}#s{seed}", "tokens": packed["tokens"],
+                                      "solved": solved, "keptSafety": packed["keptSafety"],
+                                      "goalShift": t["goalShift"], "votes": votes})
+
+    def _arm_summary(arm):
+        rows = arm_rows[arm]
+        n = len(rows); ns = sum(1 for r in rows if r["solved"]); tot = sum(r["tokens"] for r in rows)
+        return {"arm": arm, "n": n, "solvedRate": round(ns / n, 4) if n else 0.0,
+                "tokensPerSolved": round(tot / ns, 2) if ns else None, "totalTokens": tot,
+                "safetyPrunedCount": sum(1 for r in rows if not r["keptSafety"]),
+                "goalShiftSolvedRate": _subset_solved_rate(rows, True), "_rows": rows}
+
+    arms = {a: _arm_summary(a) for a in ARMS}
+    anchored, pp = arms["prosoche-anchored"], arms["priority-packed"]
+    primary = _paired_token_delta(anchored, pp, seed=0)
+    kappa = cohen_kappa(j0_labels, j1_labels)
+    ac1 = gwet_ac1(j0_labels, j1_labels)
+    success_held = anchored["solvedRate"] >= pp["solvedRate"] - 0.02
+    antifix_held = (anchored["goalShiftSolvedRate"] or 0.0) >= (pp["goalShiftSolvedRate"] or 0.0)
+    safety_pruned = anchored["safetyPrunedCount"]
+    n_items = anchored["n"]
+
+    verdict = gate_verdict(baseline_is_real=True, judge_families=judge_families, delta=primary,
+                           success_guardrail_held=success_held, antifixation_held=antifix_held,
+                           safety_pruned=safety_pruned)
+    failures = list(verdict["criticalFailures"])
+    # Pre-registered power + replication floors: a small single/low-seed battery is an
+    # UNDERPOWERED PILOT, never a GO — surfaced honestly, never tuned away.
+    if n_items < MIN_ITEMS_FOR_POWER:
+        failures.append(f"underpowered: N={n_items} < {MIN_ITEMS_FOR_POWER} items (MDE >> 0.10); this is a PILOT, not a powered result")
+    if seeds < MIN_SEEDS:
+        failures.append(f"insufficient_seeds: {seeds} < {MIN_SEEDS} seeds")
+    kappa_ok = kappa is not None and kappa >= 0.40
+    if not kappa_ok:
+        failures.append(f"judge_agreement: Cohen kappa={kappa} (AC1={ac1}) does not clear >= 0.40 (or is undefined on this small/degenerate label set)")
+    failures.append("no_decontam_no_private_split: this author battery is not decontaminated against the anchor corpus and has no held-out private split")
+    strip = lambda d: {k: v for k, v in d.items() if not k.startswith("_")}  # noqa: E731
+    return {
+        "mode": "real",
+        "status": "pilot",
+        "subject": subject_id,
+        "judges": families,
+        "judgeFamilies": judge_families,
+        "seeds": seeds,
+        "arms": {a: strip(arms[a]) for a in ARMS},
+        "primaryDelta": primary,
+        "interJudge": {"cohenKappa": kappa, "gwetAC1": ac1,
+                       "n": len(j0_labels), "note": "across the first two judge families on the anchored arm"},
+        "guardrails": {"successNonInferior": success_held, "antiFixationHeld": antifix_held,
+                       "safetyPruned": safety_pruned},
+        "verdict": "NO-GO" if failures else "GO",
+        "go": not failures,
+        "canClaimAGI": False,
+        "criticalFailures": failures,
+        "boundary": (
+            "REAL pilot: a live subject model + >= 2 independent judge families, but on a small, "
+            "non-decontaminated author battery -> UNDERPOWERED. Candidate signal only; the gate "
+            "stays NO-GO until a decontaminated, powered (N >= 100), >= 3-seed run clears every "
+            "guardrail with a delta CI excluding 0. canClaimAGI:false."
+        ),
+    }
+
+
 def build_pending_artifact() -> dict:
     """Committed not-run / NO-GO artifact. The per-arm token MECHANISM is real and
     deterministic; solved/on-goal labels are a proxy (not >= 2 judges) and there is no
@@ -378,14 +515,77 @@ def build_pending_artifact() -> dict:
     }
 
 
+def _env_judges():
+    """Build the judge panel from env. Model ids are read from the environment so no
+    specific proprietary model string is ever hardcoded in (or committed via) source;
+    the committed artifact records the FAMILY label (e.g. 'llmhub:anthropic'), not a
+    version. Two distinct families are required for the >= 2-family contract.
+
+    Env: FOCUS_JUDGE_A_MODEL / FOCUS_JUDGE_A_FAMILY (frontier judge),
+         FOCUS_JUDGE_B_MODEL (default 'qwen-flash') / FOCUS_JUDGE_B_FAMILY (default 'qwen').
+    """
+    import os
+
+    from agent.llmhub_llm import make_complete as hub_complete
+
+    ja_model = os.environ.get("FOCUS_JUDGE_A_MODEL")
+    ja_family = os.environ.get("FOCUS_JUDGE_A_FAMILY", "anthropic")
+    jb_model = os.environ.get("FOCUS_JUDGE_B_MODEL", "qwen-flash")
+    jb_family = os.environ.get("FOCUS_JUDGE_B_FAMILY", "qwen")
+    if not ja_model:
+        return None
+    return [
+        (f"llmhub:{ja_family}", hub_complete(model=ja_model, max_tokens=8)),
+        (f"llmhub:{jb_family}", hub_complete(model=jb_model, max_tokens=8)),
+    ]
+
+
+def _run_real_from_env(args) -> int:
+    """Build the real panel from env keys/models and run the pilot. Keys AND specific
+    model ids are read from the environment ONLY; they are never written to disk,
+    printed, or hardcoded in source."""
+    import os
+
+    from agent.deepseek_llm import make_complete as ds_complete
+
+    if not (os.environ.get("DEEPSEEK_API_KEY") and os.environ.get("LLMHUB_API_KEY")):
+        print("::error:: need DEEPSEEK_API_KEY (subject) and LLMHUB_API_KEY (judges) in the environment.",
+              file=sys.stderr)
+        return 2
+    judges = _env_judges()
+    if judges is None:
+        print("::error:: set FOCUS_JUDGE_A_MODEL (the frontier judge model id) in the environment.",
+              file=sys.stderr)
+        return 2
+    subject_model = os.environ.get("FOCUS_SUBJECT_MODEL", "deepseek-chat")
+    subject_id = f"deepseek:{subject_model}"
+    subject = ds_complete(model=subject_model, max_tokens=160)
+    report = run_real(subject, subject_id, judges, seeds=args.seeds, cache={})
+    out = json.dumps(report, indent=2, ensure_ascii=False, sort_keys=True)
+    if args.out:
+        Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.out).write_text(out + "\n", encoding="utf-8")
+        print(f"wrote {args.out}  verdict={report['verdict']}", file=sys.stderr)
+    else:
+        print(out)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--mock", action="store_true", help="run the 3 arms with the survival proxy and print metrics")
     ap.add_argument("--write", action="store_true", help="write the committed PENDING artifact")
     ap.add_argument("--check", action="store_true", help="verify the committed artifact matches a fresh build")
     ap.add_argument("--model", default="", help="real subject model spec — refused offline (stays PENDING)")
+    ap.add_argument("--real", action="store_true",
+                    help="run the REAL panel (subject=DeepSeek, judges=llmhub claude+qwen) from env keys")
+    ap.add_argument("--seeds", type=int, default=1, help="(--real) number of passes")
+    ap.add_argument("--out", default="", help="(--real) write the pilot report JSON here")
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args(argv)
+
+    if args.real:
+        return _run_real_from_env(args)
 
     if args.model:
         print("::error:: --model (a real 3-arm run) is model-gated and not available offline; the "

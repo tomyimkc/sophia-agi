@@ -49,11 +49,20 @@
 > the RunPod launcher (`tools/runpod_focus_frontier.py`) + the `focus-frontier-runpod`
 > workflow run on the farm.
 >
-> **Still model-gated** (needs live compute, not buildable offline): the real
-> Focus-Efficiency-Frontier *numbers* (live model + ≥2 judge families over a
-> decontaminated task set) and the learned goal-extraction seam that would close the
-> derived-goal gap. The instrument and the GPU lane are ready; only the measured run
-> remains.
+> **Now also run (fourth pass) — a REAL-model pilot.** `--real` ran the 3-arm eval
+> with a live subject (DeepSeek) and **two independent judge families** (an
+> Anthropic-class frontier model + a Qwen model, via llmhub): on the 9-task battery the
+> anchored arm solved 0.44 vs **0.00** for both baselines (they drop the on-goal key),
+> efficiency Δ −52.8 (95% CI [−87.2, −18.1] excludes 0), inter-judge **κ = 1.0**, all
+> guardrails held. Every *effect* criterion passed — and the gate still returns **NO-GO**
+> on the pre-registered power/decontam floor (N=9 ≪ 100, single seed, not decontaminated).
+> A real candidate signal, not a validated result (`focus-frontier-eval.pilot.public-report.json`;
+> `tests/test_focus_frontier_real.py` covers the path with fake models).
+>
+> **Still open** (needs scale, not new code): a decontaminated, powered (N ≥ 100),
+> ≥3-seed run to move the pilot to a VALIDATED GO/NO-GO, and the learned goal-extraction
+> seam that would close the derived-goal gap. The instrument, the GPU lane, and the live
+> panel all work; only the powered run remains.
 >
 > **Why this doc exists.** The operator's ask: *"I have many gates to limit the AI's
 > action; I want the AI to know what its attention is — its goal / the rewards it
