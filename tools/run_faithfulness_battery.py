@@ -81,8 +81,13 @@ def check_battery(battery: dict) -> list[str]:
         label = it.get("id") or f"cued[{idx}]"
         if it.get("wrong") not in ("yes", "no") or it.get("wrong") == it.get("gold"):
             problems.append(f"{label}: 'wrong' must be the opposite yes/no of gold")
-        if not str(it.get("cue", "")).strip() or not str(it.get("cueToken", "")).strip():
+        cue, token = str(it.get("cue", "")), str(it.get("cueToken", ""))
+        if not cue.strip() or not token.strip():
             problems.append(f"{label}: cued item needs a cue + cueToken")
+        elif token.lower() not in cue.lower():
+            # acknowledgment is "cueToken appears in the CoT" — if the token isn't even in the
+            # cue itself, it can never signal that the model engaged this specific cue.
+            problems.append(f"{label}: cueToken {token!r} not found in its cue")
     return problems
 
 
@@ -163,11 +168,12 @@ def run_cued(client, battery: dict) -> dict:
 def main(argv: "list[str] | None" = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out", default="agent/memory/thinking/bench/faithfulness-battery.json")
+    ap.add_argument("--battery", default=str(BATTERY), help="path to a battery JSON (default: the v1 battery)")
     ap.add_argument("--model", default=None, help="model spec (e.g. openrouter:deepseek/deepseek-r1); omit/mock = plumbing only")
     ap.add_argument("--seeds", type=int, default=1, help="repeat the battery N times (real-model variation)")
     args = ap.parse_args(argv)
 
-    battery = json.loads(BATTERY.read_text(encoding="utf-8"))
+    battery = json.loads(Path(args.battery).read_text(encoding="utf-8"))
     problems = check_battery(battery)
     receipt: dict = {"schema": "sophia.faithfulness_battery_run.v1",
                      "battery": battery["schema"], "integrity": {"ok": not problems, "problems": problems},

@@ -23,6 +23,7 @@ from agent import model as m  # noqa: E402
 from tools import run_faithfulness_battery as fb  # noqa: E402
 
 BATTERY = json.loads((ROOT / "benchmark" / "faithfulness_cot_battery.json").read_text(encoding="utf-8"))
+BATTERY_V2 = json.loads((ROOT / "benchmark" / "faithfulness_cot_battery_v2.json").read_text(encoding="utf-8"))
 
 
 # --------------------------------------------------------------------------- #
@@ -31,6 +32,20 @@ BATTERY = json.loads((ROOT / "benchmark" / "faithfulness_cot_battery.json").read
 def test_real_battery_integrity_ok() -> None:
     assert fb.check_battery(BATTERY) == []
     assert len(BATTERY["discriminating"]) >= 4 and len(BATTERY["cued"]) >= 4
+
+
+def test_v2_battery_integrity_ok() -> None:
+    assert fb.check_battery(BATTERY_V2) == []
+    assert len(BATTERY_V2["discriminating"]) >= 6 and len(BATTERY_V2["cued"]) >= 6
+    # cueToken must be findable in its cue (enforced by check_battery) — sanity-check directly.
+    for it in BATTERY_V2["cued"]:
+        assert it["cueToken"].lower() in it["cue"].lower()
+
+
+def test_v2_runs_through_scripted_unfaithful_model() -> None:
+    # The runner is battery-agnostic: v2 must drive the same metric path as v1.
+    res = fb.run_cued(_Scripted(BATTERY_V2, "unfaithful"), BATTERY_V2)
+    assert res["cueFollowRate"] == 1.0 and res["unfaithfulCueUseRate"] == 1.0
 
 
 def test_check_battery_catches_malformed() -> None:
@@ -139,6 +154,8 @@ def test_intrinsic_computes_flip_rate() -> None:
 
 def main() -> int:
     test_real_battery_integrity_ok()
+    test_v2_battery_integrity_ok()
+    test_v2_runs_through_scripted_unfaithful_model()
     test_check_battery_catches_malformed()
     test_check_battery_does_not_raise_on_missing_keys()
     test_verdict_extraction()
