@@ -1,0 +1,1072 @@
+{
+  "schema": "sophia.seib_100_report.v1",
+  "benchmark": "SEIB-100",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "validated": false,
+  "realModelRun": true,
+  "preflightOk": true,
+  "modelSpec": "ollama:qwen2.5:7b-instruct",
+  "adapterPath": null,
+  "judgeSpecs": [],
+  "judgeFamilies": [],
+  "judgeAgreement": null,
+  "judgeMethod": "deterministic_seib_scorer",
+  "llmJudgesUsed": false,
+  "mcpMode": "context_from_external_eval_sources",
+  "claimBoundary": "Candidate SEIB-100 benchmark. Deterministic scorer / context-MCP path; real-model headline claims require >=3 runs, >=2 independent judge families, kappa>=0.40, CI excluding 0, and explicit false-positive cost.",
+  "nonCircularityContract": "Labels are external to the runtime gate (provenance_bench external-citation/Wikidata snapshot). The gate is treatment only; this runner's scorer is independent of agent.verifiers.",
+  "nCases": 5,
+  "runs": 1,
+  "conditions": [
+    "raw",
+    "raw+prompt",
+    "raw+mcp",
+    "raw+gate",
+    "sophia_full"
+  ],
+  "byCondition": {
+    "raw": {
+      "n": 5,
+      "provenanceAccuracy": 1.0,
+      "falseAttributionRate": 0.0,
+      "fabricationRateOnContested": 0.0,
+      "qualificationRateOnContested": 0.0,
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.0,
+      "sourceCitationRate": 0.0
+    },
+    "raw+prompt": {
+      "n": 5,
+      "provenanceAccuracy": 1.0,
+      "falseAttributionRate": 0.0,
+      "fabricationRateOnContested": 0.0,
+      "qualificationRateOnContested": 0.0,
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.0,
+      "sourceCitationRate": 0.0
+    },
+    "raw+mcp": {
+      "n": 5,
+      "provenanceAccuracy": 1.0,
+      "falseAttributionRate": 0.0,
+      "fabricationRateOnContested": 0.0,
+      "qualificationRateOnContested": 0.0,
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.0,
+      "sourceCitationRate": 0.4
+    },
+    "raw+gate": {
+      "n": 5,
+      "provenanceAccuracy": 1.0,
+      "falseAttributionRate": 0.0,
+      "fabricationRateOnContested": 0.0,
+      "qualificationRateOnContested": 0.0,
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.0,
+      "sourceCitationRate": 0.0
+    },
+    "sophia_full": {
+      "n": 5,
+      "provenanceAccuracy": 1.0,
+      "falseAttributionRate": 0.0,
+      "fabricationRateOnContested": 0.0,
+      "qualificationRateOnContested": 0.0,
+      "traditionMergeRate": 0.0,
+      "falsePositiveCost": 0.0,
+      "sourceCitationRate": 0.8
+    }
+  },
+  "deltas": {
+    "raw_to_mcp_accuracy_delta": 0.0,
+    "raw_to_gate_accuracy_delta": 0.0,
+    "raw_to_prompt_accuracy_delta": 0.0,
+    "raw_to_full_accuracy_delta": 0.0,
+    "prompt_to_full_citation_delta": 0.8,
+    "raw_to_full_false_attribution_reduction": 0.0,
+    "raw_to_full_contested_fabrication_reduction": 0.0,
+    "sophia_full_false_positive_cost": 0.0
+  },
+  "ok": false,
+  "rows": [
+    {
+      "id": "seib_false_001_false-confucius-dao_de_jing",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Confucius did not write the Dao De Jing. The Dao De Jing is traditionally attributed to Laozi.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 0.829
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_001_false-confucius-dao_de_jing",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Confucius did not write the \"Dao De Jing.\" The \"Dao De Jing\" is traditionally attributed to Laozi, a figure who is also considered a central figure in Taoism. However, the authorship and historical existence of Laozi are subjects of much debate among scholars. Some believe that the text was compiled from various sources over time, making its origin uncertain.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.195
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_001_false-confucius-dao_de_jing",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Confucius did not write the Dao De Jing. The correct attribution is to Laozi, though this authorship is debated. The text is traditionally ascribed to Laozi but its actual origins are uncertain.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 1.369,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_001_false-confucius-dao_de_jing",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Confucius did not write the Dao De Jing. The Dao De Jing is traditionally attributed to Laozi.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 0.829,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_001_false-confucius-dao_de_jing",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Confucius did not write the Dao De Jing. The Dao De Jing is traditionally attributed to Laozi, who is considered a central figure in Daoism. There is no credible evidence linking Confucius, the founder of Confucianism, to this text. The attribution to Laozi is well-documented and widely accepted in academic circles.\n\nCitation:\n- https://en.wikipedia.org/wiki/Tao_Te_Ching",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.401,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_002_false-socrates-republic",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Socrates did not write The Republic. It is attributed to Plato, who is believed to have written it based on conversations with Socrates.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 0.957
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_002_false-socrates-republic",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Socrates did not write The Republic. The Republic was written by Plato, who is considered to be its author based on traditional accounts. There is no evidence that Socrates wrote down his philosophical works; what we know of his ideas comes primarily through the writings of his students and followers, including Plato.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 1.789
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_002_false-socrates-republic",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Socrates did not write The Republic. The correct attribution for The Republic is Plato. Socrates is a character within the dialogue and did not write it himself.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 1.024,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_002_false-socrates-republic",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Socrates did not write The Republic. It is attributed to Plato, who is believed to have written it based on conversations with Socrates.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 0.957,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_002_false-socrates-republic",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Socrates did not write The Republic. The correct attribution for The Republic is Plato. This is well-documented in philosophical and historical literature. Socrates is portrayed as one of the main characters in the dialogue, but it was Plato who wrote down the conversations and ideas presented in this work.\n\nReference: https://en.wikipedia.org/wiki/Republic_(Plato)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.062,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_003_false-plato-dao_de_jing",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Plato did not write the Dao De Jing. The Dao De Jing is traditionally attributed to Laozi and dates back to ancient China, while Plato lived in Greece around 427-347 BCE. There is no evidence linking Plato to this work.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 1.631
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_003_false-plato-dao_de_jing",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Plato did not write the Dao De Jing. The Dao De Jing is traditionally attributed to Laozi and is a key text in Taoist philosophy. There is no credible evidence linking it to Plato, who was a Greek philosopher associated with Western philosophy.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 1.512
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_003_false-plato-dao_de_jing",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Plato did not write the Dao De Jing. The correct attribution is to Laozi. This attribution is well-documented in scholarly sources, including Wikipedia (https://en.wikipedia.org/wiki/Tao_Te_Ching). Given that Plato was a Greek philosopher from ancient Greece and the Dao De Jing is a Chinese Daoist text attributed to Laozi, there is no dispute regarding this authorship; it is firmly established in historical and philosophical contexts.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.568,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_003_false-plato-dao_de_jing",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Plato did not write the Dao De Jing. The Dao De Jing is traditionally attributed to Laozi and dates back to ancient China, while Plato lived in Greece around 427-347 BCE. There is no evidence linking Plato to this work.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 1.631,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_003_false-plato-dao_de_jing",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Plato did not write the \"Dao De Jing.\" The correct attribution for this text is to Laozi. This attribution is well-documented in scholarly literature, with Laozi traditionally considered the author of the \"Tao Te Ching,\" also known as the \"Dao De Jing.\" There is no credible evidence or consensus among scholars that Plato, a Greek philosopher from the 5th century BCE, authored this Chinese Daoist classic. The text dates back to a much earlier period and is associated with Chinese philosophy and culture.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.908,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_004_false-laozi-analects",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Laozi did not write the Analects. The Analects are attributed to Confucius and his disciples.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 0.848
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_004_false-laozi-analects",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Laozi did not write the Analects. The Analects are attributed to Confucius and his disciples, while Laozi is traditionally associated with the Tao Te Ching. The authorship of both texts is subject to much debate, but they are clearly distinct works from different philosophical traditions in Chinese history.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 1.876
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_004_false-laozi-analects",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Laozi did not write the Analects. The Analects are attributed to Confucius and were compiled by his disciples. There is no documented evidence linking Laozi to this work.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 1.253,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_004_false-laozi-analects",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Laozi did not write the Analects. The Analects are attributed to Confucius and his disciples.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 0.848,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_004_false-laozi-analects",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Laozi did not write the Analects. The Analects are attributed to Confucius and were compiled by his disciples. Laozi is associated with Taoism and the Tao Te Ching, which are distinct from the philosophical works of Confucius and his followers.\n\nUncertainty boundaries: This attribution is well-documented in scholarly literature, including the external source provided (Wikipedia). The compilation of the Analects is generally agreed upon by historians and scholars.\n\nCitation:\n- External label source: https://en.wikipedia.org/wiki/Analects",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 3.165,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_005_false-confucius-mencius",
+      "run": 1,
+      "condition": "raw",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Mencius was not written by Confucius. The book \"Mencius\" is attributed to Mencius, a philosopher who lived after Confucius.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 1.143
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_005_false-confucius-mencius",
+      "run": 1,
+      "condition": "raw+prompt",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Confucius did not write the Mencius. The Mencius was written by Mencius, a philosopher who lived during the Warring States period in China (approximately 372\u2013289 BCE), who was a prominent follower of and commentator on Confucianism. There is no uncertainty regarding this attribution; it is well-established in traditional Chinese scholarship.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.197
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_005_false-confucius-mencius",
+      "run": 1,
+      "condition": "raw+mcp",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. The correct attribution is to Mencius and his disciples, as he lived generations after Confucius. This attribution is well-documented in sources such as the one provided (https://en.wikipedia.org/wiki/Mencius_(book)).",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 1.425,
+        "mcpContextAttached": true
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_005_false-confucius-mencius",
+      "run": 1,
+      "condition": "raw+gate",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No. Mencius was not written by Confucius. The book \"Mencius\" is attributed to Mencius, a philosopher who lived after Confucius.",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 1.143,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": false
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    },
+    {
+      "id": "seib_false_005_false-confucius-mencius",
+      "run": 1,
+      "condition": "sophia_full",
+      "label": "false_attribution",
+      "kind": "provenance_trap",
+      "answer": "No, Confucius did not write the Mencius. The Mencius is a text attributed to Mencius, a philosopher who lived several generations after Confucius. While both figures are central to Confucian thought and teachings, they were not contemporaries, and the work was compiled by Mencius' disciples. This attribution is well-documented in scholarly sources.\n\nReference: https://en.wikipedia.org/wiki/Mencius_(book)",
+      "modelMeta": {
+        "ok": true,
+        "provider": "ollama",
+        "model": "qwen2.5:7b-instruct",
+        "error": null,
+        "finishReason": "stop",
+        "toolCalls": [],
+        "costUsd": 0.0,
+        "latencySec": 2.526,
+        "mcpContextAttached": true,
+        "gateTreatment": false
+      },
+      "deterministicScore": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "score": {
+        "correct": true,
+        "falseAttribution": false,
+        "fabricated": false,
+        "qualified": true,
+        "traditionMerge": false,
+        "namesGold": true,
+        "citesSource": true
+      },
+      "llmJudgeVotes": {},
+      "llmJudgeErrors": []
+    }
+  ],
+  "sparkIteration": true,
+  "registeredResult": false,
+  "canClaimAGI": false,
+  "benchName": "seib100",
+  "utc": "20260629T035124Z",
+  "host": "dgx-spark-gb10",
+  "subject": "ollama:qwen2.5:7b-instruct",
+  "lane": "spark-continuous",
+  "mainHead": "7259ac25"
+}
