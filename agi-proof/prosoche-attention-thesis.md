@@ -71,11 +71,27 @@
 > seeds<3 and the sealed PRIVATE split not yet scored. One disciplined step from a
 > validated verdict — not a GO.
 >
-> **Still open** (the last two criteria + a refinement): a ≥3-seed run (at temperature > 0
-> for genuine variance) and a powered SEALED private split (enlarge the held-out split to
-> ~400) to reach a VALIDATED GO/NO-GO; plus the learned goal-extraction seam for the
-> derived-goal gap. The instrument, the GPU lane, the powered battery, and the live panel
-> all work end to end.
+> **Now also run (sixth pass) — the SEALED-SPLIT validation returned GO.** On the **N=420
+> sealed private split** (MDE 0.097) at **3 seeds, temperature 0.5**, live DeepSeek subject +
+> two independent non-US judge families (Qwen + Mistral): anchored solved **0.469** vs **0.00**
+> for both baselines, Δeff **−52.3** with the **bootstrap CI [−55.2, −49.6] AND the Robbins
+> anytime-valid CS [−56.8, −47.8] both excluding 0**, **κ = 0.81**, all guardrails held, 0 API
+> errors. Every pre-registered criterion passes → the harness gate returns **GO**
+> (`focus-frontier-eval.validation-private.json`).
+>
+> **Construct-validity bound (read before quoting the GO).** The battery is single-axis BY
+> CONSTRUCTION: the goal-relevant key is placed non-recently with newer off-goal noise, so the
+> recency/priority baselines are *designed* to drop it (their 0.00 solve rate). This GO licenses
+> only the bounded claim — *when the goal-relevant context is not the most recent, the
+> goal-anchored allocation policy solves tasks the recency/priority baselines cannot, at fewer
+> effective tokens* — **not** a general efficiency claim on arbitrary workloads. It is **not**
+> promoted to `published-results.json` (that needs a naturalistic multi-axis battery + human
+> review), and `canClaimAGI` stays **false**: one corpus-bound efficiency receipt, not AGI.
+>
+> **Still open**: a naturalistic (non-adversarial, multi-axis) battery to test whether the edge
+> generalises beyond the key-not-recent construction; and the learned goal-extraction seam for
+> the derived-goal gap. The instrument, GPU lane, powered+sealed battery, anytime-valid gate,
+> and live panel all work end to end.
 >
 > **Why this doc exists.** The operator's ask: *"I have many gates to limit the AI's
 > action; I want the AI to know what its attention is — its goal / the rewards it
