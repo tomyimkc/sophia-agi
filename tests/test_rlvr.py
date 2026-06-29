@@ -20,7 +20,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.verifiers import provenance_faithful  # noqa: E402
-from provenance_bench import code_dataset, rl_dataset, rl_reward  # noqa: E402
+from provenance_bench import code_dataset, rl_dataset, rl_reward, step_reward  # noqa: E402
 from provenance_bench.dataset import Case  # noqa: E402
 
 # Synthetic records/cases (mirror tests/test_provenance_bench.py so the gate fires
@@ -246,6 +246,86 @@ def test_code_chat_wrap_noop_without_template() -> None:
     assert code_dataset.chat_wrap(_BaseTok(), "Write a function f(x).") == "Write a function f(x)."
 
 
+# --- STEP task chat-wrap (failure-ledger step-math-chat-wrap-gap) ----------- #
+# run_eval_step fed STEP_INSTRUCTION + RAW prompt to the generator with NO chat
+# template, so a CHAT/instruct subject emitted prose, the step verifier found no
+# parseable derivation, and base AND adapter scored 0 (the Qwen2.5-Math-7B step run
+# was 0/60). The fix applies code_dataset.chat_wrap on the step path exactly as the
+# code task does — and it must stay a NO-OP for a base/completion model so the
+# registered base null is reproduced bit-for-bit.
+
+def test_step_chat_wrap_templates_for_chat_model() -> None:
+    # The STEP path templates STEP_INSTRUCTION + prompt for a chat subject so the
+    # structured instruction is delivered as an assistant turn (and survives intact).
+    text = step_reward.STEP_INSTRUCTION + "Compute 2+2."
+    wrapped = code_dataset.chat_wrap(_ChatTok(), text)
+    assert wrapped == f"<|user|>{text}<|assistant|>"
+    assert "STEP:" in wrapped  # the structured instruction survived the wrap
+
+
+def test_step_chat_wrap_noop_without_template() -> None:
+    # A base/completion model (the registered Qwen2.5-Math-7B BASE) has no chat
+    # template — chat_wrap must pass STEP_INSTRUCTION + prompt through UNCHANGED so the
+    # existing registered-base null stays on the identical raw-prompt path.
+    text = step_reward.STEP_INSTRUCTION + "Compute 2+2."
+    assert code_dataset.chat_wrap(_BaseTok(), text) == text
+
+
+def test_run_eval_step_requests_chat_template() -> None:
+    """End-to-end wiring (no GPU, no model load): run_eval_step must ask
+    _load_real_generators for the chat template — the harness fix — so the STEP path
+    templates a chat subject and NO-OPs a base subject. A fake loader replicates the
+    real generator's single chat_wrap line and records the text the generator sees.
+    Without the fix (chat_template defaults False) the chat assertion fails."""
+    import argparse
+
+    from tools import eval_rlvr_adapter as era
+
+    seen: dict = {}
+    tok_holder: dict = {"tok": _ChatTok()}
+
+    def fake_loader(model, adapter, *, max_new_tokens, chat_template=False):
+        seen["chat_template"] = chat_template
+
+        def gen(prompt: str) -> str:
+            # Exactly the real generator's templating line in _load_real_generators.
+            tok = tok_holder["tok"]
+            text = code_dataset.chat_wrap(tok, prompt) if chat_template else prompt
+            seen.setdefault("texts", []).append(text)
+            return text  # echo; scoring is irrelevant to this wiring assertion
+
+        return gen, gen
+
+    args = argparse.Namespace(
+        mode="real", step_domain="math", adapter=Path("/nonexistent-adapter"),
+        model="fake/chat", out=None, seed=0, eval_frac=0.3, limit=2, max_new_tokens=8,
+    )
+
+    orig = era._load_real_generators
+    try:
+        era._load_real_generators = fake_loader  # type: ignore[assignment]
+
+        # Chat subject: STEP_INSTRUCTION must be delivered chat-templated.
+        tok_holder["tok"] = _ChatTok()
+        era.run_eval_step(args)
+        assert seen["chat_template"] is True, "step path must request chat_template (the fix)"
+        assert seen.get("texts"), "generator was never called"
+        for t in seen["texts"]:
+            assert t.startswith("<|user|>") and t.endswith("<|assistant|>")
+            assert step_reward.STEP_INSTRUCTION in t  # instruction templated, not dropped
+
+        # Base subject: the SAME requested path is a NO-OP -> raw STEP_INSTRUCTION+prompt.
+        seen.clear()
+        tok_holder["tok"] = _BaseTok()
+        era.run_eval_step(args)
+        assert seen["chat_template"] is True
+        for t in seen["texts"]:
+            assert not t.startswith("<|user|>")
+            assert t.startswith(step_reward.STEP_INSTRUCTION)
+    finally:
+        era._load_real_generators = orig  # type: ignore[assignment]
+
+
 def main() -> int:
     test_reward_is_deterministic()
     test_reward_false_monotone_and_forbidden_negative()
@@ -263,6 +343,9 @@ def main() -> int:
     test_ingest_refuses_committed_archive()
     test_code_chat_wrap_templates_for_chat_model()
     test_code_chat_wrap_noop_without_template()
+    test_step_chat_wrap_templates_for_chat_model()
+    test_step_chat_wrap_noop_without_template()
+    test_run_eval_step_requests_chat_template()
     print("test_rlvr: OK")
     return 0
 
