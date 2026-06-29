@@ -14,7 +14,8 @@
   Rebase onto fresh `origin/main` before any PR/merge — `failure-ledger.md`, `ci.yml`,
   `dataset_guard.py` are contended files and will need conflict reconciliation. Not merged;
   no PR (none requested).
-- Commits this session (newest first): `79b80a42` DataAnalyst adoption-aware ·
+- Commits this session (newest first): `b8a617dd` registry lineage edges + version anchor ·
+  `3a771740` handover/changelog · `79b80a42` DataAnalyst adoption-aware ·
   `1ca5f0d5` fact-check CI workflow · `fa4c7449` split ADOPTED (sealed+gated) ·
   `b8b183d2` handover/changelog · `278518bb` sentinel fix (carve 75→73).
 
@@ -61,8 +62,11 @@ python -m pytest -q tests/test_data_health_report.py tests/test_build_data_regis
 2. **Third-party entity-disjoint pack** — the only path that advances an external
    generalization claim (`hidden-review-third-party-not-run`). The adopted split is
    maintainer-authored; `canClaimAGI` stays false until a third-party hidden eval is beaten.
-3. **Registry lineage edges** (`data-lineage-graph-partial`) — extend the 16-asset registry
-   from manifest-level to a real source→shard→checkpoint→eval graph.
+3. **Registry lineage edges** (`data-lineage-graph-partial`) — *first increment landed*
+   (`b8a617dd`): the registry now has a `lineage` block (9 declared-only edges +
+   `registryVersion` anchor, 0.375 upstream coverage). Remaining: backfill upstream
+   declarations in the other 10 manifests (esp. eval surfaces → corpus version + checkpoint),
+   and have eval reports stamp the `registryVersion` they ran against.
 4. **Rebase onto `origin/main`** before opening any PR (see §0 — contended files).
 
 ## 4. Read-first
