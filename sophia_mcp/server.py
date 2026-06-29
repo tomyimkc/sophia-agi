@@ -25,8 +25,11 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     capability_retention_demo,
     check_claim,
     check_concept_edge,
+    andreia_benchmark_tool,
     conformal_decide_tool,
     conscience_benchmark_tool,
+    courage_assess_tool,
+    cowardice_check_tool,
     cross_trace_mine_tool,
     conscience_check_tool,
     constitution_check_tool,
@@ -312,6 +315,43 @@ def sophia_moral_parliament(text: str, context_json: str = "{}") -> str:
 def sophia_conscience_benchmark() -> str:
     """Deterministic candidate benchmark for the seven-path conscience implementation."""
     return dumps(conscience_benchmark_tool())
+
+
+@mcp.tool()
+def sophia_courage_assess(text: str, samples_json: str = "[]", context_json: str = "{}") -> str:
+    """Andreia courage gate — the dual of the conscience fear apparatus.
+
+    Decides whether the brave, well-calibrated move is to act|heroic|escalate|hold,
+    modelling courage as a phase transition (ASIR): CQ = lambda*(1+gamma)+psi-(theta+phi).
+    NEVER overrides a hard conscience prohibition (courage is not recklessness).
+    Deterministic candidate infrastructure, not AGI proof. Read-only.
+    """
+    try:
+        samples = json.loads(samples_json or "[]")
+        context = json.loads(context_json or "{}")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid JSON arg: {exc}"})
+    if not isinstance(samples, list) or not isinstance(context, dict):
+        return dumps({"error": "samples_json must be a JSON array and context_json a JSON object"})
+    return dumps(courage_assess_tool(text, samples=samples, context=context))
+
+
+@mcp.tool()
+def sophia_cowardice_check(text: str, context_json: str = "{}") -> str:
+    """Detect a fear-driven retreat ('cowardice disguised as prudence'): respectable
+    excuses, confidence/silence mismatch, social-cost-dominated holds, sycophancy drift.
+    Informational — it can only force an explicit justification, never an action. Read-only."""
+    try:
+        context = json.loads(context_json or "{}")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid context_json: {exc}"})
+    return dumps(cowardice_check_tool(text, context=context if isinstance(context, dict) else {}))
+
+
+@mcp.tool()
+def sophia_andreia_benchmark() -> str:
+    """Deterministic candidate self-benchmark for the Andreia courage gate routing."""
+    return dumps(andreia_benchmark_tool())
 
 
 @mcp.tool()

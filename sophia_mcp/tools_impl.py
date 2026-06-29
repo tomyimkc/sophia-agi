@@ -812,6 +812,28 @@ def conscience_benchmark_tool() -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# Andreia — courage gate (the dual of the fear apparatus above). Orthogonal to
+# conscience; never overrides a hard prohibition. Candidate infrastructure.
+# --------------------------------------------------------------------------- #
+
+def courage_assess_tool(text: str, *, samples=None, context=None) -> dict:
+    from agent.andreia import assess_courage
+    if not (text or "").strip():
+        return {"error": "text is required"}
+    return assess_courage(text, samples=samples, context=context or {}).to_dict()
+
+
+def cowardice_check_tool(text: str, *, context=None) -> dict:
+    from agent.cowardice_signals import detect_cowardice
+    return detect_cowardice(text, context=context or {}).to_dict()
+
+
+def andreia_benchmark_tool() -> dict:
+    from agent.andreia import run_andreia_benchmark
+    return run_andreia_benchmark()
+
+
+# --------------------------------------------------------------------------- #
 # Verified reasoning-trace tools (read-only query + tamper-evidence re-verify).
 # These surface the verified_trace.v1 log: sophia_trace_query scans/summarizes it,
 # sophia_trace_verify re-runs the fact+logic derivation against a stored trace and
