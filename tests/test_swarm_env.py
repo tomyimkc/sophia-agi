@@ -19,6 +19,7 @@ from agent.swarm_env import (  # noqa: E402
     ChildOutput,
     offline_invariants,
     run_swarm_episode,
+    run_swarm_trajectory,
 )
 
 TASK = "Did Socrates write The Republic? Cite sources."
@@ -75,6 +76,25 @@ def test_episode_is_deterministic() -> None:
     a = run_swarm_episode(TASK, child_runner=_runner([CLEAN]), question=TASK)
     b = run_swarm_episode(TASK, child_runner=_runner([CLEAN]), question=TASK)
     assert a.reward == b.reward and a.to_dict() == b.to_dict()
+
+
+# --- multi-turn trajectory (the GRPO training unit) -------------------------
+def test_trajectory_clean_finishes_success_and_outrewards_failure() -> None:
+    turns = [TASK, TASK, TASK]
+    clean = run_swarm_trajectory(turns, child_runner=_runner([CLEAN]), question=TASK)
+    fail = run_swarm_trajectory(turns, child_runner=_runner([POISON]), question=TASK)
+    assert clean.outcome.final_verified_success == 1.0
+    assert fail.outcome.final_verified_success == 0.0
+    assert clean.reward > fail.reward
+    assert len(clean.episodes) == 3
+
+
+def test_trajectory_kl_control_penalises_drift() -> None:
+    turns = [TASK, TASK]
+    calm = run_swarm_trajectory(turns, child_runner=_runner([CLEAN]), question=TASK)
+    drift = run_swarm_trajectory(turns, child_runner=_runner([CLEAN]), question=TASK,
+                                 kl_per_turn=(3.0, 3.0))
+    assert calm.reward > drift.reward
 
 
 def main() -> int:

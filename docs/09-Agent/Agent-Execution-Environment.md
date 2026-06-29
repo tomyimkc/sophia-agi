@@ -53,8 +53,8 @@ all-poison episode rewards **−0.445** and abstains. That gap is the policy gra
 
 | Step | What | State |
 |---|---|---|
-| 1 | **Agent execution environment** (route → gate → reduce → reward) | **shipped** (`agent/swarm_env.py`, 7 invariants + 7 tests) |
-| 2 | Multi-turn trajectory reward over episodes | shipped (`trajectory_reward`); wire `SwarmEpisode` as a turn — OPEN |
+| 1 | **Agent execution environment** (route → gate → reduce → reward) | **shipped** (`agent/swarm_env.py` `run_swarm_episode`, 9 invariants + 9 tests) |
+| 2 | **Multi-turn trajectory** — episodes folded into a `TrajectoryOutcome` (KL + length-norm) | **shipped** (`run_swarm_trajectory`; the GRPO training unit) |
 | 3 | Orchestration trace data — generate episodes, label with verifiers (the preference engine generalises) | OPEN |
 | 4 | Train the policy — SFT the dispatch format at the `decide` seam, then GRPO on the reward | OPEN (GPU, RunPod Action) |
 | 5 | Distill — fold orchestration into the weights so the model self-dispatches inline, no scaffold | OPEN |

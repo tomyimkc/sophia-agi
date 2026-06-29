@@ -38,7 +38,12 @@ from dataclasses import dataclass, field
 from agent.gate import check_response
 from agent.swarm_router import SwarmPlan, SwarmRouter
 from agent.swarm_trust_boundary import AgentMessage, GatedEntry, GatedSharedState
-from provenance_bench.swarm_rl import SwarmOutcome, swarm_reward
+from provenance_bench.swarm_rl import (
+    SwarmOutcome,
+    TrajectoryOutcome,
+    swarm_reward,
+    trajectory_reward,
+)
 
 ABSTAIN = ("Insufficient verified basis: no subagent output cleared the provenance gate. "
            "Abstaining rather than synthesising from unverified work. Not advice.")
@@ -155,6 +160,58 @@ def run_swarm_episode(
                         synthesis=synthesis, outcome=outcome, reward=reward)
 
 
+@dataclass
+class SwarmTrajectory:
+    """A multi-turn rollout: a sequence of swarm episodes toward one goal, scored by the
+    multi-turn ``trajectory_reward`` (KL-controlled, length-normalised). This is the unit a
+    GRPO/PPO loop trains the orchestration policy on."""
+
+    goal: str
+    episodes: "list[SwarmEpisode]"
+    outcome: TrajectoryOutcome
+    reward: float = 0.0
+
+    def to_dict(self) -> dict:
+        return {
+            "goal": self.goal,
+            "nTurns": len(self.episodes),
+            "finalVerifiedSuccess": self.outcome.final_verified_success,
+            "totalGateFailures": self.outcome.total_gate_failures,
+            "reward": round(self.reward, 4),
+            "turns": [ep.to_dict() for ep in self.episodes],
+        }
+
+
+def run_swarm_trajectory(
+    turns: "list[str]",
+    *,
+    goal: "str | None" = None,
+    router: "SwarmRouter | None" = None,
+    child_runner=None,
+    client=None,
+    question: "str | None" = None,
+    mode: str = "advisor",
+    kl_per_turn: "tuple[float, ...]" = (),
+) -> SwarmTrajectory:
+    """Run a sequence of sub-task ``turns`` as swarm episodes and fold them into one
+    multi-turn ``TrajectoryOutcome``. ``final_verified_success`` is the LAST turn's verified
+    success (did the trajectory finish gate-clean); ``kl_per_turn`` is supplied by the trainer
+    (KL vs the reference policy) — empty offline. Deterministic given a deterministic runner."""
+    episodes = [
+        run_swarm_episode(t, router=router, child_runner=child_runner, client=client,
+                          question=question, mode=mode)
+        for t in turns
+    ]
+    outcome = TrajectoryOutcome(
+        turns=[ep.outcome for ep in episodes],
+        final_verified_success=(episodes[-1].outcome.verified_success if episodes else 0.0),
+        kl_per_turn=tuple(kl_per_turn),
+    )
+    reward = trajectory_reward(outcome)
+    return SwarmTrajectory(goal=goal or (turns[0] if turns else ""), episodes=episodes,
+                           outcome=outcome, reward=reward)
+
+
 # --- deterministic contract fixtures (no harness, no model) ------------------------------------
 def _stub_runner(outputs: "list[ChildOutput]"):
     return lambda _plan: outputs
@@ -191,9 +248,23 @@ def offline_invariants() -> "tuple[bool, dict]":
     again = run_swarm_episode(task, child_runner=_stub_runner([clean]), question=task)
     checks["deterministic"] = again.reward == ep_clean.reward
 
+    # Multi-turn trajectory: a 3-turn all-clean rollout finishes gate-clean and out-rewards a
+    # rollout whose final turn is poisoned (the final-success signal the trainer follows).
+    turns = [task, task, task]
+    traj_clean = run_swarm_trajectory(turns, child_runner=_stub_runner([clean]), question=task)
+    traj_fail = run_swarm_trajectory(turns, child_runner=_stub_runner([poison]), question=task)
+    checks["traj_clean_final_success"] = traj_clean.outcome.final_verified_success == 1.0
+    checks["traj_fail_final_zero"] = traj_fail.outcome.final_verified_success == 0.0
+    checks["traj_clean_outrewards_fail"] = traj_clean.reward > traj_fail.reward
+    checks["traj_kl_penalised"] = (
+        run_swarm_trajectory(turns, child_runner=_stub_runner([clean]), question=task,
+                             kl_per_turn=(2.0, 2.0, 2.0)).reward < traj_clean.reward
+    )
+
     ok = all(checks.values())
     return ok, {"checks": checks, "cleanReward": round(ep_clean.reward, 3),
-                "poisonReward": round(ep_allbad.reward, 3)}
+                "poisonReward": round(ep_allbad.reward, 3),
+                "trajClean": round(traj_clean.reward, 3), "trajFail": round(traj_fail.reward, 3)}
 
 
 if __name__ == "__main__":
