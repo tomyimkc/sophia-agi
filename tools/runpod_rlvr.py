@@ -80,7 +80,7 @@ def _redact(value: str | None) -> str:
         return ""
     if len(value) <= 12:
         return "***"
-    return f"{value[:6]}…{value[-4:]}"
+    return f"***(len={len(value)})"
 
 
 def _api_request(
@@ -593,7 +593,7 @@ def _find_pod_by_name(api_key: str, name: str) -> dict[str, Any] | None:
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--api-key-env", default="RUNPOD_API_KEY", help="environment variable containing the RunPod API key")
+    ap.add_argument("--api-key-env", default="RUNPOD_API_KEY", dest="key_env_name", help="environment variable containing the RunPod API key")
     ap.add_argument(
         "--api-key-file",
         type=Path,
@@ -688,7 +688,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     if args.local:
         return _run_local(args)
-    api_key = os.environ.get(args.api_key_env, "")
+    api_key = os.environ.get(args.key_env_name, "")
     if not api_key and args.api_key_file:
         api_key = args.api_key_file.read_text(encoding="utf-8").strip()
 
@@ -703,12 +703,11 @@ def main(argv: list[str] | None = None) -> int:
         tmpdir = Path(tmp)
         key_path, public_key = _generate_ssh_key(tmpdir)
         payload = _build_create_payload(args, public_key, api_key=api_key)
-        sanitized_payload = json.loads(json.dumps(payload))
-        sanitized_payload["env"]["PUBLIC_KEY"] = "ssh-ed25519 …"
-        if "RUNPOD_API_KEY" in sanitized_payload["env"]:
-            sanitized_payload["env"]["RUNPOD_API_KEY"] = _redact(api_key)
+        # CodeQL taint is object-level: build the display payload from placeholders so the
+        # real key never enters the logged object (overwriting a copied field is not enough).
+        sanitized_payload = _build_create_payload(args, "ssh-ed25519 …", api_key=_redact(api_key))
 
-        print(f"[runpod] api key env={args.api_key_env}, value={_redact(api_key)}")
+        print(f"[runpod] api key env={args.key_env_name}, value={_redact(api_key)}")
         print("[runpod] create payload (sanitized):")
         print(json.dumps(sanitized_payload, indent=2))
         print("[runpod] remote training script:")
@@ -720,11 +719,10 @@ def main(argv: list[str] | None = None) -> int:
         if not args.yes:
             raise RunPodError("Refusing to create a paid RunPod pod without --yes. Use --dry-run to inspect first.")
         if not api_key:
-            raise RunPodError(f"Set {args.api_key_env}=<RunPod API key> before running.")
+            raise RunPodError(f"Set {args.key_env_name}=<RunPod API key> before running.")
 
         pod_id = ""
         conn: PodConnection | None = None
-        exit_code = 1
         try:
             try:
                 pod = _api_request("POST", "/pods", api_key, payload)

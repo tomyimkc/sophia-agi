@@ -38,8 +38,6 @@ from agent.datalog_engine import A, Atom, Program, Rule, Var
 
 # Edge types that assert IDENTITY / subsumption (vs a scoped analogy).
 _IDENTITY_EDGE_TYPES = ("sameAs", "equivalentClass", "exactMatch", "subClassOf")
-# The admissible scoped-analogy edge types (non-transitive, closeMatch family).
-_ANALOGY_EDGE_TYPES = ("scopedAnalogy", "closeMatch")
 
 
 def build_ontology_program() -> Program:

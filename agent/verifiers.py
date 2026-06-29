@@ -24,11 +24,6 @@ from agent.config import DATA_DIR, ROOT
 
 Verifier = Callable[[str, Any, dict], dict]
 
-# Attribution verbs/markers that signal an *assertion* of authorship (any language).
-_ATTR_VERBS = [
-    r"\bwrote\b", r"\bwritten\b", r"\bauthored?\b", r"\bauthor of\b", r"\bpenned\b",
-    r"\bcomposed\b", r"\battribut", r"\bby\b", r"'s\b", r"’s\b", r"著", r"作者", r"撰", r"所著",
-]
 # Domain files whose records carry doNotAttributeTo lists. The last entry is the
 # active-learning sink: records promoted from verified gate misses
 # (tools/promote_pending.py) land here, so the live gate fires on them on the next
@@ -356,7 +351,7 @@ def code_tests_pass(*, timeout_sec: int = 30, allow_execution: bool = True) -> V
     return _verify
 
 
-_ARITH = re.compile(r"(-?\d+(?:\.\d+)?)\s*([+\-*/×x])\s*(-?\d+(?:\.\d+)?)\s*=\s*(-?\d+(?:\.\d+)?)")
+_ARITH = re.compile(r"(-?\d{1,64}(?:\.\d{1,64})?)\s*([+\-*/×x])\s*(-?\d{1,64}(?:\.\d{1,64})?)\s*=\s*(-?\d{1,64}(?:\.\d{1,64})?)")
 
 
 def arithmetic_sound(*, tol: float = 1e-6) -> Verifier:

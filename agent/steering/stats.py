@@ -10,7 +10,6 @@ import random
 import statistics
 
 from provenance_bench.aggregate import _ci, KAPPA_FLOOR
-from provenance_bench.consensus import cohen_kappa  # re-exported for callers
 
 # Pre-registered SSA thresholds — fixed before any run (spec §"Locked decisions").
 SSA_THRESHOLDS = {
@@ -88,7 +87,7 @@ def residualized_d(target_per_seed, offtarget_per_seed_by_axis):
     c = [sum(X[i][r] * y[i] for i in range(n)) for r in range(p)]
     beta = _solve_linear(A, c)
     if beta is None:
-        sd = statistics.pstdev(y) if n > 1 else 0.0
+        sd = statistics.pstdev(y)
         return 0.0 if sd == 0.0 else statistics.fmean(y) / sd
     resid = [y[i] - sum(beta[r] * X[i][r] for r in range(1, p)) for i in range(n)]
     sd = statistics.pstdev(resid)

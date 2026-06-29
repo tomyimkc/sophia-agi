@@ -62,7 +62,7 @@ def synthesize_gate(
     *,
     threshold: float = 0.8,
     seed: int = 1,
-    propose_fn: "Callable | None" = None,
+    propose_fn: Callable | None = None,
 ) -> tuple[bool, SynthesisResult]:
     """Fit + meta-verify a gate from labelled examples.
 
@@ -91,7 +91,7 @@ def improve_skill(
     *,
     threshold: float = 0.8,
     seed: int = 1,
-    propose_fn: "Callable | None" = None,
+    propose_fn: Callable | None = None,
 ) -> dict:
     """Synthesize + meta-verify a verifier from abstention/failure examples.
 
@@ -115,7 +115,7 @@ def synthesize_skill(
     blp_level: str = "UNCLASSIFIED",
     threshold: float = 0.8,
     seed: int = 1,
-    propose_fn: "Callable | None" = None,
+    propose_fn: Callable | None = None,
 ) -> "dict":
     """Verifier-first skill creation.
 

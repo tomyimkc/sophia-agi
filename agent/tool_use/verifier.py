@@ -14,6 +14,7 @@ class Verdict:
 def _schema(name):
     for s in TOOL_SCHEMAS:
         if s.get("function",{}).get("name")==name: return s.get("function",{}).get("parameters")
+    return None
 def verify_call(name,args):
     schema=_schema(name)
     if not schema: return Verdict.fail("S3",f"unknown {name}")

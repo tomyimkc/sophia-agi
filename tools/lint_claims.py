@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import json
 import re
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -71,7 +70,6 @@ REGISTRY = "training/adapters/registry.jsonl"
 
 
 def _check_registry_receipts() -> list[str]:
-    import json
     v: list[str] = []
     reg = ROOT / REGISTRY
     if not reg.exists():
@@ -118,7 +116,6 @@ def _check_recipe_receipt() -> list[str]:
     """A recipe-ranking artifact that names a 'best' recipe must be backed by a GO superiority
     receipt (tools/benchmark_recipes.py --emit-receipt) — principle #9: no 'recipe X wins' claim
     without a powered ranking + the simple baseline in the table."""
-    import json
     v: list[str] = []
     wm = ROOT / "agi-proof" / "benchmark-results" / "wisdom-market"
     bench = wm / "recipe-benchmark.json"

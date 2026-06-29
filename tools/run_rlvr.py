@@ -138,7 +138,7 @@ def _offline_invariants() -> tuple[bool, dict]:
             (_TRUE_CASE, good_true, r_good_t, d_good_t),
             (_TRUE_CASE, bad_true, r_bad_t, d_bad_t),
         ]):
-            ack = rewarded(case, completion, reward=r, detail=d, step_idx=step)
+            rewarded(case, completion, reward=r, detail=d, step_idx=step)
             # read back the emitted row so the summary reflects what was logged
             from sophia_contract.stores import _read_jsonl
             from agent.verified_trace import TRACE_LOG

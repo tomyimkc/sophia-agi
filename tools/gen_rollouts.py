@@ -43,11 +43,11 @@ OUT_DIR = ROOT / "training" / "rollouts"
 # task -> (dataset builder, target column, reward_for(answer, target) -> (score, detail))
 TASKS = {
     "math": (math_dataset.build_math_rl_dataset, "gold",
-             lambda a, t: math_reward.reward_for_problem(a, t)),
+             math_reward.reward_for_problem),
     "physics": (physics_dataset.build_physics_rl_dataset, "gold",
-                lambda a, t: physics_reward.reward_for_problem(a, t)),
+                physics_reward.reward_for_problem),
     "code": (code_dataset.build_code_rl_dataset, "test",
-             lambda a, t: code_reward.reward_for_task(a, t)),
+             code_reward.reward_for_task),
 }
 
 

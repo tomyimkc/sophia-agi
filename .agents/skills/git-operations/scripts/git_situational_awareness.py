@@ -24,8 +24,6 @@ import argparse
 import json
 import os
 import subprocess
-import sys
-from pathlib import Path
 
 # Avoid the zsh readonly-variable trap: never name a var 'status', 'path', etc.
 
