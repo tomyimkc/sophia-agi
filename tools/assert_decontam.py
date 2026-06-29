@@ -25,29 +25,22 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from provenance_bench.dataset_guard import (  # noqa: E402
-    eval_prompt_set, normalize, prompt_of, _load_jsonl)
+    eval_prompt_set, jaccard as _jaccard, normalize, prompt_of, shingles as _shingles,
+    _load_jsonl)
 
 # Committed training surfaces the assertion guards (globs, relative to repo root).
+# Includes verifier-gated DISTILLATION outputs (tools/distill_export.py): a frontier
+# teacher may have memorised public benchmarks, so its "verified" traces are decontaminated
+# against the same held-out eval as any hand-curated pack before they can become SFT data.
 TRAIN_GLOBS = [
     "training/local_sophia_v3/mlx/train.jsonl",
     "training/local_sophia_v3/mlx/valid.jsonl",
     "training/local_sophia_v3/sft_*.jsonl",
     "training/local_sophia_v3/preference_pairs.jsonl",
+    "training/distill_sft.jsonl",
+    "training/distill_dpo.jsonl",
+    "training/**/distill_sft.jsonl",
 ]
-
-
-def _shingles(text: str, k: int) -> set:
-    toks = normalize(text).split()
-    if len(toks) < k:
-        return {" ".join(toks)} if toks else set()
-    return {" ".join(toks[i:i + k]) for i in range(len(toks) - k + 1)}
-
-
-def _jaccard(a: set, b: set) -> float:
-    if not a or not b:
-        return 0.0
-    inter = len(a & b)
-    return inter / len(a | b)
 
 
 def main() -> int:

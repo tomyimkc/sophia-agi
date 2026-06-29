@@ -141,11 +141,39 @@ def _existing_baseline(out: Path) -> dict | None:
     return baseline if isinstance(baseline, dict) else None
 
 
+# verification_provenance values that mark a HARD-WON row (teacher failed first, then was
+# patched/recovered) — these carry the debug-and-recover signal worth oversampling.
+HARD_PROVENANCE = {"patched_after_failure", "self_consistent"}
+
+
+def _oversample_hard(rows: list[dict], factor: int) -> tuple[list[dict], int]:
+    """Repeat each row tagged with a HARD verification_provenance ``factor`` times.
+
+    The thesis's "small but extremely high-signal" insight made mechanical: the rows a
+    weaker teacher could NOT get right on its own (patched by a stronger teacher or by
+    verified self-consistency) are the ones that teach recovery, so they earn extra weight.
+    ``factor<=1`` is a no-op (default), so committed packs never drift unless asked.
+    """
+    if factor <= 1:
+        return rows, 0
+    out_rows: list[dict] = []
+    extra = 0
+    for r in rows:
+        prov = (r.get("metadata") or {}).get("verification_provenance")
+        out_rows.append(r)
+        if prov in HARD_PROVENANCE:
+            for _ in range(factor - 1):
+                out_rows.append(r)
+                extra += 1
+    return out_rows, extra
+
+
 def build(
     check_only: bool,
     *,
     out: Path = DEFAULT_OUT,
     base_model: str = DEFAULT_BASE_MODEL,
+    oversample_patched: int = 1,
 ) -> int:
     from provenance_bench.dataset_guard import normalize, prompt_of
     from provenance_bench.holdout_seal import verify_manifest
@@ -201,6 +229,10 @@ def build(
     # (the v2 run truncated overlong rows — see the failure ledger).
     from tools.split_long_training_rows import fit_rows
 
+    # Oversample hard-won (patched / self-consistent) rows before fitting (T8). No-op at the
+    # default factor of 1, so committed packs are byte-identical unless oversampling is asked for.
+    all_sft, oversampled_extra = _oversample_hard(all_sft, oversample_patched)
+
     mlx_train_fitted, mlx_train_fit = fit_rows(_to_mlx_rows(all_sft), max_tokens=MLX_MAX_TOKENS)
     mlx_valid_fitted, mlx_valid_fit = fit_rows(_to_mlx_rows(holdout), max_tokens=MLX_MAX_TOKENS)
     if not check_only:
@@ -245,6 +277,7 @@ def build(
         "mlx": {"trainRows": len(mlx_train_fitted), "validRows": len(mlx_valid_fitted),
                 "path": str(out.relative_to(ROOT) / "mlx"), "maxTokens": MLX_MAX_TOKENS,
                 "fit": {"train": mlx_train_fit, "valid": mlx_valid_fit}},
+        "oversampling": {"hardProvenanceFactor": oversample_patched, "extraRows": oversampled_extra},
         "claimBoundary": "Trains behavioral discipline, not general intelligence. "
                          "External MCP/verifier gates enforce correctness at runtime.",
     }
@@ -270,8 +303,11 @@ def main(argv=None) -> int:
     ap.add_argument("--check", action="store_true", help="guard only; no writes (CI)")
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT, help="output pack directory")
     ap.add_argument("--base-model", default=DEFAULT_BASE_MODEL, help="target base model id")
+    ap.add_argument("--oversample-patched", type=int, default=1, metavar="N",
+                    help="repeat each hard-won (patched/self-consistent) row N times (default 1 = off)")
     args = ap.parse_args(argv)
-    return build(args.check, out=args.out, base_model=args.base_model)
+    return build(args.check, out=args.out, base_model=args.base_model,
+                 oversample_patched=args.oversample_patched)
 
 
 if __name__ == "__main__":
