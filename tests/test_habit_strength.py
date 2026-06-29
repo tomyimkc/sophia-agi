@@ -7,8 +7,17 @@ a single slip costs one stability step (not a reset); two slips in a row trip an
 tripwire. Deterministic, offline.
 """
 
-from agent import forgetting_curve as fc
-from agent.habit_strength import NEVER_MISS_TWICE, HabitStrength
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from agent import forgetting_curve as fc  # noqa: E402
+from agent.habit_strength import NEVER_MISS_TWICE, HabitStrength  # noqa: E402
 
 
 def test_reinforcement_consolidates_strength():
@@ -87,3 +96,11 @@ def test_self_check_passes():
     from agent.habit_strength import self_check
     inv = self_check()["invariants"]
     assert all(inv.values())
+
+
+if __name__ == "__main__":
+    for name, fn in sorted(globals().items()):
+        if name.startswith("test_") and callable(fn):
+            fn()
+            print(f"ok {name}")
+    print("all passed")

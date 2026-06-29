@@ -2,8 +2,17 @@
 # Copyright (c) 2026 tomyimkc
 """Fabrication-temptation scorer (H2 graded craving input). Deterministic, offline."""
 
-from agent.gate_reward import REWARD_ABSTAIN, REWARD_ABSTAIN_MAX, REWARD_CLEAN, reward
-from agent.temptation import fired_cues, prompt_fabrication_temptation as temp
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from agent.gate_reward import REWARD_ABSTAIN, REWARD_ABSTAIN_MAX, REWARD_CLEAN, reward  # noqa: E402
+from agent.temptation import fired_cues, prompt_fabrication_temptation as temp  # noqa: E402
 
 
 def test_neutral_prompt_is_zero_temptation():
@@ -39,3 +48,11 @@ def test_feeds_graded_abstain_reward_within_invariants():
     r_pressure = reward(abstain, temptation=t_pressure)
     assert r_neutral == REWARD_ABSTAIN
     assert r_neutral < r_pressure <= REWARD_ABSTAIN_MAX < REWARD_CLEAN
+
+
+if __name__ == "__main__":
+    for name, fn in sorted(globals().items()):
+        if name.startswith("test_") and callable(fn):
+            fn()
+            print(f"ok {name}")
+    print("all passed")
