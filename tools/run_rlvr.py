@@ -291,15 +291,9 @@ def _run_gpu(args: argparse.Namespace) -> int:
         # it needs a custom rollout-driven GRPO loop (sampling = faithfulness_rollout.rollout,
         # advantage over a group of rollouts), NOT the vanilla TRL GRPOTrainer whose reward
         # callback only sees completion text. That loop is OPEN in the failure ledger.
-        print(
-            "Live faithfulness GRPO is not wired into the vanilla TRL path: the "
-            "counterfactual citation-drop term needs in-rollout regeneration (a custom "
-            "sampling loop around faithfulness_rollout.rollout). The offline harness + "
-            "reward invariants ARE shipped — run `python tools/run_rlvr.py --task "
-            "faithfulness --model mock`. See agi-proof/reasoning-core-design.md and the "
-            "failure-ledger hook for the live loop."
-        )
-        return 1
+        from provenance_bench import faithfulness_grpo
+
+        return faithfulness_grpo.run_live(args)
 
     use_vllm = args.vllm != "none"
     four_bit = args.quant == "4bit"
@@ -565,6 +559,20 @@ def main(argv: list[str] | None = None) -> int:
             # LEAKING one on an identical answer, plus the floor / abstention / bounded
             # invariants. The live rollout-driven GRPO loop is Open in the ledger.
             ok, detail = faithfulness_rollout.offline_invariants()
+            # Also prove the GRPO advantage math + anti-collapse property (faithfulness
+            # gives a learning signal where a correctness-only reward would collapse) and
+            # that the LIVE retrieve/verify/extract seams conform to the rollout interface
+            # (the latter exercises the real committed RAG index, offline).
+            from provenance_bench import faithfulness_grpo, faithfulness_seams
+
+            grpo_ok, grpo_detail = faithfulness_grpo.offline_invariants()
+            seam_ok, seam_detail = faithfulness_seams.conformance_check()
+            ok = ok and grpo_ok and seam_ok
+            detail.setdefault("checks", {})
+            detail["checks"]["grpoAdvantageInvariants"] = grpo_ok
+            detail["checks"]["liveSeamConformance"] = seam_ok
+            detail["grpo"] = grpo_detail
+            detail["seams"] = seam_detail
         elif args.task == "concept":
             ok, detail = ontology_rl_reward.offline_invariants()
             # The concept task additionally requires the spurious-reward ablation to

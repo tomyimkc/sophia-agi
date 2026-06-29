@@ -166,13 +166,18 @@ This is the payoff of post-training over from-scratch:
 
 ## Failure-ledger hooks (to add OPEN entries for)
 
-1. Live rollout-driven GRPO uplift from the faithfulness reward — unrun. The offline
-   harness + reward invariants are shipped (`provenance_bench/faithfulness_rollout.py`,
-   `provenance_bench/retrieval_faithfulness.py`, `tools/run_rlvr.py --task faithfulness
-   --model mock`); the custom sampling loop (in-rollout regeneration around the vanilla
-   TRL path) is not.
-2. Live `retrieve` / `generate` / `verify_claim` seams — the offline path uses
-   deterministic mock seams; the live wiring to `agent.ai_search` + `agent.source_verifier`
-   is not yet exercised end-to-end.
+1. Live rollout-driven GRPO uplift from the faithfulness reward — unrun. Shipped: the
+   offline harness + reward invariants (`provenance_bench/retrieval_faithfulness.py`,
+   `faithfulness_rollout.py`), the GRPO loop core + anti-collapse invariant
+   (`faithfulness_grpo.py`: `sample_group` → `group_advantages`, proving faithfulness
+   gives a learning signal where a correctness-only reward collapses), all behind
+   `tools/run_rlvr.py --task faithfulness --model mock`. **Open:** the policy-gradient
+   backend — applying `group_advantages` as token-level PG weights with the
+   counterfactual regeneration in the sampling path (`faithfulness_grpo.run_live`).
+2. Live seams — the retrieve adapter (`faithfulness_seams.make_ai_search_retrieve`) is
+   wired onto `agent.ai_search` and conformance-checked against the real committed RAG
+   index; the verify adapter (`make_entailment_verify`) is wired in the
+   `agent.source_verifier` idiom. **Open:** the real entailment LLM behind the verify
+   seam and the trained `generate` policy (the only seams that intrinsically need a model).
 3. `counterfactual_grounding_rate` power calc + private held-out split — not yet computed.
 4. ≥2-family judge validation of the faithfulness construct — not yet run.
