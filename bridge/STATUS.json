@@ -1,8 +1,10 @@
 {
-  "updatedAt": "2026-06-29T23:44:33Z",
+  "updatedAt": "2026-06-29T23:45:11Z",
   "host": "spark-2f2d",
-  "running": null,
-  "pendingCommands": [],
+  "running": "2026-06-29-claude-web-handshake-01",
+  "pendingCommands": [
+    "2026-06-29-claude-web-handshake-01"
+  ],
   "trainwatch": [
     {
       "id": "a92be4e1",
