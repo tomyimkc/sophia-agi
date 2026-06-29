@@ -38,3 +38,4 @@
 {"utc":"20260629T045330Z","bench":"lean-expiter","file":"lean-expiter-20260629T045330Z.json"}
 {"utc":"20260629T045441Z","bench":"lean-passk","file":"lean-passk-20260629T045441Z.json"}
 {"utc":"20260629T045455Z","bench":"roofline-fp4","file":"roofline-fp4-20260629T045455Z.json"}
+{"utc":"20260629T045509Z","bench":"nvfp4-quant-invariants","file":"nvfp4-quant-invariants-20260629T045509Z.json"}
