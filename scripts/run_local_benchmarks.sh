@@ -139,18 +139,24 @@ DRY_RUN=1            # default: print the plan, execute nothing
 RUN_A=0
 RUN_B=0
 RUN_VIRTUES=0        # cardinal-virtue benchmarks (Sophrosyne + Dikaiosyne real GO-path eval)
+RUN_THINKING=0       # thinking-log pipeline benchmark (CPU/offline; opt-in real-model faithfulness)
 RUN_TRAIN=0          # gate the long/destructive QAT train behind an explicit flag
 
 usage() {
   cat <<'EOF'
-Usage: scripts/run_local_benchmarks.sh [--all|--bench-a|--bench-b|--bench-virtues] [--execute] [--run-train] [-h]
+Usage: scripts/run_local_benchmarks.sh [--all|--bench-a|--bench-b|--bench-virtues|--bench-thinking] [--execute] [--run-train] [-h]
 
   --bench-a        Run Benchmark A only (≥2-family VALIDATED judging of M3-SFT uplift).
   --bench-b        Run Benchmark B only (low-RAM NVFP4 certification).
   --bench-virtues  Run the cardinal-virtue real GO-path evals (Sophrosyne + Dikaiosyne):
                    build+decontam batteries, 2-family judge labelling, real-baseline 3-arm
                    scoring. Two judge families + a baseline model required (judge != subject).
-  --all            Run A and B (default if no bench is selected). Virtues are opt-in (not in --all).
+  --bench-thinking Run the thinking-log pipeline benchmark (CPU/offline, no GPU): capture
+                   coverage (every generate() -> a trace span), A2A delegate/result/synthesis
+                   legs, and fail-closed distill yield. With THINKING_MODEL set (+ a key and
+                   SOPHIA_CAPTURE_THINKING=1) it also runs a real-model CoT faithfulness pass
+                   (a measurement, never a GO/claim). No owned-hardware judge farm needed.
+  --all            Run A and B (default if no bench is selected). Virtues and thinking are opt-in (not in --all).
   --execute        Actually run the commands. WITHOUT this flag the script DRY-RUNS (prints only).
   --run-train      In Benchmark B, also run the QAT train step (long, GPU). Default: skip & certify
                    an existing adapter at QAT_ADAPTER.
@@ -168,6 +174,7 @@ while [[ $# -gt 0 ]]; do
     --bench-a)       RUN_A=1 ;;
     --bench-b)       RUN_B=1 ;;
     --bench-virtues) RUN_VIRTUES=1 ;;
+    --bench-thinking) RUN_THINKING=1 ;;
     --all)           RUN_A=1; RUN_B=1 ;;
     --execute)       DRY_RUN=0 ;;
     --dry-run)       DRY_RUN=1 ;;   # explicit no-op (dry-run is the default); keeps bridge cmds robust
@@ -180,7 +187,10 @@ done
 
 # Default to running both M3 benchmarks ONLY if no lane at all was selected. A bare
 # --bench-virtues must NOT silently also run A+B (it has its own GPU cost profile).
-if [[ "${RUN_A}" -eq 0 && "${RUN_B}" -eq 0 && "${RUN_VIRTUES}" -eq 0 ]]; then RUN_A=1; RUN_B=1; fi
+if [[ "${RUN_A}" -eq 0 && "${RUN_B}" -eq 0 && "${RUN_VIRTUES}" -eq 0 && "${RUN_THINKING}" -eq 0 ]]; then RUN_A=1; RUN_B=1; fi
+
+# Thinking-log faithfulness model: unset -> CPU/offline pipeline only (no real model).
+THINKING_MODEL="${THINKING_MODEL:-}"
 
 # Cardinal-virtue eval config. Two distinct judge families, BOTH stronger than and DISTINCT
 # from the baseline subject (judge != subject). Judge A defaults to a CAPABLE Qwen (32B, NOT
@@ -221,13 +231,15 @@ echo "  mode:        $([[ "${DRY_RUN}" -eq 1 ]] && echo DRY-RUN || echo EXECUTE)
 echo "  benchmark A: $([[ "${RUN_A}" -eq 1 ]] && echo yes || echo no)"
 echo "  benchmark B: $([[ "${RUN_B}" -eq 1 ]] && echo yes || echo no) (run-train: $([[ "${RUN_TRAIN}" -eq 1 ]] && echo yes || echo no))"
 echo "  virtues:     $([[ "${RUN_VIRTUES}" -eq 1 ]] && echo yes || echo no)"
+echo "  thinking:    $([[ "${RUN_THINKING}" -eq 1 ]] && echo "yes (model: ${THINKING_MODEL:-offline})" || echo no)"
 echo "  repo root:   ${ROOT}"
 echo "  python:      ${PY}"
 cost_guard_reminder
 
 # Preflight: in EXECUTE mode the chosen interpreter MUST have numpy (and torch for --run-train),
 # else fail with an actionable message instead of the cryptic B0 self-test failure (no GPU spent).
-if [[ "${DRY_RUN}" -eq 0 ]]; then
+# The thinking lane is pure-stdlib (no numpy/GPU), so it does not require this preflight.
+if [[ "${DRY_RUN}" -eq 0 && ( "${RUN_A}" -eq 1 || "${RUN_B}" -eq 1 || "${RUN_VIRTUES}" -eq 1 ) ]]; then
   if ! "${PY}" -c "import numpy" >/dev/null 2>&1; then
     echo "FATAL: interpreter '${PY}' has no numpy — GPU steps need the Spark's torch venv." >&2
     echo "  Fix: restart the bridge poller with PYTHON=/abs/path/to/torch-venv/bin/python exported," >&2
@@ -391,6 +403,24 @@ if [[ "${RUN_VIRTUES}" -eq 1 ]]; then
   echo "  agi-proof/benchmark-results/dikaiosyne/dikaiosyne-justice-eval.public-report.json"
   echo "GO promotes via published-results.json + build_results_page.py; NO-GO stays candidate"
   echo "(log measured numbers in the temperance/justice ledger). canClaimAGI stays false."
+fi
+
+# ════════════════════════════════════════════════════════════════════════════════════════════
+# BENCHMARK THINKING — thinking-log pipeline (capture coverage + A2A distill) + faithfulness
+# CPU/offline by default; no owned-hardware judge farm, no RunPod. Full design: docs/09-Agent/Thinking-Logs.md
+# ════════════════════════════════════════════════════════════════════════════════════════════
+if [[ "${RUN_THINKING}" -eq 1 ]]; then
+  step "T0 — Thinking-log pipeline + A2A distill (offline capture-coverage + fail-closed yield)"
+  if [[ -n "${THINKING_MODEL}" ]]; then
+    echo "  real-model faithfulness pass enabled: model=${THINKING_MODEL} (needs key + SOPHIA_CAPTURE_THINKING=1)"
+    run "${PY}" tools/run_thinking_bench.py --model "${THINKING_MODEL}"
+  else
+    echo "  offline only (set THINKING_MODEL=anthropic|deepseek|... + a key for the faithfulness pass)"
+    run "${PY}" tools/run_thinking_bench.py --offline
+  fi
+  echo
+  echo "Thinking benchmark done. Receipt: agent/memory/thinking/bench/thinking-bench.json (gitignored)."
+  echo "Offline pass = the capture/A2A/distill MECHANISM works; faithfulness Δ is a measurement, not a claim."
 fi
 
 echo
