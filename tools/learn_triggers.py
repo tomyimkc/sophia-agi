@@ -42,7 +42,7 @@ DEFAULT_LOG = ROOT / "agi-proof" / "skill-trigger-log.jsonl"
 _STOP = set("""
 the a an and or of to in on for with without this that these those is are be use using used
 your you it its as at by from into out up down when whenever before after run i my me we our
-fix make do please can could would should help need want get set the".split() also new
+fix make do please can could would should help need want get set also new
 """.split())
 
 

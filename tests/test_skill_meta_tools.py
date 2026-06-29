@@ -31,8 +31,9 @@ def test_linter_flags_a_thin_agent_skill():
 
 
 def test_unified_index_idempotent_and_router_safe():
-    # regenerating must be a no-op (clean), and the index must NOT break the router
-    assert build_skill_index.build(check=False) == 0
+    # regenerating must be a no-op (clean), and the index must NOT break the router.
+    # Use check=True so the test VERIFIES the committed index without writing to it
+    # (build(check=False) would silently regenerate skills/registry/index.json in CI).
     assert build_skill_index.build(check=True) == 0
     loaded = skills.load_all()  # must not raise on index.json / forge_index.json
     assert "coding-debugging" in loaded

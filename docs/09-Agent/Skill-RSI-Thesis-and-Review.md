@@ -286,5 +286,3 @@ python tools/lint_skill_descriptions.py
 # after collecting routing telemetry, propose sharper triggers (apply is opt-in):
 python tools/learn_triggers.py --log agi-proof/skill-trigger-log.jsonl
 ```
-</content>
-</invoke>

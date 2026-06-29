@@ -87,4 +87,3 @@ IP skills (corpus/training/infra internals) stay encrypted — do **not** exempt
 - Do not add a near-duplicate skill when an update would do.
 - Do not write a vague `description` ("helps with debugging") — it will never trigger.
 - Do not overclaim in the skill body; `tools/lint_claims.py` still applies.
-</content>

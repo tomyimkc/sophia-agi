@@ -26,7 +26,9 @@ import json
 import math
 import re
 from pathlib import Path
-from typing import Any, Callable
+# Callable is referenced only inside quoted (forward-ref) annotations below, so the
+# name is never evaluated at runtime — importing it is unnecessary (CodeQL: unused).
+from typing import Any
 
 from agent.config import ROOT
 
@@ -299,4 +301,6 @@ def _log_selection(log_path: Path, goal: str, top: "dict[str, Any] | None") -> N
         with log_path.open("a", encoding="utf-8") as f:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
     except Exception:
+        # Telemetry logging is best-effort: a routing decision must never fail just
+        # because the log path is unwritable. Swallow and continue (behavior unchanged).
         pass

@@ -22,7 +22,6 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -73,6 +72,8 @@ def _spec_for(entry: dict) -> dict | None:
         try:
             rules = json.loads(manifest.read_text(encoding="utf-8")).get("rules", rules)
         except Exception:
+            # A malformed/unreadable manifest just falls back to the default `rules`
+            # computed above — projection must not fail on one bad skill (behavior unchanged).
             pass
     acc = (entry.get("best_validation") or {}).get("accuracy")
     when = (f"Use when the goal is to {desc} (forged, verifier-gated). "
