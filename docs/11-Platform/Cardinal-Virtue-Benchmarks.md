@@ -130,13 +130,31 @@ specs are env-overridable: `VIRTUE_JUDGE_A` (default a capable Qwen-32B — dist
 
 ## 5. Running from the cloud session (egress-blocked) — via the GitHub bridge
 
-> **Bridge prerequisite:** the poller's allowlist (`tools/github_bridge_poll.py` on the
-> `spark-bridge` branch) must include the `--bench-virtues` token, and the spark-bridge
-> worktree must carry this updated `run_local_benchmarks.sh` (merge `main`/this branch in).
-> Until both are true the poller will *reject* a `--bench-virtues` command. Once they are:
-> queue `bridge/commands/<id>.json` with `args: "--bench-virtues --dry-run"` (no approval
-> needed) to verify the round-trip, then `args: "--bench-virtues --execute"` with a non-empty
-> `approvedBy` (human) for the powered run.
+**Enablement state:** the poller allowlist on `spark-bridge` already includes the
+`--bench-virtues` token (`tools/github_bridge_poll.py`, commit `7e6590c9`). Two operator
+steps remain before a `--bench-virtues` command will run:
+
+1. **Sync the worktree:** merge `main` into `spark-bridge` so its checkout carries the
+   `--bench-virtues` lane in `run_local_benchmarks.sh` **and** the virtue tools
+   (`build_*`/`label_*`/`run_*_eval`/`*_decision`/the `agent/` modules). A dry-run only
+   needs the lane; an `--execute` run needs the tools too. (Mind the documented untracked
+   `run_local_benchmarks.sh` *shadow* in that worktree — the poller must run the tracked one.)
+2. **Restart the poller:** `ALLOWLIST` is read once at process startup, so the live poller
+   keeps the *old* allowlist in memory until restarted — re-run the tmux command in
+   `tools/github_bridge_poll.py`'s docstring. Until then, a `--bench-virtues` command is
+   **rejected** (do not queue it before the restart, or it lands a stale `rejected` result).
+
+Then queue commands (cloud side: `push_files` to `refs/heads/spark-bridge`):
+
+```json
+// bridge/commands/2026-06-29-virtues-dryrun.json  (no approval needed)
+{"id": "2026-06-29-virtues-dryrun", "args": "--bench-virtues --dry-run", "createdBy": "claude", "approvedBy": ""}
+// bridge/commands/2026-06-29-virtues-exec.json  (powered; judge farm up)
+{"id": "2026-06-29-virtues-exec", "args": "--bench-virtues --execute", "createdBy": "claude", "approvedBy": "<human-handle>"}
+```
+
+Read results back from `bridge/results/<id>.json` / `bridge/STATUS.json` via the GitHub MCP.
+`--execute` requires a non-empty `approvedBy` (the poller's `GATED` check is unchanged).
 
 The cloud session cannot reach the farm directly. Queue the commands above through the
 `spark-bridge` message queue (`bridge/PROTOCOL.md`): write `bridge/commands/<id>.json`
