@@ -38,7 +38,9 @@ if str(ROOT) not in sys.path:
 
 from provenance_bench import (  # noqa: E402
     code_dataset,
+    code_integrity,
     code_reward,
+    invention_dataset,
     math_dataset,
     math_reward,
     ontology_rl_dataset,
@@ -570,6 +572,111 @@ def run_eval_code(args: argparse.Namespace) -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# Invention task — POWERED held-out pass@1 on compositional generalization.
+# Eval suite = provenance_bench.invention_dataset.build_invention_eval_suite
+# (N>=175, depth-2/3/4 compositions ABSENT from train; MDE~0.15 at 80% power) —
+# the spec's powered primary. Scored by the GUARDED reward (integrity scan +
+# exit-code-proof isolated grader + held-out private inputs), so the EVAL itself is
+# cheat-resistant: an adapter that learned a reward-hack is floored here too, and a
+# special-cased solution fails the unshown private inputs.
+# --------------------------------------------------------------------------- #
+def _mock_completion_invention(task: dict, *, improved: bool) -> str:
+    if improved:
+        return task["reference_solution"]  # generator-verified fenced pipeline
+    return "```python\ndef pipeline(xs):\n    return []\n```"  # wrong, but plain data (not a cheat)
+
+
+def _score_invention(tasks: list, completions: dict) -> dict:
+    rows, rewards, pass1, hacks = [], [], 0, 0
+    by_depth: dict = {}
+    for t in tasks:
+        text = completions.get(t["id"], "")
+        reward, detail = code_integrity.guarded_reward_for_task(
+            text, t["test"], holdout_test=t.get("private_test"))
+        rewards.append(float(reward))
+        ok = int(reward >= 1.0)
+        pass1 += ok
+        if detail.get("cheated"):
+            hacks += 1
+        by_depth.setdefault(t["depth"], []).append(ok)
+        rows.append({"task_id": t["id"], "depth": t["depth"], "reward": reward,
+                     "cheated": bool(detail.get("cheated")), "completion": text})
+    return {
+        "n": len(tasks),
+        "passAt1": round(pass1 / len(tasks), 4) if tasks else 0.0,
+        "passAt1ByDepth": {str(d): round(sum(v) / len(v), 4) for d, v in sorted(by_depth.items())},
+        "rewardHackCount": hacks,
+        "rows": rows,
+    }
+
+
+def run_eval_invention(args: argparse.Namespace) -> dict:
+    if not code_reward.exec_enabled():
+        raise SystemExit("invention eval needs SOPHIA_ALLOW_CODE_EXEC=1 (held-out inputs are executed)")
+    from tools import eval_stats as es
+
+    suite = invention_dataset.build_invention_eval_suite(target_n=args.invention_n, seed=args.seed)
+    tasks = suite["tasks"]
+    if args.limit:
+        tasks = tasks[: args.limit]
+
+    if args.mode == "mock":
+        base = {t["id"]: _mock_completion_invention(t, improved=False) for t in tasks}
+        adapter = {t["id"]: _mock_completion_invention(t, improved=True) for t in tasks}
+        model_desc = "mock"
+    else:
+        if not args.adapter:
+            raise SystemExit("--adapter is required under --mode real")
+        base_gen, adapter_gen = _load_real_generators(
+            args.model, args.adapter, max_new_tokens=args.max_new_tokens, chat_template=True)
+        base, adapter = {}, {}
+        for i, t in enumerate(tasks, 1):
+            print(f"[eval-invention] {i}/{len(tasks)} {t['id']}", flush=True)
+            base[t["id"]] = base_gen(t["prompt"])
+            adapter[t["id"]] = adapter_gen(t["prompt"])
+        model_desc = args.model
+
+    base_score = _score_invention(tasks, base)
+    adapter_score = _score_invention(tasks, adapter)
+    delta = round(adapter_score["passAt1"] - base_score["passAt1"], 4)
+    mde = round(es.mde_at_n(len(tasks)), 4) if tasks else 1.0
+    report = {
+        "benchmark": "rlvr-adapter-heldout",
+        "task": "invention",
+        "mode": args.mode,
+        "model": model_desc,
+        "adapter": str(args.adapter) if args.adapter else None,
+        "claimStatus": (
+            "Open — POWERED held-out pass@1 on compositional-generalization tasks "
+            "(eval compositions absent from train). Capability claim requires >=3 seeds "
+            "+ no-overclaim aggregation (CI excludes 0); the integrity gate must hold."
+        ),
+        "split": {
+            "evalTasks": len(tasks),
+            "targetN": suite["target_n"],
+            "depthsUsed": suite["depths_used"],
+            "seed": args.seed,
+            "mdeAtN": mde,
+            "decontaminatedByConstruction": True,
+        },
+        "base": {k: v for k, v in base_score.items() if k != "rows"},
+        "adapterScore": {k: v for k, v in adapter_score.items() if k != "rows"},
+        "delta": {"passAt1": delta},
+        "checks": {
+            "powered": mde <= 0.16,
+            "adapterImprovesPassAt1": delta > 0,
+            "noPassAt1Regression": delta >= 0,
+            # The integrity gate baked into the eval: a pass-rate bought with any
+            # accepted reward-hack is disqualified (guarded reward floors cheats to -1).
+            "noRewardHacksAccepted": base_score["rewardHackCount"] == 0 and adapter_score["rewardHackCount"] == 0,
+        },
+        "rows": {"base": base_score["rows"], "adapter": adapter_score["rows"]},
+    }
+    report["passed"] = all(report["checks"].values())
+    return report
+
+
+# --------------------------------------------------------------------------- #
 # Concept task — held-out before/after on UNSEEN concept pairs. Reward = the
 # symbolic concept-TBox gate (ontology_rl_reward; deterministic, no judge). The
 # capability metric is meanReward (so ingest_rlvr_eval maps it through the generic
@@ -679,12 +786,15 @@ def run_eval_concept(args: argparse.Namespace) -> dict:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--mode", choices=["mock", "real"], default="mock")
-    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "step"], default="provenance",
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "step", "invention"], default="provenance",
                     help="provenance (provenance_faithful), math (sympy math_equivalent), "
                          "code (hidden-tests-pass via code_exec), concept (concept-TBox gate), "
-                         "or step (process: every step verified -> verified-correct rate)")
+                         "step (process: every step verified -> verified-correct rate), "
+                         "or invention (POWERED compositional-generalization suite, guarded grader)")
     ap.add_argument("--step-domain", choices=["math", "physics"], default="math",
                     help="for --task step: which held-out RL split + per-step oracle to use")
+    ap.add_argument("--invention-n", type=int, default=175,
+                    help="invention task only: target eval-suite size (175 -> MDE ~0.15 at 80%% power)")
     ap.add_argument("--model", default="zai-org/glm-4-9b-chat-hf")
     ap.add_argument("--adapter", type=Path, default=None)
     ap.add_argument("--out", type=Path, default=OUT)
@@ -706,6 +816,8 @@ def main(argv: list[str] | None = None) -> int:
         report = run_eval_concept(args)
     elif args.task == "step":
         report = run_eval_step(args)
+    elif args.task == "invention":
+        report = run_eval_invention(args)
     else:
         report = run_eval(args)
     _write(args.out, report)

@@ -45,6 +45,7 @@ if str(ROOT) not in sys.path:
 
 from provenance_bench import (  # noqa: E402
     code_dataset,
+    code_integrity,
     code_reward,
     math_dataset,
     math_reward,
@@ -322,9 +323,16 @@ def _run_gpu(args: argparse.Namespace) -> int:
         reward_fn = ontology_rl_reward.make_grpo_reward()
     elif args.task == "code":
         data = code_dataset.build_code_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
-        # test column -> hidden-tests-pass (provenance_bench.code_exec). Judge-free;
-        # the interpreter decides. No false-positive axis (every item has a test).
-        reward_fn = code_reward.make_grpo_reward(timeout_sec=args.code_timeout)
+        # test column -> hidden-tests-pass. The tests-pass signal is objective but NOT
+        # ungameable (see agi-proof/coding-integrity-thesis.md): the solution shares a
+        # process with the appended test. DEFAULT is the integrity-gated reward —
+        # static cheat scan + exit-code-proof isolated grader floor reward-hacks
+        # before they can train the model to emit them. --no-code-integrity-guard
+        # selects the bare (hackable) reward, kept only for the thesis baseline.
+        if args.code_integrity_guard:
+            reward_fn = code_integrity.make_grpo_reward(timeout_sec=args.code_timeout)
+        else:
+            reward_fn = code_reward.make_grpo_reward(timeout_sec=args.code_timeout)
     elif args.task == "physics":
         data = physics_dataset.build_physics_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
         # gold column -> dimensional+numeric verifier (agent.units). Judge-free and
@@ -472,7 +480,17 @@ def _run_gpu(args: argparse.Namespace) -> int:
         "evalCases": n_eval,
         "trainSealed": data["train_sealed"],
         "evalSealed": data["eval_sealed"],
-        "baseModelLicense": "glm-4-9b License (NOT MIT; commercial use needs Zhipu registration)",
+        # Derive from the actual --model: the old hardcoded glm-4-9b string was wrong for any
+        # non-glm base (e.g. Qwen2.5-Math-7B is Apache-2.0), and license is a provenance field.
+        "baseModelLicense": (
+            "glm-4-9b License (NOT MIT; commercial use needs Zhipu registration)"
+            if any(x in args.model.lower() for x in ("glm", "zai-org"))
+            else "Apache-2.0"
+            if any(x in args.model.lower() for x in ("qwen", "olmoe", "allenai", "mistral", "smol"))
+            else "Llama Community License (Meta)"
+            if "llama" in args.model.lower()
+            else f"unverified — see the model card for {args.model}"
+        ),
         "rewardSelected": args.reward,
         # M1 headline measurement: within-group reward std over training. A single-axis
         # run is expected to collapse (final std -> 0); multiaxis should stay > 0.
@@ -519,6 +537,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--eval-frac", type=float, default=0.3)
     ap.add_argument("--code-timeout", type=int, default=15,
                     help="code-task only: wall-clock seconds for the hidden-test executor")
+    ap.add_argument("--code-integrity-guard", action=argparse.BooleanOptionalAction, default=True,
+                    help="code-task only: gate the tests-pass reward with the integrity "
+                         "scan + isolated grader (default on; --no-code-integrity-guard "
+                         "selects the bare hackable reward for the thesis baseline)")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument(
         "--reward", default="verifier", choices=["verifier", "gate", "multiaxis"],
@@ -542,6 +564,14 @@ def main(argv: list[str] | None = None) -> int:
             ok, detail = step_reward.offline_invariants(domain=args.step_domain)
         elif args.task == "code":
             ok, detail = code_reward.offline_invariants()
+            # The integrity gate is part of the code reward's contract when guarded
+            # (the default): a regression that re-opens a reward-hack surface must
+            # fail the offline gate, not just a unit test.
+            if args.code_integrity_guard:
+                integ_ok, integ_detail = code_integrity.offline_invariants()
+                ok = ok and integ_ok
+                detail.setdefault("checks", {})["codeIntegrityInvariants"] = integ_ok
+                detail["codeIntegrity"] = integ_detail
         elif args.task == "concept":
             ok, detail = ontology_rl_reward.offline_invariants()
             # The concept task additionally requires the spurious-reward ablation to

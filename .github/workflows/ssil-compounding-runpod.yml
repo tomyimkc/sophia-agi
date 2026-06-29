@@ -54,6 +54,10 @@ jobs:
   mock-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      IN_TASK: ${{ github.event.inputs.task }}
+      IN_GENERATIONS: ${{ github.event.inputs.generations }}
+      IN_SEED_SWEEP: ${{ github.event.inputs.seed_sweep }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
@@ -64,9 +68,9 @@ jobs:
       - name: Mock compounding gate-pipeline smoke (rising curve + negative control)
         run: |
           python tools/run_ssil_winset_compounding.py --mode mock \
-            --task "${{ github.event.inputs.task }}" \
-            --generations "${{ github.event.inputs.generations }}" \
-            --seed-sweep "${{ github.event.inputs.seed_sweep }}" \
+            --task "$IN_TASK" \
+            --generations "$IN_GENERATIONS" \
+            --seed-sweep "$IN_SEED_SWEEP" \
             --negative-control
       - name: Upload mock compounding report
         if: always()
@@ -77,6 +81,7 @@ jobs:
           if-no-files-found: warn
 
   live:
+    environment: runpod-paid
     if: github.event.inputs.remote_mode == 'live'
     runs-on: ubuntu-latest
     timeout-minutes: 15

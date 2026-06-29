@@ -1,0 +1,36 @@
+{
+  "arms": {
+    "dikaiosyne-consulted": {
+      "reason": "scored only alongside a real baseline",
+      "status": "not_run"
+    },
+    "dikaiosyne-standalone": {
+      "falseEquivalenceErrorRate": 0.0,
+      "n": 16,
+      "note": "routing fidelity vs author labels — NOT a real-decision effect",
+      "partialityErrorRate": 0.0
+    },
+    "no-auditor-baseline": {
+      "reason": "requires a real model/agent",
+      "status": "not_run"
+    }
+  },
+  "battery": "sophia.dikaiosyne_justice_battery.v1",
+  "canClaimAGI": false,
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "criticalFailures": [
+    "no_real_baseline: the no-auditor baseline arm needs a real model/agent (mock baselines are not evidence)",
+    "relevance_labels_not_2family: relevant/irrelevant labels are author-only, not >= 2 independent judge families (kappa >= 0.40)",
+    "no_effect_ci: delta partiality-rate CI does not exclude 0 (or no real arms to compute it)"
+  ],
+  "delta": null,
+  "experimentId": "dikaiosyne-justice-eval",
+  "go": false,
+  "groundTruth": "author-labelled relevance (NOT >= 2 independent judge families) — does not satisfy the spec",
+  "harness": "tools/run_dikaiosyne_eval.py",
+  "headline": "PENDING — machinery only; no real no-auditor baseline run has been performed",
+  "note": "Intentionally PENDING. The deterministic mock baselines (--mock {biased,blind,oracle}) exercise the delta+CI math in CI (tests/test_dikaiosyne_eval.py), but a mock is not a model: no effect on real decisions is claimed. Promotion needs an external decontaminated set of equivalence classes, >= 2 independent judge families for the relevance labels, a real no-auditor baseline, and a delta partiality-rate CI excluding 0 — see the measurement_spec and the dikaiosyne-justice-gate row in agi-proof/failure-ledger.md.",
+  "preregistration": "agi-proof/benchmark-results/dikaiosyne/measurement_spec.json",
+  "status": "not_run",
+  "verdict": "NO-GO"
+}

@@ -32,6 +32,7 @@ SCAN: list[str] = [
     "agi-proof/research-note-source-discipline.md",
     "agi-proof/measurement-thesis.md",
     "docs/00-Index/Home.md",
+    "docs/LEIDEN-ALIGNMENT.md",
 ]
 SCAN_GLOBS: list[str] = ["docs/07-Growth/**/*.md", "docs/07-Growth/**/*.txt"]
 
@@ -52,6 +53,13 @@ FORBIDDEN: list[tuple[str, str]] = [
     (r"\bproves safe self-improvement\b", "unqualified safe-self-improvement claim"),
     (r"\bgödel machine\b|\bgodel machine\b", "misleading Gödel-machine framing"),
     (r"\bproves it is trustworthy\b", "unqualified trustworthiness proof claim"),
+    # Leiden Declaration value 2 (attribution & responsibility): credit and responsibility
+    # belong to humans; AI systems are tools, never authors of results.
+    (r"\bauthored by (claude|gpt|copilot|glm|an? ai|the model|the llm)\b",
+     "Leiden: results are authored by humans, not by an automated system"),
+    (r"\bai[- ]authored\b", "Leiden: AI is a tool, not an author"),
+    (r"\b(claude|gpt|the model|the llm)\s+(is|was)\s+(the\s+|an?\s+)?(author|inventor|discoverer)\b",
+     "Leiden: credit for results belongs to humans, not automated systems"),
 ]
 
 ALLOW_MARKER = "claim-ok"

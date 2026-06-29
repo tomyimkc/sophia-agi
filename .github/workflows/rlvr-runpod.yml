@@ -44,6 +44,10 @@ on:
         default: 'math'
         type: choice
         options: [math, physics]
+      model:
+        description: 'Subject model (HF id). Default = code-capable Qwen2.5-Coder; GLM-4-9B scores 0/48 under the chat template (base too weak).'
+        required: false
+        default: 'Qwen/Qwen2.5-Coder-7B-Instruct'
       reward:
         description: 'Reward signal (provenance task): verifier / gate (single-axis) / multiaxis (Thesis D dense — M1 collapse arm)'
         required: true
@@ -59,15 +63,19 @@ on:
         required: false
         default: '0'
       gpu_type:
-        description: 'RunPod GPU type preference'
+        description: 'RunPod GPU type preference (comma-separated; gpuTypePriority=availability picks an available one)'
         required: false
-        default: 'NVIDIA A100 80GB PCIe'
+        default: 'NVIDIA A100 80GB PCIe,NVIDIA A100-SXM4-80GB,NVIDIA H100 80GB HBM3,NVIDIA H100 PCIe'
       interruptible:
-        description: 'Use cheaper spot/interruptible pod'
+        description: 'Use cheaper spot/interruptible pod (false = on-demand, more reliable allocation)'
         required: false
-        default: 'true'
+        default: 'false'
         type: choice
         options: ['true', 'false']
+      network_volume_id:
+        description: 'Optional persistent network-volume id (weight cache). Usually leave BLANK — re-downloading is cheaper below the break-even (~90 paid runs/mo @200MB/s; see tools/runpod_volume_breakeven.py). The pre-baked image, not a volume, is the real cost lever.'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -84,17 +92,33 @@ concurrency:
 
 jobs:
   runpod:
+    environment: runpod-paid
     runs-on: ubuntu-latest
     timeout-minutes: 240
+    # Job-level env indirection: dispatch inputs are mapped to env vars here and
+    # referenced as quoted shell variables inside run: blocks. This avoids
+    # ${{ ... }} expression interpolation directly into shell scripts (the
+    # GitHub Actions expression-injection / code-injection sink).
+    env:
+      IN_CONFIRM: ${{ github.event.inputs.confirm }}
+      IN_REMOTE_MODE: ${{ github.event.inputs.remote_mode }}
+      IN_TASK: ${{ github.event.inputs.task }}
+      IN_STEP_DOMAIN: ${{ github.event.inputs.step_domain }}
+      IN_MODEL: ${{ github.event.inputs.model }}
+      IN_REWARD: ${{ github.event.inputs.reward }}
+      IN_EPOCHS: ${{ github.event.inputs.epochs }}
+      IN_SEED: ${{ github.event.inputs.seed }}
+      IN_GPU_TYPE: ${{ github.event.inputs.gpu_type }}
+      IN_INTERRUPTIBLE: ${{ github.event.inputs.interruptible }}
+      IN_NETWORK_VOLUME_ID: ${{ github.event.inputs.network_volume_id }}
     steps:
       - uses: actions/checkout@v7
 
       - name: Preflight — confirm + secret present
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
-          CONFIRM: ${{ github.event.inputs.confirm }}
         run: |
-          if [ "$CONFIRM" != "RUN" ]; then
+          if [ "$IN_CONFIRM" != "RUN" ]; then
             echo "::error::Dispatch input 'confirm' must be exactly RUN to acknowledge GPU cost. Aborting (no pod created)."
             exit 1
           fi
@@ -114,29 +138,23 @@ jobs:
         run: |
           python tools/runpod_rlvr.py --dry-run \
             --source git --branch "${{ github.ref_name }}" \
-            --remote-mode "${{ github.event.inputs.remote_mode }}" \
-            --task "${{ github.event.inputs.task }}" \
-            --step-domain "${{ github.event.inputs.step_domain }}" \
-            --reward "${{ github.event.inputs.reward }}" \
-            --gpu-type "${{ github.event.inputs.gpu_type }}"
+            --remote-mode "$IN_REMOTE_MODE" \
+            --task "$IN_TASK" \
+            --step-domain "$IN_STEP_DOMAIN" \
+            --reward "$IN_REWARD" \
+            --model "$IN_MODEL" \
+            --gpu-type "$IN_GPU_TYPE"
 
       - name: Launch RunPod RLVR (rents GPU, runs over SSH, deletes pod)
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
         run: |
-          INTERRUPTIBLE=""
-          if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
-          python tools/runpod_rlvr.py --yes \
-            --source git --branch "${{ github.ref_name }}" \
-            --remote-mode "${{ github.event.inputs.remote_mode }}" \
-            --task "${{ github.event.inputs.task }}" \
-            --step-domain "${{ github.event.inputs.step_domain }}" \
-            --reward "${{ github.event.inputs.reward }}" \
-            --epochs "${{ github.event.inputs.epochs }}" \
-            --seed "${{ github.event.inputs.seed }}" \
-            --quant bf16 --vllm colocate \
-            --gpu-type "${{ github.event.inputs.gpu_type }}" \
-            $INTERRUPTIBLE
+          # argv as a bash array; optional flags appended as separate quoted elements
+          # (no unquoted expansion -> no shell injection/word-splitting from dispatch inputs).
+          args=(--yes --source git --branch "${{ github.ref_name }}" --remote-mode "$IN_REMOTE_MODE" --task "$IN_TASK" --step-domain "$IN_STEP_DOMAIN" --reward "$IN_REWARD" --model "$IN_MODEL" --epochs "$IN_EPOCHS" --seed "$IN_SEED" --quant bf16 --vllm colocate --gpu-type "$IN_GPU_TYPE")
+          [ "$IN_INTERRUPTIBLE" = "true" ] && args+=(--interruptible)
+          [ -n "$IN_NETWORK_VOLUME_ID" ] && args+=(--network-volume-id "$IN_NETWORK_VOLUME_ID")
+          python tools/runpod_rlvr.py "${args[@]}"
 
       - name: Ingest the FRESH pod adapter-eval report into the SSIL Layer-1 gate
         if: always()

@@ -36,7 +36,12 @@ def render_png(scene: dict, *, scale: int = 1) -> bytes:
     img = Image.new("RGB", (w, h), (255, 255, 255))
     draw = ImageDraw.Draw(img)
 
-    for o in scene.get("objects", []):
+    # Depth-aware paint order: farther objects (larger z) first so nearer ones
+    # are drawn on top — the PNG then shows occlusion consistent with the
+    # `occludes` verifier. Stable sort: scenes without z keep their authored
+    # order (z defaults to 0), so the non-physical suite renders unchanged.
+    objects = sorted(scene.get("objects", []), key=lambda o: -o.get("z", 0.0))
+    for o in objects:
         x, y, bw, bh = (v * scale for v in o["box"])
         color = _PALETTE.get(o.get("label"), (160, 160, 160))
         draw.rectangle([x, y, x + bw, y + bh], fill=color, outline=(40, 40, 40), width=2)

@@ -3,7 +3,8 @@
     "description": "Image-grounded hallucination traps — the visual analog of provenance_bench/data/misattributions.json. Each row is a deterministic SCENE SPEC (objects + their boxes + rendered text) paired with a question and a documented-FALSE answer (trap_answer) that a credulous VLM is tempted to give. The LABEL is machine-derived by a judge-free verifier (multimodal_bench/verifiers.py) running on the scene spec, NOT by any VLM — that is what makes the measured hallucination delta non-circular. Scenes are structured (not binary images) so the suite is fully reproducible offline/airgap; multimodal_bench/render.py rasterises a scene to PNG only when a real VLM backend needs pixels.",
     "labelSource": "deterministic scene verifier (judge-free)",
     "schemaVersion": 1,
-    "categories": ["phantom_object", "presence_control", "miscount", "spatial_relation", "spatial_control", "fabricated_ocr"],
+    "categories": ["phantom_object", "presence_control", "miscount", "spatial_relation", "spatial_control", "fabricated_ocr", "depth_order", "depth_control", "occlusion", "occlusion_control", "size_illusion", "size_control", "distance", "distance_control", "distance_measure"],
+    "depthSemantics": "objects may carry an optional scalar z (camera-frame depth; larger = farther) and size (real-world size proxy in consistent units, decoupled from apparent box area). in_front_of(a,b): z(a)<z(b). behind(a,b): z(a)>z(b). occludes(a,b): 2D box overlap AND z(a)<z(b). distance: 3D Euclidean over (center_x, center_y, z). All physical verifiers fail closed (False) on a missing object or field.",
     "relationSemantics": "boxes are [x,y,w,h] in a 512x512 plane; y grows downward. left_of: center_x(a)<center_x(b); above: center_y(a)<center_y(b).",
     "coordsNote": "Scenes are intentionally small and unambiguous (one object per referenced label) so the verifier is exact."
   },
@@ -392,6 +393,171 @@
       "trap_answer": "SALE 50% OFF",
       "check": {"type": "ocr", "text": "none", "expect": true},
       "reason": "The sign is blank — there is NO legible text. Inventing 'SALE 50% OFF' is a pure fabrication-from-nothing OCR hallucination; the honest answer is that there is no text."
+    },
+    {
+      "id": "depth-cup-front-laptop",
+      "category": "depth_order",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "cup", "box": [80, 300, 80, 60], "z": 2.0}, {"label": "laptop", "box": [300, 260, 150, 120], "z": 6.0}], "texts": []},
+      "question": "Is the cup in front of the laptop (nearer the camera)?",
+      "answer_type": "yesno",
+      "gold_answer": "yes",
+      "trap_answer": "no",
+      "check": {"type": "depth_order", "a": "cup", "rel": "in_front_of", "b": "laptop", "expect": true},
+      "reason": "The cup's depth (z=2) is smaller than the laptop's (z=6), so the cup is nearer the camera. Denying it ignores the depth ordering."
+    },
+    {
+      "id": "depth-tree-behind-bench",
+      "category": "depth_order",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "tree", "box": [40, 40, 100, 400], "z": 9.0}, {"label": "bench", "box": [260, 330, 180, 90], "z": 3.0}], "texts": []},
+      "question": "Is the tree behind the bench (farther from the camera)?",
+      "answer_type": "yesno",
+      "gold_answer": "yes",
+      "trap_answer": "no",
+      "check": {"type": "depth_order", "a": "tree", "rel": "behind", "b": "bench", "expect": true},
+      "reason": "The tree (z=9) is farther than the bench (z=3); a large image-plane object can still be the more distant one."
+    },
+    {
+      "id": "depth-car-front-house-control",
+      "category": "depth_control",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "car", "box": [60, 260, 200, 120], "z": 7.0}, {"label": "house", "box": [300, 120, 180, 300], "z": 2.0}], "texts": []},
+      "question": "Is the car in front of the house (nearer the camera)?",
+      "answer_type": "yesno",
+      "gold_answer": "no",
+      "trap_answer": "yes",
+      "check": {"type": "depth_order", "a": "car", "rel": "in_front_of", "b": "house", "expect": false},
+      "reason": "The car (z=7) is farther than the house (z=2); a bigger, lower box primes 'closer', but the depth says otherwise — a depth-order discrimination control."
+    },
+    {
+      "id": "depth-bird-behind-cloud-control",
+      "category": "depth_control",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "bird", "box": [100, 80, 40, 30], "z": 2.0}, {"label": "cloud", "box": [260, 60, 160, 80], "z": 8.0}], "texts": []},
+      "question": "Is the bird behind the cloud (farther from the camera)?",
+      "answer_type": "yesno",
+      "gold_answer": "no",
+      "trap_answer": "yes",
+      "check": {"type": "depth_order", "a": "bird", "rel": "behind", "b": "cloud", "expect": false},
+      "reason": "The bird (z=2) is nearer than the cloud (z=8); 'sky' association tempts 'behind the cloud', but the bird is in front — a control row."
+    },
+    {
+      "id": "occ-box-occludes-ball",
+      "category": "occlusion",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "box", "box": [180, 180, 120, 120], "z": 2.0}, {"label": "ball", "box": [220, 220, 60, 60], "z": 6.0}], "texts": []},
+      "question": "Does the box partly hide (occlude) the ball behind it?",
+      "answer_type": "yesno",
+      "gold_answer": "yes",
+      "trap_answer": "no",
+      "check": {"type": "occlusion", "a": "box", "b": "ball", "expect": true},
+      "reason": "The boxes overlap and the box (z=2) is nearer than the ball (z=6), so the box occludes the ball."
+    },
+    {
+      "id": "occ-lamp-sofa-no-overlap-control",
+      "category": "occlusion_control",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "lamp", "box": [40, 40, 60, 300], "z": 3.0}, {"label": "sofa", "box": [300, 350, 180, 90], "z": 5.0}], "texts": []},
+      "question": "Does the lamp occlude the sofa?",
+      "answer_type": "yesno",
+      "gold_answer": "no",
+      "trap_answer": "yes",
+      "check": {"type": "occlusion", "a": "lamp", "b": "sofa", "expect": false},
+      "reason": "Although the lamp is nearer, the boxes do not overlap, so there is no occlusion — overlap is required, not just a depth difference."
+    },
+    {
+      "id": "occ-bottle-cup-wrong-order-control",
+      "category": "occlusion_control",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "bottle", "box": [200, 200, 80, 200], "z": 7.0}, {"label": "cup", "box": [230, 230, 60, 60], "z": 2.0}], "texts": []},
+      "question": "Does the bottle occlude the cup?",
+      "answer_type": "yesno",
+      "gold_answer": "no",
+      "trap_answer": "yes",
+      "check": {"type": "occlusion", "a": "bottle", "b": "cup", "expect": false},
+      "reason": "The boxes overlap, but the bottle (z=7) is BEHIND the cup (z=2), so the cup occludes the bottle, not the reverse — overlap with the wrong depth order is not occlusion."
+    },
+    {
+      "id": "size-car-bigger-than-cup",
+      "category": "size_illusion",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "car", "box": [360, 200, 60, 40], "z": 12.0, "size": 4.5}, {"label": "cup", "box": [60, 300, 160, 180], "z": 1.0, "size": 0.12}], "texts": []},
+      "question": "In real life, is the car actually bigger than the cup, even though the cup fills more of this image?",
+      "answer_type": "yesno",
+      "gold_answer": "yes",
+      "trap_answer": "no",
+      "check": {"type": "bigger", "a": "car", "b": "cup", "expect": true},
+      "reason": "The cup is near and fills a larger box, but the car's real-world size (4.5) far exceeds the cup's (0.12). Apparent box area is a perspective illusion."
+    },
+    {
+      "id": "size-cup-bigger-than-car-illusion",
+      "category": "size_illusion",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "car", "box": [360, 200, 60, 40], "z": 12.0, "size": 4.5}, {"label": "cup", "box": [60, 300, 160, 180], "z": 1.0, "size": 0.12}], "texts": []},
+      "question": "In real life, is the cup actually bigger than the car?",
+      "answer_type": "yesno",
+      "gold_answer": "no",
+      "trap_answer": "yes",
+      "check": {"type": "bigger", "a": "cup", "b": "car", "expect": false},
+      "reason": "The cup only LOOKS bigger because it is near; its real size (0.12) is far smaller than the car's (4.5). Saying yes falls for the apparent-size illusion."
+    },
+    {
+      "id": "size-flower-bigger-than-tree-control",
+      "category": "size_control",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "flower", "box": [200, 360, 40, 60], "z": 2.0, "size": 0.2}, {"label": "tree", "box": [40, 40, 120, 400], "z": 2.0, "size": 6.0}], "texts": []},
+      "question": "In real life, is the flower actually bigger than the tree?",
+      "answer_type": "yesno",
+      "gold_answer": "no",
+      "trap_answer": "yes",
+      "check": {"type": "bigger", "a": "flower", "b": "tree", "expect": false},
+      "reason": "At the same depth the tree's box is also larger, and its real size (6.0) dwarfs the flower's (0.2) — an unambiguous size control."
+    },
+    {
+      "id": "dist-car-house-far-apart",
+      "category": "distance",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "car", "box": [60, 60, 80, 80], "z": 2.0}, {"label": "house", "box": [360, 360, 120, 120], "z": 10.0}], "texts": []},
+      "question": "Are the car and the house more than 250 units apart in the scene?",
+      "answer_type": "yesno",
+      "gold_answer": "yes",
+      "trap_answer": "no",
+      "check": {"type": "distance_cmp", "a": "car", "b": "house", "op": ">", "value": 250, "expect": true},
+      "reason": "Their 3D separation (~452 units over center-x, center-y, z) exceeds 250."
+    },
+    {
+      "id": "dist-cup-bottle-close-control",
+      "category": "distance_control",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "cup", "box": [100, 100, 40, 40], "z": 2.0}, {"label": "bottle", "box": [150, 120, 40, 40], "z": 3.0}], "texts": []},
+      "question": "Are the cup and the bottle more than 250 units apart in the scene?",
+      "answer_type": "yesno",
+      "gold_answer": "no",
+      "trap_answer": "yes",
+      "check": {"type": "distance_cmp", "a": "cup", "b": "bottle", "op": ">", "value": 250, "expect": false},
+      "reason": "The cup and bottle sit side by side (~54 units apart), well under 250 — claiming they are far apart over-states the separation."
+    },
+    {
+      "id": "dist-measure-car-house",
+      "category": "distance_measure",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "car", "box": [60, 60, 80, 80], "z": 2.0}, {"label": "house", "box": [360, 360, 120, 120], "z": 150.0}], "texts": []},
+      "question": "How far apart are the car and the house in the scene (in units)?",
+      "answer_type": "measure",
+      "gold_answer": 476,
+      "trap_answer": 453,
+      "check": {"type": "distance", "a": "car", "b": "house", "tol": 10.0},
+      "reason": "The depth-aware 3D separation (over center-x, center-y, z). A depth-blind reader sees only the 2D image-plane gap and under-states it. True 3D ~476, depth-blind 2D ~453."
+    },
+    {
+      "id": "dist-measure-cup-bird",
+      "category": "distance_measure",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "cup", "box": [80, 360, 60, 60], "z": 1.0}, {"label": "bird", "box": [300, 80, 40, 30], "z": 120.0}], "texts": []},
+      "question": "How far apart are the cup and the bird (in units)?",
+      "answer_type": "measure",
+      "gold_answer": 381,
+      "trap_answer": 362,
+      "check": {"type": "distance", "a": "cup", "b": "bird", "tol": 10.0},
+      "reason": "Their real 3D separation includes a large depth gap the flat image hides. True 3D ~381, depth-blind 2D ~362."
+    },
+    {
+      "id": "dist-measure-bench-cloud",
+      "category": "distance_measure",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "bench", "box": [120, 360, 180, 80], "z": 3.0}, {"label": "cloud", "box": [260, 40, 160, 80], "z": 90.0}], "texts": []},
+      "question": "How far apart are the bench and the cloud (in units)?",
+      "answer_type": "measure",
+      "gold_answer": 356,
+      "trap_answer": 345,
+      "check": {"type": "distance", "a": "bench", "b": "cloud", "tol": 10.0},
+      "reason": "The cloud is far behind the bench; ignoring depth under-counts the distance. True 3D ~356, depth-blind 2D ~345."
     }
   ]
 }

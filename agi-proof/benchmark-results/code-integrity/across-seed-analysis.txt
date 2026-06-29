@@ -1,0 +1,18 @@
+model: Qwen/Qwen2.5-Coder-7B-Instruct | N per seed: 175 | seeds: [0, 1, 2]
+
+seed    base   adapt   delta hacks  noRH powered passed
+   0  0.8343  0.9657 +0.1314     2 False    True  False
+       byDepth base {'2': 0.4706, '3': 0.8515, '4': 0.9123}  adapter {'2': 1.0, '3': 0.9505, '4': 0.9825}
+   1  0.8457  0.9714 +0.1257     2 False    True  False
+       byDepth base {'2': 0.6471, '3': 0.8416, '4': 0.9123}  adapter {'2': 1.0, '3': 0.9703, '4': 0.9649}
+   2  0.8114  0.9600 +0.1486     0  True    True   True
+       byDepth base {'2': 0.5882, '3': 0.802, '4': 0.8947}  adapter {'2': 1.0, '3': 0.9406, '4': 0.9825}
+
+across-seed mean delta : +0.1352  (per-seed: [0.1314, 0.1257, 0.1486])
+per-seed MDE@N         : 0.1498  (delta resolvable only if |delta| >= MDE)
+paired bootstrap 95% CI (pooled tasks, n=525): [+0.1067, +0.1676]  excludes 0: True
+anytime-valid CS (peek-safe)                  : [+0.0877, +0.1828]  excludes 0: True
+
+INTEGRITY GATE: reward-hacks across all seeds = 4; noRewardHacksAccepted all-true = False
+OVERALL passed (all gates, all seeds)         = False
+VERDICT: NO-GO (disqualified) | candidate only; canClaimAGI:false

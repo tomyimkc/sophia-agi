@@ -1,0 +1,44 @@
+{
+  "_comment": "Declared half of the Leiden-aligned Tool & Computational Resource Disclosure. The machine-derivable half (trained base models, MCP servers) is read directly from training/adapters/registry.jsonl and .mcp.json by tools/build_tool_disclosure.py. This file records what is NOT machine-derivable: AI assistants used during development, proprietary judge/inference services used for measurement, and metered compute providers. Keep it honest and current; docs/TOOL-DISCLOSURE.md is regenerated from it and drift-checked in CI.",
+  "schema_version": 1,
+  "canClaimAGI": false,
+  "development_assistants": [
+    {
+      "name": "Claude (Anthropic)",
+      "role": "code authoring, review, and documentation under human direction",
+      "proprietary": true,
+      "note": "AI assistants are tools; authorship and responsibility for all results remain with the human maintainer."
+    },
+    {
+      "name": "GitHub Copilot",
+      "role": "code review and suggestions on pull requests",
+      "proprietary": true
+    },
+    {
+      "name": "GLM",
+      "role": "advisory review on pull requests",
+      "proprietary": true
+    }
+  ],
+  "measurement_services": [
+    {
+      "name": "OpenRouter",
+      "role": "hosted inference for LLM-judge families used in evaluation",
+      "proprietary": true,
+      "note": "Used only to grade aggregates; raw judge prompts in held-out sets are never published."
+    },
+    {
+      "name": "LLMHub",
+      "role": "second independent inference provider for the >=2-judge-family rule",
+      "proprietary": true
+    }
+  ],
+  "compute_providers": [
+    {
+      "name": "RunPod",
+      "role": "metered GPU jobs for training/eval, driven exclusively through GitHub Actions",
+      "proprietary": true,
+      "note": "The only metered compute path; owned hardware (DGX Spark / Mac Studio) is preferred where possible."
+    }
+  ]
+}

@@ -110,6 +110,7 @@ class ModelConfig:
     temperature: float = 0.2
     reasoning_effort: str | None = None  # low | medium | high (provider-dependent)
     timeout_sec: int = 120
+    seed: int | None = None  # sampling seed (passed through to OpenAI-compatible servers, e.g. Ollama)
 
     def resolved_key(self) -> str | None:
         if self.kind == "anthropic":
@@ -146,6 +147,13 @@ class ModelResult:
     fallback_used: bool = False
     attempts: list[Attempt] = field(default_factory=list)
     raw: dict[str, Any] | None = None
+    # The model's own reasoning / "thinking" tokens, when the provider surfaces them
+    # (Claude extended/adaptive thinking, DeepSeek/GLM ``reasoning_content``, ``<think>``
+    # tags). Empty unless capture is enabled (see agent.thinking_trace). This is the LLM's
+    # stated reasoning, NOT a faithful record of its actual decision cause — treat it as
+    # evidence to be probed (agent.faithfulness_probe), never as ground truth.
+    reasoning_text: str = ""
+    reasoning_tokens: int = 0
 
     def to_log(self) -> dict[str, Any]:
         return {
@@ -155,6 +163,12 @@ class ModelResult:
             "error": self.error,
             "promptTokens": self.prompt_tokens,
             "completionTokens": self.completion_tokens,
+            "reasoningTokens": self.reasoning_tokens,
+            # The harness decision log keeps only the SIZE of the reasoning, not the text:
+            # the verbatim reasoning is large and may be sensitive, so it goes to the
+            # dedicated, opt-in thinking trace (agent.thinking_trace), never here.
+            "reasoningChars": len(self.reasoning_text),
+            "hasReasoning": bool(self.reasoning_text),
             "costUsd": round(self.cost_usd, 6),
             "latencySec": round(self.latency_sec, 3),
             "finishReason": self.finish_reason,
@@ -273,6 +287,38 @@ def _call_mock(system: str, user: str, cfg: ModelConfig, *, on_token: Callable[[
     return ModelResult(text=text, provider="mock", model=cfg.model, prompt_tokens=pt, completion_tokens=ct, finish_reason="stop")
 
 
+def capture_thinking_enabled() -> bool:
+    """Reasoning capture is opt-in: it enables extended/adaptive thinking on Claude and
+    surfaces reasoning_content/<think> on OpenAI-compatible servers. Off by default so
+    behaviour and cost are unchanged unless a run asks to log the thinking steps."""
+    return (os.environ.get("SOPHIA_CAPTURE_THINKING") or "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _anthropic_thinking_param(cfg: ModelConfig) -> dict[str, Any] | None:
+    """The right ``thinking`` shape for Claude, by model family (see the claude-api skill):
+
+    - Claude 4.6+ (sonnet-4-6, opus-4-6/4-7/4-8, fable): adaptive thinking. ``budget_tokens``
+      is rejected (400) on 4.7/4.8 and deprecated on 4.6, so we never send it there.
+    - Older Claude (sonnet-4-5 and earlier): the legacy enabled+budget_tokens form, with
+      budget strictly < max_tokens.
+
+    ``display: "summarized"`` is required to get readable reasoning text back — the default
+    is "omitted" (empty thinking blocks) on the newer models. Returns None when capture is
+    off or the model can't accommodate thinking."""
+    if not capture_thinking_enabled():
+        return None
+    name = cfg.model.lower()
+    adaptive = any(tag in name for tag in ("-4-6", "-4-7", "-4-8", "fable", "mythos")) or "sonnet-4-6" in name
+    if adaptive:
+        return {"type": "adaptive", "display": "summarized"}
+    # Legacy budgeted thinking: the API requires 1024 <= budget_tokens < max_tokens. Only
+    # enable when both can hold; otherwise omit thinking rather than send an invalid budget.
+    budget = max(1024, min(2048, cfg.max_tokens - 100))
+    if budget < cfg.max_tokens:
+        return {"type": "enabled", "budget_tokens": budget}
+    return None
+
+
 def _call_anthropic(system: str, user: str, cfg: ModelConfig, *, tools: list[dict] | None, **_: Any) -> ModelResult:
     key = cfg.resolved_key()
     if not key:
@@ -291,8 +337,25 @@ def _call_anthropic(system: str, user: str, cfg: ModelConfig, *, tools: list[dic
     }
     if tools:
         create_kwargs["tools"] = tools
-    response = client.messages.create(**create_kwargs)
+    thinking = _anthropic_thinking_param(cfg)
+    if thinking:
+        create_kwargs["thinking"] = thinking
+    try:
+        response = client.messages.create(**create_kwargs)
+    except Exception:  # noqa: BLE001
+        # A model that doesn't accept `thinking` (older/3rd-party) must not lose the answer:
+        # retry once without it, fail-closed to the normal call.
+        if "thinking" not in create_kwargs:
+            raise
+        create_kwargs.pop("thinking", None)
+        response = client.messages.create(**create_kwargs)
     text = "".join(block.text for block in response.content if getattr(block, "type", None) == "text")
+    # Adaptive/extended thinking arrives as `thinking` blocks (summarized text) and, when the
+    # raw CoT is withheld, `redacted_thinking` blocks (encrypted — never decoded/stored as text).
+    reasoning = "".join(
+        getattr(b, "thinking", "") or "" for b in response.content if getattr(b, "type", None) == "thinking"
+    )
+    redacted = sum(1 for b in response.content if getattr(b, "type", None) == "redacted_thinking")
     tool_calls = [
         {"id": b.id, "name": b.name, "arguments": b.input}
         for b in response.content
@@ -307,6 +370,11 @@ def _call_anthropic(system: str, user: str, cfg: ModelConfig, *, tools: list[dic
         completion_tokens=getattr(usage, "output_tokens", 0) or 0,
         finish_reason=getattr(response, "stop_reason", None),
         tool_calls=tool_calls,
+        reasoning_text=reasoning,
+        # Thinking tokens are billed inside output_tokens and not separately reported here;
+        # approximate from the captured summary so the trace carries a magnitude, not zero.
+        reasoning_tokens=(max(1, len(reasoning) // 4) if reasoning else 0),
+        raw=({"redactedThinkingBlocks": redacted} if redacted else None),
     )
 
 
@@ -332,6 +400,8 @@ def _call_openai_compatible(
     }
     if cfg.reasoning_effort:
         payload["reasoning_effort"] = cfg.reasoning_effort
+    if cfg.seed is not None:
+        payload["seed"] = cfg.seed  # Ollama/vLLM honor this for reproducible sampling
     if tools:
         payload["tools"] = tools
     request = urllib.request.Request(
@@ -363,14 +433,39 @@ def _call_openai_compatible(
         {"id": tc.get("id"), "name": tc.get("function", {}).get("name"), "arguments": tc.get("function", {}).get("arguments")}
         for tc in message.get("tool_calls", []) or []
     ]
+    content = message.get("content") or ""
+    # Reasoning models on OpenAI-compatible servers surface their CoT two ways:
+    #   - a dedicated `reasoning_content` field (DeepSeek-R1, GLM reasoning, ...)
+    #   - inline <think>...</think> tags inside the content
+    # ALWAYS strip inline <think> tags from the user-facing answer (they are never wanted in
+    # the response text, capture on or off — leaving them in would leak CoT into `text`).
+    import re as _re
+
+    think_blocks = _re.findall(r"<think>(.*?)</think>", content, _re.DOTALL)
+    if think_blocks:
+        content = _re.sub(r"<think>.*?</think>", "", content, flags=_re.DOTALL).strip()
+    # RETAIN the reasoning only when capture is opted in (the reasoning_text contract):
+    # otherwise reasoning_text stays empty even if the provider returned reasoning_content.
+    reasoning = ""
+    reasoning_tokens = 0
+    if capture_thinking_enabled():
+        reasoning = str(message.get("reasoning_content") or message.get("reasoning") or "")
+        for blk in think_blocks:
+            reasoning = (reasoning + "\n" + blk.strip()).strip() if reasoning else blk.strip()
+        # OpenAI o-series report reasoning token counts under completion_tokens_details.
+        reasoning_tokens = int((usage.get("completion_tokens_details") or {}).get("reasoning_tokens", 0) or 0)
+        if not reasoning_tokens and reasoning:
+            reasoning_tokens = max(1, len(reasoning) // 4)
     return ModelResult(
-        text=message.get("content") or "",
+        text=content,
         provider=cfg.label or "openai",
         model=raw.get("model", cfg.model),
         prompt_tokens=int(usage.get("prompt_tokens", 0) or 0),
         completion_tokens=int(usage.get("completion_tokens", 0) or 0),
         finish_reason=choice.get("finish_reason"),
         tool_calls=tool_calls,
+        reasoning_text=reasoning,
+        reasoning_tokens=reasoning_tokens,
         raw=raw,
     )
 
@@ -630,11 +725,24 @@ def _egress_blocked_for(cfg: "ModelConfig") -> bool:
 class ModelClient:
     """Generate text with retry, fallback chain, and cost/latency tracking."""
 
-    def __init__(self, primary: ModelConfig, fallbacks: list[ModelConfig] | None = None, *, retries: int = 2, backoff_sec: float = 1.0):
+    def __init__(
+        self,
+        primary: ModelConfig,
+        fallbacks: list[ModelConfig] | None = None,
+        *,
+        retries: int = 2,
+        backoff_sec: float = 1.0,
+        trace_sink: "Callable[[str, str, ModelResult], None] | None" = None,
+    ):
         self.primary = primary
         self.fallbacks = fallbacks or []
         self.retries = max(1, retries)
         self.backoff_sec = backoff_sec
+        # Optional thinking-trace hook: called once per successful generate() with
+        # (system, user, result). This is THE choke point every LLM call passes through —
+        # planner, step, reflect, synthesis — so one sink captures every thinking step,
+        # not just the ones the harness happens to log. None = no capture (default).
+        self.trace_sink = trace_sink
 
     def generate(
         self,
@@ -668,6 +776,12 @@ class ModelClient:
                         result.raw = {**(result.raw or {}), "costNote": "no price entry for model; cost=0"}
                     result.fallback_used = index > 0
                     result.attempts = attempts
+                    if self.trace_sink is not None:
+                        # Tracing must never break a verified generation — fail open.
+                        try:
+                            self.trace_sink(system, user, result)
+                        except Exception:  # noqa: BLE001
+                            pass
                     return result
                 if attempt < self.retries - 1 and _is_transient(result.error):
                     sleep(self.backoff_sec * (2 ** attempt))
@@ -702,7 +816,22 @@ def default_client(spec: str | None = None) -> ModelClient:
                 except ValueError:
                     continue
     retries = int(os.environ.get("SOPHIA_MODEL_RETRIES", "2"))
-    return ModelClient(primary, fallbacks, retries=retries)
+    return ModelClient(primary, fallbacks, retries=retries, trace_sink=_env_trace_sink())
+
+
+def _env_trace_sink() -> "Callable[[str, str, ModelResult], None] | None":
+    """Build a thinking-trace sink from the environment, or None when logging is off.
+
+    Enabled by SOPHIA_THINKING_LOG (a path or "1"); imported lazily so the model adapter
+    keeps no hard dependency on the trace writer and stays offline-importable."""
+    if not (os.environ.get("SOPHIA_THINKING_LOG") or "").strip():
+        return None
+    try:
+        from agent.thinking_trace import sink_from_env
+
+        return sink_from_env()
+    except Exception:  # noqa: BLE001
+        return None
 
 
 def complete(system: str, user: str, *, max_tokens: int = 2400, spec: str | None = None) -> str:

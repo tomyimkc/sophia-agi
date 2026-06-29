@@ -64,6 +64,12 @@ def _first_int(text: str) -> "int | None":
     return None
 
 
+def _first_number(text: str) -> "float | None":
+    """First numeric value (int or decimal) in the text, for `measure` answers."""
+    m = re.search(r"\b(\d+(?:\.\d+)?)\b", text)
+    return float(m.group(1)) if m else None
+
+
 # --- judgment -------------------------------------------------------------- #
 
 
@@ -97,6 +103,18 @@ def lexical_judge(answer: str, trap: dict) -> VisualJudgment:
         if n is None:
             return VisualJudgment(abstained=True, hallucinated=False, affirmed_gold=False)
         return VisualJudgment(abstained=False, hallucinated=(n == int(trapped)), affirmed_gold=(n == int(gold)))
+
+    if atype == "measure":
+        val = _first_number(low)
+        if val is None:
+            return VisualJudgment(abstained=True, hallucinated=False, affirmed_gold=False)
+        tol = float(trap.get("check", {}).get("tol", 0.0))
+        aff = abs(val - float(gold)) <= tol
+        hall = (not aff) and abs(val - float(trapped)) <= tol
+        if not aff and not hall:
+            # a confident number that is neither gold nor the documented trap value
+            return VisualJudgment(abstained=False, hallucinated=True, affirmed_gold=False)
+        return VisualJudgment(abstained=False, hallucinated=hall, affirmed_gold=aff)
 
     if atype == "text":
         # 'none' gold: hallucinated iff the answer asserts the fabricated string.

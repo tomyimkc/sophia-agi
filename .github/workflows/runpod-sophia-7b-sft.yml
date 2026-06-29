@@ -93,6 +93,7 @@ jobs:
         run: python tools/lint_claims.py
 
   runpod:
+    environment: runpod-paid
     needs: preflight
     runs-on: ubuntu-latest
     timeout-minutes: 480

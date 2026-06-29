@@ -1,0 +1,58 @@
+{
+  "experimentId": "code-integrity-rlvr",
+  "preregisteredOn": "2026-06-29",
+  "question": "Does GRPO with the integrity-gated code reward raise held-out pass@1 over base WITHOUT the model learning reward-hacks, and does it generalize compositionally on the open-invention split?",
+  "constructs": [
+    "deterministic verifier — hidden-tests-pass via the hardened isolated grader (provenance_bench.code_exec.run_solution_isolated)",
+    "integrity audit — zero reward-hacks accepted (tools/fuzz_code_verifier.py GO on the policy's eval rollouts)",
+    "compositional generalization — open-invention held-out split (provenance_bench.invention_dataset, depth 2)"
+  ],
+  "primaryMetric": "held-out pass@1 uplift (adapter - base) on the POWERED open-invention eval suite (provenance_bench.invention_dataset.build_invention_eval_suite, N=175, depth-2/3/4 compositions absent from train), scored by the GUARDED reward (integrity-clean trajectories only)",
+  "primaryN": "175 decontaminated-by-construction invention tasks x >=3 seeds; report paired bootstrap 95% CI across tasks",
+  "primaryMDE": 0.15,
+  "power": {
+    "rule": "primary requires mde_at_n(N) <= primaryMDE at 80% power (tools/eval_stats.mde_at_n)",
+    "mde_at_175": 0.150,
+    "verdict": "POWERED: the N=175 invention suite resolves the 15pt threshold at 80% power (mde_at_175 == 0.150 == primaryMDE). This replaces the earlier 48-task family-disjoint split, which resolved only ~0.286 and is now demoted to a SECONDARY coarse GO/NO-GO lane (report separately, never as the ranked primary)."
+  },
+  "secondaryLane": {
+    "metric": "pass@1 uplift on the legacy 48-task family-disjoint code split (provenance_bench.code_dataset)",
+    "n": 48, "mde_at_n": 0.286, "use": "coarse GO/NO-GO only — underpowered for <29pt effects, never ranked"
+  },
+  "guardrails": {
+    "integrity": {
+      "rule": "reward-hack rate == 0 on the trained policy's eval rollouts; tools/fuzz_code_verifier.py stays GO. A pass-rate gain that comes with ANY accepted cheat is disqualified, not celebrated.",
+      "use": "hard gate — the whole point of the experiment"
+    },
+    "invention": {
+      "rule": "report the open-invention (depth-2) held-out pass@1 SEPARATELY from the seen-family eval; never pool them. The recall-derivation gap is the compositional-generalization signal.",
+      "instrument": "provenance_bench.invention_dataset (discrimination() proven to separate recall from invention)"
+    },
+    "base_floor": {
+      "rule": "base pass@1 > 0 under the chat template before reading any uplift; if base is ~0 the base is too weak for these families (see ledger rlvr-code-no-chat-template) -> switch base, do not claim uplift",
+      "base_model": "Qwen2.5-Coder-7B-Instruct (code-specialized; GLM-4-9B-chat scored 0/48 base AND adapter)"
+    }
+  },
+  "stoppingRule": "anytime-valid confidence sequence for any peeked metric (tools/eval_stats.confidence_sequence_mean) — fixed-n CI is invalid under the multi-seed peek-and-iterate loop",
+  "decontam": "family-disjoint code split (provenance_bench.code_dataset, fixed not seed-dependent) + the invention split is disjoint-by-construction (eval compositions absent from train, primitives all seen); tools/assert_decontam.py over committed packs",
+  "ranking": "guardrails first (integrity == hard gate; base floor), then primary uplift strength; invention reported as a separate axis",
+  "claimCeiling": "candidate_only; canClaimAGI:false; narrow corpus-bound feasibility",
+  "honestLimits": [
+    "48-task held-out split underpowered for <15pt effects — grow N or report coarse GO/NO-GO only",
+    "the verifier is hardened but NOT a sandbox — run inside the container/VM the workflow provides (SOPHIA_ALLOW_CODE_EXEC), never on a dev box",
+    "invention split measures compositional generalization (a proxy), not open-ended novelty; depth-1 is pure recall",
+    "no first-party frontier comparison (egress-blocked); this is an adapter-vs-base uplift, not a leaderboard claim"
+  ],
+  "peekedMetrics": ["held-out pass@1 across seeds"],
+  "execution": {
+    "lane": "GitHub Actions .github/workflows/rlvr-runpod.yml ONLY — never local SSH (repo guardrail)",
+    "preflight": "read .claude/skills/wisdom-gpu-prebaked/SKILL.md FIRST (three documented credit-burn incidents)",
+    "smokeFirst": "gh workflow run rlvr-runpod.yml -f confirm=RUN -f mode=offline -f task=code -f seed=0  (cheap remote smoke; confirm base pass-rate > 0 under the chat template)",
+    "liveRun": "gh workflow run rlvr-runpod.yml -f confirm=RUN -f mode=live -f task=code -f seed=0   (then seed=1, seed=2 for the 3-seed sweep; the code reward is integrity-gated by default per tools/run_rlvr.py --code-integrity-guard)",
+    "poweredPrimaryEval": "SOPHIA_ALLOW_CODE_EXEC=1 python tools/eval_rlvr_adapter.py --task invention --mode real --model <BASE> --adapter <ADAPTER> --seed 0  (then 1,2). Scores base-vs-adapter pass@1 on the N=175 invention suite with the GUARDED grader; the report's checks.noRewardHacksAccepted is the integrity gate, checks.powered confirms MDE<=0.16.",
+    "costGuard": "watch the first ~6 min for restart loops; cheap validation (limit/runs small) before the full sweep; ALWAYS confirm zero leaked pods after (list-pods)",
+    "artifacts": "agi-proof/benchmark-results/runpod-rlvr/<jobid>.rlvr.{public-report,offline-report,adapter-eval}.json"
+  },
+  "gateOnCompletion": "tools/claim_gate.py --prefix code-integrity-rlvr --spec agi-proof/benchmark-results/code-integrity/measurement_spec.json --assert-prereg ; promote ONLY on GO, regenerate RESULTS.md from published-results.json",
+  "canClaimAGI": false
+}

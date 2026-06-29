@@ -191,6 +191,17 @@ def _build_create_payload(args: argparse.Namespace, public_key: str, api_key: st
         "dockerEntrypoint": [],
         "dockerStartCmd": _startup_cmd(args.auto_exit_seconds),
     }
+    # getattr: _build_create_payload is reused by other launchers (e.g. runpod_nccl_bench.py) whose
+    # arg parsers don't define --network-volume-id, so read it defensively.
+    netvol = getattr(args, "network_volume_id", "")
+    if netvol:
+        # Persistent network volume mounted at /workspace (where HF_HOME lives): the model weight
+        # cache then SURVIVES pod deletion, so subsequent runs skip the cold ~8GB+ download (billed
+        # GPU minutes) — the saving the ephemeral volumeInGb above CANNOT give (it dies with the pod).
+        # NB: a network volume is data-center-scoped, so the pod is pinned to that volume's DC (can
+        # reduce GPU availability there). Only worth it past the break-even runs/mo — see
+        # tools/runpod_volume_breakeven.py.
+        payload["networkVolumeId"] = netvol
     if args.allowed_cuda_versions:
         payload["allowedCudaVersions"] = [
             v.strip() for v in args.allowed_cuda_versions.split(",") if v.strip()
@@ -408,6 +419,20 @@ if [ -d /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 ]; then
     --seed "$SOPHIA_SEED" \\
     --out /workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.json{capability_flag} \\
     || echo "[runpod] adapter-eval failed (non-fatal); no SSIL gate input produced"
+  # PRIMARY metric for the code task: the POWERED N=175 open-invention suite
+  # (compositional generalization), scored by the guarded grader. The eval above is
+  # the SECONDARY coarse 48-task lane. Both run on the SAME trained adapter; the
+  # invention report carries the integrity gate (checks.noRewardHacksAccepted) and
+  # the power flag (checks.powered) the measurement_spec treats as primary.
+  if [ "$SOPHIA_TASK" = "code" ]; then
+    python tools/eval_rlvr_adapter.py --mode real \\
+      --task invention \\
+      --model "$SOPHIA_MODEL" \\
+      --adapter /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 \\
+      --seed "$SOPHIA_SEED" \\
+      --out /workspace/sophia-runpod/sophia-rlvr-v1.invention-eval.json \\
+      || echo "[runpod] invention-eval failed (non-fatal)"
+  fi
 fi
 """
     else:
@@ -609,6 +634,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--image-name", default=DEFAULT_IMAGE)
     ap.add_argument("--container-disk-gb", type=int, default=120)
     ap.add_argument("--volume-gb", type=int, default=80)
+    ap.add_argument("--network-volume-id", default="",
+                    help="attach an existing persistent RunPod network volume at /workspace (HF_HOME) so the "
+                         "weight cache survives pod deletion; pod is then pinned to that volume's data center. "
+                         "Run tools/runpod_volume_breakeven.py first — only pays off past the break-even runs/mo.")
     ap.add_argument("--allowed-cuda-versions", default="")
     ap.add_argument("--ssh-timeout-s", type=int, default=1200)
     ap.add_argument("--auto-exit-seconds", type=int, default=6 * 60 * 60)
@@ -742,6 +771,13 @@ def main(argv: list[str] | None = None) -> int:
                 key_path,
                 "/workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.json",
                 args.artifacts_dir / f"{pod_id}.rlvr.adapter-eval.json",
+            )
+            # POWERED open-invention primary eval (code task; best-effort).
+            _scp_from_pod(
+                conn,
+                key_path,
+                "/workspace/sophia-runpod/sophia-rlvr-v1.invention-eval.json",
+                args.artifacts_dir / f"{pod_id}.rlvr.invention-eval.json",
             )
             _scp_from_pod(
                 conn,
