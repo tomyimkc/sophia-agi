@@ -1,0 +1,227 @@
+{
+  "nCases": 20,
+  "nBad": 11,
+  "nGood": 9,
+  "routingAccuracy": 1.0,
+  "council": {
+    "caught_bad": 11,
+    "passed_good": 8,
+    "catchRate": 1.0
+  },
+  "monolith": {
+    "caught_bad": 3,
+    "passed_good": 8,
+    "catchRate": 0.2727
+  },
+  "councilCatchesMore": true,
+  "perDiscipline": {
+    "mathematics": {
+      "nBad": 1,
+      "councilCaught": 1,
+      "monolithCaught": 1
+    },
+    "chemistry": {
+      "nBad": 2,
+      "councilCaught": 2,
+      "monolithCaught": 0
+    },
+    "biology": {
+      "nBad": 2,
+      "councilCaught": 2,
+      "monolithCaught": 0
+    },
+    "finance": {
+      "nBad": 2,
+      "councilCaught": 2,
+      "monolithCaught": 0
+    },
+    "medicine": {
+      "nBad": 2,
+      "councilCaught": 2,
+      "monolithCaught": 0
+    },
+    "philosophy": {
+      "nBad": 1,
+      "councilCaught": 1,
+      "monolithCaught": 1
+    },
+    "psychology": {
+      "nBad": 1,
+      "councilCaught": 1,
+      "monolithCaught": 1
+    },
+    "law": {
+      "nBad": 0,
+      "councilCaught": 0,
+      "monolithCaught": 0
+    },
+    "economics": {
+      "nBad": 0,
+      "councilCaught": 0,
+      "monolithCaught": 0
+    }
+  },
+  "note": "Council uses each discipline's verifier; monolith uses one general provenance gate. The delta is the discipline-specific errors (unbalanced equation, invalid DNA, bad balance sheet, implausible dose) the general gate has no oracle for. Stub answers; real 3B adapters plug in unchanged.",
+  "perCase": [
+    {
+      "task": "Mathematics: verify 144 / 12.",
+      "routed": "mathematics",
+      "gold": "mathematics",
+      "correct": false,
+      "councilPass": false,
+      "monolithPass": false
+    },
+    {
+      "task": "Mathematics: verify 144 / 12.",
+      "routed": "mathematics",
+      "gold": "mathematics",
+      "correct": true,
+      "councilPass": true,
+      "monolithPass": true
+    },
+    {
+      "task": "Chemistry: balance the formation of ammo",
+      "routed": "chemistry",
+      "gold": "chemistry",
+      "correct": false,
+      "councilPass": false,
+      "monolithPass": true
+    },
+    {
+      "task": "Chemistry: balance the formation of ammo",
+      "routed": "chemistry",
+      "gold": "chemistry",
+      "correct": true,
+      "councilPass": true,
+      "monolithPass": true
+    },
+    {
+      "task": "Chemistry: give the formula of this oxid",
+      "routed": "chemistry",
+      "gold": "chemistry",
+      "correct": false,
+      "councilPass": false,
+      "monolithPass": true
+    },
+    {
+      "task": "Biology: state a valid mRNA sequence.",
+      "routed": "biology",
+      "gold": "biology",
+      "correct": false,
+      "councilPass": false,
+      "monolithPass": true
+    },
+    {
+      "task": "Biology: state a valid mRNA sequence.",
+      "routed": "biology",
+      "gold": "biology",
+      "correct": true,
+      "councilPass": true,
+      "monolithPass": true
+    },
+    {
+      "task": "Biology: what is the reverse complement?",
+      "routed": "biology",
+      "gold": "biology",
+      "correct": false,
+      "councilPass": false,
+      "monolithPass": true
+    },
+    {
+      "task": "Finance: confirm the balance sheet.",
+      "routed": "finance",
+      "gold": "finance",
+      "correct": false,
+      "councilPass": false,
+      "monolithPass": true
+    },
+    {
+      "task": "Finance: confirm the balance sheet.",
+      "routed": "finance",
+      "gold": "finance",
+      "correct": true,
+      "councilPass": true,
+      "monolithPass": true
+    },
+    {
+      "task": "Finance: state our market share.",
+      "routed": "finance",
+      "gold": "finance",
+      "correct": false,
+      "councilPass": false,
+      "monolithPass": true
+    },
+    {
+      "task": "Medicine: recommend a dose.",
+      "routed": "medicine",
+      "gold": "medicine",
+      "correct": false,
+      "councilPass": false,
+      "monolithPass": true
+    },
+    {
+      "task": "Medicine: recommend a dose.",
+      "routed": "medicine",
+      "gold": "medicine",
+      "correct": true,
+      "councilPass": true,
+      "monolithPass": true
+    },
+    {
+      "task": "Medicine: combine therapies?",
+      "routed": "medicine",
+      "gold": "medicine",
+      "correct": false,
+      "councilPass": false,
+      "monolithPass": true
+    },
+    {
+      "task": "Philosophy: who authored the Analects?",
+      "routed": "philosophy",
+      "gold": "philosophy",
+      "correct": false,
+      "councilPass": false,
+      "monolithPass": false
+    },
+    {
+      "task": "Philosophy: who authored the Analects?",
+      "routed": "philosophy",
+      "gold": "philosophy",
+      "correct": true,
+      "councilPass": true,
+      "monolithPass": true
+    },
+    {
+      "task": "Psychology: who coined cognitive dissona",
+      "routed": "psychology",
+      "gold": "psychology",
+      "correct": false,
+      "councilPass": false,
+      "monolithPass": false
+    },
+    {
+      "task": "Psychology: who coined cognitive dissona",
+      "routed": "psychology",
+      "gold": "psychology",
+      "correct": true,
+      "councilPass": false,
+      "monolithPass": false
+    },
+    {
+      "task": "Law: is the citation well-formed?",
+      "routed": "law",
+      "gold": "law",
+      "correct": true,
+      "councilPass": true,
+      "monolithPass": true
+    },
+    {
+      "task": "Economics: explain inflation drivers.",
+      "routed": "economics",
+      "gold": "economics",
+      "correct": true,
+      "councilPass": true,
+      "monolithPass": true
+    }
+  ]
+}

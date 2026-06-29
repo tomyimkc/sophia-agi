@@ -23,9 +23,10 @@ designed (`adapter_id` carries the comment "V3 (Branch-Train-MiX)"):
 
 | Gate kind | Meaning | Disciplines |
 |---|---|---|
-| `standalone` | a deterministic validator gates ANY answer | mathematics, chemistry, biology, engineering, statistics |
+| `standalone` | a deterministic validator gates ANY answer | mathematics, chemistry, biology, **finance**, engineering, statistics |
 | `reference` | the verifier needs a gold/test; **no reference → ABSTAIN** (fail-closed) | physics, coding |
-| `provenance` | no truth oracle — gated for source discipline / attribution (`agent.gate`); reduces fabrication, does not certify correctness | medicine, philosophy, history, religion, linguistics, psychology, sociology, political science, economics, finance, law, business, education, environment |
+| `composite` | a domain safety overlay THEN provenance (must clear both) | **medicine** (dose/contraindication safety + provenance) |
+| `provenance` | no truth oracle — gated for source discipline / attribution (`agent.gate`); reduces fabrication, does not certify correctness | philosophy, history, religion, linguistics, psychology, sociology, political science, economics, law, business, education, environment |
 
 A discipline with no machine verifier is **not** a verified expert — it is a provenance-gated one.
 That distinction is the council's honesty. **religion and history are PROTECTED** (fixed floor,
@@ -49,12 +50,24 @@ and its `verifier_ref`.
 Both are reference-grade, candidate-only, **fail-closed** — they flag the cheap machine-checkable
 errors, never claim correctness they cannot check.
 
+Two more bring high-value seats into the gate-able set:
+
+- `agent/finance_verifier.py` — the **accounting identity** (Assets = Liabilities + Equity) and a
+  share/probability asserted > 100%. Finance is numeric, so the finance seat is genuinely
+  `standalone` (must also clear provenance).
+- `agent/medicine_verifier.py` — a conservative **safety overlay**: implausible dose, unknown dose
+  unit, and a small hard-contraindication table. It flags gross errors and otherwise PASSES,
+  deferring correctness to provenance + human. Reference-grade, **not medical advice**; medicine
+  stays `composite` (overlay + provenance) because no clinical-correctness oracle exists.
+
 ## Does the council actually help? (the measured hypothesis)
 
 `tools/eval_council_vs_monolith.py` gates labelled answers two ways — per-discipline (council) vs one
-general provenance gate (monolith). On the offline fixture set the **council catches 4/4 discipline
-errors; the monolith catches 2/4** — it misses exactly the unbalanced equation and the invalid DNA
-sequence, which the general gate has no oracle for. That delta *is* the council's reason to exist:
+general provenance gate (monolith). On the offline fixture set the **council catches 4/4** discipline
+errors vs the monolith's **2/4**; on the 20-case held-out pack (`eval/council/heldout_v1.jsonl`,
+`--pack`) the **council catches 11/11 vs the monolith's 3/11**, with the per-discipline rollup showing
+the gap is entirely in chemistry, biology, finance, and medicine — the seats with a machine verifier.
+That delta *is* the council's reason to exist:
 **it only beats a monolith where each seat is machine-verifiable.** Elsewhere (pure provenance
 domains) a single strong generalist may match it — which is why this stays a pre-registered
 experiment to run on real adapters, not an assumed win.

@@ -16,8 +16,12 @@ if str(ROOT) not in sys.path:
 
 from agent.biology_verifier import biology_sound, reverse_complement  # noqa: E402
 from agent.chemistry_verifier import chemistry_sound, is_balanced, parse_formula  # noqa: E402
+from agent.finance_verifier import finance_sound  # noqa: E402
+from agent.medicine_verifier import medicine_safe  # noqa: E402
 from agent import council_registry as cr  # noqa: E402
 from tools import eval_council_vs_monolith as ev  # noqa: E402
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 # --- chemistry ---------------------------------------------------------------
@@ -74,6 +78,26 @@ def test_registry_invariants() -> None:
 
 
 # --- council vs monolith -----------------------------------------------------
+def test_finance_verifier() -> None:
+    v = finance_sound()
+    assert not v("Assets 100, liabilities 60, equity 50.")["passed"]  # 100 != 110
+    assert v("Assets 100 = liabilities 60 + equity 40.")["passed"]
+    assert not v("Our market share is 130% of the total.")["passed"]
+    assert v("The discount rate is 5%.")["passed"]
+    # composite council gate: finance answer must clear BOTH finance + provenance
+    assert not cr.verify("finance", "Assets 100, liabilities 60, equity 50.")["passed"]
+    assert cr.get("finance").gate_kind == "standalone"
+
+
+def test_medicine_verifier_conservative_safety() -> None:
+    v = medicine_safe()
+    assert v("Administer 400 mg every 8 hours.")["passed"]   # normal -> pass (defer to provenance)
+    assert not v("Take a dose of 800000 mg at once.")["passed"]
+    assert not v("Give a nitrate together with sildenafil.")["passed"]
+    assert cr.get("medicine").gate_kind == "provenance"      # honest: no correctness oracle
+    assert not cr.verify("medicine", "Administer a dose of 800000 mg at once.")["passed"]
+
+
 def test_council_catches_more_than_monolith() -> None:
     ok, detail = ev.offline_invariants()
     assert ok, detail["checks"]
@@ -81,6 +105,19 @@ def test_council_catches_more_than_monolith() -> None:
     assert r["councilCatchesMore"]
     assert r["council"]["caught_bad"] > r["monolith"]["caught_bad"]
     assert r["routingAccuracy"] >= 0.75
+
+
+def test_council_heldout_pack() -> None:
+    pack = ev.load_pack(ROOT / "eval" / "council" / "heldout_v1.jsonl")
+    assert len(pack) >= 18
+    r = ev.evaluate(pack)
+    # On the held-out pack the council catches strictly more discipline errors than the monolith.
+    assert r["council"]["caught_bad"] > r["monolith"]["caught_bad"]
+    assert r["council"]["passed_good"] >= r["monolith"]["passed_good"]
+    # chemistry / finance / medicine errors are caught by the council and missed by the monolith.
+    for disc in ("chemistry", "finance", "medicine"):
+        pd = r["perDiscipline"][disc]
+        assert pd["councilCaught"] > pd["monolithCaught"], disc
 
 
 def main() -> int:

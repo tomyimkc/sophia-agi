@@ -63,14 +63,31 @@ def _monolith_gate(answer: str, question: str) -> bool:
     return passed
 
 
+def _norm(c: dict) -> dict:
+    """Accept both harness fixtures ({gold}) and pack rows ({discipline})."""
+    return {"task": c["task"], "gold": c.get("gold") or c.get("discipline"),
+            "answer": c["answer"], "correct": bool(c["correct"])}
+
+
+def load_pack(path) -> "list[dict]":
+    from pathlib import Path as _P
+    rows = []
+    for line in _P(path).read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line:
+            rows.append(_norm(json.loads(line)))
+    return rows
+
+
 def evaluate(cases=None) -> dict:
-    cases = cases if cases is not None else CASES
+    cases = [_norm(c) for c in (cases if cases is not None else CASES)]
     routed_ok = 0
     council = {"caught_bad": 0, "passed_good": 0}
     monolith = {"caught_bad": 0, "passed_good": 0}
     n_bad = sum(1 for c in cases if not c["correct"])
     n_good = sum(1 for c in cases if c["correct"])
     per_case = []
+    per_discipline: dict = {}
 
     for c in cases:
         d = route(c["task"])
@@ -81,9 +98,13 @@ def evaluate(cases=None) -> dict:
         council_pass = cv["passed"] and not cv["abstained"]
         mono_pass = _monolith_gate(c["answer"], c["task"])
 
+        pd = per_discipline.setdefault(c["gold"], {"nBad": 0, "councilCaught": 0, "monolithCaught": 0})
         if not c["correct"]:
             council["caught_bad"] += int(not council_pass)
             monolith["caught_bad"] += int(not mono_pass)
+            pd["nBad"] += 1
+            pd["councilCaught"] += int(not council_pass)
+            pd["monolithCaught"] += int(not mono_pass)
         else:
             council["passed_good"] += int(council_pass)
             monolith["passed_good"] += int(mono_pass)
@@ -97,9 +118,11 @@ def evaluate(cases=None) -> dict:
         "council": {**council, "catchRate": round(council["caught_bad"] / n_bad, 4) if n_bad else 1.0},
         "monolith": {**monolith, "catchRate": round(monolith["caught_bad"] / n_bad, 4) if n_bad else 1.0},
         "councilCatchesMore": council["caught_bad"] > monolith["caught_bad"],
+        "perDiscipline": per_discipline,
         "note": ("Council uses each discipline's verifier; monolith uses one general provenance gate. "
-                 "The delta is the discipline-specific errors (unbalanced equation, invalid DNA) the "
-                 "general gate has no oracle for. Stub answers; real 3B adapters plug in unchanged."),
+                 "The delta is the discipline-specific errors (unbalanced equation, invalid DNA, bad "
+                 "balance sheet, implausible dose) the general gate has no oracle for. Stub answers; "
+                 "real 3B adapters plug in unchanged."),
         "perCase": per_case,
     }
 
@@ -118,8 +141,9 @@ def offline_invariants() -> "tuple[bool, dict]":
 def main(argv: "list[str] | None" = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--emit", type=Path, help="write the result JSON here")
+    ap.add_argument("--pack", type=Path, help="evaluate a held-out pack JSONL instead of the fixtures")
     args = ap.parse_args(argv)
-    r = evaluate()
+    r = evaluate(load_pack(args.pack) if args.pack else None)
     print(json.dumps({k: v for k, v in r.items() if k != "perCase"}, ensure_ascii=False, indent=2))
     if args.emit:
         args.emit.parent.mkdir(parents=True, exist_ok=True)

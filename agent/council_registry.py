@@ -65,7 +65,8 @@ DISCIPLINES: "dict[str, Discipline]" = {d.id: d for d in [
        ("circuit", "stress", "load", "design spec", "tolerance", "signal", "structural", "torque", "cad")),
     _d("statistics", "Statistics / Data science", "standalone:math", "standalone", "agent.verifiers.math_sound",
        ("mean", "variance", "p-value", "regression", "distribution", "confidence interval", "sample", "bayes")),
-    _d("medicine", "Medicine", "provenance", "provenance", "agent.medical_faithfulness",
+    _d("medicine", "Medicine", "composite:medicine", "provenance",
+       "agent.medicine_verifier (dose/contraindication safety) + agent.gate",
        ("diagnosis", "symptom", "treatment", "dose", "patient", "clinical", "disease", "drug", "therapy")),
 
     # Humanities — provenance-gated
@@ -87,7 +88,8 @@ DISCIPLINES: "dict[str, Discipline]" = {d.id: d for d in [
        ("government", "policy", "election", "democracy", "sovereign", "geopolit", "constitution", "vote", "regime")),
     _d("economics", "Economics", "provenance", "provenance", "agent.gate (numeric+attribution)",
        ("gdp", "inflation", "market", "supply", "demand", "fiscal", "monetary", "trade", "macroecon")),
-    _d("finance", "Finance", "provenance", "provenance", "agent.gate (numeric+attribution)",
+    _d("finance", "Finance", "standalone:finance", "standalone",
+       "agent.finance_verifier (accounting identity) + agent.gate",
        ("portfolio", "valuation", "interest rate", "equity", "bond", "risk", "cash flow", "discount", "npv")),
 
     # Applied / professional — provenance-gated (law's citation existence is gated by agent.gate)
@@ -169,8 +171,25 @@ def _code_ref(answer, _question, gold):
     return (r.get("verdict") == "accepted"), list(r.get("reasons") or [])
 
 
+def _finance(answer, question, gold):
+    from agent.finance_verifier import finance_sound
+    r = finance_sound()(answer, None, {})
+    if not r["passed"]:
+        return False, list(r.get("reasons") or [])
+    return _provenance(answer, question, gold)  # must ALSO clear source discipline
+
+
+def _medicine(answer, question, gold):
+    from agent.medicine_verifier import medicine_safe
+    r = medicine_safe()(answer, None, {})
+    if not r["passed"]:
+        return False, list(r.get("reasons") or [])
+    return _provenance(answer, question, gold)  # safety overlay passed -> defer to provenance
+
+
 GATE_BINDINGS = {
     "standalone:math": _math, "standalone:chem": _chem, "standalone:bio": _bio,
+    "standalone:finance": _finance, "composite:medicine": _medicine,
     "provenance": _provenance, "reference:physics": _physics_ref, "reference:code": _code_ref,
 }
 
