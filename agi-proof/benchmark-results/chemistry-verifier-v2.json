@@ -1,0 +1,13 @@
+{
+  "discipline": "chemistry",
+  "n": 9,
+  "nBad": 4,
+  "nGood": 5,
+  "recallOnBad": 1.0,
+  "passRateOnGood": 1.0,
+  "minRecall": 0.9,
+  "minPass": 0.9,
+  "floorMet": true,
+  "caveat": "v2 is independent of the self-checks and heldout_v1 but authored knowing the verifier's rules -> self-consistency on a fresh set, NOT blind generalisation; a truly third-party pack remains OPEN.",
+  "errors": []
+}

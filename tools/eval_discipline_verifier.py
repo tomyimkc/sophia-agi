@@ -89,15 +89,12 @@ def evaluate(discipline: str, rows: "list[dict]") -> dict:
 
 
 def offline_invariants() -> "tuple[bool, dict]":
-    fin = evaluate("finance", _load(ROOT / "eval" / "council" / "finance_heldout_v2.jsonl"))
-    med = evaluate("medicine", _load(ROOT / "eval" / "council" / "medicine_heldout_v2.jsonl"))
-    checks = {
-        "finance_floor_met": fin["floorMet"],
-        "medicine_floor_met": med["floorMet"],
-        "finance_has_both_labels": fin["nBad"] >= 3 and fin["nGood"] >= 3,
-        "medicine_has_both_labels": med["nBad"] >= 3 and med["nGood"] >= 3,
-    }
-    return all(checks.values()), {"checks": checks, "finance": fin, "medicine": med}
+    packs = {d: evaluate(d, _load(ROOT / "eval" / "council" / f"{d}_heldout_v2.jsonl"))
+             for d in ("finance", "medicine", "chemistry", "biology")}
+    checks = {f"{d}_floor_met": r["floorMet"] for d, r in packs.items()}
+    checks.update({f"{d}_has_both_labels": r["nBad"] >= 3 and r["nGood"] >= 3
+                   for d, r in packs.items()})
+    return all(checks.values()), {"checks": checks, **packs}
 
 
 def main(argv: "list[str] | None" = None) -> int:

@@ -1,0 +1,9 @@
+{"id": "chemv2-bad-1", "discipline": "chemistry", "answer": "Fe + O2 -> Fe2O3", "correct": false}
+{"id": "chemv2-bad-2", "discipline": "chemistry", "answer": "Na + Cl2 -> NaCl", "correct": false}
+{"id": "chemv2-bad-3", "discipline": "chemistry", "answer": "C3H8 + O2 -> CO2 + H2O", "correct": false}
+{"id": "chemv2-bad-4", "discipline": "chemistry", "answer": "The mystery oxide has formula Qz3O2.", "correct": false}
+{"id": "chemv2-good-1", "discipline": "chemistry", "answer": "4 Fe + 3 O2 -> 2 Fe2O3", "correct": true}
+{"id": "chemv2-good-2", "discipline": "chemistry", "answer": "2 Na + Cl2 -> 2 NaCl", "correct": true}
+{"id": "chemv2-good-3", "discipline": "chemistry", "answer": "C3H8 + 5 O2 -> 3 CO2 + 4 H2O", "correct": true}
+{"id": "chemv2-good-4", "discipline": "chemistry", "answer": "Glucose has the formula C6H12O6.", "correct": true}
+{"id": "chemv2-good-5", "discipline": "chemistry", "answer": "Water is H2O and is highly polar.", "correct": true}

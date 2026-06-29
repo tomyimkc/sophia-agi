@@ -50,7 +50,7 @@ def biology_sound():
     labelled 'coding'/'ORF' whose length is not a multiple of 3. No checkable biology -> passes."""
 
     def _v(text, _record=None, _ctx=None) -> dict:
-        text = text or ""
+        text = (text or "")[:8000]  # bound untrusted input
         reasons: list[str] = []
         checked = 0
 

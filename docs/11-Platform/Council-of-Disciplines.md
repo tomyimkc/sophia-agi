@@ -88,10 +88,23 @@ arithmetic-clean by construction.
 ## Independent v2 validation of the new verifiers
 
 `tools/eval_discipline_verifier.py` runs a discipline's raw verifier over an independent v2 pack and
-reports recall (reject the bad) + pass-rate (accept the good). On `eval/council/{finance,medicine}_
-heldout_v2.jsonl` both score **recall 1.0 / pass-rate 1.0** (floor 0.9). Honest caveat: v2 is
-independent of the self-checks and `heldout_v1` but authored knowing the verifier's rules — so this is
-self-consistency on a fresh set, **not** blind generalisation; a truly third-party pack stays OPEN.
+reports recall (reject the bad) + pass-rate (accept the good). On `eval/council/{finance,medicine,
+chemistry,biology}_heldout_v2.jsonl` all four score **recall 1.0 / pass-rate 1.0** (floor 0.9). Honest
+caveat: v2 is independent of the self-checks and `heldout_v1` but authored knowing the verifier's
+rules — so this is self-consistency on a fresh set, **not** blind generalisation; a truly third-party
+pack stays OPEN.
+
+## Security hardening (untrusted model output)
+
+The verifiers parse a model's answer — untrusted input — so a catastrophic-backtracking regex would
+let an attacker hang the gate (ReDoS). A stress test found exactly this: the chemistry formula scan
+hung on `"C"×N + "1"×N`, and `parse_formula` could trip Python's int-string-digit limit. Fixes, with a
+permanent regression test (`tests/test_verifier_robustness.py`): all regex quantifiers are **bounded**
+(no unbounded `\d[\d,]*` or greedy `[...]*` around a delimiter), each verifier **caps input length**,
+formula length / atom-count digits are bounded, and paren expansion is iteration-capped. The chemistry
+side-parser was also rewritten to sum only valid-formula terms (skipping prose) — so a prose-wrapped
+equation is both *caught* when unbalanced and *passed* when balanced, instead of false-rejecting good
+answers. Worst-case over all adversarial inputs is now ~50 ms.
 
 ## Honest limits / OPEN
 

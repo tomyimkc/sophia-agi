@@ -22,7 +22,9 @@ import re
 
 # Single-dose plausibility ceilings (deliberately generous — only gross errors trip these).
 _UNIT_CEILING_MG = {"mcg": 1e6, "µg": 1e6, "ug": 1e6, "mg": 1e5, "g": 1e2, "iu": 1e7, "unit": 1e7, "units": 1e7}
-_DOSE = re.compile(r"(-?\d[\d,]*(?:\.\d+)?)\s*(mcg|µg|ug|mg|g|iu|units?|mmol|ml)\b", re.I)
+# Bounded digit run keeps this linear on untrusted input (an unbounded ``\d[\d,]*`` before the
+# optional unit backtracks O(n^2) on a long digit string).
+_DOSE = re.compile(r"(-?\d[\d,]{0,18}(?:\.\d{1,6})?)\s*(mcg|µg|ug|mg|g|iu|units?|mmol|ml)\b", re.I)
 _DOSE_INTENT = re.compile(r"\b(dose|dosage|administer|take|prescrib|give|mg|mcg)\b", re.I)
 
 # Hard contraindication pairs (well-established; explicit co-administration is dangerous).
@@ -75,7 +77,7 @@ def medicine_safe():
     Conservative: flags gross dose/contraindication errors; otherwise passes (defer to provenance)."""
 
     def _v(text, _record=None, _ctx=None) -> dict:
-        text = text or ""
+        text = (text or "")[:8000]  # bound untrusted input
         reasons = check_doses(text) + check_contraindications(text)
         return {"passed": not reasons, "reasons": reasons,
                 "detail": {"note": "reference safety overlay; not clinical correctness; not medical advice"}}

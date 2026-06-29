@@ -19,7 +19,9 @@ from __future__ import annotations
 
 import re
 
-_NUM = r"(-?\d[\d,]*(?:\.\d+)?)"
+# Bounded quantifiers keep this LINEAR on untrusted input — an unbounded ``\d[\d,]*`` followed by
+# optional groups backtracks O(n^2) on a long digit run with no trailing match.
+_NUM = r"(-?\d[\d,]{0,18}(?:\.\d{1,6})?)"
 
 
 def _f(num: str) -> float:
@@ -56,7 +58,7 @@ def finance_sound():
     """Verifier-style callable ``v(text, record, ctx) -> {passed, reasons, detail}``."""
 
     def _v(text, _record=None, _ctx=None) -> dict:
-        text = text or ""
+        text = (text or "")[:8000]  # bound untrusted input
         reasons = check_accounting_identity(text) + check_percentage_share(text)
         checked = len(re.findall(r"assets?", text, re.I)) + len(re.findall(r"%", text))
         return {"passed": not reasons, "reasons": reasons, "detail": {"checked": checked}}

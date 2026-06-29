@@ -118,12 +118,13 @@ def test_distillation_seeds_all_gate_clean() -> None:
         assert r["metadata"]["discipline"]
 
 
-def test_finance_medicine_v2_floor_met() -> None:
+def test_discipline_verifier_v2_floors_met() -> None:
     from tools.eval_discipline_verifier import offline_invariants
     ok, detail = offline_invariants()
     assert ok, detail["checks"]
-    assert detail["finance"]["recallOnBad"] >= 0.9 and detail["finance"]["passRateOnGood"] >= 0.9
-    assert detail["medicine"]["recallOnBad"] >= 0.9 and detail["medicine"]["passRateOnGood"] >= 0.9
+    for disc in ("finance", "medicine", "chemistry", "biology"):
+        assert detail[disc]["recallOnBad"] >= 0.9, disc
+        assert detail[disc]["passRateOnGood"] >= 0.9, disc
 
 
 def test_council_heldout_pack() -> None:
