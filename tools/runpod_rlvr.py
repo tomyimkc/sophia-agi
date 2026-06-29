@@ -406,6 +406,7 @@ $SOPHIA_LAUNCH tools/run_rlvr.py \\
   --task "$SOPHIA_TASK" \\
   --step-domain "$SOPHIA_STEP_DOMAIN" \\
   --reward "$SOPHIA_REWARD" \\
+  $SOPHIA_GRADED_FLAG \\
   --model "$SOPHIA_MODEL" \\
   --quant "$SOPHIA_QUANT" \\
   --vllm "$SOPHIA_VLLM" \\
@@ -484,6 +485,7 @@ export SOPHIA_STEP_DOMAIN={shlex.quote(args.step_domain)}
 export SOPHIA_REWARD={shlex.quote(args.reward)}
 export SOPHIA_ENTAILMENT={shlex.quote(getattr(args, "entailment_provider", ""))}
 export SOPHIA_LIMIT={shlex.quote(str(getattr(args, "limit", 0)))}
+export SOPHIA_GRADED_FLAG={shlex.quote("--graded-craving" if args.graded_craving else "")}
 export SOPHIA_QUANT={shlex.quote(args.quant)}
 export SOPHIA_VLLM={shlex.quote(args.vllm)}
 export SOPHIA_EPOCHS={shlex.quote(str(args.epochs))}
@@ -658,6 +660,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                          "blank = lexical placeholder")
     ap.add_argument("--limit", type=int, default=0,
                     help="faithfulness task: cap training cases (0 = all; use e.g. 24 for a cheap validation)")
+    ap.add_argument("--graded-craving", action="store_true", help="H2 (reward=gate only): scale reward-positive abstention by prompt fabrication temptation (HST graded arm). Flat arm omits this flag.")
     ap.add_argument("--quant", choices=["bf16", "4bit"], default="bf16")
     ap.add_argument("--vllm", choices=["none", "server", "colocate"], default="none")
     ap.add_argument("--epochs", type=float, default=1.0)
@@ -707,6 +710,8 @@ def _run_local(args: argparse.Namespace) -> int:
         "--vllm", args.vllm, "--epochs", str(args.epochs), "--seed", str(args.seed),
         "--out", str(out_path),
     ]
+    if args.graded_craving:
+        cmd.append("--graded-craving")
     if args.remote_mode == "offline":
         # run_rlvr's own --dry-run is the offline reward-wiring check (no GPU, no model load).
         cmd.append("--dry-run")
