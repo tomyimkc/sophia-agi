@@ -118,8 +118,16 @@ meaning-preserving paraphrases**. This is fail-closed behavior, not a bug (low
 derived confidence on unverified text correctly suppresses CQ), and it is **not**
 tuned away. The honest consequence: **no claim that the gate is courageous on raw
 text**; the integration is conservative by design. Tracked as
-`andreia-derived-signal-routing-weak-on-raw-text-2026-06-29` in the failure ledger;
-the fix is a paraphrase-robust detector + a model-backed signal estimator.
+`andreia-derived-signal-routing-weak-on-raw-text-2026-06-29` in the failure ledger.
+
+The fix has a **pluggable seam** — `detect_cowardice(text, …, semantic_backend=…)`,
+a callable `text → cowardice-likelihood ∈ [0,1]`, off by default (zero behaviour
+change). The only fully-offline backend (a `local-hash-v1` char-n-gram embedding) is
+**measured insufficient**: cowardly-paraphrase and courageous-control similarities
+overlap (`separable: false` in the robustness report), so it would either miss
+paraphrases or fire on courageous text. Closing the gap is therefore **model-gated** —
+wire a real embedding/NLI/LLM-judge backend into the seam (and a model-backed
+confidence/stakes estimator), then re-run the probe.
 
 ## Measurement boundary (read this)
 

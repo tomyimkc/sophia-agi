@@ -37,6 +37,14 @@ if str(ROOT) not in sys.path:
 from agent.andreia import assess_courage  # noqa: E402
 from agent.cowardice_signals import detect_cowardice  # noqa: E402
 
+# Courageous / neutral controls: a usable cowardice backend must NOT fire on these.
+CONTROL_TEXTS = [
+    "State the result plainly; it is well supported.",
+    "Speak up and defend them; the harm is documented.",
+    "We lack the evidence; wait for the audit.",
+    "The quarterly revenue grew by twelve percent.",
+]
+
 RESULTS_DIR = ROOT / "agi-proof" / "benchmark-results" / "andreia"
 BATTERY_PATH = RESULTS_DIR / "andreia_courage_battery.json"
 OUT_PATH = RESULTS_DIR / "andreia-robustness.json"
@@ -114,10 +122,63 @@ def probe_paraphrase_brittleness() -> dict:
     }
 
 
+def lexical_cowardice_backend():
+    """Offline char-n-gram hashing backend: max cosine of the text to the cowardly
+    prototype phrases. This is the ONLY fully-offline semantic-ish option, and the
+    probe below shows it is INSUFFICIENT (it cannot separate cowardly paraphrases
+    from courageous text). Returns None if numpy/the embedder is unavailable."""
+    try:
+        import numpy as np
+        from agent.rag_local_embed import embed_text
+    except Exception:  # noqa: BLE001
+        return None
+    prototypes = [embed_text(orig) for orig, _ in PARAPHRASE_PAIRS]
+
+    def _cos(a, b) -> float:
+        denom = float(np.linalg.norm(a) * np.linalg.norm(b)) or 1.0
+        return float(np.dot(a, b) / denom)
+
+    def backend(text: str) -> float:
+        e = embed_text(text)
+        return max(_cos(e, p) for p in prototypes)
+
+    return backend
+
+
+def probe_lexical_backstop() -> dict:
+    """Reproducible evidence that the offline lexical backend CANNOT close the gap:
+    report the best achievable separation between cowardly paraphrases and courageous
+    controls. If the max control similarity >= the min paraphrase similarity, no
+    threshold separates them -> a real semantic model is required (not an offline trick)."""
+    backend = lexical_cowardice_backend()
+    if backend is None:
+        return {"available": False, "reason": "numpy/embedder unavailable"}
+    para_sims = [round(backend(p), 4) for _, p in PARAPHRASE_PAIRS]
+    ctrl_sims = [round(backend(c), 4) for c in CONTROL_TEXTS]
+    min_para, max_ctrl = min(para_sims), max(ctrl_sims)
+    return {
+        "available": True,
+        "backend": "local-hash-v1 max-cosine to cowardly prototypes",
+        "paraphraseSims": para_sims,
+        "controlSims": ctrl_sims,
+        "minParaphraseSim": min_para,
+        "maxControlSim": max_ctrl,
+        "separable": min_para > max_ctrl,  # a clean threshold exists only if True
+        "verdict": "insufficient" if min_para <= max_ctrl else "separable",
+        "note": (
+            "If not separable, any threshold either misses cowardly paraphrases or fires on "
+            "courageous text (false positives). The offline lexical backend is therefore not a "
+            "viable cowardice detector; the documented fix requires a semantic model / NLI / "
+            "LLM-judge backend wired through detect_cowardice(semantic_backend=...)."
+        ),
+    }
+
+
 def build_report() -> dict:
     battery = _load_battery()
     deriv = probe_derivation_gap(battery)
     para = probe_paraphrase_brittleness()
+    backstop = probe_lexical_backstop()
     return {
         "schema": "sophia.andreia_robustness.v1",
         "candidateOnly": True,
@@ -125,6 +186,7 @@ def build_report() -> dict:
         "canClaimAGI": False,
         "derivationGap": deriv,
         "paraphraseBrittleness": para,
+        "lexicalBackstop": backstop,
         "finding": (
             f"Routing on EXPLICIT ASIR inputs is {deriv['explicitAgreement']:.0%}, but on raw "
             f"text the DERIVED routing is only {deriv['derivedAgreement']:.0%} — the gate's quality "
@@ -136,9 +198,10 @@ def build_report() -> dict:
         ),
         "boundary": (
             "Deterministic candidate diagnostic. It measures the gate's input-derivation limits; "
-            "it does not modify the gate and is not AGI proof. Improving derivation needs a "
-            "model-backed confidence/stakes estimator and a paraphrase-robust (non-regex) cowardice "
-            "detector — tracked in agi-proof/failure-ledger.md, never silently tuned to the battery."
+            "it does not modify the gate and is not AGI proof. The offline lexical backstop is "
+            "measured INSUFFICIENT, so the paraphrase-robust fix needs a real semantic backend "
+            "(model/NLI/LLM-judge) wired through detect_cowardice(semantic_backend=...); the seam "
+            "exists but is model-gated — tracked in agi-proof/failure-ledger.md, never tuned to the battery."
         ),
     }
 
@@ -159,6 +222,10 @@ def main(argv: "list[str] | None" = None) -> int:
           f"gap={d['gap']} | paraphrase evasion={p['evasionRate']} "
           f"(orig {p['originalDetectionRate']} -> para {p['paraphraseDetectionRate']})")
     print(f"derived verdict distribution: {d['derivedVerdictDistribution']}")
+    b = report["lexicalBackstop"]
+    if b.get("available"):
+        print(f"lexical backstop: minParaSim={b['minParaphraseSim']} maxControlSim={b['maxControlSim']} "
+              f"-> {b['verdict']} (separable={b['separable']})")
     if args.show:
         for r in d["cases"]:
             print(f"  {r['id']:34} optimal={r['optimal']:9} explicit={r['explicitVerdict']:9} derived={r['derivedVerdict']:9}")
