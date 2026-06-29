@@ -59,6 +59,13 @@ jobs:
     environment: runpod-paid
     runs-on: ubuntu-latest
     timeout-minutes: 180
+    env:
+      IN_MODEL: ${{ github.event.inputs.model }}
+      IN_EPOCHS: ${{ github.event.inputs.epochs }}
+      IN_SEED: ${{ github.event.inputs.seed }}
+      IN_GPU_TYPE: ${{ github.event.inputs.gpu_type }}
+      IN_INTERRUPTIBLE: ${{ github.event.inputs.interruptible }}
+      IN_LORA_RANK_ALLOC: ${{ github.event.inputs.lora_rank_alloc }}
     steps:
       - uses: actions/checkout@v7
 
@@ -86,13 +93,13 @@ jobs:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
         run: |
           ALLOC=""
-          if [ "${{ github.event.inputs.lora_rank_alloc }}" = "true" ]; then ALLOC="--lora-rank-alloc"; fi
+          if [ "$IN_LORA_RANK_ALLOC" = "true" ]; then ALLOC="--lora-rank-alloc"; fi
           python tools/runpod_train.py --dry-run \
             --source git --branch "${{ github.ref_name }}" \
-            --model "${{ github.event.inputs.model }}" \
-            --epochs "${{ github.event.inputs.epochs }}" \
-            --seed "${{ github.event.inputs.seed }}" \
-            --gpu-type "${{ github.event.inputs.gpu_type }}" \
+            --model "$IN_MODEL" \
+            --epochs "$IN_EPOCHS" \
+            --seed "$IN_SEED" \
+            --gpu-type "$IN_GPU_TYPE" \
             $ALLOC
 
       - name: Launch RunPod training (rents GPU, runs over SSH, deletes pod)
@@ -100,15 +107,15 @@ jobs:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
         run: |
           INTERRUPTIBLE=""
-          if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
+          if [ "$IN_INTERRUPTIBLE" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
           ALLOC=""
-          if [ "${{ github.event.inputs.lora_rank_alloc }}" = "true" ]; then ALLOC="--lora-rank-alloc"; fi
+          if [ "$IN_LORA_RANK_ALLOC" = "true" ]; then ALLOC="--lora-rank-alloc"; fi
           python tools/runpod_train.py --yes \
             --source git --branch "${{ github.ref_name }}" \
-            --model "${{ github.event.inputs.model }}" \
-            --epochs "${{ github.event.inputs.epochs }}" \
-            --seed "${{ github.event.inputs.seed }}" \
-            --gpu-type "${{ github.event.inputs.gpu_type }}" \
+            --model "$IN_MODEL" \
+            --epochs "$IN_EPOCHS" \
+            --seed "$IN_SEED" \
+            --gpu-type "$IN_GPU_TYPE" \
             $INTERRUPTIBLE $ALLOC
 
       - name: Show the eval ladder + promotion report in the run log

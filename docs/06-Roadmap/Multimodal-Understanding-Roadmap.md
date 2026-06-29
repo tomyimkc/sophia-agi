@@ -270,3 +270,64 @@ no-overclaim footing (37 tests). What remains is genuinely hardware/weights-gate
 and tracked in the failure ledger: a live VLM-GRPO run, real-VLM headline runs
 through the multi-family consensus judge, and real CLIP/SigLIP probes — none of
 which is asserted as a capability here.
+
+### Physical / 2.5D extension (workstream A, the metric axes) — ✅ landed (offline)
+
+The literature's consistent finding (2025–2026) is that VLMs are *semantically*
+strong but *metrically* blind — they infer spatial relations from co-occurrence
+priors, not geometry, and fail at depth, occlusion, real-world size, and distance
+(SPHERE, Open3D-VQA, Ego3D-Bench; the field's fix is to inject depth — DepthVLM,
+SD-VLM, Depth Anything V2). That blindness is the *same* failure mode as the
+phantom-object trap, so it belongs in Sophia's verifier-first idiom. This slice
+ports the moat to the physical axes ASI most needs from an image — **without**
+training a VLM and **without** weakening any honesty machinery:
+
+| Piece | What landed | File |
+|---|---|---|
+| 2.5D scene schema | objects carry optional scalar `z` (camera-frame depth; larger = farther) and `size` (real-world size, decoupled from apparent box area) | `multimodal_bench/data/visual_traps.json` (`_meta.depthSemantics`) |
+| Physical verifiers (judge-free) | `depth_order` (in-front/behind), `occludes` (box overlap **and** nearer), `bigger_than` (real size, not pixels), `distance_between`/`distance_cmp` (3D Euclidean) — all **fail closed** (False/None) on a missing object/field | `multimodal_bench/verifiers.py` |
+| 12 physical traps + controls | `depth_order`, `occlusion`, `size_illusion`, `distance` + `*_control` rows with mixed yes/no gold, so neither blanket-deny nor abstain-all wins; every gold re-derived by the verifier | `multimodal_bench/data/visual_traps.json` |
+| Depth-aware render | far→near paint order so the real-VLM PNG shows occlusion consistent with the `occludes` verifier (non-physical scenes render unchanged) | `multimodal_bench/render.py` |
+| Tests | depth/occlusion/size/distance verifier semantics + fail-closed + category/polarity coverage | `tests/test_multimodal_traps.py` |
+
+The suite is now **50 traps across 15 categories**. The physical rows inherit the
+existing reward (`correct > abstain > wrong`), the contamination-free family split
+(they enter as new families — `depth_order`/`depth`/`distance_control` etc.), and
+the no-overclaim gate for free. Honesty bound: the depth/size fields are *authored*
+ground truth over structured scenes — they measure the harness and reference
+behaviours, **not** pixel perception. A real VLM (and, for pixel-derived depth, a
+monocular metric backend such as Depth Anything V2 wired as the verifier's evidence
+source) is required before any physical-understanding number is a headline —
+registered OPEN as `physical-spatial-verifier-real-vlm-not-run-2026-06-29`. Run:
+
+```
+python tools/run_multimodal_traps.py --answer mock:grounded --runs 3   # 0 hallucination on the suite
+python tools/run_multimodal_reward.py                                  # reward + family-disjoint split incl. physical rows
+```
+
+**Metric grounding gate + depth seam (the re-check loop).** Beyond *scoring* a
+physical answer, the slice closes the workstream-A grounding loop: a VLM's metric
+claim is a hypothesis, re-checked before it is accepted.
+
+| Piece | What landed | File |
+|---|---|---|
+| `measure` answer-type | free-form numeric distance scored within a tolerance (gold = true 3D separation, distractor = the depth-blind 2D estimate) — the judge/verifier/mocks all handle it | `judge.py`, `verifiers.py`, `model.py`, `multimodal_bench/data/visual_traps.json` (`distance_measure`) |
+| Fail-closed metric gate | a claim is accepted only if its cited **region** contains the subject AND the judge-free verifier confirms the relation/measure; reversed depth order, the size illusion, and ungroundable regions are **blocked + escalated** (the metric twin of the GUI-action gate) | `multimodal_bench/metric_gate.py`, `tools/run_metric_gate.py` |
+| Depth-source seam | pluggable depth: `authored` z offline (default), or pixel-derived **Depth Anything V2** that renders the scene and samples per-object metric depth — recorded as a **blocker** when weights/deps are absent, never faked | `multimodal_bench/depth_backend.py` |
+
+Offline behaviour: the gate accepts 2/2 grounded claims and blocks 3/3 hallucinated
+ones (distinct reasons, all escalated); the Depth Anything source returns a clean
+blocker without weights, and the gate then fails closed (blocks every claim). The
+suite is now **50 traps**; `tests/test_metric_gate.py` covers the gate and the
+backend seam. Run:
+
+```
+python tools/run_metric_gate.py                          # authored depth: grounded accepted, hallucinated blocked
+python tools/run_metric_gate.py --depth depth-anything   # pixel depth: blocker until weights are wired
+```
+
+The honesty bound is unchanged and now doubly explicit: with the **authored**
+source the depth is declared, not seen; pixel-derived depth needs the Depth
+Anything V2 weights, tracked OPEN in the failure ledger
+(`physical-spatial-verifier-real-vlm-not-run-2026-06-29`). The gate is the
+machinery; no physical-understanding capability is claimed here.

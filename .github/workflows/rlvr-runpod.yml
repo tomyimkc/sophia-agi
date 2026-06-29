@@ -99,15 +99,31 @@ jobs:
     environment: runpod-paid
     runs-on: ubuntu-latest
     timeout-minutes: 240
+    # Job-level env indirection: dispatch inputs are mapped to env vars here and
+    # referenced as quoted shell variables inside run: blocks. This avoids
+    # ${{ ... }} expression interpolation directly into shell scripts (the
+    # GitHub Actions expression-injection / code-injection sink).
+    env:
+      IN_CONFIRM: ${{ github.event.inputs.confirm }}
+      IN_REMOTE_MODE: ${{ github.event.inputs.remote_mode }}
+      IN_TASK: ${{ github.event.inputs.task }}
+      IN_ENTAILMENT_PROVIDER: ${{ github.event.inputs.entailment_provider }}
+      IN_LIMIT: ${{ github.event.inputs.limit }}
+      IN_MODEL: ${{ github.event.inputs.model }}
+      IN_REWARD: ${{ github.event.inputs.reward }}
+      IN_EPOCHS: ${{ github.event.inputs.epochs }}
+      IN_SEED: ${{ github.event.inputs.seed }}
+      IN_GPU_TYPE: ${{ github.event.inputs.gpu_type }}
+      IN_INTERRUPTIBLE: ${{ github.event.inputs.interruptible }}
+      IN_NETWORK_VOLUME_ID: ${{ github.event.inputs.network_volume_id }}
     steps:
       - uses: actions/checkout@v7
 
       - name: Preflight — confirm + secret present
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
-          CONFIRM: ${{ github.event.inputs.confirm }}
         run: |
-          if [ "$CONFIRM" != "RUN" ]; then
+          if [ "$IN_CONFIRM" != "RUN" ]; then
             echo "::error::Dispatch input 'confirm' must be exactly RUN to acknowledge GPU cost. Aborting (no pod created)."
             exit 1
           fi
@@ -125,16 +141,16 @@ jobs:
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
         run: |
-          LIMIT="${{ github.event.inputs.limit }}"; [ -z "$LIMIT" ] && LIMIT=0
+          LIMIT="$IN_LIMIT"; [ -z "$LIMIT" ] && LIMIT=0
           python tools/runpod_rlvr.py --dry-run \
             --source git --branch "${{ github.ref_name }}" \
-            --remote-mode "${{ github.event.inputs.remote_mode }}" \
-            --task "${{ github.event.inputs.task }}" \
-            --reward "${{ github.event.inputs.reward }}" \
-            --entailment-provider "${{ github.event.inputs.entailment_provider }}" \
+            --remote-mode "$IN_REMOTE_MODE" \
+            --task "$IN_TASK" \
+            --reward "$IN_REWARD" \
+            --entailment-provider "$IN_ENTAILMENT_PROVIDER" \
             --limit "$LIMIT" \
-            --model "${{ github.event.inputs.model }}" \
-            --gpu-type "${{ github.event.inputs.gpu_type }}"
+            --model "$IN_MODEL" \
+            --gpu-type "$IN_GPU_TYPE"
 
       - name: Launch RunPod RLVR (rents GPU, runs over SSH, deletes pod)
         env:
@@ -145,27 +161,15 @@ jobs:
           LLMHUB_API_KEY: ${{ secrets.LLMHUB_API_KEY }}
           LLMHUB_BASE_URL: ${{ vars.LLMHUB_BASE_URL }}
         run: |
-          INTERRUPTIBLE=""
-          if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
-          NETVOL=""
-          if [ -n "${{ github.event.inputs.network_volume_id }}" ]; then NETVOL="--network-volume-id ${{ github.event.inputs.network_volume_id }}"; fi
+          # argv as a bash array; optional flags appended as separate quoted elements
+          # (no unquoted expansion -> no shell injection/word-splitting from dispatch inputs).
           # faithfulness uses a custom loop (no vLLM); other tasks keep the colocate vLLM stack.
-          VLLM="colocate"
-          if [ "${{ github.event.inputs.task }}" = "faithfulness" ]; then VLLM="none"; fi
-          LIMIT="${{ github.event.inputs.limit }}"; [ -z "$LIMIT" ] && LIMIT=0
-          python tools/runpod_rlvr.py --yes \
-            --source git --branch "${{ github.ref_name }}" \
-            --remote-mode "${{ github.event.inputs.remote_mode }}" \
-            --task "${{ github.event.inputs.task }}" \
-            --reward "${{ github.event.inputs.reward }}" \
-            --entailment-provider "${{ github.event.inputs.entailment_provider }}" \
-            --limit "$LIMIT" \
-            --model "${{ github.event.inputs.model }}" \
-            --epochs "${{ github.event.inputs.epochs }}" \
-            --seed "${{ github.event.inputs.seed }}" \
-            --quant bf16 --vllm "$VLLM" \
-            --gpu-type "${{ github.event.inputs.gpu_type }}" \
-            $INTERRUPTIBLE $NETVOL
+          VLLM="colocate"; [ "$IN_TASK" = "faithfulness" ] && VLLM="none"
+          LIMIT="$IN_LIMIT"; [ -z "$LIMIT" ] && LIMIT=0
+          args=(--yes --source git --branch "${{ github.ref_name }}" --remote-mode "$IN_REMOTE_MODE" --task "$IN_TASK" --reward "$IN_REWARD" --entailment-provider "$IN_ENTAILMENT_PROVIDER" --limit "$LIMIT" --model "$IN_MODEL" --epochs "$IN_EPOCHS" --seed "$IN_SEED" --quant bf16 --vllm "$VLLM" --gpu-type "$IN_GPU_TYPE")
+          [ "$IN_INTERRUPTIBLE" = "true" ] && args+=(--interruptible)
+          [ -n "$IN_NETWORK_VOLUME_ID" ] && args+=(--network-volume-id "$IN_NETWORK_VOLUME_ID")
+          python tools/runpod_rlvr.py "${args[@]}"
 
       - name: Ingest the FRESH pod adapter-eval report into the SSIL Layer-1 gate
         if: always()

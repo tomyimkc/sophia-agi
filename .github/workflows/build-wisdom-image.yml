@@ -49,7 +49,9 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Report
+        env:
+          IN_TAG: ${{ github.event.inputs.tag }}
         run: |
-          echo "Pushed ghcr.io/${{ github.repository_owner }}/wisdom-pilot:${{ github.event.inputs.tag }}"
+          echo "Pushed ghcr.io/${{ github.repository_owner }}/wisdom-pilot:$IN_TAG"
           echo "NEXT: make the GHCR package PUBLIC, then run wisdom-pilot-runpod with"
-          echo "      --image-name ghcr.io/${{ github.repository_owner }}/wisdom-pilot:${{ github.event.inputs.tag }}"
+          echo "      --image-name ghcr.io/${{ github.repository_owner }}/wisdom-pilot:$IN_TAG"

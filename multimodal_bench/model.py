@@ -29,6 +29,8 @@ def grounded_answer_fn(trap: dict) -> str:
         return "Yes." if gold.lower() == "yes" else "No, that is not in the image."
     if atype == "count":
         return f"There are {gold}."
+    if atype == "measure":
+        return f"They are about {gold} units apart."
     if gold.lower() == "none":
         return "There is no legible text on it."
     return f"It says {gold}."
@@ -42,6 +44,8 @@ def credulous_answer_fn(trap: dict) -> str:
         return "Yes." if trapped.lower() == "yes" else "No."
     if atype == "count":
         return f"There are {trapped}."
+    if atype == "measure":
+        return f"About {trapped} units apart."
     return f"It says {trapped}."
 
 
