@@ -357,6 +357,15 @@ def _run_gpu(args: argparse.Namespace) -> int:
     train_rows = data["train_rows"]
     if args.curriculum:
         train_rows = _gate_curriculum_order(train_rows, samples=args.curriculum_samples)
+    if args.task == "code":
+        # Wrap each prompt in the model's chat template so an instruct/chat base
+        # generates an extractable fenced code block during GRPO rollouts. Must
+        # match the eval side (eval_rlvr_adapter, chat_template=True), else the
+        # adapter trains on raw prompts but is graded on templated ones. No-op for a
+        # base/completion model (no template); math/provenance are untouched (they
+        # cleared on the raw-prompt path). See failure-ledger rlvr-code-no-chat-template.
+        _tok = AutoTokenizer.from_pretrained(args.model)
+        train_rows = [{**r, "prompt": code_dataset.chat_wrap(_tok, r["prompt"])} for r in train_rows]
     ds = Dataset.from_list(train_rows)  # columns kept: remove_unused_columns=False
 
     model_init_kwargs: dict = {"trust_remote_code": False}
