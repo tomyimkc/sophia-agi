@@ -5,8 +5,15 @@
 The provenance RLVR reward (``rl_reward``) uses ``provenance_faithful`` as the
 seam. This is the code analogue: the reward IS whether the model's solution passes
 the hidden canonical tests when executed (``provenance_bench.code_exec``). Unlike a
-humanities judge, this signal is objective and ungameable — the interpreter
-decides. This is exactly the RLVR setup that works best (DeepSeek-R1 code RL).
+humanities judge, this signal is *objective* — the interpreter decides. It is NOT,
+however, ungameable: the solution runs in the same process as the appended test, so
+it can manipulate the exit code (``sys.exit(0)``/``atexit``), override ``__eq__``,
+tamper with the harness, or special-case the visible inputs and still score +1
+(see the ``code-reward-hackable-not-ungameable`` failure-ledger entry; the demo is
+in ``tests/test_code_integrity.py``). Use ``provenance_bench.code_integrity`` (the
+integrity-gated composite reward) for any run that trains on this signal — it floors
+detected reward-hacks before the executor is consulted. This is the RLVR setup that
+works best (DeepSeek-R1 code RL) *once the verifier itself is hardened*.
 
 Reward in ``[-1, 1]``: +1 tests pass, -1 code present but fails, -1 no code at all
 (the model must actually answer with code). Deterministic given the sandbox.

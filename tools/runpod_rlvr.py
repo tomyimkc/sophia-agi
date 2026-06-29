@@ -406,6 +406,20 @@ if [ -d /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 ]; then
     --seed "$SOPHIA_SEED" \\
     --out /workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.json{capability_flag} \\
     || echo "[runpod] adapter-eval failed (non-fatal); no SSIL gate input produced"
+  # PRIMARY metric for the code task: the POWERED N=175 open-invention suite
+  # (compositional generalization), scored by the guarded grader. The eval above is
+  # the SECONDARY coarse 48-task lane. Both run on the SAME trained adapter; the
+  # invention report carries the integrity gate (checks.noRewardHacksAccepted) and
+  # the power flag (checks.powered) the measurement_spec treats as primary.
+  if [ "$SOPHIA_TASK" = "code" ]; then
+    python tools/eval_rlvr_adapter.py --mode real \\
+      --task invention \\
+      --model "$SOPHIA_MODEL" \\
+      --adapter /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 \\
+      --seed "$SOPHIA_SEED" \\
+      --out /workspace/sophia-runpod/sophia-rlvr-v1.invention-eval.json \\
+      || echo "[runpod] invention-eval failed (non-fatal)"
+  fi
 fi
 """
     else:
@@ -735,6 +749,13 @@ def main(argv: list[str] | None = None) -> int:
                 key_path,
                 "/workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.json",
                 args.artifacts_dir / f"{pod_id}.rlvr.adapter-eval.json",
+            )
+            # POWERED open-invention primary eval (code task; best-effort).
+            _scp_from_pod(
+                conn,
+                key_path,
+                "/workspace/sophia-runpod/sophia-rlvr-v1.invention-eval.json",
+                args.artifacts_dir / f"{pod_id}.rlvr.invention-eval.json",
             )
             _scp_from_pod(
                 conn,
