@@ -166,7 +166,13 @@ This is the payoff of post-training over from-scratch:
 
 ## Failure-ledger hooks (to add OPEN entries for)
 
-1. Live GRPO uplift from the faithfulness reward — unrun; offline reward invariants only.
-2. The counterfactual citation-drop harness (regeneration with a chunk ablated) — design only.
+1. Live rollout-driven GRPO uplift from the faithfulness reward — unrun. The offline
+   harness + reward invariants are shipped (`provenance_bench/faithfulness_rollout.py`,
+   `provenance_bench/retrieval_faithfulness.py`, `tools/run_rlvr.py --task faithfulness
+   --model mock`); the custom sampling loop (in-rollout regeneration around the vanilla
+   TRL path) is not.
+2. Live `retrieve` / `generate` / `verify_claim` seams — the offline path uses
+   deterministic mock seams; the live wiring to `agent.ai_search` + `agent.source_verifier`
+   is not yet exercised end-to-end.
 3. `counterfactual_grounding_rate` power calc + private held-out split — not yet computed.
 4. ≥2-family judge validation of the faithfulness construct — not yet run.

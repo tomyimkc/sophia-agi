@@ -47,6 +47,7 @@ from provenance_bench import (  # noqa: E402
     code_dataset,
     code_integrity,
     code_reward,
+    faithfulness_rollout,
     math_dataset,
     math_reward,
     ontology_rl_dataset,
@@ -284,6 +285,22 @@ def _run_gpu(args: argparse.Namespace) -> int:
         )
         return 1
 
+    if args.task == "faithfulness":
+        # The faithfulness reward's counterfactual citation-drop term regenerates the
+        # answer with a chunk ablated — that extra inference happens DURING sampling, so
+        # it needs a custom rollout-driven GRPO loop (sampling = faithfulness_rollout.rollout,
+        # advantage over a group of rollouts), NOT the vanilla TRL GRPOTrainer whose reward
+        # callback only sees completion text. That loop is OPEN in the failure ledger.
+        print(
+            "Live faithfulness GRPO is not wired into the vanilla TRL path: the "
+            "counterfactual citation-drop term needs in-rollout regeneration (a custom "
+            "sampling loop around faithfulness_rollout.rollout). The offline harness + "
+            "reward invariants ARE shipped — run `python tools/run_rlvr.py --task "
+            "faithfulness --model mock`. See agi-proof/reasoning-core-design.md and the "
+            "failure-ledger hook for the live loop."
+        )
+        return 1
+
     use_vllm = args.vllm != "none"
     four_bit = args.quant == "4bit"
     # Refuse the broken combo: QLoRA(4-bit) + vLLM colocate (trl#4973).
@@ -478,10 +495,12 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     ap.add_argument("--model", default="mock", help=f'subject model (default "mock"; GPU: "{DEFAULT_MODEL}")')
-    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "physics"], default="provenance",
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "physics", "faithfulness"],
+                    default="provenance",
                     help="reward task: provenance (provenance_faithful), math (sympy math_equivalent), "
-                         "code (hidden-tests-pass via provenance_bench.code_exec), or concept "
-                         "(concept-TBox gate: don't merge cross-tradition concepts)")
+                         "code (hidden-tests-pass via provenance_bench.code_exec), concept "
+                         "(concept-TBox gate: don't merge cross-tradition concepts), or faithfulness "
+                         "(retrieve-then-reason + counterfactual citation-drop; offline harness only)")
     ap.add_argument("--dry-run", action="store_true", help="offline reward-wiring check only (no GPU)")
     ap.add_argument("--out", type=Path, default=OUT_JSON)
     # GPU-only args (ignored under --model mock / --dry-run)
@@ -540,6 +559,12 @@ def main(argv: list[str] | None = None) -> int:
                 ok = ok and integ_ok
                 detail.setdefault("checks", {})["codeIntegrityInvariants"] = integ_ok
                 detail["codeIntegrity"] = integ_detail
+        elif args.task == "faithfulness":
+            # Retrieve-then-reason rollout + counterfactual citation-drop reward.
+            # Offline harness: proves a retrieval-USING policy outscores a weights-
+            # LEAKING one on an identical answer, plus the floor / abstention / bounded
+            # invariants. The live rollout-driven GRPO loop is Open in the ledger.
+            ok, detail = faithfulness_rollout.offline_invariants()
         elif args.task == "concept":
             ok, detail = ontology_rl_reward.offline_invariants()
             # The concept task additionally requires the spurious-reward ablation to
