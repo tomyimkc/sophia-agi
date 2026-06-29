@@ -4,6 +4,36 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+### Added — thinking-chain intervention & the instinct system (`reasoning/instinct_*`, measured/candidate)
+
+A falsifiable, offline, seeded module family + measurement harnesses modelling the operator's
+thesis: an *instinct* that detects an error early and **re-routes** (or edits the chain in place)
+instead of ploughing ahead. Pure stdlib, deterministic across `PYTHONHASHSEED`, each with a test.
+All `candidateOnly`; `canClaimAGI:false`; not promoted to `published-results.json`.
+
+- **`reasoning/instinct_gate.py`** — policy model: early re-route beats late self-correction above
+  a stable break-even **d′=1.0**; ko-bounded escalate; the ceiling is the reflex's ROC.
+- **`reasoning/instinct_reflex_eval.py`** — go/no-go harness: a reflex's d′/AUC vs the
+  belief-revision oracle; self-consistency is borderline.
+- **`reasoning/instinct_fusion.py`** — independent-detector fusion law `d′_fused=(d_A+d_B)/√(2+2ρ)`;
+  adds `_reflex_B2` (grounding-completeness) + quality-weighted `fuse()`.
+- **`reasoning/instinct_endtoend.py`** — outcome sim on **real operating points**: with the full
+  bus, confident-wrong → correct-reroute or honest escalate (DeepSeek 0.58→0.00; Claude-haiku
+  0.98→0.00 via 0.92 escalation).
+- **`reasoning/instinct_validation.py`** — LOO-CV weights + bootstrap CIs; surfaces the honest
+  artifact that B/B2 are *verifiers* (near-tautological), so the real frontier is a label-free reflex.
+- **`reasoning/instinct_injection.py`** — the injection half: in-place edit dominates re-route but
+  has a brittleness roofline; inject→reroute hybrid wins.
+- **`reasoning/instinct_labelfree.py`** — per-element membership *instability* beats exact
+  self-consistency (AUC 0.668 vs 0.629, CI excludes chance); hard ceiling on confident-wrong models.
+- **`agent/reflex_bus.py`** — opt-in reflex bus + interrupt controller emitting conscience-native
+  verdicts (`allow/revise/escalate/abstain`); composes `agent.calibration` + caller-supplied OKF
+  sets; no existing call site rewired.
+- **`tools/run_reflex_openrouter.py`, `tools/run_fusion_realmodel.py`** — real-model runners
+  (OpenAI-compatible; keys from env only; fail-loud on API errors; store raw answer-sets).
+- Docs: `docs/06-Roadmap/Thinking-Chain-Intervention-and-Instinct.md`; handover
+  `SESSION-HANDOVER-2026-06-29-instinct-system.md`.
+
 ### Added — always-available RunPod connection + stalled-pod checker
 
 Makes reaching RunPod reliable even when `RUNPOD_API_KEY` is absent from the current
