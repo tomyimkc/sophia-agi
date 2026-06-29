@@ -55,6 +55,29 @@ def test_faithfulness_signal_where_correctness_collapses() -> None:
     assert detail["withinGroupStd"] > 0.0
 
 
+# --- the GRPO objective + its gradient ------------------------------------- #
+
+
+def test_objective_gradient_sign_follows_advantage() -> None:
+    """Gradient descent (lp -= grad) must RAISE a positive-advantage answer's log-prob
+    (grad < 0) and LOWER a negative-advantage one's (grad > 0). beta=0: grad = -adv/N."""
+    obj = fg.grpo_objective([1.0, -1.0], [-1.0, -1.0])
+    assert obj["grad_logprob"][0] < 0.0 < obj["grad_logprob"][1]
+    assert obj["kl"] == [0.0, 0.0]
+
+
+def test_objective_kl_nonnegative_and_zero_at_reference() -> None:
+    on_ref = fg.grpo_objective([0.5], [-1.0], ref_mean_logprobs=[-1.0], beta=0.1)
+    off_ref = fg.grpo_objective([0.5], [-1.0], ref_mean_logprobs=[-0.5], beta=0.1)
+    assert abs(on_ref["kl"][0]) < 1e-12          # policy == reference -> KL 0
+    assert off_ref["kl"][0] > 0.0                # diverged -> KL > 0
+
+
+def test_collapsed_group_zero_objective_gradient() -> None:
+    obj = fg.grpo_objective([0.0, 0.0, 0.0], [-1.0, -1.0, -1.0])
+    assert obj["grad_logprob"] == [0.0, 0.0, 0.0]
+
+
 # --- live seam conformance ------------------------------------------------- #
 
 
@@ -84,6 +107,9 @@ def main() -> int:
     test_collapsed_group_has_zero_advantage()
     test_offline_invariants_pass()
     test_faithfulness_signal_where_correctness_collapses()
+    test_objective_gradient_sign_follows_advantage()
+    test_objective_kl_nonnegative_and_zero_at_reference()
+    test_collapsed_group_zero_objective_gradient()
     test_seam_conformance_passes()
     test_ai_search_retrieve_returns_rollout_shaped_chunks()
     test_entailment_verify_maps_verdicts()

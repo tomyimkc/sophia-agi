@@ -117,14 +117,20 @@ def heuristic_extract_claims(answer: str, context: list) -> list:
 # end-to-end, offline (no policy model, no entailment LLM, no GPU).
 # --------------------------------------------------------------------------- #
 
-def _mock_entailment(claim_text: str, source_text: str) -> str:
-    """Deterministic stand-in for the entailment LLM: lexical-overlap heuristic, so the
-    conformance check exercises the adapter wiring without a model."""
+def lexical_entailment(claim_text: str, source_text: str) -> str:
+    """Deterministic placeholder for the entailment LLM: an attribution-aware lexical
+    heuristic ((author in source) -> entails). Lets the rollout reward be computed
+    on-box without a second model, so the GRPO loop can run; a real entailment LLM is
+    the live upgrade (Open in the ledger). Returns "entails"|"contradicts"|"irrelevant"."""
     ct, st = claim_text.lower(), source_text.lower()
-    author = ct.split(" wrote")[0].split(" authored")[0].strip()
+    author = ct.split(" wrote")[0].split(" authored")[0].split(" composed")[0].strip()
     if author and author in st:
         return "entails"
     return "irrelevant"
+
+
+# Back-compat alias used by conformance_check.
+_mock_entailment = lexical_entailment
 
 
 def conformance_check() -> tuple[bool, dict]:
@@ -197,5 +203,6 @@ __all__ = [
     "make_ai_search_retrieve",
     "make_entailment_verify",
     "heuristic_extract_claims",
+    "lexical_entailment",
     "conformance_check",
 ]
