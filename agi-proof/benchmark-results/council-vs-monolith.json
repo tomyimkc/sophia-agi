@@ -1,0 +1,84 @@
+{
+  "nCases": 8,
+  "nBad": 4,
+  "nGood": 4,
+  "routingAccuracy": 1.0,
+  "council": {
+    "caught_bad": 4,
+    "passed_good": 4,
+    "catchRate": 1.0
+  },
+  "monolith": {
+    "caught_bad": 2,
+    "passed_good": 4,
+    "catchRate": 0.5
+  },
+  "councilCatchesMore": true,
+  "note": "Council uses each discipline's verifier; monolith uses one general provenance gate. The delta is the discipline-specific errors (unbalanced equation, invalid DNA) the general gate has no oracle for. Stub answers; real 3B adapters plug in unchanged.",
+  "perCase": [
+    {
+      "task": "Is this chemistry reaction balanced: H2 ",
+      "routed": "chemistry",
+      "gold": "chemistry",
+      "correct": false,
+      "councilPass": false,
+      "monolithPass": true
+    },
+    {
+      "task": "Is this chemistry reaction balanced: 2 H",
+      "routed": "chemistry",
+      "gold": "chemistry",
+      "correct": true,
+      "councilPass": true,
+      "monolithPass": true
+    },
+    {
+      "task": "Is this DNA gene sequence valid: ACGTXG ",
+      "routed": "biology",
+      "gold": "biology",
+      "correct": false,
+      "councilPass": false,
+      "monolithPass": true
+    },
+    {
+      "task": "Is this DNA gene sequence valid: ACGTACG",
+      "routed": "biology",
+      "gold": "biology",
+      "correct": true,
+      "councilPass": true,
+      "monolithPass": true
+    },
+    {
+      "task": "In philosophy, who wrote the Dao De Jing",
+      "routed": "philosophy",
+      "gold": "philosophy",
+      "correct": false,
+      "councilPass": false,
+      "monolithPass": false
+    },
+    {
+      "task": "In philosophy, who wrote the Dao De Jing",
+      "routed": "philosophy",
+      "gold": "philosophy",
+      "correct": true,
+      "councilPass": true,
+      "monolithPass": true
+    },
+    {
+      "task": "Mathematics: compute 100000 / 5000 in mo",
+      "routed": "mathematics",
+      "gold": "mathematics",
+      "correct": false,
+      "councilPass": false,
+      "monolithPass": false
+    },
+    {
+      "task": "Mathematics: compute 100000 / 5000 in mo",
+      "routed": "mathematics",
+      "gold": "mathematics",
+      "correct": true,
+      "councilPass": true,
+      "monolithPass": true
+    }
+  ]
+}
