@@ -36,3 +36,4 @@
 {"utc":"20260629T044518Z","bench":"gsm8k-exactmatch","file":"gsm8k-exactmatch-20260629T044518Z.json"}
 {"utc":"20260629T044727Z","bench":"seib100","file":"seib100-20260629T044727Z.json"}
 {"utc":"20260629T045330Z","bench":"lean-expiter","file":"lean-expiter-20260629T045330Z.json"}
+{"utc":"20260629T045441Z","bench":"lean-passk","file":"lean-passk-20260629T045441Z.json"}
