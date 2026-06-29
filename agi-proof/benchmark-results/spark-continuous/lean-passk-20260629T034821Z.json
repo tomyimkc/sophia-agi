@@ -1,0 +1,132 @@
+{
+  "benchmark": "core-lean-passk.jsonl",
+  "isMiniF2F": false,
+  "n": 12,
+  "solved": 2,
+  "passAt1": 0.1667,
+  "modelSpec": "ollama:qwen2.5:7b-instruct",
+  "verifier": "agent.lean_backend.verify_lean_source",
+  "estCostUsd": 0.0,
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "note": "Whole-proof pass@1, real Lean-kernel verified, trace-free. NOT miniF2F: a core-Lean-provable local set (bare `lean`, no Mathlib).",
+  "results": [
+    {
+      "id": "p01_one_plus_one",
+      "tier": "trivial",
+      "decl": "theorem p01 : 1 + 1 = 2",
+      "verdict": "accepted",
+      "proof": "theorem p01 : 1 + 1 = 2 := by rfl",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 3.8
+    },
+    {
+      "id": "p02_add_zero",
+      "tier": "trivial",
+      "decl": "theorem p02 (n : Nat) : n + 0 = n",
+      "verdict": "rejected",
+      "proof": "theorem p02 (n : Nat) : n + 0 = n := by rw add_zero",
+      "reason": "lean_rejected: /tmp/tmp_80ap55v.lean:1:37: error: unsolved goals",
+      "sec": 4.0
+    },
+    {
+      "id": "p03_zero_add",
+      "tier": "easy",
+      "decl": "theorem p03 (n : Nat) : 0 + n = n",
+      "verdict": "rejected",
+      "proof": "theorem p03 (n : Nat) : 0 + n = n := by rw add_zero",
+      "reason": "lean_rejected: /tmp/tmp5rppsgca.lean:1:37: error: unsolved goals",
+      "sec": 4.1
+    },
+    {
+      "id": "p04_add_comm",
+      "tier": "easy",
+      "decl": "theorem p04 (a b : Nat) : a + b = b + a",
+      "verdict": "rejected",
+      "proof": "theorem p04 (a b : Nat) : a + b = b + a := by rw add_comm",
+      "reason": "lean_rejected: /tmp/tmpv52jc475.lean:1:43: error: unsolved goals",
+      "sec": 3.8
+    },
+    {
+      "id": "p05_imp_self",
+      "tier": "easy",
+      "decl": "theorem p05 (p : Prop) : p \u2192 p",
+      "verdict": "accepted",
+      "proof": "theorem p05 (p : Prop) : p \u2192 p := by intro h; exact h",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 4.0
+    },
+    {
+      "id": "p06_and_comm",
+      "tier": "easy",
+      "decl": "theorem p06 (p q : Prop) (h : p \u2227 q) : q \u2227 p",
+      "verdict": "rejected",
+      "proof": "theorem p06 (p q : Prop) (h : p \u2227 q) : q \u2227 p := by split; assumption",
+      "reason": "lean_rejected: /tmp/tmpk5hncyp0.lean:1:51: error: Tactic `split` failed: Could not split an `if` or `match` expression in the goal",
+      "sec": 4.1
+    },
+    {
+      "id": "p07_le_refl",
+      "tier": "easy",
+      "decl": "theorem p07 (n : Nat) : n \u2264 n",
+      "verdict": "rejected",
+      "proof": "theorem p07 (n : Nat) : n \u2264 n := by refl",
+      "reason": "lean_rejected: /tmp/tmp8gxobj1d.lean:1:33: error: unsolved goals",
+      "sec": 4.0
+    },
+    {
+      "id": "p08_succ_pos",
+      "tier": "easy",
+      "decl": "theorem p08 (n : Nat) : 0 < n + 1",
+      "verdict": "rejected",
+      "proof": "theorem p08 (n : Nat) : 0 < n + 1 := by simp [add_zero]",
+      "reason": "lean_rejected: returncode=1",
+      "sec": 4.4
+    },
+    {
+      "id": "p09_mul_two",
+      "tier": "medium",
+      "decl": "theorem p09 (n : Nat) : 2 * n = n + n",
+      "verdict": "rejected",
+      "proof": "theorem p09 (n : Nat) : 2 * n = n + n := by rw [mul_add]",
+      "reason": "lean_rejected: /tmp/tmpn4aw0ppq.lean:1:41: error: unsolved goals",
+      "sec": 4.3
+    },
+    {
+      "id": "p10_list_append_nil",
+      "tier": "medium",
+      "decl": "theorem p10 (l : List Nat) : l ++ [] = l",
+      "verdict": "rejected",
+      "proof": "theorem p10 (l : List Nat) : l ++ [] = l := by simp [append_empty]",
+      "reason": "lean_rejected: returncode=1",
+      "sec": 4.2
+    },
+    {
+      "id": "p11_left_distrib",
+      "tier": "medium",
+      "decl": "theorem p11 (a b c : Nat) : a * (b + c) = a * b + a * c",
+      "verdict": "rejected",
+      "proof": "theorem p11 (a b c : Nat) : a * (b + c) = a * b + a * c := by ring",
+      "reason": "lean_rejected: /tmp/tmpw2tx2_6k.lean:1:59: error: unsolved goals",
+      "sec": 3.8
+    },
+    {
+      "id": "p12_or_comm",
+      "tier": "medium",
+      "decl": "theorem p12 (p q : Prop) (h : p \u2228 q) : q \u2228 p",
+      "verdict": "rejected",
+      "proof": "theorem p12 (p q : Prop) (h : p \u2228 q) : q \u2228 p := by cases h with hphq; exact or.inl hp | or.inr hpq",
+      "reason": "lean_rejected: /tmp/tmpqzyg7s9y.lean:1:65: error: unknown tactic",
+      "sec": 4.2
+    }
+  ],
+  "sparkIteration": true,
+  "registeredResult": false,
+  "benchName": "lean-passk",
+  "utc": "20260629T034821Z",
+  "host": "dgx-spark-gb10",
+  "subject": "ollama:qwen2.5:7b-instruct",
+  "lane": "spark-continuous",
+  "mainHead": "2275db98"
+}
