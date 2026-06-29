@@ -120,9 +120,9 @@ def _known_authors(snapshot: dict) -> set:
 def resolve_true_author(
     work: str,
     *,
-    belief_fn: Optional[Callable[[str], Optional[str]]] = None,
+    belief_fn: "Optional[Callable[[str], Optional[str]]]" = None,
     snapshot: "dict | None" = None,
-) -> Optional[str]:
+) -> "Optional[str]":
     """Resolve a work's documented author, deterministically and offline.
 
     Order: (a) the offline Wikidata snapshot (``work -> gold_author``), then
@@ -215,7 +215,7 @@ def synth_records_for_claim(
     *,
     base_records: dict,
     snapshot: "dict | None" = None,
-    belief_fn: Optional[Callable[[str], Optional[str]]] = None,
+    belief_fn: "Optional[Callable[[str], Optional[str]]]" = None,
 ) -> dict:
     """Synthesize ``doNotAttributeTo`` records for misattributions in ``text``.
 

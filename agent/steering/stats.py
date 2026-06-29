@@ -12,22 +12,6 @@ import statistics
 from provenance_bench.aggregate import _ci, KAPPA_FLOOR
 from provenance_bench.consensus import cohen_kappa  # re-exported for callers
 
-# Public API. ``cohen_kappa`` is a deliberate re-export (callers use
-# ``stats.cohen_kappa``); listing it in ``__all__`` marks the import as used so
-# CodeQL's py/unused-import does not flag it.
-__all__ = [
-    "SSA_THRESHOLDS",
-    "cohen_d",
-    "bootstrap_diff_ci",
-    "binarize_moved",
-    "ssa_verdict",
-    "residualized_d",
-    "holm_bonferroni",
-    "benjamini_hochberg",
-    "bootstrap_diff_p",
-    "cohen_kappa",
-]
-
 # Pre-registered SSA thresholds — fixed before any run (spec §"Locked decisions").
 SSA_THRESHOLDS = {
     "delta_point_min": 0.30,   # Δd point estimate floor
@@ -104,7 +88,7 @@ def residualized_d(target_per_seed, offtarget_per_seed_by_axis):
     c = [sum(X[i][r] * y[i] for i in range(n)) for r in range(p)]
     beta = _solve_linear(A, c)
     if beta is None:
-        sd = statistics.pstdev(y)
+        sd = statistics.pstdev(y) if n > 1 else 0.0
         return 0.0 if sd == 0.0 else statistics.fmean(y) / sd
     resid = [y[i] - sum(beta[r] * X[i][r] for r in range(1, p)) for i in range(n)]
     sd = statistics.pstdev(resid)

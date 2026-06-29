@@ -19,6 +19,7 @@ implementing ``pipeline.store.objectstore.ObjectStore``; the rest is unchanged.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import sys
 import time
 from pathlib import Path

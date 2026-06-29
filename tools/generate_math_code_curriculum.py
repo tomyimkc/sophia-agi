@@ -31,7 +31,7 @@ BOX = r" Put the final answer in \boxed{}."
 
 from agent import code_verifier as cv  # noqa: E402
 from agent import math_verifier as mv  # noqa: E402
-from provenance_bench.dataset_guard import check_contamination, eval_prompt_set, normalize  # noqa: E402
+from provenance_bench.dataset_guard import check_contamination, eval_prompt_set, normalize, prompt_of  # noqa: E402
 from tools.heldout_seal_guard import assert_generator_safe  # noqa: E402
 
 import sympy as sp  # noqa: E402

@@ -38,7 +38,6 @@ reimplemented here — it is ``agent.corroboration.corroborated_confidence``.
 
 from __future__ import annotations
 
-import math
 from collections.abc import Mapping
 from dataclasses import dataclass
 
@@ -77,7 +76,7 @@ class SourceTrust:
         except (TypeError, ValueError):
             t = self.default
         # Clamp into [0,1]; non-finite / out-of-range falls back to default-safe.
-        if math.isnan(t):  # NaN
+        if t != t:  # NaN
             t = self.default
         return min(1.0, max(0.0, t))
 
@@ -119,7 +118,7 @@ def _evidences(item: dict, st: SourceTrust, prior: float) -> list:
     return evs
 
 
-def _independent_group_count(item: dict, st: SourceTrust, trust_floor: float) -> int:
+def _trusted_group_count(item: dict, st: SourceTrust, trust_floor: float) -> int:
     """Count DISTINCT independence groups that contain >=1 source clearing the
     trust floor. Sybil/duplicate sources sharing a group count once."""
     groups: set = set()
@@ -156,7 +155,7 @@ def assess_item(
     claim_id = item.get("claimId")
     reasons: list = []
 
-    indep = _independent_group_count(item, st, trust_floor)
+    indep = _trusted_group_count(item, st, trust_floor)
     evs = _evidences(item, st, prior)
     pooled = corroborated_confidence(evs, prior=prior) if evs else float(prior)
 

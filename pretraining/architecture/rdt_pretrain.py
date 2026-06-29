@@ -130,7 +130,7 @@ def train(args) -> dict:
         x, y = next(gen)
         opt.zero_grad(set_to_none=True)
         with torch.autocast(device_type=device.type, dtype=dtype, enabled=(dtype != torch.float32)):
-            _, loss, _ = model(x, y)
+            _, loss = model(x, y)
         loss.backward()
         gnorm = torch.nn.utils.clip_grad_norm_(model.parameters(), args.grad_clip)
         opt.step()

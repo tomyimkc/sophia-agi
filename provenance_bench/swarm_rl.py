@@ -29,7 +29,7 @@ tokens-over-FFN-experts to tasks-over-agent-teams.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Callable
 
 from agent.swarm_router import TEAMS, SwarmPlan

@@ -82,7 +82,7 @@ def _is_abstain(policy: str) -> bool:
 
 def main() -> int:
     print(f"subject: {SPEC} | reps/vector: {REPS}")
-    raw_affirm = 0
+    raw_fab = raw_affirm = 0
     raw_total = 0
     gated_abstain = gated_total = 0
     print(f"\n{'vector':12} {'rep':>3} {'raw':>8} {'gated':>16}")

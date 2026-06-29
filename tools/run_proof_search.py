@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent import proof_search  # noqa: E402
+from agent import lean_backend, proof_search  # noqa: E402
 from agent.tactic_proposer import default_proposer, stub_proposer  # noqa: E402
 
 # A tiny bundled theorem set: (name, theorem_source, initial_state, winning_tactic_for_stub)

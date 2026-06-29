@@ -30,6 +30,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.verifier_proposer import make_model_proposer  # noqa: E402
+from agent.verifier_synthesis import compose  # noqa: E402
 from gateway import Gateway, ToolEntry  # noqa: E402
 from gateway.skill_flywheel import synthesize_gate  # noqa: E402
 
@@ -208,7 +209,6 @@ def _load_generated_program(skill_dir: Path):
         try:
             sys.path.remove(str(skill_dir))
         except ValueError:
-            # path entry may already have been removed; nothing to clean up
             pass
     return module.run
 

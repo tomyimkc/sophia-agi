@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import json
 import urllib.request
-from typing import Callable
+from typing import Any, Callable
 
 __all__ = ["fetch_truth_refs", "default_fetch_fn", "WIKI_SUMMARY_API"]
 

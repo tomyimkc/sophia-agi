@@ -258,7 +258,7 @@ def build_report(
         ),
         "notes": [
             "Scores are auto keyword/regex screens; two-pass manual semantic review "
-            + "still required before strong per-case quality claims.",
+            "still required before strong per-case quality claims.",
             "A flat or negative improvement is reported honestly per the failure ledger.",
         ],
     }

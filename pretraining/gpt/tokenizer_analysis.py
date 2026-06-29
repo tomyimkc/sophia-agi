@@ -36,6 +36,7 @@ def bytes_per_char(text: str) -> float:
 
 def language_efficiency(tokenizer: "ByteProvenanceTokenizer | None" = None) -> dict:
     """Tokens (bytes) per visible character, split by script, over the corpus."""
+    tok = tokenizer or ByteProvenanceTokenizer()
     ascii_chars = cjk_chars = 0
     ascii_bytes = cjk_bytes = 0
     for doc in corpus_documents() or []:

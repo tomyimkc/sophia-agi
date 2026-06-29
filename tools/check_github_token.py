@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import json
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -31,24 +32,11 @@ def get(url: str, token: str) -> None:
     try:
         with urllib.request.urlopen(req, timeout=20) as resp:
             print(f"OK {resp.status} {url}")
-            # Build the line from response headers only (token-independent); use the token
-            # purely in a membership test (a bool, which breaks taint) to guard against the
-            # unlikely case the scopes header echoes it back.
-            # Build the header name at runtime so the literal "x-oauth-scopes" (contains
-            # "oauth") is not misread by CodeQL's sensitive-name heuristic; the scopes
-            # value is non-secret diagnostic output.
-            scopes_header = "x-oau" + "th-scopes"
-            scopes_line = f"  scopes: {resp.headers.get(scopes_header, '(fine-grained)')}"
-            if token and token in scopes_line:
-                scopes_line = "<redacted: output contained token>"
-            print(scopes_line)
+            print(f"  scopes: {resp.headers.get('x-oauth-scopes', '(fine-grained)')}")
     except urllib.error.HTTPError as exc:
         print(f"FAIL {exc.code} {url}")
         print(f"  needed: {exc.headers.get('x-accepted-github-permissions', '')}")
-        # Avoid echoing the raw error body verbatim (it is derived from a
-        # token-authenticated request); report only its length, which is enough
-        # to tell an empty error from a populated one without leaking secrets.
-        print(f"  body: <{len(exc.read())} bytes>")
+        print(f"  body: {exc.read().decode()[:300]}")
 
 
 def main() -> int:

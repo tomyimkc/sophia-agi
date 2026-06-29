@@ -63,7 +63,7 @@ def _seq(rng):  # abstraction_pattern — integer sequences
         s = [a]
         for i in range(4):
             s.append(s[-1] + (x if i % 2 == 0 else -y))
-        nxt = s[-1] + x  # next index is 4 (even) -> add x
+        nxt = s[-1] + (x if 4 % 2 == 0 else -y)
     return {"prompt": f"Continue the sequence with the next single number: {', '.join(map(str, s))}, ?\n"
                       f"Reply with only the number.", "answer": str(nxt), "match": "numeric"}
 

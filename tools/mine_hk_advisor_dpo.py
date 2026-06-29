@@ -84,7 +84,7 @@ def mine_pairs(*, out: Path, max_pairs: int = 400) -> dict:
     forbidden = hk_advisor_benchmark_prompt_set(root=ROOT)
     from tools.gen_hk_advisor_traces import _task_pool  # noqa: E402
     train_pool = [c for c in _task_pool() if normalize(c["prompt"]) not in forbidden]
-    load_cases()
+    bench = load_cases()
     rng = random.Random(42)
     rng.shuffle(train_pool)
 

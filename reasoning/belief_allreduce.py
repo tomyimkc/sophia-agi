@@ -203,8 +203,8 @@ def run_experiment(n: int = 8, seed: int = 7) -> dict:
     fw_agents[cleared_holder]["secret_fact"] = {"conf": 3, "holders": {cleared_holder},
                                                 "label": "secret"}
     fw_finals, forbidden = firewalled_broadcast(fw_agents, clearance)
-    secret_leaked = bool(any(("secret_fact" in fw_finals[i]) and not clearance[i] for i in range(n)))
-    cleared_have_secret = bool(all(("secret_fact" in fw_finals[i]) for i in range(n) if clearance[i]))
+    secret_leaked = any(("secret_fact" in fw_finals[i]) and not clearance[i] for i in range(n))
+    cleared_have_secret = all(("secret_fact" in fw_finals[i]) for i in range(n) if clearance[i])
     public_everywhere = all("claim0" in fw_finals[i] for i in range(n))
 
     return {
@@ -214,19 +214,14 @@ def run_experiment(n: int = 8, seed: int = 7) -> dict:
         "ring_vs_a2a_msg_ratio": m_ring / m_a2a,
         "tree_vs_a2a_msg_ratio": m_tree / m_a2a,
         "minority": {"provenance_preserving_keeps": pp_keeps, "majority_vote_keeps": mv_keeps},
-        "firewall": {"forbidden_transmissions": forbidden, "secret_leaked": bool(secret_leaked),
-                     "cleared_have_secret": bool(cleared_have_secret),
+        "firewall": {"forbidden_transmissions": forbidden, "secret_leaked": secret_leaked,
+                     "cleared_have_secret": cleared_have_secret,
                      "public_consensus_everywhere": public_everywhere},
     }
 
 
 def format_report(r: dict) -> str:
     m = r["messages"]
-    fw = r["firewall"]
-    # Plain booleans (not the secret payload itself) describing whether the firewall
-    # held — bound to neutrally-named locals so the report renders status, not data.
-    leaked_flag = bool(fw["secret_leaked"])
-    cleared_received_flag = bool(fw["cleared_have_secret"])
     L = [f"Belief all-reduce experiment  (N={r['n']} agents, seed={r['seed']})\n",
          "H1 topology efficiency (same consensus, fewer messages):",
          f"  all-to-all (naive O(N^2)) : {m['all_to_all']:>4} messages",
@@ -242,8 +237,8 @@ def format_report(r: dict) -> str:
          "",
          "H3 confidentiality firewall:",
          f"  forbidden transmissions          : {r['firewall']['forbidden_transmissions']}",
-         f"  secret leaked to uncleared agent : {leaked_flag}",
-         f"  cleared agents received secret   : {cleared_received_flag}",
+         f"  secret leaked to uncleared agent : {r['firewall']['secret_leaked']}",
+         f"  cleared agents received secret   : {r['firewall']['cleared_have_secret']}",
          f"  public consensus reached by all  : {r['firewall']['public_consensus_everywhere']}",
          "",
          "THEORY VERDICT",
@@ -252,7 +247,7 @@ def format_report(r: dict) -> str:
          f"  H2 reduce preserves minority (vote loses it): "
          f"{'CONFIRMED' if r['minority']['provenance_preserving_keeps'] and not r['minority']['majority_vote_keeps'] else 'REFUTED'}",
          f"  H3 firewall holds, public consensus intact: "
-         f"{'CONFIRMED' if (not leaked_flag) and cleared_received_flag and r['firewall']['public_consensus_everywhere'] else 'REFUTED'}"]
+         f"{'CONFIRMED' if (not r['firewall']['secret_leaked']) and r['firewall']['cleared_have_secret'] and r['firewall']['public_consensus_everywhere'] else 'REFUTED'}"]
     return "\n".join(L)
 
 

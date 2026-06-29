@@ -34,8 +34,7 @@ class OutcomePredictor(Protocol):
     """What a learned model must expose to drive the planner. Matches the
     verified-world-model predictor interface (``predict(state, action) -> p``)."""
 
-    def predict(self, state: str, action: str) -> float:
-        """Return P(success) for taking ``action`` in ``state``."""
+    def predict(self, state: str, action: str) -> float: ...
 
 
 # Maps a (PlannerState, Action) to the (state, action) keys the predictor was

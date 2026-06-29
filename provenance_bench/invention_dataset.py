@@ -43,7 +43,7 @@ PRIMITIVES: dict[str, tuple[str, Callable[[list[int]], list[int]]]] = {
     "reverse": ("reverse the order of the elements", lambda xs: xs[::-1]),
     "dedup": ("remove later duplicates, keeping first occurrence order",
               lambda xs: list(dict.fromkeys(xs))),
-    "sort_asc": ("sort the elements ascending", sorted),
+    "sort_asc": ("sort the elements ascending", lambda xs: sorted(xs)),
     "filter_even": ("keep only the even numbers", lambda xs: [x for x in xs if x % 2 == 0]),
     "running_sum": ("replace each element with the running sum up to it",
                     lambda xs: list(itertools.accumulate(xs))),
@@ -180,7 +180,7 @@ def build_invention_dataset(
 # anything novel. If the instrument is valid, eval pass-rate separates them.
 
 def _deriver(_train: set) -> Callable[[tuple], Callable]:
-    return _compose
+    return lambda comp: _compose(comp)
 
 
 def _memorizer(train: set) -> Callable[[tuple], Callable]:

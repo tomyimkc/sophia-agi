@@ -21,7 +21,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 import statistics
 from pathlib import Path
 
@@ -65,7 +64,7 @@ def run(*, quick: bool = False, out: Path | None = None) -> dict:
                 "optimizer": opt, "lr": lr,
                 "final_held_loss": round(held_loss, 5),
                 "excess_over_floor": round(held_loss - E, 5),
-                "diverged": hist["diverged"] or math.isnan(held_loss),  # NaN check
+                "diverged": hist["diverged"] or held_loss != held_loss,  # NaN check
                 "max_grad_norm": round(hist["max_grad_norm"], 4),
                 "grad_spikes": _spikes(hist["grad_norms"]),
                 "loss_curve": [round(x, 4) for x in hist["epoch_loss"]],

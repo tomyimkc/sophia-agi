@@ -23,7 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent.ssil_compound import demo_compound_report, run_compound_loop  # noqa: E402
+from agent.ssil_compound import demo_compound_report, run_compound_loop, scripted_proposer  # noqa: E402
 from agent.ssil_proposer import propose_policy_spec  # noqa: E402
 
 DEFAULT_OUT = ROOT / "agi-proof" / "self-extension" / "ssil-compound.public-report.json"

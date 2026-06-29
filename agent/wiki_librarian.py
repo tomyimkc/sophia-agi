@@ -81,7 +81,7 @@ def ingest_proposal(proposal: dict, source_id: str, *, tier: str = "draft") -> d
     return result
 
 
-def ingest_text(source_text: str, source_id: str, *, client: ModelClient | None = None, tier: str = "draft") -> dict:
+def ingest_text(source_text: str, source_id: str, *, client: "ModelClient | None" = None, tier: str = "draft") -> dict:
     """Full loop: model extracts a page from the (untrusted) source, then gate+write."""
     client = client or default_client()
     fenced = untrusted.wrap_untrusted(source_text, f"raw:{source_id}")

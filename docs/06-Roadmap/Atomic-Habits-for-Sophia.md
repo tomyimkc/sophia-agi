@@ -124,14 +124,6 @@ twice**.
   stability (slower review cadence); one that goes unexercised fades toward re-validation.
   This gives Sophia an auditable "habit strength" per skill — and "never miss twice" becomes
   "a single miss resets stability one step, not to zero."
-  - **Built (offline):** `agent/habit_strength.py` implements exactly this — a
-    `HabitStrength` tracker over named behaviors that reuses `forgetting_curve.retention`
-    (one shared decay model), where `reinforce()` raises stability, a single `miss()` costs
-    *one* step (floored at 0, never a reset), and back-to-back misses trip an `at_risk`
-    tripwire at `NEVER_MISS_TWICE = 2`. `report()` flags faded + at-risk behaviors;
-    `self_check()` asserts the invariants. Tested in `tests/test_habit_strength.py`.
-    The *powered behavioral* claim (do higher-stability behaviors really fire correctly more
-    often after disuse?) still needs a run and stays `not-yet-powered` in the spec.
 
 ---
 

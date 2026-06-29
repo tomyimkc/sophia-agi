@@ -47,6 +47,7 @@ backend is optional and inherited (fail-closed) from ``agent.formal_verifier``.
 
 from __future__ import annotations
 
+from dataclasses import dataclass, field
 from typing import Any
 
 from okf import is_grounded, propagate_confidence

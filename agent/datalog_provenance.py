@@ -140,7 +140,7 @@ def check_claim_datalog(text: str, *, records: dict | None = None) -> dict:
     ``"forbidden attribution asserted: <author> -> <rid>"`` wording.
     """
     prog, _meta = extract_facts(text, records)
-    prog.solve()
+    sol = prog.solve()
     # Re-derive the violation set in the gate's "author -> rid" string form.
     violations = sorted({f"{a} -> {w}" for (w, a) in prog.query(A("violation", Var("W"), Var("A")))})
     if violations:
@@ -215,4 +215,4 @@ def _gate_extra_deny() -> list[str]:
 
 
 # Re-export the Atom type for callers that build their own programs.
-__all__ = ["Atom", "build_logic_program", "extract_facts", "check_claim_datalog", "check_claim"]
+__all__ = ["Atom", "build_logic_program", "extract_facts", "check_claim_datalog"]

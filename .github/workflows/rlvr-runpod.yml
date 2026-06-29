@@ -33,27 +33,17 @@ on:
         type: choice
         options: [offline, live]
       task:
-        description: 'RLVR reward task: provenance / math (sympy) / code (hidden-tests-pass) / concept (concept-TBox gate) / step (process: every step verified) / faithfulness (retrieve-then-reason + counterfactual citation-drop)'
+        description: 'RLVR reward task: provenance / math (sympy) / code (hidden-tests-pass) / concept / step (process: every step verified)'
         required: true
         default: 'provenance'
         type: choice
-        options: [provenance, math, code, concept, step, faithfulness]
+        options: [provenance, math, code, concept, step]
       step_domain:
         description: 'For task=step only: per-step oracle + held-out split (math needs sympy; physics pure-Python)'
         required: false
         default: 'math'
         type: choice
         options: [math, physics]
-      entailment_provider:
-        description: 'faithfulness task only: live entailment LLM behind the verify seam (needs DEEPSEEK_API_KEY / LLMHUB_API_KEY repo secrets). Blank = lexical placeholder.'
-        required: false
-        default: ''
-        type: choice
-        options: ['', deepseek, llmhub]
-      limit:
-        description: 'faithfulness task only: cap training cases (blank/0 = all; use 24 for a cheap validation)'
-        required: false
-        default: ''
       model:
         description: 'Subject model (HF id). Default = code-capable Qwen2.5-Coder; GLM-4-9B scores 0/48 under the chat template (base too weak).'
         required: false
@@ -64,12 +54,6 @@ on:
         default: 'verifier'
         type: choice
         options: [verifier, gate, multiaxis]
-      graded_craving:
-        description: 'H2 (reward=gate only): scale reward-positive abstention by prompt fabrication temptation. true = HST graded arm; false = flat arm.'
-        required: false
-        default: 'false'
-        type: choice
-        options: ['false', 'true']
       epochs:
         description: 'Training epochs (live mode)'
         required: false
@@ -103,7 +87,7 @@ permissions:
 # run. NOTE: parallel pods = parallel paid GPUs (same total GPU-hours, higher peak
 # spend); your RunPod account must have the quota/credit/GPU availability.
 concurrency:
-  group: rlvr-runpod-${{ github.event.inputs.task }}-${{ github.event.inputs.reward }}-${{ github.event.inputs.graded_craving }}-${{ github.event.inputs.seed }}-${{ github.event.inputs.remote_mode }}
+  group: rlvr-runpod-${{ github.event.inputs.task }}-${{ github.event.inputs.seed }}-${{ github.event.inputs.remote_mode }}
   cancel-in-progress: false
 
 jobs:
@@ -116,16 +100,12 @@ jobs:
     # ${{ ... }} expression interpolation directly into shell scripts (the
     # GitHub Actions expression-injection / code-injection sink).
     env:
-      IN_REF: ${{ github.ref_name }}
       IN_CONFIRM: ${{ github.event.inputs.confirm }}
       IN_REMOTE_MODE: ${{ github.event.inputs.remote_mode }}
       IN_TASK: ${{ github.event.inputs.task }}
       IN_STEP_DOMAIN: ${{ github.event.inputs.step_domain }}
-      IN_ENTAILMENT_PROVIDER: ${{ github.event.inputs.entailment_provider }}
-      IN_LIMIT: ${{ github.event.inputs.limit }}
       IN_MODEL: ${{ github.event.inputs.model }}
       IN_REWARD: ${{ github.event.inputs.reward }}
-      IN_GRADED_CRAVING: ${{ github.event.inputs.graded_craving }}
       IN_EPOCHS: ${{ github.event.inputs.epochs }}
       IN_SEED: ${{ github.event.inputs.seed }}
       IN_GPU_TYPE: ${{ github.event.inputs.gpu_type }}
@@ -156,27 +136,22 @@ jobs:
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
         run: |
-          LIMIT="$IN_LIMIT"; [ -z "$LIMIT" ] && LIMIT=0
-          dry_args=(--dry-run --source git --branch "$IN_REF" --remote-mode "$IN_REMOTE_MODE" --task "$IN_TASK" --step-domain "$IN_STEP_DOMAIN" --reward "$IN_REWARD" --entailment-provider "$IN_ENTAILMENT_PROVIDER" --limit "$LIMIT" --model "$IN_MODEL" --gpu-type "$IN_GPU_TYPE")
-          [ "$IN_GRADED_CRAVING" = "true" ] && dry_args+=(--graded-craving)
-          python tools/runpod_rlvr.py "${dry_args[@]}"
+          python tools/runpod_rlvr.py --dry-run \
+            --source git --branch "${{ github.ref_name }}" \
+            --remote-mode "$IN_REMOTE_MODE" \
+            --task "$IN_TASK" \
+            --step-domain "$IN_STEP_DOMAIN" \
+            --reward "$IN_REWARD" \
+            --model "$IN_MODEL" \
+            --gpu-type "$IN_GPU_TYPE"
 
       - name: Launch RunPod RLVR (rents GPU, runs over SSH, deletes pod)
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
-          # faithfulness task: forwarded into the pod env by runpod_rlvr.py (only when set).
-          # Add these as repo Actions secrets to use --entailment-provider; unused otherwise.
-          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-          LLMHUB_API_KEY: ${{ secrets.LLMHUB_API_KEY }}
-          LLMHUB_BASE_URL: ${{ vars.LLMHUB_BASE_URL }}
         run: |
           # argv as a bash array; optional flags appended as separate quoted elements
           # (no unquoted expansion -> no shell injection/word-splitting from dispatch inputs).
-          # faithfulness uses a custom loop (no vLLM); other tasks keep the colocate vLLM stack.
-          VLLM="colocate"; [ "$IN_TASK" = "faithfulness" ] && VLLM="none"
-          LIMIT="$IN_LIMIT"; [ -z "$LIMIT" ] && LIMIT=0
-          args=(--yes --source git --branch "$IN_REF" --remote-mode "$IN_REMOTE_MODE" --task "$IN_TASK" --step-domain "$IN_STEP_DOMAIN" --reward "$IN_REWARD" --entailment-provider "$IN_ENTAILMENT_PROVIDER" --limit "$LIMIT" --model "$IN_MODEL" --epochs "$IN_EPOCHS" --seed "$IN_SEED" --quant bf16 --vllm "$VLLM" --gpu-type "$IN_GPU_TYPE")
-          [ "$IN_GRADED_CRAVING" = "true" ] && args+=(--graded-craving)
+          args=(--yes --source git --branch "${{ github.ref_name }}" --remote-mode "$IN_REMOTE_MODE" --task "$IN_TASK" --step-domain "$IN_STEP_DOMAIN" --reward "$IN_REWARD" --model "$IN_MODEL" --epochs "$IN_EPOCHS" --seed "$IN_SEED" --quant bf16 --vllm colocate --gpu-type "$IN_GPU_TYPE")
           [ "$IN_INTERRUPTIBLE" = "true" ] && args+=(--interruptible)
           [ -n "$IN_NETWORK_VOLUME_ID" ] && args+=(--network-volume-id "$IN_NETWORK_VOLUME_ID")
           python tools/runpod_rlvr.py "${args[@]}"

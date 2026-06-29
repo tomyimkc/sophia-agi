@@ -17,17 +17,10 @@ from typing import Protocol, runtime_checkable
 
 @runtime_checkable
 class ObjectStore(Protocol):
-    def put(self, key: str, data: bytes) -> None:
-        pass
-
-    def get(self, key: str) -> bytes:
-        pass
-
-    def exists(self, key: str) -> bool:
-        pass
-
-    def list(self, prefix: str = "") -> list[str]:
-        pass
+    def put(self, key: str, data: bytes) -> None: ...
+    def get(self, key: str) -> bytes: ...
+    def exists(self, key: str) -> bool: ...
+    def list(self, prefix: str = "") -> list[str]: ...
 
 
 class LocalObjectStore:

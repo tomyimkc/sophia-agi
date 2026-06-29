@@ -148,7 +148,13 @@ def _mock_run() -> dict:
         for c in load_json(DOMAIN_BENCH[domain]).get("cases", []):
             cases[c["id"]] = c
     ids = list(cases)
-    # Deterministic synthetic judgements: base passes first 72%, adapter first 88%; ~90% agreement.
+    # Deterministic fake judges: base passes first 72%, adapter first 88%; ~90% agreement.
+    def fake(rate):
+        def jf(q, req, ans):
+            # answer encodes truth as a trailing tag the fake judge reads
+            return ans.endswith("|PASS")
+        return jf
+    fns = {f: fake(0.0) for f in fams}
     # synthesize a dir-less manifest by monkeypatching _load_answers via closures
     seed_blocks = []
     for seed in range(3):

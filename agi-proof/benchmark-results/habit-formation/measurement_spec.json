@@ -13,19 +13,8 @@
   "factors": {
     "rewardShape": [
       "flat  — agent/gate_reward.py as shipped (REWARD_ABSTAIN=0.5 constant)",
-      "graded — H2: REWARD_ABSTAIN scaled by per-prompt fabrication-temptation (agent/temptation.py; harder honest refusal earns more), bounded in [REWARD_ABSTAIN, REWARD_ABSTAIN_MAX] < REWARD_CLEAN, invariants of gate_reward preserved (violation < abstain > 0, clean >= abstain)"
+      "graded — H2: REWARD_ABSTAIN scaled by per-trap fabrication-temptation (harder honest refusal earns more), bounded in [0, REWARD_CLEAN], invariants of gate_reward preserved (violation < abstain > 0, clean >= abstain)"
     ]
-  },
-
-  "dispatchReady": {
-    "status": "WIRED end-to-end, NOT yet run on GPU. Validated offline only (run_rlvr --dry-run + remote-script construction). GPU spend requires repo Actions secrets RUNPOD_API_KEY + HF_TOKEN and an explicit confirm=RUN dispatch.",
-    "path": "agent/gate_reward.py (--graded-craving) -> tools/run_rlvr.py --reward gate [--graded-craving] -> tools/runpod_rlvr.py --graded-craving -> .github/workflows/rlvr-runpod.yml input graded_craving",
-    "costGuard": ".claude/skills/wisdom-gpu-prebaked/SKILL.md — cheap validation FIRST (remote_mode=offline, then limit-small live), watch for restart loops in the first ~6 min, confirm zero leaked pods after.",
-    "dispatch": {
-      "flatArm":   "rlvr-runpod: confirm=RUN, task=provenance, reward=gate, graded_craving=false, seed in {0,1,2}",
-      "gradedArm": "rlvr-runpod: confirm=RUN, task=provenance, reward=gate, graded_craving=true,  seed in {0,1,2}",
-      "smokeFirst": "remote_mode=offline on BOTH arms first (~$0.30) to surface wiring bugs before any full live GRPO run"
-    }
   },
 
   "constructs": [
@@ -104,7 +93,7 @@
       "id": "H4",
       "name": "Habit-strength streak via forgetting curve (Make it satisfying / Never miss twice)",
       "metric": "per-skill stability (agent/forgetting_curve.py) as habit strength; a single miss decrements stability one step rather than resetting to zero",
-      "status": "MECHANISM BUILT (offline): agent/habit_strength.py + tests/test_habit_strength.py (never-miss-twice tripwire at NEVER_MISS_TWICE=2; reuses forgetting_curve.retention). The POWERED behavioral run remains not-yet-powered.",
+      "status": "not-yet-powered; generalizes forgetting_curve from facts to behaviors",
       "falsifiable": "behaviors with higher reinforcement-driven stability are exercised correctly at a higher rate after a disuse interval than low-stability behaviors"
     },
     {

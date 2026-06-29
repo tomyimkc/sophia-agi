@@ -27,7 +27,7 @@ reach. ``candidateOnly: true``, ``level3Evidence: false``.
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any

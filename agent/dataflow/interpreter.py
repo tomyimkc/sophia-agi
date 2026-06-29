@@ -99,7 +99,7 @@ class InterpreterResult:
 class Interpreter:
     """Execute a plan with taint-tracked variables and firewall-gated tool calls."""
 
-    def __init__(self, *, tools: dict, extractor: Callable | None = None,
+    def __init__(self, *, tools: dict, extractor: "Callable | None" = None,
                  approver=None, profile=None, approve_sinks: bool = False):
         self.tools = tools                 # name -> callable(*plain_args) -> result
         self.extractor = extractor         # (instruction, src_text) -> str  (Q-LLM)

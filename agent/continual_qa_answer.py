@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import json
 import re
+from typing import Any
 
 ABSTAIN_TEXT = "I don't have a grounded source for this in the corpus, so I won't assert an answer."
 

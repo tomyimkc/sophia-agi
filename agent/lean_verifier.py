@@ -47,7 +47,7 @@ import os
 import subprocess
 import tempfile
 from dataclasses import dataclass, field
-from typing import Callable
+from typing import Any, Callable
 
 # --------------------------------------------------------------------------- #
 # Toolchain detection — the fail-closed seam
@@ -213,8 +213,6 @@ def _lean_check(claim_id: str, proposition: str, proof_text: str, timeout_s: int
         try:
             os.unlink(tmp)
         except (OSError, NameError):
-            # temp file may never have been created (NameError) or already gone
-            # (OSError); cleanup is best-effort and must not mask the real result.
             pass
 
     stderr, stdout = (proc.stderr or ""), (proc.stdout or "")

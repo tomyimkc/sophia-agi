@@ -63,8 +63,9 @@ exactly as Sophia's gate takes verdicts as audited input. `level3Evidence: false
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
+from okf.schema import CONFIDENCE_RANK
 
 # Jeffreys' scale of evidence for Bayes factors. We require DECISIVE to demote consensus.
 #   K 1-3.2      "substantial"   — nowhere near enough to touch consensus

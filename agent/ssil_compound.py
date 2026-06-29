@@ -82,7 +82,7 @@ def run_compound_loop(
     active = select_active(hp_spec, seed=seed)
     all_corr = {s["id"]: True for s in corr_spec["scenarios"]}
     no_bait = {hp: False for hp in active}
-    load_cases("test")
+    test_cases = load_cases("test")
 
     history: list[dict] = []
     dry = 0

@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import ast
 import json
+import math
 import random
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -343,7 +344,6 @@ def induce_program(
                 if c is not None:
                     candidates.append(c)
         except Exception:
-            # propose_fn is an optional best-effort source; a failing proposer is skipped
             pass
 
     best: tuple[ProgramCandidate, ProgramStats, ProgramStats] | None = None

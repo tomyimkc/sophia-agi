@@ -187,6 +187,8 @@ def score_case(
         check_id = str(item.get("id") or f"semantic_{index}") if isinstance(item, dict) else f"semantic_{index}"
         judgement = manual_semantic.get(check_id, {}) if isinstance(manual_semantic, dict) else {}
         review_state = _manual_review_state(judgement)
+        has_judgement = review_state["status"] in {"passed", "failed"}
+        passed = review_state["status"] == "passed"
         semantic_results.append(
             {
                 "id": check_id,

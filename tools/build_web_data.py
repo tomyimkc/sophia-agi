@@ -192,13 +192,13 @@ def _comparisons() -> dict:
         "charts": charts,
         "honesty": [
             "Every figure here is from the curated published-results set; each cleared its own "
-            + "no-overclaim gate or is explicitly labelled a tradeoff / candidate / null result.",
+            "no-overclaim gate or is explicitly labelled a tradeoff / candidate / null result.",
             "Sophia’s anti-fabrication edge is largest on weak or overconfident models and shrinks "
-            + "toward zero on strong, well-aligned models — it is a guardrail, not a capability multiplier.",
+            "toward zero on strong, well-aligned models — it is a guardrail, not a capability multiplier.",
             "A live test of the multi-agent swarm structure found NO measured benefit over a single "
-            + "well-prompted pass, and sometimes degraded it — published as a null result.",
+            "well-prompted pass, and sometimes degraded it — published as a null result.",
             "Most packs are self-authored and keys are held by one operator; the SimpleQA selective-"
-            + "prediction result is the first on fully external, human-authored data.",
+            "prediction result is the first on fully external, human-authored data.",
         ],
     }
 

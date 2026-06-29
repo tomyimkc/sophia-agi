@@ -227,14 +227,9 @@ def self_check() -> dict:
     r_abstain = reward(abstain)
     r_violation = reward(violation)
 
-    # Compute the ordering invariants once so the asserts and the reported
-    # telemetry below reference the same booleans (no duplicated comparison).
-    inv_abstain_positive = r_abstain > 0.0
-    inv_violation_lt_abstain = r_violation < r_abstain
-    inv_clean_ge_abstain = r_clean >= r_abstain
-    assert inv_abstain_positive, f"abstain must be positive, got {r_abstain}"
-    assert inv_violation_lt_abstain, f"violation({r_violation}) must be < abstain({r_abstain})"
-    assert inv_clean_ge_abstain, f"clean({r_clean}) must be >= abstain({r_abstain})"
+    assert r_abstain > 0.0, f"abstain must be positive, got {r_abstain}"
+    assert r_violation < r_abstain, f"violation({r_violation}) must be < abstain({r_abstain})"
+    assert r_clean >= r_abstain, f"clean({r_clean}) must be >= abstain({r_abstain})"
     assert REWARD_MIN <= r_violation <= REWARD_MAX
     assert REWARD_MIN <= r_abstain <= REWARD_MAX
     assert REWARD_MIN <= r_clean <= REWARD_MAX
@@ -265,9 +260,9 @@ def self_check() -> dict:
         "violation": r_violation,
         "gradedAbstain": {"t0": g0, "t0.5": g_mid, "t1": g1, "max": REWARD_ABSTAIN_MAX},
         "invariants": {
-            "violationLtAbstain": inv_violation_lt_abstain,
-            "abstainPositive": inv_abstain_positive,
-            "cleanGeAbstain": inv_clean_ge_abstain,
+            "violationLtAbstain": r_violation < r_abstain,
+            "abstainPositive": r_abstain > 0.0,
+            "cleanGeAbstain": r_clean >= r_abstain,
             "gradedMonotone": g0 <= g_mid <= g1,
             "gradedPositiveBelowClean": 0.0 < g1 <= REWARD_ABSTAIN_MAX < r_clean,
             "flatDefaultUnchanged": reward(abstain, temptation=None) == REWARD_ABSTAIN,

@@ -117,6 +117,7 @@ def main(argv: list[str] | None = None) -> int:
         t0 = time.perf_counter()
         proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
         wall = time.perf_counter() - t0
+        tail = proc.stdout[-2000:]
         skipped = "CUDA GPU not detected" in proc.stdout or "cuda available: False" in proc.stdout
         steps = None
         m = re.search(r"Run summary:\s*(\{.*\})", proc.stdout)

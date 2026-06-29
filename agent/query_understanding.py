@@ -227,8 +227,6 @@ def expand(query: str, *, raw: str | None = None, language: str | None = None) -
                 if fl and fl not in present:
                     out.append(fl)
     except Exception:
-        # alias expansion is best-effort enrichment; any failure just yields no
-        # extra surface forms and the base expansions below still apply.
         pass
 
     # Seed synonym expansion over present tokens.
@@ -258,8 +256,6 @@ def analyze(query: str, *, client: Any | None = None, max_expansions: int = 8) -
         try:
             expansions = expansions + [r for r in rewrite_with_llm(norm, client) if r]
         except Exception:
-            # HyDE rewrites are best-effort; on any client/parse failure we fall
-            # back to the deterministic expansions already computed above.
             pass
     # Cap to keep the recall string bounded; de-dup once more after the LLM merge.
     seen: set[str] = set()

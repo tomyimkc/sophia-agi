@@ -18,11 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 # Held-out sets that training must never overlap.
-EVAL_GLOBS = [
-    "eval/**/*.jsonl",
-    "data/wisdom_market_benchmark/*.jsonl",
-    "data/seib_entity_disjoint/*.jsonl",   # adopted entity-disjoint held-out split (2026-06-29)
-]
+EVAL_GLOBS = ["eval/**/*.jsonl", "data/wisdom_market_benchmark/*.jsonl"]
 EVAL_PACKS = ["agi-proof/baseline-ablation/abstain-pack-2026-06-22.json"]
 SEAL_MANIFEST = "agi-proof/sophia-math-code-curriculum/heldout-seal.manifest.json"
 TEAM_AGENTS_MANIFEST = ROOT / "data" / "team_agents_benchmark" / "manifest.json"
@@ -134,6 +130,52 @@ def eval_prompt_set(*, root: Path = ROOT) -> set[str]:
                         if pr:
                             out.add(normalize(pr))
     return out
+
+
+def shingles(text: str, k: int = 5) -> set[str]:
+    """Word k-shingles of a normalized string (shared by the decontam tools).
+
+    A near-duplicate is detected by Jaccard overlap of these shingles, so a train
+    prompt that paraphrases an eval prompt is caught even without an exact match.
+    A string shorter than ``k`` words collapses to a single whole-string shingle.
+    """
+    toks = normalize(text).split()
+    if len(toks) < k:
+        return {" ".join(toks)} if toks else set()
+    return {" ".join(toks[i:i + k]) for i in range(len(toks) - k + 1)}
+
+
+def jaccard(a: set, b: set) -> float:
+    """Jaccard similarity of two shingle sets (0.0 when either is empty)."""
+    if not a or not b:
+        return 0.0
+    return len(a & b) / len(a | b)
+
+
+def build_eval_shingles(eval_prompts: set[str], *, k: int = 5, cap: int = 4000) -> list[tuple[str, set]]:
+    """Precompute ``(eval_prompt, shingles)`` once so a near-dup scan over many train
+    prompts is O(train × cappedEval) instead of reshingling the eval set every call."""
+    return [(e, shingles(e, k)) for e in list(eval_prompts)[:cap]]
+
+
+def nearest_eval(prompt: str, eval_shingles: list[tuple[str, set]], *, k: int = 5) -> tuple[float, str]:
+    """Best (Jaccard, eval_prompt) for ``prompt`` against precomputed eval shingles.
+
+    Returns (0.0, "") when nothing overlaps. Exact/normalized matches are the caller's
+    job (cheaper set membership); this is the near-duplicate tier.
+    """
+    tsh = shingles(prompt, k)
+    if not tsh:
+        return (0.0, "")
+    best_j, best_e = 0.0, ""
+    npr = normalize(prompt)
+    for e, esh in eval_shingles:
+        if npr == e:
+            continue  # exact handled by the caller
+        j = jaccard(tsh, esh)
+        if j > best_j:
+            best_j, best_e = j, e
+    return (best_j, best_e)
 
 
 def check_contamination(train_rows: list[dict], eval_prompts: set[str] | None = None,

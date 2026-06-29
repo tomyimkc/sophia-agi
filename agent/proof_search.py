@@ -26,9 +26,8 @@ until a gated run produces a Lean-verified, non-retrieved proof.
 
 from __future__ import annotations
 
-import functools
 import heapq
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Callable, Literal
 
 from agent import lean_backend
@@ -36,7 +35,6 @@ from agent import lean_backend
 ProofSearchVerdict = Literal["proved", "no_proof_within_budget", "lean_unavailable"]
 
 
-@functools.total_ordering
 @dataclass(frozen=True)
 class ProofNode:
     """One node in the proof-search tree: a Lean proof state + the tactic path to it."""
@@ -189,8 +187,7 @@ def search_proof(
         if node.depth >= max_depth:
             continue
         # Propose tactics (+ optional premise retrieval) and expand.
-        if premise_retriever:
-            premise_retriever(node.state)
+        premises = premise_retriever(node.state) if premise_retriever else []
         proposed = proposer(theorem, node.state) or []
         for tac in proposed:
             next_state, closed = apply_tactic(node.state, tac)
@@ -337,8 +334,6 @@ class LeanProofSession:
             if self._dojo is not None and hasattr(self._dojo, "close"):
                 self._dojo.close()
         except Exception:
-            # close() is best-effort teardown; a failing/absent LeanDojo backend
-            # must not raise during cleanup. State is reset unconditionally below.
             pass
         self._dojo = None
         self._open = False

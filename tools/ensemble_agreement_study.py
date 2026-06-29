@@ -245,7 +245,7 @@ def main(argv=None) -> int:
                  "NOT a capability result: the stronger two-model-family judge ensemble is "
                  "model-gated. canClaimAGI false.")
     else:
-        args.data.read_text(encoding="utf-8")  # validate the path is readable
+        items = [json.loads(l) for l in args.data.read_text(encoding="utf-8").splitlines() if l.strip()]
         # Data path is for callers who wire their own verifiers; nothing to score without them.
         print(json.dumps({"error": "--data provides items only; import evaluate_ensemble and pass "
                           "your verifiers dict to score them"}, indent=2))

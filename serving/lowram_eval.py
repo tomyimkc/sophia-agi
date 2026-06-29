@@ -88,7 +88,7 @@ class LowRamGate:
     protected_min_agreement: float = 0.95
 
     def evaluate(self, full_probs, lowram_probs, *,
-                 protected_mask: Optional[list[bool]] = None,
+                 protected_mask: "Optional[list[bool]]" = None,
                  mem_ratio: float = 1.0) -> LowRamReport:
         """Score ``lowram_probs`` against ``full_probs`` and apply the contract.
 

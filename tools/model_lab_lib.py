@@ -82,6 +82,7 @@ def distill_specs_from_attributions(limit: int) -> list[dict]:
     specs: list[dict] = []
     for text_id, record in records.items():
         title = record.get("canonicalTitleEn", text_id)
+        author = record.get("attributedAuthor", "")
         for forbidden in record.get("doNotAttributeTo", [])[:2]:
             specs.append({
                 "domain": record.get("domain", "philosophy"),

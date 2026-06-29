@@ -31,12 +31,13 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent.gate_feedback import candidate_record, detect_miss  # noqa: E402
+from agent.gate_feedback import _rid, candidate_record, detect_miss  # noqa: E402
 
 FEEDBACK_DIR = ROOT / "training" / "feedback"
 PENDING = FEEDBACK_DIR / "pending_candidates.jsonl"

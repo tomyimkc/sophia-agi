@@ -222,21 +222,21 @@ def build_report(
         "falsificationCheck": falsification_check(summaries),
         "caveats": [
             "Internally valid cross-mode deltas; does NOT satisfy the third-party "
-            + "reviewer-signed independence requirement on its own.",
+            "reviewer-signed independence requirement on its own.",
             "raw-model uses a deliberately neutral system prompt (see rawSystemPrompt) "
-            + "so the base model is not given Sophia source discipline.",
+            "so the base model is not given Sophia source discipline.",
             "raw-model and raw-model-plus-tools differ only on tool_use cases.",
             "OPERATIONAL FLOORING: modes with tools off (raw-model) or memory off "
-            + "(raw-model, sophia-no-memory) are structurally penalized on requiresToolLog / "
-            + "requiresMemoryDiff cases by operational checks they cannot satisfy. Read the "
-            + "tool_use / learning entries in perDomainDeltasVsSophiaFull as harness+reasoning "
-            + "combined, not pure reasoning quality; whole-pack deltas mix the two.",
+            "(raw-model, sophia-no-memory) are structurally penalized on requiresToolLog / "
+            "requiresMemoryDiff cases by operational checks they cannot satisfy. Read the "
+            "tool_use / learning entries in perDomainDeltasVsSophiaFull as harness+reasoning "
+            "combined, not pure reasoning quality; whole-pack deltas mix the two.",
             "The operational tool-log check is answer-independent, so the "
-            + "raw-model-plus-tools delta is only a weak proxy for tool-use reasoning value.",
+            "raw-model-plus-tools delta is only a weak proxy for tool-use reasoning value.",
             "Learning cases score the main answer, not the post-learning probe answer; the "
-            + "memory-ablation delta is dominated by the single append-only operational check.",
+            "memory-ablation delta is dominated by the single append-only operational check.",
             "A negative or null delta is a valid scientific outcome and is reported "
-            + "either way per the falsification rule.",
+            "either way per the falsification rule.",
         ],
     }
 

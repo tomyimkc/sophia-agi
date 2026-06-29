@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import math
 from pathlib import Path
+from statistics import mean
 from typing import Any
 
 from agent.fact_check_gate import decision_to_dict, fact_check_text

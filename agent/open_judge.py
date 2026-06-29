@@ -78,7 +78,7 @@ def _parse_verdict(raw: str) -> "Optional[int]":
 
 
 def score(claim: str, answer: str, *, env: "Optional[dict[str, str]]" = None,
-          transport: Optional[Transport] = None, retries: int = 3) -> "Optional[int]":
+          transport: "Optional[Transport]" = None, retries: int = 3) -> "Optional[int]":
     """Return 1 (DISCIPLINED), 0 (UNDISCIPLINED), or None (unavailable / unparseable).
 
     Never falls back to a proprietary judge — None means the caller must decide.

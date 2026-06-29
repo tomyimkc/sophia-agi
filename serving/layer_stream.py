@@ -269,8 +269,8 @@ class StreamingLayerStore:
 # ---------------------------------------------------------------------------
 
 def plan_layer_bits(layer_fp16_bytes: "dict[int, int]", target_avg_bits: float,
-                    *, protected: Optional[set[int]] = None,
-                    sensitivities: Optional[dict[int, float]] = None) -> "dict[int, int]":
+                    *, protected: "Optional[set[int]]" = None,
+                    sensitivities: "Optional[dict[int, float]]" = None) -> "dict[int, int]":
     """Per-layer bit-widths under a target average width, via :func:`moe.adapt.bit_allocator`.
 
     The greedy sensitivity allocator already in ``moe/adapt.py`` is the right tool: spend

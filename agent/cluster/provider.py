@@ -32,7 +32,7 @@ class FleetProvider(Protocol):
     """Anything that can enumerate node telemetry."""
 
     def list_nodes(self) -> list[NodeMetrics]:  # pragma: no cover - protocol
-        """Return the current node telemetry for the fleet."""
+        ...
 
 
 # A small deterministic synthetic fleet: a mix of healthy, warning and failing nodes

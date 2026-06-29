@@ -42,6 +42,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import statistics
 import sys
 from pathlib import Path
 from typing import Any, Callable
@@ -51,7 +52,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.public_sanitize import sanitize_public_artifact  # noqa: E402
-from provenance_bench import calibration_score, runner  # noqa: E402
+from provenance_bench import calibration_score, judge, runner  # noqa: E402
 from provenance_bench.dataset import build_cases  # noqa: E402
 
 SCHEMA = "sophia.capability_panel.v1"
@@ -158,6 +159,8 @@ def _mock_generators(limit: int = 0) -> tuple[Generate, Generate, Generate, Gene
     """Return (attr_base, attr_adapter, cal_base, cal_adapter) mock generators."""
     attr_cases = _load_attribution_cases(limit)
     attr_by_prompt = {c.prompt: c for c in attr_cases}
+    cal_pack = _load_calibration_pack(limit)
+    cal_by_domain = {c["id"]: c for c in cal_pack["cases"]}
 
     def _attr_gen(system: str, user: str, *, improved: bool) -> _MockResult:
         # The runner calls generate(NEUTRAL_SYSTEM, case.prompt).
@@ -407,7 +410,6 @@ def run(*, mode: str = "mock", model: str = "mock", adapter: str | None = None,
 
     If ``out`` is ``None`` the report is returned without writing a file (the
     caller may embed it in a larger report, e.g. the RLVR adapter-eval report)."""
-    cal_pack: dict = {}
     if mode == "mock":
         base_attr, adapter_attr, cal_base, cal_adapter = _mock_generators(limit)
         model_desc, adapter_desc = "mock", None

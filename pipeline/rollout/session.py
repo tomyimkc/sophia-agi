@@ -87,7 +87,7 @@ class Session:
         invariant). A drop is only legal immediately after a ``compact()``."""
         return all(b >= a for a, b in zip(self._prefix_history, self._prefix_history[1:]))
 
-    def compact(self, summary: str, *, archive: Callable[[list[Message]], None] | None = None) -> None:
+    def compact(self, summary: str, *, archive: "Callable[[list[Message]], None] | None" = None) -> None:
         """The single sanctioned prefix reset: fold assistant/tool work into a digest.
 
         Following Reasonix's compaction: **user turns survive verbatim** (they carry

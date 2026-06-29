@@ -20,12 +20,9 @@ from typing import Protocol, runtime_checkable
 
 @runtime_checkable
 class WorkQueue(Protocol):
-    def push(self, item: dict) -> None:
-        """Enqueue an item."""
-    def pop(self) -> dict | None:
-        """Dequeue the next item, or return None if empty."""
-    def __len__(self) -> int:
-        """Number of pending items."""
+    def push(self, item: dict) -> None: ...
+    def pop(self) -> dict | None: ...
+    def __len__(self) -> int: ...
 
 
 class FileQueue:

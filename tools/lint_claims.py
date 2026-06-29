@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -70,6 +71,7 @@ REGISTRY = "training/adapters/registry.jsonl"
 
 
 def _check_registry_receipts() -> list[str]:
+    import json
     v: list[str] = []
     reg = ROOT / REGISTRY
     if not reg.exists():
@@ -116,6 +118,7 @@ def _check_recipe_receipt() -> list[str]:
     """A recipe-ranking artifact that names a 'best' recipe must be backed by a GO superiority
     receipt (tools/benchmark_recipes.py --emit-receipt) — principle #9: no 'recipe X wins' claim
     without a powered ranking + the simple baseline in the table."""
+    import json
     v: list[str] = []
     wm = ROOT / "agi-proof" / "benchmark-results" / "wisdom-market"
     bench = wm / "recipe-benchmark.json"
@@ -190,10 +193,9 @@ def _check_architecture_bets() -> list[str]:
     return problems
 
 
-def _prose_violations_python(files: list[Path]) -> list[str]:
-    """Reference oracle: the regex FORBIDDEN scan over public-facing prose."""
+def main() -> int:
     violations: list[str] = []
-    for path in files:
+    for path in _files():
         try:
             lines = path.read_text(encoding="utf-8").splitlines()
         except Exception:
@@ -206,57 +208,6 @@ def _prose_violations_python(files: list[Path]) -> list[str]:
                 if re.search(pat, low):
                     rel = path.relative_to(ROOT)
                     violations.append(f"{rel}:{i}: «{line.strip()[:90]}» — {why}")
-    return violations
-
-
-def _prose_violations_accel(files: list[Path]) -> list[str]:
-    """Optional sophia-lex accelerator path; raises on any issue so the caller
-    can fall back to the Python oracle. Reproduces the Python message format."""
-    import sys as _sys
-    _sys.path.insert(0, str(Path(__file__).resolve().parent))
-    from _lex_accel import overclaim_scan  # type: ignore
-
-    cache: dict[str, list[str]] = {}
-
-    def _line_text(rel: str, n: int) -> str:
-        if rel not in cache:
-            try:
-                cache[rel] = (ROOT / rel).read_text(encoding="utf-8").splitlines()
-            except Exception:
-                cache[rel] = []
-        lines = cache[rel]
-        return lines[n - 1].strip()[:90] if 0 < n <= len(lines) else ""
-
-    return [
-        f"{rel}:{line_no}: «{_line_text(rel, line_no)}» — {why}"
-        for rel, line_no, why in overclaim_scan(files)
-    ]
-
-
-def main() -> int:
-    import argparse
-    ap = argparse.ArgumentParser(
-        description="Claims linter (no-overclaim gate).",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
-    ap.add_argument(
-        "--accel", action="store_true",
-        help="use the sophia-lex Rust scanner for the prose scan if built (auto "
-             "falls back to Python); registry/recipe/architecture checks always run in Python",
-    )
-    args = ap.parse_args()
-
-    files = _files()
-    violations: list[str] = []
-    used_accel = False
-    if args.accel:
-        try:
-            violations = _prose_violations_accel(files)
-            used_accel = True
-        except Exception as exc:  # any bridge error -> Python oracle
-            print(f"(claims linter: accel unavailable, using Python oracle — {exc})")
-    if not used_accel:
-        violations = _prose_violations_python(files)
 
     violations.extend(_check_registry_receipts())
     violations.extend(_check_recipe_receipt())
@@ -269,8 +220,7 @@ def main() -> int:
         print(f"\n{len(violations)} violation(s). The README must not exceed agi-proof/failure-ledger.md.")
         print("If a line is genuinely qualified in context, append the marker 'claim-ok'.")
         return 1
-    scanner = "sophia-lex" if used_accel else "python"
-    print(f"CLAIMS LINTER: OK — scanned {len(files)} file(s) ({scanner}), no overclaims.")
+    print(f"CLAIMS LINTER: OK — scanned {len(_files())} file(s), no overclaims.")
     return 0
 
 

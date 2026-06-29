@@ -97,7 +97,6 @@ def _chat_ids(tok, messages, *, max_len, add_generation_prompt):
         if isinstance(out, torch.Tensor):
             out = out.tolist()
     except Exception:
-        # torch may be absent or `out` already a plain list; leave `out` as-is
         pass
     if out and isinstance(out[0], (list, tuple)):  # nested [[...]] -> first row
         out = out[0]
@@ -304,7 +303,7 @@ def evaluate(model_id: str, adapter_dir: Path, *, runs: int, limit, out_path: Pa
 
     report = {
         "pilot": "sophia-wisdom-4b-m3",
-        "baseModel": model_id,
+        "baseModel": model_id, "adapter": str(adapter_dir.relative_to(ROOT) if adapter_dir.is_relative_to(ROOT) else adapter_dir),
         "benchmark": str(BENCH.relative_to(ROOT)), "nCases": len(cases), "runs": runs,
         "base": pack(base_runs), "adapter": pack(adapter_runs),
         # The pilot's PRIMARY signal: adapter(prompt) vs base(prompt) — did the WEIGHTS move the

@@ -83,7 +83,7 @@ def pack_topo(cluster: Cluster, job: Job) -> list[str] | None:
     #    tightest island that still holds the job (best-fit → less external frag).
     fits = sorted(
         (g for g in groups.values() if len(g) >= need),
-        key=len,
+        key=lambda g: len(g),
     )
     if fits:
         chosen = fits[0][:need]

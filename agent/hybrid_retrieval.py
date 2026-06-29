@@ -196,8 +196,6 @@ def retrieve_hybrid(
                     hits = dedupe_chunks(hits)[:top_k]
                 return hits[:top_k]
     except Exception:
-        # hybrid path is best-effort (index may be missing/corrupt or embeddings
-        # unavailable); fall back to keyword retrieval below rather than failing the query.
         pass
     return _retrieve_keyword(query, top_k=top_k)
 

@@ -3,11 +3,12 @@
 """Deterministic HK bilingual advisor verifier."""
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Any
 
 from agent.cantonese import CANTONESE_MARKERS, is_cantonese
-from agent.hk_advisor.policy import ADVISORY_DISCLAIMER_YUE
+from agent.hk_advisor.policy import ADVISORY_DISCLAIMER_EN, ADVISORY_DISCLAIMER_YUE
 from agent.legal_citations import extract_citations, load_known_authorities
 from agent.verifiers import legal_citation_exists
 from provenance_bench.calibration_score import ABSTAIN_MARKERS, score_answer
@@ -57,6 +58,7 @@ def verify_advisory_boundary(answer: str) -> Verdict:
 
 def verify_citation(answer: str, case: dict) -> Verdict:
     label = case.get("label", {})
+    decision = label.get("decision", "")
     if _must_abstain(case):
         return Verdict.ok("A2")
     result = _CITATION_VERIFIER(answer, None, {})

@@ -79,6 +79,7 @@ def build_index(Q, K, *, topk: int):
         raise RuntimeError("numpy required")
     Q = np.asarray(Q, dtype=np.float64)
     K = np.asarray(K, dtype=np.float64)
+    Nq, d = Q.shape
     Nk = K.shape[0]
     topk = min(topk, Nk)
     scores = Q @ K.T                                   # (Nq, Nk) — the expensive pass
@@ -102,6 +103,7 @@ def sparse_attention_indexed(Q, K, V, index, *, scale: float | None = None):
     V = np.asarray(V, dtype=np.float64)
     index = np.asarray(index)
     Nq, d = Q.shape
+    topk = index.shape[1]
     if scale is None:
         scale = 1.0 / math.sqrt(d)
     out = np.zeros((Nq, d), dtype=np.float64)
@@ -289,6 +291,7 @@ def indexshare_adaptive(layers, *, topk: int, divergence_eps: float = 0.5):
         raise RuntimeError("numpy required")
     if not layers:
         return [], 0, []
+    n = len(layers)
     outputs: list = []
     reindex_at = [0]
     # seed index from layer 0 (the "informed" index, same as indexshare_block)

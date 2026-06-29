@@ -35,6 +35,7 @@ from __future__ import annotations
 import time
 from typing import Any
 
+from agent.belief_revision_policy import resolve_conflicts
 from agent.belief_revision_scaling import make_pages, scaling_sweep
 from okf.schema import as_list, confidence_rank
 from okf import wikilinks
@@ -77,7 +78,7 @@ class IncrementalReviser:
     """
 
     def __init__(self) -> None:
-        self._pages: dict[str, Any] = {}
+        self._pages: "dict[str, Any]" = {}
         self._order: "list[str]" = []
         self._contradicts: "dict[str, set]" = {}
         self._dependents: "dict[str, set]" = {}

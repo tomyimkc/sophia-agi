@@ -29,8 +29,7 @@ DEFAULT_RECORDS = ROOT / "data" / "attributions.json"
 # Confidence vocabulary → reserved marker. Anything not clearly settled is LOW,
 # fail-closed (uncertainty defaults to caution, never to false confidence).
 _HI = {"attributed", "consensus", "documented", "established", "certain"}
-# Anything not in _HI (legendary / disputed / uncertain / compiled / traditional /
-# contested / ...) is treated as LOW confidence by _conf_marker, fail-closed.
+_LO = {"legendary", "disputed", "uncertain", "compiled", "traditional", "contested"}
 
 
 def _conf_marker(author_confidence: str) -> str:

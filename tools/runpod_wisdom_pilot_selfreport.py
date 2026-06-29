@@ -31,7 +31,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from tools.runpod_rlvr import _api_request, RunPodError  # noqa: E402
+from tools.runpod_rlvr import _api_request, _redact, RunPodError  # noqa: E402
 
 DEFAULT_GPU_TYPES = ["NVIDIA A100 80GB PCIe", "NVIDIA A100-SXM4-80GB", "NVIDIA H100 PCIe", "NVIDIA H100 80GB HBM3"]
 DEFAULT_IMAGE = "runpod/pytorch:1.0.7-cu1281-torch280-ubuntu2204"
@@ -224,7 +224,7 @@ echo "[pod] result + answers written; finish() will commit + push"
 """
 
 
-def _build_payload(args, runpod_env_value, hf_env_value, gh_env_value):
+def _build_payload(args, api_key, hf_token, gh_pat):
     gpu_types = [g.strip() for g in args.gpu_type.split(",") if g.strip()]
     payload = {
         "name": args.name,
@@ -241,9 +241,9 @@ def _build_payload(args, runpod_env_value, hf_env_value, gh_env_value):
         "interruptible": False,
         "locked": False,
         "env": {
-            "RUNPOD_API_KEY": runpod_env_value,   # for the pod's self-delete on exit
-            "HF_TOKEN": hf_env_value,
-            "GH_PILOT_PAT": gh_env_value,
+            "RUNPOD_API_KEY": api_key,   # for the pod's self-delete on exit
+            "HF_TOKEN": hf_token,
+            "GH_PILOT_PAT": gh_pat,
         },
         "dockerEntrypoint": [],
         "dockerStartCmd": ["bash", "-lc", _job_script(args)],
@@ -304,8 +304,6 @@ def _delete_pod(api_key: str, pod_id: str) -> None:
     try:
         _api_request("DELETE", f"/pods/{pod_id}", api_key, timeout=60)
     except RunPodError:
-        # best-effort teardown: the pod may already be gone (self-deleted on exit)
-        # or transiently unreachable; either way there is nothing more to do here.
         pass
 
 
@@ -405,11 +403,7 @@ def main(argv=None) -> int:
     gh_pat = os.environ.get(args.gh_token_env, "")
 
     if args.dry_run:
-        # Fully mask secrets for the printed plan: never emit any portion of a token
-        # to stdout, only whether it is present. (Preserves the dry-run's purpose.)
-        def _mask(value: str) -> str:
-            return "<set>" if value else "<unset>"
-        payload = _build_payload(args, _mask(api_key), _mask(hf_token), _mask(gh_pat))
+        payload = _build_payload(args, _redact(api_key), _redact(hf_token), _redact(gh_pat))
         print(json.dumps(payload, indent=2))
         return 0
     for name, val in (("RUNPOD_API_KEY", api_key), ("HF_TOKEN", hf_token), (args.gh_token_env, gh_pat)):

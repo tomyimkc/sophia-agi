@@ -22,7 +22,7 @@ the same `answer(target)` contract later. Offline, deterministic, dependency-fre
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 

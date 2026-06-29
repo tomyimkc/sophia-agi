@@ -110,7 +110,6 @@ def _resolve_target(query: str, chunks: list[SourceChunk], pages) -> "tuple[str 
         if linked:
             return linked, "query_link"
     except Exception:
-        # optional lexical-link path; any import/route failure falls back to ("none")
         pass
     return None, "none"
 
@@ -124,7 +123,7 @@ def grounded_search(
     thresholds: "dict | None" = None,
     client: Any | None = None,
     gap_log_path: Any | None = None,
-    search_result: SearchResult | None = None,
+    search_result: "SearchResult | None" = None,
 ) -> GroundedSearchResult:
     """Run the search pipeline and overlay grounding + calibrated abstention.
 

@@ -18,7 +18,7 @@ import random
 from dataclasses import dataclass, field
 from typing import Any
 
-from agent.fact_check_gate import classify_claim, risk_for
+from agent.fact_check_gate import AtomicClaim, classify_claim, risk_for
 
 
 @dataclass(frozen=True)

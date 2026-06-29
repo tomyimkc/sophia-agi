@@ -271,7 +271,6 @@ def retrieve(query: str, *, top_k: int = 8, mode: "str | None" = None) -> list[S
                 if query_embedding is not None:
                     return search(query, indexed, top_k=top_k, query_embedding=query_embedding)
         except Exception:
-            # learned-index path is optional; fall through to keyword retrieval below
             pass
         if mode != "auto":  # caller explicitly asked for learned; do not silently fall through
             return _retrieve_keyword(query, top_k=top_k)
@@ -282,7 +281,6 @@ def retrieve(query: str, *, top_k: int = 8, mode: "str | None" = None) -> list[S
             if ranked or mode != "auto":
                 return ranked
         except Exception:
-            # lexical/vector retrieval is optional; fall through to keyword retrieval below
             pass
 
     return _retrieve_keyword(query, top_k=top_k)

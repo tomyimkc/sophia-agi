@@ -23,6 +23,7 @@ is a new claim version — never a fail-closed key/content conflict.
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 
 from okf import frontmatter

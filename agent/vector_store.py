@@ -4,10 +4,10 @@
 
 from __future__ import annotations
 
-import contextlib
 import hashlib
 import json
 import logging
+import math
 import os
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -211,11 +211,12 @@ def search(
     results = _search_impl(query, chunks, top_k=top_k, query_embedding=query_embedding)
 
     if client is not None and key is not None:
-        with contextlib.closing(client):
-            try:
-                client.set(key, _encode_results(results), _KVCACHE_TTL_MS)
-            except Exception as e:  # noqa: BLE001 — cache write is best-effort
-                _LOG.debug("kvcache store skipped: %s", e)
+        try:
+            client.set(key, _encode_results(results), _KVCACHE_TTL_MS)
+        except Exception as e:  # noqa: BLE001 — cache write is best-effort
+            _LOG.debug("kvcache store skipped: %s", e)
+        finally:
+            client.close()
     return results
 
 

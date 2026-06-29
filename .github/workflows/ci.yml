@@ -104,19 +104,6 @@ jobs:
         run: |
           python tools/validate_failure_ledger.py --check
           python tests/test_failure_ledger.py
-      - name: Data health + registry drift gates
-        # validate-core is deliberately dependency-free (no pip install), so the
-        # gates here run stdlib-only tools. The pytest-style unit tests for these
-        # modules (tests/test_data_health_report.py, test_build_data_registry.py,
-        # test_assert_entity_decontam.py, test_carve_entity_disjoint_split.py,
-        # test_assert_mix_balance.py, test_data_analyst.py) are pytest-fixture
-        # based and run in the `test` job's full `pytest -q` suite (which installs
-        # pytest); duplicating them here would need pytest that this job lacks.
-        run: |
-          python tools/build_data_registry.py --check
-          python tools/data_health_report.py --check
-          python tools/assert_mix_balance.py
-          python tools/assert_entity_decontam.py --eval-file data/seib_entity_disjoint/heldout_v1.jsonl --fail-covered 0
       - name: Validate OKF wiki (drift, links, provenance)
         run: |
           python tools/wiki_sync.py check

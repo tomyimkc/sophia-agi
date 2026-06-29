@@ -140,8 +140,6 @@ def main(argv: "list[str] | None" = None) -> int:
         try:
             c.spec = spec  # tag for reporting
         except Exception:
-            # tagging is best-effort cosmetics; some clients reject attribute
-            # assignment (e.g. __slots__) — safe to skip, reporting falls back.
             pass
         return c
 

@@ -1,0 +1,38 @@
+{
+  "experimentId": "qat-consistency-lowram-bound",
+  "status": "preregistration_only",
+  "question": "Does adding the next-token KL consistency term (tools/train_lora.py --qat-consistency) lower the served-quant BF16-vs-NVFP4 next-token mean-KL and/or raise top-1 agreement versus the QAT-only baseline (olmoe-qat-spark-v3: mean_kl 0.0451, top1 0.906) on the held-out, decontaminated calibration set?",
+  "rationale": "T6 in agi-proof/gemma4-distillation-research-note.md. The existing QAT path adds a WEIGHT-space quant-push penalty (training/qat.qat_penalty); the consistency term penalises the OUTPUT-space quantity the certifier actually measures (serving/lowram_eval.LowRamGate next-token KL), so it is co-designed with the gate rather than hoping the weight-space penalty transfers.",
+  "constructs": [
+    "served-quant next-token mean-KL (deterministic, agent-free; serving/lowram_eval)",
+    "served-quant top-1 agreement (deterministic)"
+  ],
+  "primaryMetric": "BF16-vs-NVFP4 next-token mean-KL on the held-out calib set (lower is better), reported jointly with top-1 agreement",
+  "comparison": "QAT --qat-consistency arm vs the QAT-only v3 baseline at the SAME base (allenai/OLMoE-1B-7B-0924-Instruct), scheme (nvfp4), epochs, and seed",
+  "primaryN": "calibration rows >= the v3 set; >= 3 seeds for the train+certify pair",
+  "gate": {
+    "tool": "serving/lowram_eval.LowRamGate (via tools/certify_lowram.py --scheme nvfp4)",
+    "pass": "mean_kl <= 0.05 AND top1 agreement >= 0.97",
+    "protectedSlice": "mean_kl <= 0.10 AND top1 >= 0.95",
+    "improvementCriterion": "the consistency arm must not regress mean_kl or top1 vs v3; a PASS is earned only when top1 >= 0.97 at full quant"
+  },
+  "decontam": "calibration texts decontaminated vs the held-out eval (tools/assert_decontam.py); the calib set must not overlap the certify eval",
+  "claimCeiling": "candidate_only; canClaimAGI:false. A served-quant PASS may claim ONLY 'served NVFP4 retains BF16 next-token behaviour to the measured KL/top-1 bound' — never 'capability retained' or 'frontier on 8 GB'.",
+  "honestLimits": [
+    "next-token KL/top-1 is a behavioural-fidelity bound, NOT a capability claim; a downstream task eval is a separate experiment",
+    "the consistency term costs a 2nd forward/step (eval-mode fp teacher + train-mode quant student)",
+    "requires the Spark/RunPod GPU path; offline only proves the KL math (training.qat.offline_invariants, CI-gated via tests/test_track_b.py)"
+  ],
+  "runbook": {
+    "train": "tools/train_lora.py --4bit --qat --qat-consistency --qat-scheme nvfp4 --model allenai/OLMoE-1B-7B-0924-Instruct --output training/lora/checkpoints/olmoe-qat-consistency",
+    "viaActions": ".github/workflows/train-runpod.yml with extra_train_args = '--qat --qat-consistency --qat-scheme nvfp4'",
+    "certify": "tools/certify_lowram.py --base-model allenai/OLMoE-1B-7B-0924-Instruct --adapter training/lora/checkpoints/olmoe-qat-consistency --scheme nvfp4",
+    "costGuard": ".claude/skills/wisdom-gpu-prebaked/SKILL.md (cheap validation first; confirm zero leaked pods)"
+  },
+  "enforcement": {
+    "lowram_gate": "serving/lowram_eval.LowRamGate — the pass/fail bound",
+    "certify": "tools/certify_lowram.py — emits the certify-lowram*.json artifact",
+    "offline_invariants": "training.qat.offline_invariants (next_token_kl_ref: zero on equal, positive on diff) — CI via tests/test_track_b.py::test_qat_offline_invariants"
+  },
+  "outcomeNote": "A NO-GO (consistency term does not move top1 past 0.97) is a valid publishable outcome — log the measured mean_kl/top1 vs v3, do not tune the lambda to the gate."
+}

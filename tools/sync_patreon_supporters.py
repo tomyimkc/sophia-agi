@@ -73,6 +73,7 @@ def normalize_tier_title(raw: str) -> str:
     if not raw:
         return "Supporter"
     cfg = load_tiers_config()
+    titles = {t["patreon_title"]: t["patreon_title"] for t in cfg.get("tiers", [])}
     # Also allow matching by key or partial
     for t in cfg.get("tiers", []):
         if raw == t["patreon_title"] or raw == t["key"]:

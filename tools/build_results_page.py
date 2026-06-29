@@ -39,11 +39,11 @@ def render(doc: dict) -> str:
         f"_Last updated: {doc.get('lastUpdated', 'n/a')}_",
         "",
         "**No-overclaim gate.** A number is **VALIDATED** only with "
-        + "≥2 independent judges in consensus (judge ≠ subject), reported inter-judge "
-        + "agreement, ≥3 runs, and confidence intervals. Everything else is "
-        + "**illustrative** and labelled. Hidden-eval prompts are never published — "
-        + "only aggregates. See [SECURITY.md](SECURITY.md) and "
-        + "[methodology](docs/11-Platform/Provenance-Delta.md).",
+        "≥2 independent judges in consensus (judge ≠ subject), reported inter-judge "
+        "agreement, ≥3 runs, and confidence intervals. Everything else is "
+        "**illustrative** and labelled. Hidden-eval prompts are never published — "
+        "only aggregates. See [SECURITY.md](SECURITY.md) and "
+        "[methodology](docs/11-Platform/Provenance-Delta.md).",
         "",
         "## Validated results",
         "",
@@ -52,9 +52,9 @@ def render(doc: dict) -> str:
     if not validated:
         L += [
             "_None yet._ No run has cleared the gate (multi-judge consensus + "
-            + "agreement + ≥3 runs + CIs). This is intentional and honest: see the "
-            + "illustrative section and the audit below for why a single judge is not "
-            + "enough.",
+            "agreement + ≥3 runs + CIs). This is intentional and honest: see the "
+            "illustrative section and the audit below for why a single judge is not "
+            "enough.",
             "",
         ]
     else:
@@ -99,9 +99,9 @@ def render(doc: dict) -> str:
             "## External-oracle evals (base-model accuracy via the harness)",
             "",
             "Scored by **exact-match against external gold** (no LLM judge). These "
-            + "report the **base model's** accuracy through Sophia's external-eval "
-            + "harness and validate the harness end-to-end — they are **not** claims "
-            + "about Sophia's provenance gate or any Sophia-specific capability.",
+            "report the **base model's** accuracy through Sophia's external-eval "
+            "harness and validate the harness end-to-end — they are **not** claims "
+            "about Sophia's provenance gate or any Sophia-specific capability.",
             "",
             "| Dataset | Model | N | Accuracy | Date |",
             "|---|---|---|---|---|",
@@ -123,10 +123,10 @@ def render(doc: dict) -> str:
             "## Verifier evals (objective accuracy of a Sophia verifier)",
             "",
             "Scored by **exact-match against ground-truth labels** with a "
-            + "**deterministic verifier** (no LLM judge). Unlike the provenance-delta "
-            + "rows, these measure a **machine-checked gate's** accuracy directly, so "
-            + "they need no multi-judge consensus — but they are honestly bounded by "
-            + "small, constructed benchmarks and are **not** headline capability claims.",
+            "**deterministic verifier** (no LLM judge). Unlike the provenance-delta "
+            "rows, these measure a **machine-checked gate's** accuracy directly, so "
+            "they need no multi-judge consensus — but they are honestly bounded by "
+            "small, constructed benchmarks and are **not** headline capability claims.",
             "",
             "| Verifier | Benchmark | N | Accuracy | Fabrication recall | False-alarm | Date |",
             "|---|---|---|---|---|---|---|",
@@ -149,11 +149,11 @@ def render(doc: dict) -> str:
             "## Calibration evals (abstention vs fabrication, deterministic)",
             "",
             "Scored by a **deterministic marker-based scorer** (no LLM judge) that rewards "
-            + "honest abstention on genuinely-unknown questions and scores a confident "
-            + "fabricated specific 0. Validated by **≥3 runs with a 95% CI excluding zero**. "
-            + "Honestly bounded: the scorer and pack are **self-authored** (internally valid "
-            + "cross-mode deltas; a third-party audit of the labels/markers — and human "
-            + "semantic review — would harden these to headline grade).",
+            "honest abstention on genuinely-unknown questions and scores a confident "
+            "fabricated specific 0. Validated by **≥3 runs with a 95% CI excluding zero**. "
+            "Honestly bounded: the scorer and pack are **self-authored** (internally valid "
+            "cross-mode deltas; a third-party audit of the labels/markers — and human "
+            "semantic review — would harden these to headline grade).",
             "",
             "| Method | Baseline | Pack (runs) | Calibration Δ (95% CI) | Fabrication reduction (95% CI) | Method fab-rate | Date |",
             "|---|---|---|---|---|---|---|",
@@ -209,8 +209,8 @@ def render(doc: dict) -> str:
             "## Semantic evals (model-judged, gated)",
             "",
             "Judging whether a holding *supports* a proposition is a model call, so "
-            + "these are held to the no-overclaim gate (multi-judge + agreement + runs "
-            + "+ CIs). A single judge is illustrative, never a headline.",
+            "these are held to the no-overclaim gate (multi-judge + agreement + runs "
+            "+ CIs). A single judge is illustrative, never a headline.",
             "",
             f"- Benchmark: {semantic.get('benchmark')}",
             f"- Gate: {semantic.get('gate')}",
@@ -246,10 +246,10 @@ def render(doc: dict) -> str:
             "## Continual / grounded-answering (CANDIDATE — not a headline)",
             "",
             "Continual Provenance QA (CPQA): a frozen LLM answers either from the retrieved "
-            + "OKF/wiki source (`grounded`) or from parametric memory (`raw`), and a "
-            + "cross-provider judge panel scores both. Held to the no-overclaim gate and "
-            + "**candidate, not validated** — self-authored benchmark, keys held by one "
-            + "operator, no external replication.",
+            "OKF/wiki source (`grounded`) or from parametric memory (`raw`), and a "
+            "cross-provider judge panel scores both. Held to the no-overclaim gate and "
+            "**candidate, not validated** — self-authored benchmark, keys held by one "
+            "operator, no external replication.",
             "",
             f"- Benchmark: {cg.get('benchmark')}",
             f"- Answers: {cg.get('answerModel')} · Judges: {', '.join(cg.get('judges', []))} "
@@ -301,8 +301,8 @@ def render(doc: dict) -> str:
             "## Systems benchmarks (performance — candidate, host-dependent)",
             "",
             "Throughput/latency micro-benchmarks for the systems components. These are "
-            + "**candidate** engineering numbers (single host, vary by machine), not "
-            + "no-overclaim accuracy results — reproduce with the command in each note.",
+            "**candidate** engineering numbers (single host, vary by machine), not "
+            "no-overclaim accuracy results — reproduce with the command in each note.",
             "",
         ]
         for s in systems:
@@ -371,8 +371,8 @@ def render(doc: dict) -> str:
         "```",
         "",
         "Offline tests run in CI on every commit. Real-model numbers are produced "
-        + "locally by the maintainer and curated into "
-        + "`agi-proof/benchmark-results/published-results.json`.",
+        "locally by the maintainer and curated into "
+        "`agi-proof/benchmark-results/published-results.json`.",
     ]
     return "\n".join(L) + "\n"
 

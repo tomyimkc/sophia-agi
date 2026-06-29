@@ -26,11 +26,13 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from agent.council_deliberate import deliberate  # noqa: E402
 from agent.steering import stats  # noqa: E402
 from agent.team_agents import deliberate_team, measure_panel_independence  # noqa: E402
 from provenance_bench.team_agents_benchmark import (  # noqa: E402
     HELDOUT,
     PROBE,
+    load_cases,
     score_deliberation,
     verify_manifest,
 )

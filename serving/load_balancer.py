@@ -43,6 +43,7 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass, field
+from typing import Optional
 
 from serving.kv_cache import block_hashes
 

@@ -157,7 +157,7 @@ def grounded_gate(run_smoke: bool) -> Check:
 def coding_eval(run_smoke: bool) -> Check:
     out = ROOT / "eval" / "results" / "coding_eval.json"
     if run_smoke:
-        _run([sys.executable, "tools/run_coding_eval.py", "--out", str(out)])
+        res = _run([sys.executable, "tools/run_coding_eval.py", "--out", str(out)])
     data = _load_json(out) or {}
     ok = bool(data) and data.get("n") == data.get("passed") and data.get("n", 0) > 0
     return _check("coding_eval", status="pass" if ok else ("missing" if not out.exists() else "fail"), summary="Executable coding eval lane passes." if ok else "Coding eval report missing or failing.", evidence=[_rel(out), "tools/run_coding_eval.py"], details=data)

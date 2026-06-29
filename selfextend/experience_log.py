@@ -17,7 +17,7 @@ self-score — so Evolve optimises against the same hard signal the gate uses.
 from __future__ import annotations
 
 import json
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 

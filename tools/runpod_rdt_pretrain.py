@@ -42,7 +42,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from tools.runpod_rlvr import _api_request, RunPodError  # noqa: E402
+from tools.runpod_rlvr import _api_request, _redact, RunPodError  # noqa: E402
 
 # Cheap/available GPUs first — a smoke needs no big VRAM; availability-priority picks what's free.
 DEFAULT_GPU_TYPES = [
@@ -172,7 +172,7 @@ echo "[pod] train report written; finish() will commit + push"
 """
 
 
-def _build_payload(args, runpod_env_value, gh_env_value):
+def _build_payload(args, api_key, gh_pat):
     gpu_types = [g.strip() for g in args.gpu_type.split(",") if g.strip()]
     payload = {
         "name": args.name,
@@ -189,8 +189,8 @@ def _build_payload(args, runpod_env_value, gh_env_value):
         "interruptible": False,
         "locked": False,
         "env": {
-            "RUNPOD_API_KEY": runpod_env_value,   # for the pod's self-delete on exit
-            "GH_PILOT_PAT": gh_env_value,
+            "RUNPOD_API_KEY": api_key,   # for the pod's self-delete on exit
+            "GH_PILOT_PAT": gh_pat,
         },
         "dockerEntrypoint": [],
         "dockerStartCmd": ["bash", "-lc", _job_script(args)],
@@ -240,7 +240,6 @@ def _delete_pod(api_key: str, pod_id: str) -> None:
     try:
         _api_request("DELETE", f"/pods/{pod_id}", api_key, timeout=60)
     except RunPodError:
-        # best-effort cleanup: pod may already be gone or unreachable, nothing to recover
         pass
 
 
@@ -325,11 +324,8 @@ def main(argv=None) -> int:
     gh_pat = os.environ.get(args.gh_token_env, "")
 
     if args.dry_run:
-        # Fully mask secrets in the previewed payload so no token material is printed.
-        # Pass presence-only constants (derived via bool()) so no real or secret-named
-        # value flows into the logged object; _build_payload's params are neutrally named.
-        display = _build_payload(args, "***" if bool(api_key) else "", "***" if bool(gh_pat) else "")
-        print(json.dumps(display, indent=2))
+        payload = _build_payload(args, _redact(api_key), _redact(gh_pat))
+        print(json.dumps(payload, indent=2))
         return 0
     for name, val in (("RUNPOD_API_KEY", api_key), (args.gh_token_env, gh_pat)):
         if not val:

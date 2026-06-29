@@ -40,7 +40,7 @@ from __future__ import annotations
 import hashlib
 import shutil
 from collections import OrderedDict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import IntEnum
 from pathlib import Path
 from typing import Iterable, Optional

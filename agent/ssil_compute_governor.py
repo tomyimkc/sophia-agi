@@ -51,6 +51,9 @@ SCHEMA = "sophia.compute_governor_decision.v1"
 
 _DEFAULT_ESCALATION_FACTOR = 2.0
 
+# Verdict precedence (worst wins), mirroring agent/ssil.py.
+_PRECEDENCE = {"reject": 0, "quarantine": 1, "promote": 2}
+
 _BOUNDARY = (
     "governs the DECLARED cost (estUsd) of a sanctioned dispatch against a budget "
     "ledger and a two-key escalation control; estUsd is an estimate and the gate "

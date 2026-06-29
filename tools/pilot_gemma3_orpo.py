@@ -51,6 +51,7 @@ def _formatted_pairs(tok, smoke: bool):
         r = json.loads(line)
         if not (r.get("prompt") and r.get("chosen") and r.get("rejected") and r["chosen"] != r["rejected"]):
             continue
+        msgs = [{"role": "system", "content": ADV_SYS}, {"role": "user", "content": r["prompt"]}]
         # fold system into user (gemma has no system role), then render the prompt string
         folded = [{"role": "user", "content": f"{ADV_SYS}\n\n{r['prompt']}"}]
         prompt_str = tok.apply_chat_template(folded, tokenize=False, add_generation_prompt=True)
@@ -159,7 +160,7 @@ def evaluate_stack(model_id: str, sft_adapter: Path, orpo_adapter: Path, *, runs
     report = {
         "pilot": "sophia-wisdom-4b-m4-orpo-sft",
         "baseModel": model_id,
-        "adapterModel": f"{sft_adapter.name}+{orpo_adapter.name} (SFT-merged + ORPO stack)",
+        "adapter": f"{sft_adapter.name}+{orpo_adapter.name} (SFT-merged + ORPO stack)",
         "recipe": "SFT(M3) -> merge -> ORPO LoRA on top",
         "benchmark": str(PGR.BENCH.relative_to(ROOT)), "nCases": len(cases), "runs": runs,
         "base": pack(base_runs), "adapter": pack(stack_runs),

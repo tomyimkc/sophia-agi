@@ -115,6 +115,7 @@ def fp8_e4m3_roundtrip(W):
     W = np.asarray(W, dtype=np.float64)
     sign = np.sign(W)
     a = np.abs(W)
+    out = np.zeros_like(a)
     nz = a > 0
     # exponent of the value; mantissa rounded to 3 bits => quantize a to
     # nearest multiple of 2^(e - mant_bits).

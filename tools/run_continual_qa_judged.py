@@ -221,10 +221,10 @@ def main() -> None:
         "summary": summary,
         "caveats": [
             "Models reached via one gateway (LLMHub) under one key; validated:false pending "
-            + "independent replication and pre-registration, though judges are distinct families.",
+            "independent replication and pre-registration, though judges are distinct families.",
             "abstain-rubric scores confident refutation of a fictional premise as non-abstention, "
-            + "which can understate the raw model on fictional-premise controls; the unambiguous "
-            + "contrast is on RETRACTED real facts (raw asserts the stale fact, grounded abstains).",
+            "which can understate the raw model on fictional-premise controls; the unambiguous "
+            "contrast is on RETRACTED real facts (raw asserts the stale fact, grounded abstains).",
         ],
     }
     out = Path(args.out)

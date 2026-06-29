@@ -21,6 +21,7 @@ soundness gate, not a presence requirement. Pure stdlib, deterministic, offline.
 from __future__ import annotations
 
 import re
+from typing import Any
 
 from agent import verifiers as _v
 
@@ -28,8 +29,10 @@ from agent import verifiers as _v
 # Atomic-claim decomposition.
 # --------------------------------------------------------------------------- #
 
-# Abbreviations whose trailing period must not be treated as a sentence boundary
-# (would shatter them into fragments below the verifiers' own min-length guards).
+# Sentence boundary: terminal punctuation (Latin + CJK) or a newline. We keep the
+# split conservative so we do not shatter abbreviations into fragments below the
+# verifiers' own min-length guards.
+_SENT_SPLIT = re.compile(r"(?<=[.!?。！？])\s+|\n+")
 _NO_SPLIT_ABBREVIATIONS = {
     "mr", "mrs", "ms", "dr", "prof", "st", "jr", "sr", "vs", "etc", "e.g", "i.e",
 }
@@ -40,9 +43,7 @@ _NO_SPLIT_ABBREVIATIONS = {
 # treated as a clause boundary — that would break author->title patterns the
 # provenance verifier relies on.
 _CLAUSE_SPLIT = re.compile(
-    # Single \s on each side (not \s+) keeps the match linear — no nested/adjacent
-    # quantifiers — so it cannot exhibit polynomial backtracking on adversarial input.
-    r"[;—–]|\s\b(?:and|but|however|yet)\b\s"
+    r"\s*;\s*|\s+\band\b\s+|\s+\bbut\b\s+|\s+\bhowever\b\s+|\s+\byet\b\s+|\s*—\s*|\s*–\s*"
 )
 
 
@@ -272,7 +273,7 @@ def route_and_check(text: str, *, records: "dict | None" = None,
     if _CODE_RE.search(text or ""):
         # Only the EXPLICITLY python-tagged blocks (not a language-agnostic extract),
         # so a JS/other block elsewhere in the answer can't be compiled as Python.
-        py_blocks = re.findall(r"```(?:python|py)[ \t]*\n(.*?)```", text or "", re.DOTALL | re.IGNORECASE)
+        py_blocks = re.findall(r"```(?:python|py)\s*\n(.*?)```", text or "", re.DOTALL | re.IGNORECASE)
         code = "\n\n".join(b.rstrip() for b in py_blocks)
         if code.strip():
             try:

@@ -32,7 +32,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from tools.runpod_rlvr import (  # noqa: E402 — reuse the proven lifecycle
-    RunPodError, _build_create_payload, _delete_pod, _generate_ssh_key,
+    PodConnection, RunPodError, _build_create_payload, _delete_pod, _generate_ssh_key,
     _redact, _rsync_repo_to_pod, _scp_from_pod, _ssh_base, _stream, _wait_ssh_login,
 )
 from tools.runpod_train import _create_pod_with_ssh  # noqa: E402
@@ -141,6 +141,7 @@ def main(argv=None) -> int:
         payload["env"]["HF_TOKEN"] = hf_token  # injected to PID1 env; read on pod from /proc/1/environ
 
         pod_id = ""
+        exit_code = 1
         try:
             pod_id, conn = _create_pod_with_ssh(
                 api_key, payload, args.name, attempts=args.ssh_attempts, ssh_timeout_s=args.ssh_timeout_s)

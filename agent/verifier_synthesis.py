@@ -39,6 +39,7 @@ still comes solely from measured validation.
 from __future__ import annotations
 
 import ast
+import math
 import os
 import random
 import re

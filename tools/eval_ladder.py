@@ -58,7 +58,6 @@ def _load_reports(label: str, domains: list[str]) -> list[dict[str, Any]]:
             try:
                 reports.append(json.loads(path.read_text(encoding="utf-8")))
             except json.JSONDecodeError:
-                # a malformed/partial report file is skipped; absent reports are non-fatal here.
                 pass
     return reports
 

@@ -22,6 +22,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from typing import Any
 
 # Reuse the agent verifier's extractor semantics, but keep a local copy so this
 # module is import-light and usable from the benchmark without the full agent stack.

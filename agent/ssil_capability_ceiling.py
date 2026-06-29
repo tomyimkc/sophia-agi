@@ -31,7 +31,6 @@ Deterministic, offline, pure stdlib. This is SSIL gate G8.
 from __future__ import annotations
 
 import json
-import math
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -131,7 +130,7 @@ def evaluate(bundle: dict[str, Any], *, candidate_id: str = "sophia-rlvr-v1") ->
         except (TypeError, ValueError):
             invalid.append(probe)
             continue
-        if math.isnan(val) or val < 0.0 or val > 1.0:  # NaN / out of [0,1] -> not a usable measurement
+        if val != val or val < 0.0 or val > 1.0:  # NaN / out of [0,1] -> not a usable measurement
             invalid.append(probe)
             continue
         measured[probe] = val

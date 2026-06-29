@@ -10,13 +10,16 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 from provenance_bench.team_agents_benchmark import (
     DeliberationScore,
+    _any,
+    _check_stance,
     _find_seat,
+    _seat_name,
     _seat_text,
     score_deliberation,
 )

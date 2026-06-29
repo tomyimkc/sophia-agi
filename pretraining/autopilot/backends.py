@@ -18,7 +18,6 @@ Two backends, by design:
 """
 from __future__ import annotations
 
-import math
 from typing import Any
 
 from pretraining.nano import (
@@ -72,7 +71,7 @@ class LocalBackend:
         m = NanoLM(vocab=vocab, context=context, hidden=hidden, seed=seed)
         hist = train(m, ex, epochs=epochs, optimizer=optimizer, lr=lr, seed=seed)
         held_loss = eval_loss(m, held)
-        diverged = bool(hist["diverged"]) or math.isnan(held_loss)  # NaN
+        diverged = bool(hist["diverged"]) or held_loss != held_loss  # NaN
         params = m.num_params()
         return {
             "held_loss": round(held_loss, 5) if not diverged else float("inf"),
