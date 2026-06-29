@@ -107,6 +107,20 @@ for the pre-registered plan: external decontaminated battery, ≥2 independent
 judge families (κ ≥ 0.40), a raw-model baseline contrast, and an effect on the
 cowardice/recklessness error rates whose 95% CI excludes zero.
 
+## Known limitation: derived signals on raw text
+
+The gate routes well when its ASIR inputs are supplied explicitly (16/16). When it
+must **derive** them from raw text (the `consultCourage` path), the robustness
+probe (`tools/run_andreia_robustness.py`) measures the cost: derived routing
+agrees with the labels only **0.25 vs 1.00 explicit (gap 0.75)**, collapsing to
+`hold`/`escalate` — and the regex cowardice detector misses **100% of
+meaning-preserving paraphrases**. This is fail-closed behavior, not a bug (low
+derived confidence on unverified text correctly suppresses CQ), and it is **not**
+tuned away. The honest consequence: **no claim that the gate is courageous on raw
+text**; the integration is conservative by design. Tracked as
+`andreia-derived-signal-routing-weak-on-raw-text-2026-06-29` in the failure ledger;
+the fix is a paraphrase-robust detector + a model-backed signal estimator.
+
 ## Measurement boundary (read this)
 
 Andreia is **candidate infrastructure**. The Courage-Calibration battery routes
