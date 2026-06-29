@@ -1,0 +1,25 @@
+Instinct gate — early reflex re-route vs late self-correct (falsifiable model)
+==============================================================================
+params: {"trials": 4000, "seed": 1234, "n_steps": 10, "p_err": 0.09, "derail": 0.8, "p_fix": 0.22, "p_break": 0.16}
+
+POLICY CORRECTNESS / COST
+  good reflex (snr=3): commit 0.533@10.0  late 0.552@15.0  instinct 0.726@20.4 (escalate 0.130)
+  poor reflex (snr=0): commit 0.533  instinct 0.526 (false-interrupt 0.042)
+
+SNR SWEEP (instinct vs commit vs late)
+  snr=0.0: instinct 0.526  commit 0.533  late 0.552  (FI 0.04, esc 0.00)
+  snr=0.5: instinct 0.543  commit 0.533  late 0.552  (FI 0.04, esc 0.00)
+  snr=1.0: instinct 0.592  commit 0.533  late 0.552  (FI 0.04, esc 0.00)
+  snr=1.5: instinct 0.656  commit 0.533  late 0.552  (FI 0.05, esc 0.03)
+  snr=2.0: instinct 0.713  commit 0.533  late 0.552  (FI 0.07, esc 0.07)
+  snr=3.0: instinct 0.726  commit 0.533  late 0.552  (FI 0.08, esc 0.13)
+  snr=4.0: instinct 0.710  commit 0.533  late 0.552  (FI 0.08, esc 0.15)
+  snr=5.0: instinct 0.709  commit 0.533  late 0.552  (FI 0.08, esc 0.15)
+
+THEORY VERDICT
+  H1 compounding (don't plough ahead) : True
+  H2 early reroute beats late correct : True
+  H3 break-even SNR (reflex = ceiling): 0.5
+  H4 ko-bounded escalate              : True
+  candidateOnly=True  level3Evidence=False
+  boundary: synthetic planted-truth model of a reflex policy; not AGI proof.

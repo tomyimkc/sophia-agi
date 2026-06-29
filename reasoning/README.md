@@ -11,6 +11,7 @@ never break.* Each module is pure stdlib, seeded, and runs with no GPU or API ke
 | `reasoning_compiler.py` | #3 compiler/IR | CSE + dead-code elimination cut verification cost ~53% with the grounded conclusion **invariant** (100%); contradictions caught fail-closed, zero false alarms. |
 | `memory_hierarchy.py` | #4 memory | a locality-aware tiered policy falls to **8.6%** of flat cost at high locality, with a capacity knee, 100% recall, provenance preserved. |
 | `belief_allreduce.py` | #5 collectives | ring/tree reach the same consensus as all-to-all at O(N)/O(N log N) messages; minority beliefs survive (a vote drops them); confidentiality firewall holds. |
+| `instinct_gate.py` | #6 instinct | early reflex *re-route* ("change its mind") beats *late* self-correction (0.73 vs 0.55, commit 0.53) **only above a break-even reflex SNR ≈ 0.5**; below it a trigger-happy reflex hurts; the ko guard bounds re-route to a clean `escalate`. The ceiling is the reflex's ROC, not the policy. See [`Thinking-Chain-Intervention-and-Instinct.md`](../docs/06-Roadmap/Thinking-Chain-Intervention-and-Instinct.md). |
 
 Each module shares one CLI:
 
@@ -22,7 +23,8 @@ python reasoning/<module>.py --run --json   # raw results
 
 Saved verdicts live in [`results/`](results/). Tests are in
 `tests/test_deliberation_roofline.py`, `tests/test_reasoning_compiler.py`,
-`tests/test_memory_hierarchy.py`, `tests/test_belief_allreduce.py` (28 tests).
+`tests/test_memory_hierarchy.py`, `tests/test_belief_allreduce.py`,
+`tests/test_instinct_gate.py`.
 
 **Honest scope.** These are *models* of the claims, not production wiring — synthetic streams
 and planted ground truth, chosen so the hypotheses are falsifiable rather than assumed. Each
