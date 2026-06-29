@@ -6,4 +6,5 @@ verify-generate-census.public-report.json
 ensemble-agreement.public-report.json
 conformal-calibration.public-report.json
 canary-breaker.public-report.json
+aats-benchmark.public-report.json
 _test-tmp/
