@@ -33,11 +33,17 @@ on:
         type: choice
         options: [offline, live]
       task:
-        description: 'RLVR reward task: provenance / math (sympy) / code (hidden-tests-pass) / concept (concept-TBox gate)'
+        description: 'RLVR reward task: provenance / math (sympy) / code (hidden-tests-pass) / concept / step (process: every step verified)'
         required: true
         default: 'provenance'
         type: choice
-        options: [provenance, math, code, concept]
+        options: [provenance, math, code, concept, step]
+      step_domain:
+        description: 'For task=step only: per-step oracle + held-out split (math needs sympy; physics pure-Python)'
+        required: false
+        default: 'math'
+        type: choice
+        options: [math, physics]
       model:
         description: 'Subject model (HF id). Default = code-capable Qwen2.5-Coder; GLM-4-9B scores 0/48 under the chat template (base too weak).'
         required: false
@@ -103,6 +109,7 @@ jobs:
       IN_CONFIRM: ${{ github.event.inputs.confirm }}
       IN_REMOTE_MODE: ${{ github.event.inputs.remote_mode }}
       IN_TASK: ${{ github.event.inputs.task }}
+      IN_STEP_DOMAIN: ${{ github.event.inputs.step_domain }}
       IN_MODEL: ${{ github.event.inputs.model }}
       IN_REWARD: ${{ github.event.inputs.reward }}
       IN_GRADED_CRAVING: ${{ github.event.inputs.graded_craving }}
@@ -136,7 +143,7 @@ jobs:
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
         run: |
-          dry_args=(--dry-run --source git --branch "${{ github.ref_name }}" --remote-mode "$IN_REMOTE_MODE" --task "$IN_TASK" --reward "$IN_REWARD" --model "$IN_MODEL" --gpu-type "$IN_GPU_TYPE")
+          dry_args=(--dry-run --source git --branch "${{ github.ref_name }}" --remote-mode "$IN_REMOTE_MODE" --task "$IN_TASK" --step-domain "$IN_STEP_DOMAIN" --reward "$IN_REWARD" --model "$IN_MODEL" --gpu-type "$IN_GPU_TYPE")
           [ "$IN_GRADED_CRAVING" = "true" ] && dry_args+=(--graded-craving)
           python tools/runpod_rlvr.py "${dry_args[@]}"
 
@@ -146,7 +153,7 @@ jobs:
         run: |
           # argv as a bash array; optional flags appended as separate quoted elements
           # (no unquoted expansion -> no shell injection/word-splitting from dispatch inputs).
-          args=(--yes --source git --branch "${{ github.ref_name }}" --remote-mode "$IN_REMOTE_MODE" --task "$IN_TASK" --reward "$IN_REWARD" --model "$IN_MODEL" --epochs "$IN_EPOCHS" --seed "$IN_SEED" --quant bf16 --vllm colocate --gpu-type "$IN_GPU_TYPE")
+          args=(--yes --source git --branch "${{ github.ref_name }}" --remote-mode "$IN_REMOTE_MODE" --task "$IN_TASK" --step-domain "$IN_STEP_DOMAIN" --reward "$IN_REWARD" --model "$IN_MODEL" --epochs "$IN_EPOCHS" --seed "$IN_SEED" --quant bf16 --vllm colocate --gpu-type "$IN_GPU_TYPE")
           [ "$IN_GRADED_CRAVING" = "true" ] && args+=(--graded-craving)
           [ "$IN_INTERRUPTIBLE" = "true" ] && args+=(--interruptible)
           [ -n "$IN_NETWORK_VOLUME_ID" ] && args+=(--network-volume-id "$IN_NETWORK_VOLUME_ID")

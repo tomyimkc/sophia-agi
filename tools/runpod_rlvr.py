@@ -393,6 +393,7 @@ else
 fi
 $SOPHIA_LAUNCH tools/run_rlvr.py \\
   --task "$SOPHIA_TASK" \\
+  --step-domain "$SOPHIA_STEP_DOMAIN" \\
   --reward "$SOPHIA_REWARD" \\
   $SOPHIA_GRADED_FLAG \\
   --model "$SOPHIA_MODEL" \\
@@ -413,6 +414,7 @@ if [ -d /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 ]; then
   # this eval and embeds it in the .adapter-eval.json (additive; legacy unchanged).
   python tools/eval_rlvr_adapter.py --mode real \\
     --task "$SOPHIA_TASK" \\
+    --step-domain "$SOPHIA_STEP_DOMAIN" \\
     --model "$SOPHIA_MODEL" \\
     --adapter /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 \\
     --seed "$SOPHIA_SEED" \\
@@ -448,6 +450,7 @@ export TRANSFORMERS_CACHE=/workspace/.cache/huggingface/transformers
 export PIP_CACHE_DIR=/workspace/.cache/pip
 export SOPHIA_MODEL={shlex.quote(args.model)}
 export SOPHIA_TASK={shlex.quote(args.task)}
+export SOPHIA_STEP_DOMAIN={shlex.quote(args.step_domain)}
 export SOPHIA_REWARD={shlex.quote(args.reward)}
 export SOPHIA_GRADED_FLAG={shlex.quote("--graded-craving" if args.graded_craving else "")}
 export SOPHIA_QUANT={shlex.quote(args.quant)}
@@ -484,7 +487,10 @@ PY
 python -m pip install --upgrade pip setuptools wheel
 # The math task's reward is sympy (math_equivalent); needed in BOTH modes so the
 # offline smoke's math invariants and the live reward can run.
-if [ "$SOPHIA_TASK" = "math" ]; then
+SOPHIA_NEED_SYMPY=0
+if [ "$SOPHIA_TASK" = "math" ]; then SOPHIA_NEED_SYMPY=1; fi
+if [ "$SOPHIA_TASK" = "step" ] && [ "$SOPHIA_STEP_DOMAIN" = "math" ]; then SOPHIA_NEED_SYMPY=1; fi
+if [ "$SOPHIA_NEED_SYMPY" = "1" ]; then
   python -m pip install -r requirements-math.txt
 fi
 # The code task's reward executes model-generated code (provenance_bench.code_exec);
@@ -498,7 +504,7 @@ if [ {shlex.quote(args.remote_mode)} = "live" ]; then
   python -m pip install -r /tmp/requirements-rl.sophia.txt
 fi
 python tools/validate_attribution.py
-python tools/run_rlvr.py --task "$SOPHIA_TASK" --model mock --dry-run --out /workspace/sophia-runpod/rlvr.offline-report.json
+python tools/run_rlvr.py --task "$SOPHIA_TASK" --step-domain "$SOPHIA_STEP_DOMAIN" --model mock --dry-run --out /workspace/sophia-runpod/rlvr.offline-report.json
 {live_cmd}
 echo "Sophia RLVR remote run complete."
 ls -lh /workspace/sophia-runpod/rlvr*.json || true
@@ -612,7 +618,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--branch", default="", help="optional git branch/tag to clone")
     ap.add_argument("--model", default="zai-org/glm-4-9b-chat-hf")
     ap.add_argument("--remote-mode", choices=["offline", "live"], default="live", help="run only remote offline smoke test or full live GRPO")
-    ap.add_argument("--task", choices=["provenance", "math", "code", "concept"], default="provenance", help="RLVR reward task: provenance (provenance_faithful), math (sympy math_equivalent), code (hidden-tests-pass via code_exec), or concept (concept-TBox gate; no extra deps)")
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "step"], default="provenance", help="RLVR reward task: provenance (provenance_faithful), math (sympy math_equivalent), code (hidden-tests-pass via code_exec), concept (concept-TBox gate), or step (process: every step verified)")
+    ap.add_argument("--step-domain", choices=["math", "physics"], default="math", help="for --task step: per-step oracle + held-out RL split (math needs sympy; physics is pure-Python)")
     ap.add_argument("--reward", choices=["verifier", "gate", "multiaxis"], default="verifier", help="reward signal (provenance task): verifier (default), gate (single-axis), or multiaxis (Thesis D dense reward; M1 collapse comparison)")
     ap.add_argument("--graded-craving", action="store_true", help="H2 (reward=gate only): scale reward-positive abstention by prompt fabrication temptation (HST graded arm). Flat arm omits this flag.")
     ap.add_argument("--quant", choices=["bf16", "4bit"], default="bf16")

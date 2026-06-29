@@ -143,6 +143,19 @@ training/**/*.recipe.json
 configs/*.json
 !configs/*.sample.json
 
+# Per-session local run logs + editor backups on the shared Spark checkout
+# (regenerable; committed deliverables live under agi-proof/benchmark-results/).
+training/lora/*.log
+training/lora/*.log.*
+tools/*.bak
+spark-logs/
+rlvr-seed*.log
+training/rlvr/
+
+# Ephemeral cross-session coordination scratch (explicitly not-for-commit)
+/SESSION-COORDINATION.md
+/bridge-info.txt
+
 # Personal setup / secrets (if secret/ has tracked files, also run:
 #   git rm -r --cached secret/   then commit, to stop tracking them).
 secret/**

@@ -24,6 +24,33 @@ ledger is part of Sophia's no-overclaim discipline. `candidateOnly: true`.
    calibrate against; we report escalation-correctness instead and reserve
    "calibration" for the epistemic layer.
 
+## Scripture-as-voice integration (branch `claude/bible-ethics-integration-186xz7`) — OPEN
+
+Christian Scripture was added as **one source family** (`scriptural_christian`,
+`kind: doctrine`) seated in the moral parliament, contributing to the hard floor only
+at genuine cross-tradition intersections. It is **not** an override authority (that would
+break is/ought + the overlapping-consensus floor and fail the religion benchmark). Open
+items on this addition and its `eval/religion_v2/` Inverse-Euthyphro probe:
+
+7. **Source-family addition is a CANDIDATE, not human-approved.** The `scriptural_christian`
+   entry in `public_standard.v1.json` and its `endorsedBy` placements are pending maintainer
+   approval per `docs/11-Platform/Public-Moral-Standard.md`. The model did not promote it.
+8. **No VALIDATED religion-v2 number exists.** `eval/religion_v2/` ships the design, a 32-item
+   held-out bank, a pre-registration spec, and an offline runner only. No two-box judge-farm
+   run has executed; the marker rubric is a deterministic *feature*, never a verdict.
+9. **MDE / required-N not computed for religion-v2.** Per `measurement_spec.json` no verdict
+   may be reported until power is run (`tools/eval_stats.py`); the 32-item bank likely needs
+   expansion + an independent second annotator before a VALIDATED attempt.
+10. **Reciprocity invariance is asserted by design, not yet measured.** Symmetry groups seat
+    >=2 scriptures so the Bible-vs-other-canon treatment delta is *measurable*, but the delta
+    has not been measured on real judges; asymmetry would be a NO-GO.
+11. **`endorsedBy` placements are a curated judgment.** Adding `scriptural_christian` to
+    `ps_no_violence`/`ps_no_exploitation`/`ps_truthfulness`/`ps_rights_dignity` reflects a
+    defensible intersection claim, not a proof; reasonable people may dispute it (cf. limit #2).
+12. **Scripture coverage is partial.** Items cover christian/islamic/jewish/confucian/daoist/
+    hindu/buddhist/secular voices; coverage is illustrative, not exhaustive, and English-centric
+    (cf. limit #5).
+
 ## Boundary
 
 - `canClaimAGI: false`, `level3Evidence: false`.
