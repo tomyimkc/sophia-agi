@@ -221,7 +221,11 @@ def run_mock(*, n: int = 400, seed: int = 0) -> dict:
     delta_ece = round((arms["trace-feature-verifier"]["ece"] or 0) -
                       (arms["provenance-confidence-baseline"]["ece"] or 0), 6)
     ci = bootstrap_ci_auroc_delta(verifier_scores, prov_scores, labels, seed=seed)
-    verdict = gate_verdict(real_corpus=False, judge_families=1, leakage_audited=False,
+    # The no-answer-leakage audit is a REAL, runnable guardrail (tools/audit_feature_leakage.py):
+    # run it on the actual extractor so the leakage pillar reflects the audit, not a promise.
+    from tools.audit_feature_leakage import audit_t3_extractor
+    leakage = audit_t3_extractor(n=min(len(traces), 100), seed=seed)
+    verdict = gate_verdict(real_corpus=False, judge_families=1, leakage_audited=leakage["passed"],
                            delta_auroc=delta_auroc, delta_auroc_ci=ci, delta_ece=delta_ece,
                            base_sizes=1)
     return {
@@ -231,6 +235,7 @@ def run_mock(*, n: int = 400, seed: int = 0) -> dict:
         "deltaAUROC": delta_auroc,
         "deltaAUROCCI95": ci,
         "deltaECE": delta_ece,
+        "leakageAudit": {"passed": leakage["passed"], "verdict": leakage["verdict"]},
         "verdict": verdict["verdict"],
         "criticalFailures": verdict["criticalFailures"],
         "boundary": "synthetic traces + synthetic labels — machinery proof of the AUROC/ECE/delta "

@@ -28,7 +28,7 @@
   },
   "guardrails": {
     "noAnswerLeakage": {
-      "rule": "the verifier's input features are derived ONLY from the reasoning trace and retrieved sources, NEVER from the gold answer or the correctness label; a feature audit (tools, PENDING) must confirm no label leakage before any AUROC is reported",
+      "rule": "the verifier's input features are derived ONLY from the reasoning trace and retrieved sources, NEVER from the gold answer or the correctness label; the metamorphic feature audit tools/audit_feature_leakage.py (re-extract features after perturbing only the label/answer fields; any change = leakage) must PASS before any AUROC is reported. The current T3 extractor passes the audit.",
       "use": "GO/NO-GO — leaked-label features produce an inflated AUROC that is not a result"
     },
     "baselineContrast": {
@@ -65,9 +65,11 @@
   "go": false,
   "canClaimAGI": false,
   "enforcement": {
-    "harness": "PENDING — tools/run_calibration_verifier_eval.py (to build): extract trace features from agent/semantic_entropy.py + agent/corroboration.py + agent/grounded_confidence.py, train the verifier on the train split, score the test split, emit AUROC/ECE per arm",
-    "stats": "tools/eval_stats.py — paired bootstrap CI (fixed-n) + anytime-valid confidence sequence (peeked) + mde_at_n power check on the AUROC delta",
-    "tests": "PENDING — tests/test_calibration_verifier_eval.py: feature-no-leakage audit, AUROC/ECE math on a deterministic mock, the delta+CI logic, and the not-run/NO-GO pending artifact",
+    "harness": "tools/run_calibration_verifier_eval.py — extracts trace features from agent/semantic_entropy.py + agent/corroboration.py, fits the verifier on a disjoint split, scores three arms, emits AUROC/ECE + paired-bootstrap delta CI; --mock exercises the math on synthetic traces (machinery, not evidence), --emit-pending writes the not-run artifact, --model refuses",
+    "leakageAudit": "tools/audit_feature_leakage.py — metamorphic no-answer-leakage audit (the T3 extractor passes; tests/test_audit_feature_leakage.py)",
+    "judgePanel": "tools/run_judge_panel.py — multi-judge labeling panel: majority consensus + pairwise Cohen kappa / Gwet AC1 (+ bootstrap CI) + the >= 0.40 gate, the instrument that turns single-source labels into >= 2-family ground truth (tests/test_run_judge_panel.py)",
+    "stats": "tools/eval_stats.py — paired bootstrap CI (fixed-n) + anytime-valid confidence sequence (peeked) + mde_at_n power check on the AUROC delta + cohen_kappa/gwet_ac1 for the label panel",
+    "tests": "tests/test_calibration_verifier_eval.py: AUROC/ECE math on a deterministic mock, the delta+CI logic, the real leakage-audit pillar, and the not-run/NO-GO pending artifact",
     "lint_claims": "tools/lint_claims.py — no-overclaim copy must hold for any prose that cites this result",
     "decontam": "tools/assert_decontam.py — trace-split disjointness + base-corpus disjointness before any real run",
     "note": "PRE-REGISTRATION ONLY. This is the T3 thesis from docs/09-Agent/notes/DiveIntoLLMs-Takeaways.md — the highest-leverage open calibration item. No model run has been performed; the claim is never auto-promoted and canClaimAGI stays false."

@@ -56,7 +56,11 @@ def test_mock_run_is_deterministic_and_no_go() -> None:
     assert a["verdict"] == "NO-GO", a
     # the offline pillars that can never pass with synthetic data must be named
     joined = " ".join(a["criticalFailures"])
-    assert "no_real_corpus" in joined and "labels_not_2family" in joined and "no_leakage_audit" in joined, a
+    assert "no_real_corpus" in joined and "labels_not_2family" in joined, a
+    # the leakage audit is a REAL guardrail and the T3 extractor passes it, so the leakage
+    # pillar is NOT among the failures (it is genuinely satisfied, not a promise)
+    assert "no_leakage_audit" not in joined, a
+    assert a["leakageAudit"]["passed"] is True, a
     # the math actually ran
     assert a["arms"]["trace-feature-verifier"]["auroc"] is not None, a
     assert isinstance(a["deltaAUROCCI95"], list) and len(a["deltaAUROCCI95"]) == 2, a
