@@ -11,6 +11,11 @@ Platform: Linux aarch64, NVIDIA GB10, torch 2.12.1+cu130, trl ~1.7.x, transforme
 
 ## 1. tools/run_rlvr.py (tracked, committed)
 
+> **Update (follow-up commit):** `device_map="cuda"` below was later **guarded to the
+> non-vLLM path** (`if not use_vllm: ...`) so the RunPod `--vllm colocate` path is
+> unaffected; `max_prompt_length` is kept and auto-dropped by the field-filter only on
+> trl versions that lack it. The diff below is the original aarch64 patch, for the record.
+
 ```diff
 diff --git a/tools/run_rlvr.py b/tools/run_rlvr.py
 index 9028cc5c..2f428cea 100644
