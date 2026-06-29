@@ -23,9 +23,23 @@
 > `tests/test_prosoche_safety.py`, `tests/test_distraction_signals.py`,
 > `tests/test_context_manager_focus.py`, `tests/test_focus_efficiency_frontier.py`.
 > Open claims tracked in `agi-proof/failure-ledger.md` (three `prosoche-*` rows).
-> **Not yet built** (next session): the opt-in `conscience_check` path (§2.4), the
-> goal-anchored SFT dataset (§4.1), MCP tools + skill, the cross-regulator
-> orthogonality column (§6), and the explicit-vs-derived robustness probe runner.
+>
+> **Now also shipped (second pass).** The opt-in **11th `conscience_check` path**
+> (`context={"consultProsoche": True, "attentionAnchor": {...}}` — off by default,
+> only ever acts on an `allow`, never weakens a stronger verdict, never prunes a
+> safety step). The **goal-anchored SFT dataset** (`tools/build_prosoche_sft.py` →
+> `training/prosoche/attention_sft.jsonl`, 3 balanced classes, closed-loop validated
+> through `focus_reward_axis`). **MCP tools** (`sophia_attention_assess`,
+> `sophia_distraction_check`, `sophia_prosoche_benchmark`) + **skill**
+> (`skills/prosoche.py` `focus_advocate`). The **cross-regulator orthogonality
+> column** (`tools/run_virtue_orthogonality_bench.py` now 5 gates × {truth,
+> direction, magnitude, relational, **allocation**}; clean diagonal, the
+> Temperance/Attention cell does not bleed). The **explicit-vs-derived robustness
+> probe** (`tools/run_prosoche_robustness.py` → `prosoche-robustness.json`, honest
+> explicit 0.75 vs derived 0.50 gap, reported not tuned).
+> **Still model-gated** (needs live compute, not buildable offline): the real
+> Focus-Efficiency-Frontier run (live model + ≥2 judge families) and the learned
+> goal-extraction seam that would close the derived-goal gap.
 >
 > **Why this doc exists.** The operator's ask: *"I have many gates to limit the AI's
 > action; I want the AI to know what its attention is — its goal / the rewards it
