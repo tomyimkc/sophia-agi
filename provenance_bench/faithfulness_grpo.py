@@ -342,7 +342,8 @@ def train(args: Any) -> int:
 
     g = getattr(args, "num_generations", 8)
     beta = getattr(args, "beta", 0.02)
-    max_steps = getattr(args, "max_steps", 0) or len(cases)
+    ms = getattr(args, "max_steps", 0)
+    max_steps = ms if (ms and ms > 0) else len(cases)  # run_rlvr defaults --max-steps to -1
     std_log = []
 
     for step in range(max_steps):

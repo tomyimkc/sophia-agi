@@ -33,11 +33,21 @@ on:
         type: choice
         options: [offline, live]
       task:
-        description: 'RLVR reward task: provenance / math (sympy) / code (hidden-tests-pass) / concept (concept-TBox gate)'
+        description: 'RLVR reward task: provenance / math (sympy) / code (hidden-tests-pass) / concept (concept-TBox gate) / faithfulness (retrieve-then-reason + counterfactual citation-drop)'
         required: true
         default: 'provenance'
         type: choice
-        options: [provenance, math, code, concept]
+        options: [provenance, math, code, concept, faithfulness]
+      entailment_provider:
+        description: 'faithfulness task only: live entailment LLM behind the verify seam (needs DEEPSEEK_API_KEY / LLMHUB_API_KEY repo secrets). Blank = lexical placeholder.'
+        required: false
+        default: ''
+        type: choice
+        options: ['', deepseek, llmhub]
+      limit:
+        description: 'faithfulness task only: cap training cases (blank/0 = all; use 24 for a cheap validation)'
+        required: false
+        default: ''
       model:
         description: 'Subject model (HF id). Default = code-capable Qwen2.5-Coder; GLM-4-9B scores 0/48 under the chat template (base too weak).'
         required: false
@@ -115,31 +125,45 @@ jobs:
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
         run: |
+          LIMIT="${{ github.event.inputs.limit }}"; [ -z "$LIMIT" ] && LIMIT=0
           python tools/runpod_rlvr.py --dry-run \
             --source git --branch "${{ github.ref_name }}" \
             --remote-mode "${{ github.event.inputs.remote_mode }}" \
             --task "${{ github.event.inputs.task }}" \
             --reward "${{ github.event.inputs.reward }}" \
+            --entailment-provider "${{ github.event.inputs.entailment_provider }}" \
+            --limit "$LIMIT" \
             --model "${{ github.event.inputs.model }}" \
             --gpu-type "${{ github.event.inputs.gpu_type }}"
 
       - name: Launch RunPod RLVR (rents GPU, runs over SSH, deletes pod)
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          # faithfulness task: forwarded into the pod env by runpod_rlvr.py (only when set).
+          # Add these as repo Actions secrets to use --entailment-provider; unused otherwise.
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          LLMHUB_API_KEY: ${{ secrets.LLMHUB_API_KEY }}
+          LLMHUB_BASE_URL: ${{ vars.LLMHUB_BASE_URL }}
         run: |
           INTERRUPTIBLE=""
           if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
           NETVOL=""
           if [ -n "${{ github.event.inputs.network_volume_id }}" ]; then NETVOL="--network-volume-id ${{ github.event.inputs.network_volume_id }}"; fi
+          # faithfulness uses a custom loop (no vLLM); other tasks keep the colocate vLLM stack.
+          VLLM="colocate"
+          if [ "${{ github.event.inputs.task }}" = "faithfulness" ]; then VLLM="none"; fi
+          LIMIT="${{ github.event.inputs.limit }}"; [ -z "$LIMIT" ] && LIMIT=0
           python tools/runpod_rlvr.py --yes \
             --source git --branch "${{ github.ref_name }}" \
             --remote-mode "${{ github.event.inputs.remote_mode }}" \
             --task "${{ github.event.inputs.task }}" \
             --reward "${{ github.event.inputs.reward }}" \
+            --entailment-provider "${{ github.event.inputs.entailment_provider }}" \
+            --limit "$LIMIT" \
             --model "${{ github.event.inputs.model }}" \
             --epochs "${{ github.event.inputs.epochs }}" \
             --seed "${{ github.event.inputs.seed }}" \
-            --quant bf16 --vllm colocate \
+            --quant bf16 --vllm "$VLLM" \
             --gpu-type "${{ github.event.inputs.gpu_type }}" \
             $INTERRUPTIBLE $NETVOL
 

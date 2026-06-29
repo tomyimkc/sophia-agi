@@ -172,6 +172,13 @@ def _build_create_payload(args: argparse.Namespace, public_key: str, api_key: st
     }
     if not args.no_remote_delete_watchdog and api_key:
         env["RUNPOD_API_KEY"] = api_key
+    # Faithfulness task: forward the entailment LLM key (+ optional LLMHub base url / CA)
+    # into the pod env so the on-pod verify seam works. Read from the launcher's environment
+    # (on the GH runner: repo Actions secrets), NEVER hardcoded. Only injected when present.
+    for _var in ("DEEPSEEK_API_KEY", "LLMHUB_API_KEY", "LLMHUB_BASE_URL"):
+        _val = os.environ.get(_var)
+        if _val:
+            env[_var] = _val
     payload: dict[str, Any] = {
         "name": args.name,
         "cloudType": args.cloud_type,
@@ -391,6 +398,10 @@ if [ "$SOPHIA_VLLM" = "none" ]; then
 else
   SOPHIA_LAUNCH="accelerate launch --num_processes 1 --num_machines 1"
 fi
+# Faithfulness-only flags: live entailment provider + a case cap for cheap validation.
+# Empty vars expand to nothing (no-op for the other tasks).
+ENT_FLAG=""; [ -n "$SOPHIA_ENTAILMENT" ] && ENT_FLAG="--entailment-provider $SOPHIA_ENTAILMENT"
+LIMIT_FLAG=""; [ "$SOPHIA_LIMIT" != "0" ] && LIMIT_FLAG="--limit $SOPHIA_LIMIT"
 $SOPHIA_LAUNCH tools/run_rlvr.py \\
   --task "$SOPHIA_TASK" \\
   --reward "$SOPHIA_REWARD" \\
@@ -400,7 +411,8 @@ $SOPHIA_LAUNCH tools/run_rlvr.py \\
   --epochs "$SOPHIA_EPOCHS" \\
   --seed "$SOPHIA_SEED" \\
   --out /workspace/sophia-runpod/rlvr.public-report.json \\
-  --output /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1
+  --output /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 \\
+  $ENT_FLAG $LIMIT_FLAG
 if [ -d /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 ]; then
   tar -czf /workspace/sophia-runpod/sophia-rlvr-v1.tar.gz \\
     -C /workspace/sophia-runpod/checkpoints sophia-rlvr-v1
@@ -410,13 +422,23 @@ if [ -d /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 ]; then
   # Non-fatal: if eval OOMs or fails, the training artifacts are still copied back.
   # --capability-panel (provenance task) runs the capability-delta panel as part of
   # this eval and embeds it in the .adapter-eval.json (additive; legacy unchanged).
-  python tools/eval_rlvr_adapter.py --mode real \\
-    --task "$SOPHIA_TASK" \\
-    --model "$SOPHIA_MODEL" \\
-    --adapter /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 \\
-    --seed "$SOPHIA_SEED" \\
-    --out /workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.json{capability_flag} \\
-    || echo "[runpod] adapter-eval failed (non-fatal); no SSIL gate input produced"
+  # The faithfulness task is NOT scored by eval_rlvr_adapter (provenance/code-specific);
+  # its base-vs-adapter held-out eval (faithfulness_eval with the trained adapter AS the
+  # local-HF policy) is a separate step — Open in the ledger. Here we only run the
+  # offline instrument smoke so a bad faithfulness build fails loudly on the pod.
+  if [ "$SOPHIA_TASK" = "faithfulness" ]; then
+    python tools/eval_faithfulness.py --mock \\
+      || echo "[runpod] faithfulness instrument smoke failed (non-fatal)"
+    echo "[runpod] faithfulness adapter trained; base-vs-adapter held-out eval is a separate gated step."
+  else
+    python tools/eval_rlvr_adapter.py --mode real \\
+      --task "$SOPHIA_TASK" \\
+      --model "$SOPHIA_MODEL" \\
+      --adapter /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 \\
+      --seed "$SOPHIA_SEED" \\
+      --out /workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.json{capability_flag} \\
+      || echo "[runpod] adapter-eval failed (non-fatal); no SSIL gate input produced"
+  fi
   # PRIMARY metric for the code task: the POWERED N=175 open-invention suite
   # (compositional generalization), scored by the guarded grader. The eval above is
   # the SECONDARY coarse 48-task lane. Both run on the SAME trained adapter; the
@@ -448,6 +470,8 @@ export PIP_CACHE_DIR=/workspace/.cache/pip
 export SOPHIA_MODEL={shlex.quote(args.model)}
 export SOPHIA_TASK={shlex.quote(args.task)}
 export SOPHIA_REWARD={shlex.quote(args.reward)}
+export SOPHIA_ENTAILMENT={shlex.quote(getattr(args, "entailment_provider", ""))}
+export SOPHIA_LIMIT={shlex.quote(str(getattr(args, "limit", 0)))}
 export SOPHIA_QUANT={shlex.quote(args.quant)}
 export SOPHIA_VLLM={shlex.quote(args.vllm)}
 export SOPHIA_EPOCHS={shlex.quote(str(args.epochs))}
@@ -610,8 +634,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--branch", default="", help="optional git branch/tag to clone")
     ap.add_argument("--model", default="zai-org/glm-4-9b-chat-hf")
     ap.add_argument("--remote-mode", choices=["offline", "live"], default="live", help="run only remote offline smoke test or full live GRPO")
-    ap.add_argument("--task", choices=["provenance", "math", "code", "concept"], default="provenance", help="RLVR reward task: provenance (provenance_faithful), math (sympy math_equivalent), code (hidden-tests-pass via code_exec), or concept (concept-TBox gate; no extra deps)")
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "faithfulness"], default="provenance", help="RLVR reward task: provenance (provenance_faithful), math (sympy math_equivalent), code (hidden-tests-pass via code_exec), concept (concept-TBox gate), or faithfulness (retrieve-then-reason GRPO + counterfactual citation-drop)")
     ap.add_argument("--reward", choices=["verifier", "gate", "multiaxis"], default="verifier", help="reward signal (provenance task): verifier (default), gate (single-axis), or multiaxis (Thesis D dense reward; M1 collapse comparison)")
+    ap.add_argument("--entailment-provider", choices=["", "deepseek", "llmhub"], default="",
+                    help="faithfulness task: live entailment LLM behind the verify seam "
+                         "(needs DEEPSEEK_API_KEY / LLMHUB_API_KEY forwarded to the pod); "
+                         "blank = lexical placeholder")
+    ap.add_argument("--limit", type=int, default=0,
+                    help="faithfulness task: cap training cases (0 = all; use e.g. 24 for a cheap validation)")
     ap.add_argument("--quant", choices=["bf16", "4bit"], default="bf16")
     ap.add_argument("--vllm", choices=["none", "server", "colocate"], default="none")
     ap.add_argument("--epochs", type=float, default=1.0)
