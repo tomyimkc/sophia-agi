@@ -191,6 +191,17 @@ def _build_create_payload(args: argparse.Namespace, public_key: str, api_key: st
         "dockerEntrypoint": [],
         "dockerStartCmd": _startup_cmd(args.auto_exit_seconds),
     }
+    # getattr: _build_create_payload is reused by other launchers (e.g. runpod_nccl_bench.py) whose
+    # arg parsers don't define --network-volume-id, so read it defensively.
+    netvol = getattr(args, "network_volume_id", "")
+    if netvol:
+        # Persistent network volume mounted at /workspace (where HF_HOME lives): the model weight
+        # cache then SURVIVES pod deletion, so subsequent runs skip the cold ~8GB+ download (billed
+        # GPU minutes) — the saving the ephemeral volumeInGb above CANNOT give (it dies with the pod).
+        # NB: a network volume is data-center-scoped, so the pod is pinned to that volume's DC (can
+        # reduce GPU availability there). Only worth it past the break-even runs/mo — see
+        # tools/runpod_volume_breakeven.py.
+        payload["networkVolumeId"] = netvol
     if args.allowed_cuda_versions:
         payload["allowedCudaVersions"] = [
             v.strip() for v in args.allowed_cuda_versions.split(",") if v.strip()
@@ -382,6 +393,7 @@ else
 fi
 $SOPHIA_LAUNCH tools/run_rlvr.py \\
   --task "$SOPHIA_TASK" \\
+  --step-domain "$SOPHIA_STEP_DOMAIN" \\
   --reward "$SOPHIA_REWARD" \\
   --model "$SOPHIA_MODEL" \\
   --quant "$SOPHIA_QUANT" \\
@@ -401,11 +413,26 @@ if [ -d /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 ]; then
   # this eval and embeds it in the .adapter-eval.json (additive; legacy unchanged).
   python tools/eval_rlvr_adapter.py --mode real \\
     --task "$SOPHIA_TASK" \\
+    --step-domain "$SOPHIA_STEP_DOMAIN" \\
     --model "$SOPHIA_MODEL" \\
     --adapter /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 \\
     --seed "$SOPHIA_SEED" \\
     --out /workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.json{capability_flag} \\
     || echo "[runpod] adapter-eval failed (non-fatal); no SSIL gate input produced"
+  # PRIMARY metric for the code task: the POWERED N=175 open-invention suite
+  # (compositional generalization), scored by the guarded grader. The eval above is
+  # the SECONDARY coarse 48-task lane. Both run on the SAME trained adapter; the
+  # invention report carries the integrity gate (checks.noRewardHacksAccepted) and
+  # the power flag (checks.powered) the measurement_spec treats as primary.
+  if [ "$SOPHIA_TASK" = "code" ]; then
+    python tools/eval_rlvr_adapter.py --mode real \\
+      --task invention \\
+      --model "$SOPHIA_MODEL" \\
+      --adapter /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 \\
+      --seed "$SOPHIA_SEED" \\
+      --out /workspace/sophia-runpod/sophia-rlvr-v1.invention-eval.json \\
+      || echo "[runpod] invention-eval failed (non-fatal)"
+  fi
 fi
 """
     else:
@@ -422,6 +449,7 @@ export TRANSFORMERS_CACHE=/workspace/.cache/huggingface/transformers
 export PIP_CACHE_DIR=/workspace/.cache/pip
 export SOPHIA_MODEL={shlex.quote(args.model)}
 export SOPHIA_TASK={shlex.quote(args.task)}
+export SOPHIA_STEP_DOMAIN={shlex.quote(args.step_domain)}
 export SOPHIA_REWARD={shlex.quote(args.reward)}
 export SOPHIA_QUANT={shlex.quote(args.quant)}
 export SOPHIA_VLLM={shlex.quote(args.vllm)}
@@ -457,7 +485,10 @@ PY
 python -m pip install --upgrade pip setuptools wheel
 # The math task's reward is sympy (math_equivalent); needed in BOTH modes so the
 # offline smoke's math invariants and the live reward can run.
-if [ "$SOPHIA_TASK" = "math" ]; then
+SOPHIA_NEED_SYMPY=0
+if [ "$SOPHIA_TASK" = "math" ]; then SOPHIA_NEED_SYMPY=1; fi
+if [ "$SOPHIA_TASK" = "step" ] && [ "$SOPHIA_STEP_DOMAIN" = "math" ]; then SOPHIA_NEED_SYMPY=1; fi
+if [ "$SOPHIA_NEED_SYMPY" = "1" ]; then
   python -m pip install -r requirements-math.txt
 fi
 # The code task's reward executes model-generated code (provenance_bench.code_exec);
@@ -471,7 +502,7 @@ if [ {shlex.quote(args.remote_mode)} = "live" ]; then
   python -m pip install -r /tmp/requirements-rl.sophia.txt
 fi
 python tools/validate_attribution.py
-python tools/run_rlvr.py --task "$SOPHIA_TASK" --model mock --dry-run --out /workspace/sophia-runpod/rlvr.offline-report.json
+python tools/run_rlvr.py --task "$SOPHIA_TASK" --step-domain "$SOPHIA_STEP_DOMAIN" --model mock --dry-run --out /workspace/sophia-runpod/rlvr.offline-report.json
 {live_cmd}
 echo "Sophia RLVR remote run complete."
 ls -lh /workspace/sophia-runpod/rlvr*.json || true
@@ -585,7 +616,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--branch", default="", help="optional git branch/tag to clone")
     ap.add_argument("--model", default="zai-org/glm-4-9b-chat-hf")
     ap.add_argument("--remote-mode", choices=["offline", "live"], default="live", help="run only remote offline smoke test or full live GRPO")
-    ap.add_argument("--task", choices=["provenance", "math", "code", "concept"], default="provenance", help="RLVR reward task: provenance (provenance_faithful), math (sympy math_equivalent), code (hidden-tests-pass via code_exec), or concept (concept-TBox gate; no extra deps)")
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "step"], default="provenance", help="RLVR reward task: provenance (provenance_faithful), math (sympy math_equivalent), code (hidden-tests-pass via code_exec), concept (concept-TBox gate), or step (process: every step verified)")
+    ap.add_argument("--step-domain", choices=["math", "physics"], default="math", help="for --task step: per-step oracle + held-out RL split (math needs sympy; physics is pure-Python)")
     ap.add_argument("--reward", choices=["verifier", "gate", "multiaxis"], default="verifier", help="reward signal (provenance task): verifier (default), gate (single-axis), or multiaxis (Thesis D dense reward; M1 collapse comparison)")
     ap.add_argument("--quant", choices=["bf16", "4bit"], default="bf16")
     ap.add_argument("--vllm", choices=["none", "server", "colocate"], default="none")
@@ -602,6 +634,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--image-name", default=DEFAULT_IMAGE)
     ap.add_argument("--container-disk-gb", type=int, default=120)
     ap.add_argument("--volume-gb", type=int, default=80)
+    ap.add_argument("--network-volume-id", default="",
+                    help="attach an existing persistent RunPod network volume at /workspace (HF_HOME) so the "
+                         "weight cache survives pod deletion; pod is then pinned to that volume's data center. "
+                         "Run tools/runpod_volume_breakeven.py first — only pays off past the break-even runs/mo.")
     ap.add_argument("--allowed-cuda-versions", default="")
     ap.add_argument("--ssh-timeout-s", type=int, default=1200)
     ap.add_argument("--auto-exit-seconds", type=int, default=6 * 60 * 60)
@@ -735,6 +771,13 @@ def main(argv: list[str] | None = None) -> int:
                 key_path,
                 "/workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.json",
                 args.artifacts_dir / f"{pod_id}.rlvr.adapter-eval.json",
+            )
+            # POWERED open-invention primary eval (code task; best-effort).
+            _scp_from_pod(
+                conn,
+                key_path,
+                "/workspace/sophia-runpod/sophia-rlvr-v1.invention-eval.json",
+                args.artifacts_dir / f"{pod_id}.rlvr.invention-eval.json",
             )
             _scp_from_pod(
                 conn,

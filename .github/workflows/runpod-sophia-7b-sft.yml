@@ -93,6 +93,7 @@ jobs:
         run: python tools/lint_claims.py
 
   runpod:
+    environment: runpod-paid
     needs: preflight
     runs-on: ubuntu-latest
     timeout-minutes: 480
@@ -120,7 +121,7 @@ jobs:
 
       - name: Download Stage-2 SFT artifacts (DPO only)
         if: github.event.inputs.stage == 'dpo' && github.event.inputs.sft_workflow_run_id != ''
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: runpod-sophia-7b-artifacts
           run-id: ${{ github.event.inputs.sft_workflow_run_id }}

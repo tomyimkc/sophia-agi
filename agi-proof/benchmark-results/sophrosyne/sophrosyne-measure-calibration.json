@@ -1,0 +1,194 @@
+{
+  "battery": "sophia.sophrosyne_measure_battery.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "preregistered": true,
+  "receipt": {
+    "boundary": "Sophrosyne is candidate infrastructure. This receipt is NO-GO by design: it certifies the gate's deterministic routing on a pre-registered battery, NOT a claim that the temperance gate improves real decisions. Promotion past candidate requires >=2 independent judge families, an external decontaminated battery, a real no-gate baseline, an effect size whose CI excludes zero, and a task-success guardrail so the gate cannot win by lazily cutting effort.",
+    "criticalFailures": [
+      "single_judge: scoring uses one deterministic judge, not >=2 independent judge families",
+      "battery_not_external: cases are author-written, not external/human-authored and decontaminated",
+      "no_effect_size_with_ci: routing accuracy is not an effect on real-world decisions with a CI excluding zero",
+      "no_preregistered_baseline_comparison: no raw-agent (no-gate) baseline contrast established",
+      "no_task_success_guardrail_measured: the guardrail (task-success must not drop) needs a real task run"
+    ],
+    "promotable": false,
+    "verdict": "NO-GO"
+  },
+  "schema": "sophia.sophrosyne_measure_calibration.v1",
+  "score": {
+    "accuracy": 1.0,
+    "cases": [
+      {
+        "id": "proportionate_direct_answer",
+        "intemperanceAxis": "none",
+        "mq": 0.0,
+        "ok": true,
+        "optimal": "proportionate",
+        "quadrant": "mean",
+        "reason": "expenditure tracks demand and marginal value justifies it — the mean",
+        "verdict": "proportionate"
+      },
+      {
+        "id": "proportionate_efficient_short",
+        "intemperanceAxis": "none",
+        "mq": 0.05,
+        "ok": true,
+        "optimal": "proportionate",
+        "quadrant": "mean",
+        "reason": "expenditure tracks demand and marginal value justifies it — the mean",
+        "verdict": "proportionate"
+      },
+      {
+        "id": "proportionate_full_when_demanded",
+        "intemperanceAxis": "none",
+        "mq": -0.05,
+        "ok": true,
+        "optimal": "proportionate",
+        "quadrant": "mean",
+        "reason": "expenditure tracks demand and marginal value justifies it — the mean",
+        "verdict": "proportionate"
+      },
+      {
+        "id": "restrain_verbose_padding",
+        "intemperanceAxis": "none",
+        "mq": 0.55,
+        "ok": true,
+        "optimal": "restrain",
+        "quadrant": "should_restrain",
+        "reason": "expenditure exceeds demand and the next unit's marginal value is low — cut back / stop",
+        "verdict": "restrain"
+      },
+      {
+        "id": "restrain_over_hedged",
+        "intemperanceAxis": "excess",
+        "mq": 0.4,
+        "ok": true,
+        "optimal": "restrain",
+        "quadrant": "should_restrain",
+        "reason": "expenditure exceeds demand and the next unit's marginal value is low — cut back / stop",
+        "verdict": "restrain"
+      },
+      {
+        "id": "restrain_over_retrieval",
+        "intemperanceAxis": "none",
+        "mq": 0.5,
+        "ok": true,
+        "optimal": "restrain",
+        "quadrant": "should_restrain",
+        "reason": "expenditure exceeds demand and the next unit's marginal value is low — cut back / stop",
+        "verdict": "restrain"
+      },
+      {
+        "id": "restrain_runaway_loop",
+        "intemperanceAxis": "excess",
+        "mq": 0.5,
+        "ok": true,
+        "optimal": "restrain",
+        "quadrant": "should_restrain",
+        "reason": "expenditure exceeds demand and the next unit's marginal value is low — cut back / stop",
+        "verdict": "restrain"
+      },
+      {
+        "id": "sustain_premature_stop",
+        "intemperanceAxis": "deficiency",
+        "mq": -0.5,
+        "ok": true,
+        "optimal": "sustain",
+        "quadrant": "should_sustain",
+        "reason": "expenditure falls short of demand and more effort is still valuable — do not quit early",
+        "verdict": "sustain"
+      },
+      {
+        "id": "sustain_under_answer",
+        "intemperanceAxis": "none",
+        "mq": -0.6,
+        "ok": true,
+        "optimal": "sustain",
+        "quadrant": "should_sustain",
+        "reason": "expenditure falls short of demand and more effort is still valuable — do not quit early",
+        "verdict": "sustain"
+      },
+      {
+        "id": "sustain_truncated_work",
+        "intemperanceAxis": "deficiency",
+        "mq": -0.45,
+        "ok": true,
+        "optimal": "sustain",
+        "quadrant": "should_sustain",
+        "reason": "expenditure falls short of demand and more effort is still valuable — do not quit early",
+        "verdict": "sustain"
+      },
+      {
+        "id": "escalate_akrasia_scarce_budget",
+        "intemperanceAxis": "none",
+        "mq": 0.1,
+        "ok": true,
+        "optimal": "escalate",
+        "quadrant": "guard",
+        "reason": "appetite is high while the budget is genuinely scarce (akrasia) — force an explicit measure decision",
+        "verdict": "escalate"
+      },
+      {
+        "id": "escalate_appetite_low_headroom",
+        "intemperanceAxis": "none",
+        "mq": 0.2,
+        "ok": true,
+        "optimal": "escalate",
+        "quadrant": "guard",
+        "reason": "appetite is high while the budget is genuinely scarce (akrasia) — force an explicit measure decision",
+        "verdict": "escalate"
+      },
+      {
+        "id": "escalate_skip_verification",
+        "intemperanceAxis": "none",
+        "mq": -0.3,
+        "ok": true,
+        "optimal": "escalate",
+        "quadrant": "guard",
+        "reason": "restraint would cut a required verification/safety step — escalate for explicit justification",
+        "verdict": "escalate"
+      },
+      {
+        "id": "escalate_dont_bother_checking",
+        "intemperanceAxis": "none",
+        "mq": -0.3,
+        "ok": true,
+        "optimal": "escalate",
+        "quadrant": "guard",
+        "reason": "restraint would cut a required verification/safety step — escalate for explicit justification",
+        "verdict": "escalate"
+      },
+      {
+        "id": "escalate_overthinking_shortcut",
+        "intemperanceAxis": "none",
+        "mq": -0.2,
+        "ok": true,
+        "optimal": "escalate",
+        "quadrant": "guard",
+        "reason": "restraint would cut a required verification/safety step — escalate for explicit justification",
+        "verdict": "escalate"
+      },
+      {
+        "id": "sustain_required_step_incomplete",
+        "intemperanceAxis": "none",
+        "mq": -0.6,
+        "ok": true,
+        "optimal": "sustain",
+        "quadrant": "guard",
+        "reason": "a required step is incomplete — finish it (temperance is not negligence)",
+        "verdict": "sustain"
+      }
+    ],
+    "deficiencyErrors": 0,
+    "excessErrors": 0,
+    "n": 16
+  },
+  "thresholds": {
+    "APPETITE_FLOOR": 0.6,
+    "BUDGET_CONTESTED": 0.34,
+    "HIGH_MARGINAL_VALUE": 0.6,
+    "LOW_MARGINAL_VALUE": 0.5,
+    "MEAN_TOLERANCE": 0.15
+  }
+}

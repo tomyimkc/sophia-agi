@@ -51,6 +51,9 @@ class ConscienceDecision:
     deception: dict[str, Any] = field(default_factory=dict)
     publicStandard: dict[str, Any] = field(default_factory=dict)
     consequence: dict[str, Any] = field(default_factory=dict)
+    courage: dict[str, Any] = field(default_factory=dict)
+    temperance: dict[str, Any] = field(default_factory=dict)
+    virtueArbitration: dict[str, Any] = field(default_factory=dict)
     recommendedActions: tuple[dict[str, Any], ...] = ()
     boundary: str = "Sophia is an AGI-candidate verifier-gated epistemic framework; this decision is not proof of AGI."
 
@@ -71,6 +74,9 @@ class ConscienceDecision:
             "deception": self.deception,
             "publicStandard": self.publicStandard,
             "consequence": self.consequence,
+            "courage": self.courage,
+            "temperance": self.temperance,
+            "virtueArbitration": self.virtueArbitration,
             "recommendedActions": list(self.recommendedActions),
             "boundary": self.boundary,
         }
@@ -259,6 +265,86 @@ def conscience_check(
     else:
         verdict, reason = "allow", "all conscience gates passed"
 
+    # 9th path — Andreia courage gate (opt-in via context["consultCourage"]=True,
+    # like the consequence path). The conscience kernel is a fear apparatus: six of
+    # seven verdicts are retreat, so it cannot tell genuine prudence from "cowardice
+    # disguised as prudence". When consulted, Andreia annotates the decision and may
+    # upgrade an otherwise-quiet ``abstain`` to ``escalate`` when the hold looks
+    # fear-driven (high confidence + high cost of silence) rather than risk-driven —
+    # forcing an explicit justification instead of a silent retreat. It NEVER turns a
+    # block/allow/retrieve/clarify into something weaker and never overrides a hard
+    # prohibition (courage is not recklessness); the worst it can do is ask for
+    # justification. Off by default, so existing behavior is unchanged.
+    courage: dict[str, Any] = {}
+    if context.get("consultCourage"):
+        from agent.andreia import assess_courage
+        courage = assess_courage(text, samples=samples, context={
+            "highRisk": high,
+            "proposedHold": verdict == "abstain",
+        }).to_dict()
+        if (verdict == "abstain" and courage.get("verdict") == "escalate"
+                and not courage.get("blockRespected")):
+            verdict = "escalate"
+            reason = "courage gate: the abstain looks fear-driven — escalate for explicit justification"
+
+    # 10th path — Sophrosyne temperance gate (opt-in via context["consultTemperance"]=True,
+    # like the consequence and courage paths). The conscience kernel regulates truth and
+    # Andreia regulates direction; neither regulates *magnitude* (how much effort/words/
+    # tool-calls, and when to stop). When consulted, Sophrosyne annotates the decision and,
+    # conservatively, may:
+    #   - downgrade an over-expenditure ``allow`` to ``revise`` (trim) when temperance says
+    #     ``restrain`` on the excess axis — tighter wording, never weaker safety;
+    #   - upgrade an otherwise-quiet ``abstain`` to ``escalate`` when temperance says
+    #     ``sustain`` (a premature/lazy abstention with effort still worth spending) —
+    #     forcing explicit justification instead of silently quitting.
+    # It NEVER weakens a block/retrieve/clarify, never suppresses a required verification
+    # step (temperance is not negligence; stepRespected guards that), and is off by default.
+    temperance: dict[str, Any] = {}
+    if context.get("consultTemperance"):
+        from agent.sophrosyne import assess_temperance
+        temperance = assess_temperance(text, context={
+            **{k: v for k, v in context.items() if k != "consultTemperance"},
+            "canClaimAGI": context.get("canClaimAGI", False),
+            "proposedStop": verdict == "abstain",
+        }).to_dict()
+        t_verdict = temperance.get("verdict")
+        if not temperance.get("stepRespected"):
+            if verdict == "allow" and t_verdict == "restrain":
+                verdict = "revise"
+                reason = "temperance gate: expenditure exceeds demand with low marginal value — trim (restrain)"
+            elif verdict == "abstain" and t_verdict == "sustain":
+                verdict = "escalate"
+                reason = "temperance gate: the abstain looks premature — effort is still valuable, escalate for explicit justification"
+
+    # 11th path — Dikaiosyne Role B: the inter-virtue arbiter (the *Republic* harmony of the
+    # four cardinal virtues), opt-in via context["consultVirtues"]=True. It computes the
+    # courage / temperance / justice verdicts (reusing the 9th/10th-path reports when present)
+    # and runs the pre-registered lexical-priority arbiter
+    # (hard_prohibition > Wisdom > Justice > Courage > Temperance), attaching the harmonized
+    # posture as an AUDIT annotation under ``decision.virtueArbitration``. It is
+    # INFORMATIONAL-ONLY here — it never changes the conscience verdict, so it is byte-identical
+    # when off. Making the arbiter authoritative over the verdict is a separate, pre-registered
+    # measurement decision, not a silent behaviour change. canClaimAGI stays false.
+    virtue_arbitration: dict[str, Any] = {}
+    if context.get("consultVirtues"):
+        from agent.andreia import assess_courage
+        from agent.dikaiosyne import assess_justice
+        from agent.sophrosyne import assess_temperance
+        from agent.virtue_parliament import arbitrate
+        can_claim_agi = bool(context.get("canClaimAGI", False))
+        c_verdict = courage.get("verdict") or assess_courage(
+            text, samples=samples, context={"highRisk": high}).to_dict()["verdict"]
+        t_verdict = temperance.get("verdict") or assess_temperance(
+            text, context={"canClaimAGI": can_claim_agi, "proposedStop": verdict == "abstain"},
+        ).to_dict()["verdict"]
+        j_verdict = assess_justice(
+            text, context={"canClaimAGI": can_claim_agi},
+        ).to_dict()["verdict"]
+        virtue_arbitration = arbitrate(
+            wisdom=verdict, courage=c_verdict, temperance=t_verdict,
+            justice=j_verdict, hard_block=(verdict == "block"),
+        ).to_dict()
+
     decision = ConscienceDecision(
         verdict=verdict,
         reason=reason,
@@ -272,6 +358,9 @@ def conscience_check(
         deception=deception,
         publicStandard=public_standard,
         consequence=consequence,
+        courage=courage,
+        temperance=temperance,
+        virtueArbitration=virtue_arbitration,
         recommendedActions=tuple(agenda_actions),
     )
 

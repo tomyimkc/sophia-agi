@@ -30,6 +30,7 @@ from agent.continual_plasticity import (  # noqa: E402
     evaluate_update_multigoal,
 )
 from agent.formal_verifier import check_lattice_consistency  # noqa: E402
+from agent.auto_approval_breaker import promotion_block_reason  # noqa: E402
 from agent.godel_oracle import evaluate_for_promotion  # noqa: E402
 
 DEFAULT_PROTECTED = ("religion", "history")
@@ -249,6 +250,10 @@ def main(argv: list[str] | None = None) -> int:
         help="OFF by default: allow promotion without z3 solver attestation (stamps solverChecked:false)",
     )
     ap.add_argument("--dry-run", action="store_true", help="evaluate and print; do not write the report")
+    ap.add_argument("--breaker-state", default="agi-proof/aats/breaker-state.json",
+                    help="auto-approval circuit-breaker state file; a TRIPPED breaker fail-closed "
+                         "BLOCKS promotion (opt-in: ignored if the file is absent — no canary regime). "
+                         "See agent/auto_approval_breaker.py + tools/run_canary_breaker.py.")
     args = ap.parse_args(argv)
 
     adapter_ladder = _load(ROOT / args.adapter_ladder)
@@ -375,6 +380,12 @@ def main(argv: list[str] | None = None) -> int:
         final_verdict = "reject"
     if legacy_proof.get("verdict") == "rejected" and final_verdict == "promote":
         final_verdict = "reject"
+    # Fail-closed external precondition: a TRIPPED auto-approval circuit breaker blocks
+    # ALL promotion (autonomy is off until a human re-arms it). Opt-in — no breaker
+    # state file means no canary regime is configured and this is a no-op.
+    breaker_reason = promotion_block_reason((ROOT / args.breaker_state) if not Path(args.breaker_state).is_absolute() else args.breaker_state)
+    if breaker_reason and final_verdict == "promote":
+        final_verdict = "reject"
 
     report = {
         "schema": "sophia.adapter_promotion.v2",
@@ -410,6 +421,12 @@ def main(argv: list[str] | None = None) -> int:
             "forgetting": bool(retention and retention.forgot(args.max_retention_regression)),
         },
         "decision": decision.to_dict(),
+        "autoApprovalBreaker": {
+            "invariant": "a tripped auto-approval circuit breaker fail-closed blocks promotion",
+            "statePath": args.breaker_state,
+            "blocked": bool(breaker_reason),
+            "reason": breaker_reason,
+        },
         "inputs": {
             "adapterLadder": args.adapter_ladder,
             "baselineLadder": args.baseline_ladder if baseline_ladder else None,

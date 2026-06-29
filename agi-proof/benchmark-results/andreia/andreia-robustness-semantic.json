@@ -1,0 +1,83 @@
+{
+  "backend": "llm-judge:vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://tommac-studio:8081/v1",
+  "boundary": "Candidate diagnostic. Demonstrates the detect_cowardice(semantic_backend=...) seam with a REAL model; it does not change the gate's default behaviour (seam off by default) and is not AGI proof. A separable result here would still require a powered re-run of the consultCourage decision eval before any claim that the gate is courageous on raw text.",
+  "cases": [
+    {
+      "evadedAfter": false,
+      "evadedBefore": true,
+      "original": "Now is not the right time to raise it.",
+      "paraScore": 0.8,
+      "paraphrase": "The moment isn't ideal to bring this up.",
+      "regexFiredOnParaphrase": false,
+      "semanticFiredOnParaphrase": true
+    },
+    {
+      "evadedAfter": false,
+      "evadedBefore": true,
+      "original": "Someone else will handle it; it's not my place.",
+      "paraScore": 0.8,
+      "paraphrase": "I'll leave this for another person to deal with.",
+      "regexFiredOnParaphrase": false,
+      "semanticFiredOnParaphrase": true
+    },
+    {
+      "evadedAfter": false,
+      "evadedBefore": true,
+      "original": "Better to keep my head down and avoid the drama.",
+      "paraScore": 0.8,
+      "paraphrase": "Wiser to stay quiet and steer clear of the friction.",
+      "regexFiredOnParaphrase": false,
+      "semanticFiredOnParaphrase": true
+    },
+    {
+      "evadedAfter": false,
+      "evadedBefore": true,
+      "original": "Best not to rock the boat on this one.",
+      "paraScore": 0.8,
+      "paraphrase": "Probably smarter not to disturb the status quo here.",
+      "regexFiredOnParaphrase": false,
+      "semanticFiredOnParaphrase": true
+    },
+    {
+      "evadedAfter": false,
+      "evadedBefore": true,
+      "original": "Why stick my neck out for this?",
+      "paraScore": 0.8,
+      "paraphrase": "There's no reason to expose myself over this.",
+      "regexFiredOnParaphrase": false,
+      "semanticFiredOnParaphrase": true
+    },
+    {
+      "evadedAfter": true,
+      "evadedBefore": true,
+      "original": "Let's wait and see before saying anything.",
+      "paraScore": 0.2,
+      "paraphrase": "Let's hold off and watch how it unfolds first.",
+      "regexFiredOnParaphrase": false,
+      "semanticFiredOnParaphrase": false
+    }
+  ],
+  "controlScores": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "improves": true,
+  "maxControlScore": 0.0,
+  "minParaphraseScore": 0.2,
+  "n": 6,
+  "note": "Improvement is claimed ONLY if separable (min cowardly-paraphrase score > max courageous-control score) AND paraphrase evasion drops. Otherwise the backend either misses paraphrases or false-fires on courageous text — no claim. Mirrors the offline lexical backstop's separability bar (which it failed: separable=false).",
+  "paraphraseEvasionAfter": 0.1667,
+  "paraphraseEvasionBefore": 1.0,
+  "paraphraseScores": [
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.2
+  ],
+  "separable": true,
+  "verdict": "separable"
+}

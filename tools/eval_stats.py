@@ -176,6 +176,67 @@ def sigma_from_ci(ci_lo: float, ci_hi: float, n: int, alpha: float = 0.05) -> fl
     return h * math.sqrt(max(1, n)) / z_quantile(1 - alpha / 2)
 
 
+def cohen_kappa(a: "Sequence[str]", b: "Sequence[str]") -> "float | None":
+    """Multi-category Cohen's kappa for two raters over the SAME items. Categories are
+    inferred from the data. Returns None if undefined (n<2 or chance agreement == 1).
+    Prevalence/marginal asymmetry can DEFLATE kappa even at high observed agreement —
+    pair it with gwet_ac1 (the prevalence-robust companion) as the m3-sft rows do."""
+    pairs = [(x, y) for x, y in zip(a, b) if x is not None and y is not None]
+    n = len(pairs)
+    if n < 2:
+        return None
+    cats = sorted({c for pair in pairs for c in pair})
+    po = sum(1 for x, y in pairs if x == y) / n
+    px = {c: sum(1 for x, _ in pairs if x == c) / n for c in cats}
+    py = {c: sum(1 for _, y in pairs if y == c) / n for c in cats}
+    pe = sum(px[c] * py[c] for c in cats)
+    # Full precision: callers round only when presenting/serializing, so threshold
+    # comparisons (kappa>=0.40) and bootstrap resampling are not coarsened.
+    return (po - pe) / (1 - pe) if pe != 1 else None
+
+
+def gwet_ac1(a: "Sequence[str]", b: "Sequence[str]") -> "float | None":
+    """Multi-category Gwet's AC1 for two raters — prevalence-robust agreement. Chance
+    agreement uses pi_k*(1-pi_k) summed over categories (pi_k = mean marginal of cat k),
+    which does NOT collapse to 1 under skewed prevalence the way kappa's does."""
+    pairs = [(x, y) for x, y in zip(a, b) if x is not None and y is not None]
+    n = len(pairs)
+    if n < 2:
+        return None
+    cats = sorted({c for pair in pairs for c in pair})
+    q = len(cats)
+    if q < 2:
+        return 1.0  # both raters used a single category and always agreed
+    po = sum(1 for x, y in pairs if x == y) / n
+    pi = {c: (sum(1 for x, _ in pairs if x == c) + sum(1 for _, y in pairs if y == c)) / (2 * n) for c in cats}
+    pe = sum(pi[c] * (1 - pi[c]) for c in cats) / (q - 1)
+    # Full precision (round at presentation only) — see cohen_kappa.
+    return (po - pe) / (1 - pe) if pe != 1 else None
+
+
+def bootstrap_ci_agreement(a: "Sequence[str]", b: "Sequence[str]", stat, alpha: float = 0.05,
+                           iters: int = 2000, seed: int = 0) -> "list[float]":
+    """Percentile-bootstrap CI for a paired agreement statistic (cohen_kappa / gwet_ac1)
+    by resampling item-pairs. Returns [lo, hi] (or [None, None] if the stat is undefined)."""
+    pairs = [(x, y) for x, y in zip(a, b) if x is not None and y is not None]
+    n = len(pairs)
+    if n < 2:
+        return [None, None]
+    rnd = random.Random(seed)
+    boot: list[float] = []
+    for _ in range(iters):
+        sample = [pairs[rnd.randrange(n)] for _ in range(n)]
+        v = stat([p[0] for p in sample], [p[1] for p in sample])
+        if v is not None:
+            boot.append(v)
+    if not boot:
+        return [None, None]
+    boot.sort()
+    lo = boot[int((alpha / 2) * len(boot))]
+    hi = boot[min(len(boot) - 1, int((1 - alpha / 2) * len(boot)))]
+    return [round(lo, 4), round(hi, 4)]
+
+
 def mcnemar(base_correct: Sequence[int], adapter_correct: Sequence[int]) -> dict:
     """Paired McNemar test for two adapters on the SAME items. b = base-right/adapter-wrong,
     c = base-wrong/adapter-right. Returns the discordant counts + a chi-square (cc) p-value."""

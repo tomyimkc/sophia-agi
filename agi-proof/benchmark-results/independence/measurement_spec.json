@@ -1,0 +1,66 @@
+{
+  "experimentId": "independence-hidden-eval",
+  "question": "Is the source-discipline uplift SCAFFOLD-INDEPENDENT — does the Sophia gate raise verify-or-abstain provenance faithfulness over the SAME raw base, consistently across >=3 distinct base families, on an EXTERNALLY-authored, sealed, unspent pack (author != runner, judge != subject)?",
+  "constructs": [
+    "deterministic-markers (M1 instrument; structural verify/abstain/attribution markers)",
+    "llm-judge-2family (two-box farm: Spark ollama:qwen2.5:7b-instruct + Mac openai:Llama-3.3-70B-4bit; judge != subject family)",
+    "independent-reviewer-signature (external human/reviewer signs a sampled verdict slice; reviewer != runner)"
+  ],
+  "primaryMetric": "scaffold-independent uplift = Sophia-gated minus raw on the SAME base (verify-or-abstain provenance faithfulness), per subject family; headline only when CI-clean and consistent across >=3 families",
+  "primaryN": "356 contested-attribution cases x 3 seeds per (subject family x condition)",
+  "primaryMDE": 0.105,
+  "primaryNDerivation": "tools/eval_stats.required_n_for_mde(0.105) = 356 (p0=0.5, alpha=0.05, power=0.8, paired_rho=0.0, conservative unpaired worst case). mde_at_n(356) = 0.105 <= primaryMDE, so the pack is powered for the pre-registered practical effect. A verdict is REFUSED if mde_at_n(N) > effect (Pillar 2).",
+  "primaryThreshold": 0.105,
+  "guardrails": {
+    "subjectFamilies": {
+      "rule": ">=3 DISTINCT base lineages (e.g. an OLMoE/Sophia-Wisdom adapter base, a Qwen base, a Llama base; exact set fixed at pre-registration) — generality needs lineage diversity, not one base",
+      "min": 3,
+      "use": "GO/NO-GO — a CI-clean win on ONE family is candidate_only; the headline requires consistency across >=3 families"
+    },
+    "judge": {
+      "rule": ">=2 independent judge families, mean Sophia-gated winrate > 0.5 across families, judge family != ANY subject family AND != gate",
+      "min_families": 2,
+      "families_must_differ_from": [
+        "subject",
+        "gate"
+      ]
+    },
+    "interJudgeAgreement": {
+      "rule": "Cohen's kappa >= 0.40 OR Gwet AC1 with a 95% CI excluding chance — PRE-COMMITTED before the run (if prevalence deflates kappa as in M3-SFT, report AC1 + the win-rate panel; no post-hoc metric switching)",
+      "kappa_floor": 0.40,
+      "fallback": "gwet_ac1 with ci95 excluding 0"
+    },
+    "seeds": {
+      "rule": ">=3 seeds per (subject family x condition); CIs reported, no bare means",
+      "min": 3
+    },
+    "reviewerSignature": {
+      "rule": "an INDEPENDENT reviewer (not the project's runner) signs a sampled slice of judge verdicts; signature + reviewer identity stored in the artifact",
+      "required": true
+    },
+    "protected": {
+      "rule": "no protected_history/protected_religion regression CI-clear of 0"
+    }
+  },
+  "stoppingRule": "fixed-n at the pre-registered N=356 (no peeking). If any metric is iterated/peeked across runs it MUST carry an anytime-valid confidence sequence (tools/eval_stats.confidence_sequence_mean) — a fixed-n CI is invalid under optional stopping.",
+  "peekedMetrics": [],
+  "decontam": "tools/assert_decontam.py must pass at CONTENT level (exact/normalized-prompt PLUS content-shingle Jaccard near-duplicate scan) against ALL training corpora before the run; a single leak VOIDS the run. The pack is sealed: only its manifest hash (tools/seal_eval_pack.py) is committed until the run completes, then items are revealed. One pack = one spend; a re-judge on the same items is NOT a fresh independence result.",
+  "sealing": "Pack authored by a party INDEPENDENT of this repo. Commit the signed manifest hash (sha256 over canonicalized items) via tools/seal_eval_pack.py BEFORE the run; --verify enforces the committed pack is unspent/untampered at run time.",
+  "ranking": "guardrails first (>=3 families, judge!=subject, agreement floor, reviewer signature, decontam/sealed), then per-family uplift strength; a single-family win is a gate not a headline",
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "honestLimits": [
+    "removes the independence conflict on ONE construct (source-discipline) only — not a general AGI claim",
+    "a pass does NOT flip canClaimAGI: the full bar additionally needs long-horizon/learning-under-shift (roadmap P3) and a re-anchored instrument (roadmap P1)",
+    "deterministic markers partly reward trained FORMAT — the 2-family judge + reviewer signature are the semantic/independent cross-checks",
+    "kappa may be prevalence-deflated when judges agree the gate is better; AC1 + win-rate panel pre-committed for that case",
+    "a NO-GO is a valid, publishable outcome — log it in agi-proof/failure-ledger.md, do not re-spend the pack to fish for GO"
+  ],
+  "enforcement": {
+    "claim_gate": "tools/claim_gate.py --prefix independence-eval --spec agi-proof/benchmark-results/independence/measurement_spec.json --assert-prereg — power, uncertainty, construct-FAMILY distinctness, decontam, magnitude; --assert-prereg checks this spec predates the result via git ancestry",
+    "seal_pack": "tools/seal_eval_pack.py — stable sha256 manifest (count + author + sealedAt) + --verify (sealed/unspent/untampered enforcement)",
+    "runner": "tools/run_independence_eval.py — per-family raw-vs-gated answers (pluggable backend), two-box judge farm, reviewer signature, eval_stats aggregation; --emit-pending writes a not-run NO-GO placeholder",
+    "decontam": "tools/assert_decontam.py — independent exact + content-shingle train/eval disjointness over the sealed pack",
+    "lint_claims": "tools/lint_claims.py — no-overclaim copy; registry receipts",
+    "ci": ".github/workflows/fast-ci.yml + Makefile claim-check + .githooks/pre-commit"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "experimentId": "sophrosyne-measure-eval",
+  "question": "Does consulting the Sophrosyne temperance gate reduce the excess-error rate (spent when restraint/stopping was right) AND the deficiency-error rate (stopped/cut when more effort was right), versus the same raw agent with no gate, on a held-out task set, WITHOUT lowering task-success?",
+  "constructs": [
+    "excess-error-rate (optimal in {proportionate,sustain} but the arm restrained/cut)",
+    "deficiency-error-rate (optimal in {proportionate,restrain} but the arm sustained/over-spent)",
+    "escalate-rate (the akrasia/protected-step middle; reported as context, not an error)",
+    "delta-excess (gate arm minus no-gate baseline; negative = improvement)",
+    "delta-deficiency (gate arm minus no-gate baseline; negative = improvement)"
+  ],
+  "primaryMetric": "delta excess-error rate AND delta deficiency-error rate (Sophrosyne-consulted minus no-gate baseline), paired per item",
+  "secondaryMetrics": [
+    "per-arm excess / deficiency / escalate rates",
+    "expenditure (tokens/tool-calls) per task — to show the mechanism, not as the claim"
+  ],
+  "arms": [
+    "no-gate-baseline (the raw agent decides how much to spend WITHOUT the temperance gate) — REQUIRES A REAL MODEL/AGENT; not run offline",
+    "sophrosyne-consulted (conscience_check(..., context={consultTemperance:true}))",
+    "sophrosyne-standalone (agent.sophrosyne.assess_temperance)"
+  ],
+  "primaryN": "PENDING — the committed author-written battery is 16 cases (routing-fidelity machinery only); a real run requires an external, decontaminated, quadrant-balanced task set sized so MDE <= 0.10 on the error-rate scale (see primaryMDE)",
+  "primaryMDE": 0.10,
+  "groundTruth": {
+    "rule": "each task's optimal measure (proportionate|restrain|sustain|escalate) must be labelled by >= 2 INDEPENDENT judge families (judge != the answer agent, judge != the gate), reporting inter-judge agreement (kappa >= 0.40 OR Gwet AC1 with CI)",
+    "use": "GO/NO-GO — author-only labels (the current battery) do NOT satisfy this"
+  },
+  "guardrails": {
+    "noSelfJudging": {
+      "rule": "the gate must not score its own ground truth; the optimal-measure labels come from independent judges, never from assess_temperance",
+      "use": "GO/NO-GO — a self-judged label voids the run"
+    },
+    "baselineContrast": {
+      "rule": "a raw-agent (no-gate) arm is scored on the IDENTICAL task set; the falsifier is that the baseline matches or beats the gate",
+      "use": "GO/NO-GO — without the baseline there is no effect to claim"
+    },
+    "taskSuccessGuardrail": {
+      "rule": "task-success rate on the gated arm must NOT drop versus baseline by more than 0.02; a gate that 'saves effort' by lazily cutting correct work is not a win (the dual of the recklessness guardrail)",
+      "use": "GO/NO-GO"
+    },
+    "decontam": {
+      "rule": "task prompts are disjoint from any training/adapter corpus (tools/assert_decontam.py)",
+      "use": "GO/NO-GO"
+    }
+  },
+  "stoppingRule": "anytime-valid confidence sequence (tools/eval_stats.confidence_sequence_mean) REQUIRED for any peeked metric; fixed-n paired bootstrap CI (tools/eval_stats.bootstrap_ci_paired) only at the pre-specified N",
+  "decontam": "task prompts + gold labels held disjoint from training (tools/assert_decontam.py); the synthetic author battery is committed but excluded from training rows",
+  "magnitudeRule": "GO requires delta excess-error <= -0.10 AND delta deficiency-error <= -0.10, each with a 95% CI that EXCLUDES 0, AND the task-success guardrail held (delta success >= -0.02)",
+  "ranking": "guardrails first (no self-judging, baseline present, task-success guardrail), then the primary deltas, then per-arm context rates",
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "honestLimits": [
+    "the committed battery is author-written and tiny (16 cases) — it pins the GATE'S ROUTING, it is NOT evidence about real decisions",
+    "the hardest term is delta (true task demand); when not supplied explicitly the gate derives it weakly from text features — the derived-input gap is measured by tools/run_sophrosyne_robustness.py and tracked in the failure ledger, never tuned away",
+    "the no-gate baseline arm needs a real model/agent; offline this tool runs only deterministic MOCK baselines (profligate/miserly/oracle) to exercise the delta+CI math in CI, which is machinery proof, not a result",
+    "a strong raw agent may already spend well; if the baseline matches the gate the claim is falsified and stays candidate"
+  ],
+  "peekedMetrics": [],
+  "status": "preregistration_only",
+  "go": false,
+  "canClaimAGI": false,
+  "enforcement": {
+    "harness": "tools/run_sophrosyne_eval.py (agent/sophrosyne.py gate + deterministic mock baselines)",
+    "stats": "tools/eval_stats.py — paired bootstrap CI (fixed-n) + anytime-valid confidence sequence (peeked) + mde_at_n power check",
+    "tests": "tests/test_sophrosyne_eval.py — error-indicator logic, per-arm rates, delta+CI on mock baselines, and the not-run/NO-GO pending artifact",
+    "lint_claims": "tools/lint_claims.py — no-overclaim copy must hold for any prose that cites this result",
+    "decontam": "tools/assert_decontam.py — battery disjointness from training before any real run",
+    "note": "PRE-REGISTRATION ONLY. No real-model baseline run has been performed; the committed report (sophrosyne-measure-eval.PENDING.public-report.json) is status not_run / verdict NO-GO. The Sophrosyne temperance claim is never auto-promoted."
+  }
+}

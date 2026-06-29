@@ -1,0 +1,6 @@
+{"id": "good-arith-true", "text": "2 + 2 = 4", "expect_approve": true, "kind": "arithmetic"}
+{"id": "good-plato-republic", "text": "Plato wrote The Republic.", "expect_approve": true, "kind": "authorship"}
+{"id": "good-kant-critique", "text": "Kant wrote the Critique of Pure Reason.", "expect_approve": true, "kind": "authorship"}
+{"id": "bad-arith-false", "text": "2 + 2 = 5", "expect_approve": false, "kind": "arithmetic"}
+{"id": "bad-aristotle-critique", "text": "Aristotle wrote the Critique of Pure Reason.", "expect_approve": false, "kind": "authorship"}
+{"id": "bad-aristotle-hamlet", "text": "Aristotle wrote Hamlet.", "expect_approve": false, "kind": "authorship"}
