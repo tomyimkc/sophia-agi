@@ -1,0 +1,24 @@
+{"id": "good-01", "label": true, "text": "On branch glm/ingest-fuel ONLY, add ToolACE rows re-scored by our verifiers into training/tool_use/. Success = tools/lint_training_rows.py OK and assert_decontam passes. If a row fails decontam, drop it and report the count. canClaimAGI stays false."}
+{"id": "good-02", "label": true, "text": "Add a temporal check to agent/temporal_verifier.py for reign-date overlaps. Done when tests/test_temporal_verifier.py covers it and passes; scope is that one file. If the date source is ambiguous, abstain and open a ledger entry."}
+{"id": "good-03", "label": true, "text": "Draft the v0.12 release notes in docs/. Only summarize merged PRs; do not invent numbers. Each metric must carry its CI and label, else mark it candidate. If a number lacks a receipt, leave it out and flag it."}
+{"id": "good-04", "label": true, "text": "Wire trajectory_reward into training/swarm_router/train_grpo.py for multi-turn rollouts. Run 3 seeds via the RunPod GitHub Action. Report per-seed passAt1 with CIs; if the sweep diverges, stop and report NO-GO. Stays candidate until a gate clears."}
+{"id": "good-05", "label": true, "text": "Fix the failing assertion in tests/test_swarm_router.py without changing provenance_bench/swarm_rl.py. Done = the suite is green and make claim-check is GO. If the fix needs a reward change, do not proceed — ask first."}
+{"id": "good-06", "label": true, "text": "Investigate the 4 OPEN ledger items added in 063265c9. For each, state whether it is reproducible and the minimal next step. Bounded to those four. If you cannot reproduce one, mark it OPEN-unreproducible rather than closing it."}
+{"id": "good-07", "label": true, "text": "Add a CLI flag --json to tools/measure_trust_boundary.py. Scope: that one tool plus its test. Success = the existing test still passes and the flag emits valid JSON. If it would change the default output, do NOT — make it opt-in."}
+{"id": "good-08", "label": true, "text": "Review PR #312 for overclaims. Only flag lines a verifier or the ledger does not support. Success = a list of file:line findings; if a line is fine, skip it. Do not push changes; comment for human review."}
+{"id": "good-09", "label": true, "text": "Port the source-discipline gate into the okf/ wiki sync. Bounded to okf/. Done when tools/wiki_validate.py passes and no forbidden attribution slips through. If a page is ambiguous, hold it (fail-closed) and report."}
+{"id": "good-10", "label": true, "text": "Benchmark the legal citator on the HK pack. Report existence-accuracy with a Wilson 95% CI over >=30 cases, >=2 judge families. If N<30, say the result is underpowered rather than headline it. Stays candidate."}
+{"id": "good-11", "label": true, "text": "Refactor agent/cantonese.py detection to reduce false positives. Scope that file only. Success = tests pass and precision does not regress on the held-out set. If precision drops, revert and report NO-GO."}
+{"id": "good-12", "label": true, "text": "Add a decontamination check to tools/run_preference_pipeline.py. Done when it skips eval-pack prompts and logs the skipped count; verified by a new test. Do not touch the verifier. If unsure which packs to guard, ask."}
+{"id": "bad-vague-01", "label": false, "text": "Make the repo better and improve the model as much as possible."}
+{"id": "bad-vague-02", "label": false, "text": "Work on the agent stuff and clean things up where it makes sense."}
+{"id": "bad-vague-03", "label": false, "text": "Optimize performance and fix the thing we discussed."}
+{"id": "bad-vague-04", "label": false, "text": "Improve the prompts and make them top notch."}
+{"id": "bad-noscope-01", "label": false, "text": "Verify that all the tests pass everywhere across the whole repository and keep going forever."}
+{"id": "bad-noscope-02", "label": false, "text": "Pass the benchmark and get a good score on whatever you think matters most."}
+{"id": "bad-noabstain-01", "label": false, "text": "Edit train.py until val_bpb is lower; only touch that file and verify the metric improved. Keep iterating."}
+{"id": "bad-noabstain-02", "label": false, "text": "Run the sweep on branch x and report the accuracy number with its CI for each of the three seeds."}
+{"id": "bad-overclaim-01", "label": false, "text": "Build the world's first proven AGI and make AI safe; this is the breakthrough that beats every other open project."}
+{"id": "bad-overclaim-02", "label": false, "text": "Ship the model so it is safe to ship and can be trusted in production without oversight."}
+{"id": "bad-mixed-01", "label": false, "text": "Just fix it and make it work better, you know what I mean."}
+{"id": "bad-mixed-02", "label": false, "text": "Do the needful and improve everything that looks off."}

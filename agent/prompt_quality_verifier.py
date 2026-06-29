@@ -47,18 +47,26 @@ except Exception:  # pragma: no cover - defensive
         r"\bmakes ai safe\b", r"\bthe only open project\b")]
 
 _SUCCESS_CRITERION = re.compile(
-    r"\b(test|gate|claim-?check|\bCI\b|metric|pass(?:es|ed)?|expected|verif(?:y|ied|ication)|"
-    r"κ|kappa|confidence interval|excludes? zero|benchmark|assert|receipt|GO|NO-?GO|"
-    r"≥|>=|\d+\s?%|seeds?)\b", re.I)
+    r"(\b(?:success|done)\b\s*[=:]|\bdone when\b|\bstate whether\b|\breport whether\b|"
+    r"\ba list of\b|\bdeliverable\b|\bminimal next step\b|"
+    r"\b(test|gate|claim-?check|CI|metric|pass(?:es|ed)?|expected|verif(?:y|ied|ication)|"
+    r"kappa|confidence interval|excludes? zero|benchmark|assert|receipt|GO|NO-?GO|"
+    r">=|seeds?)\b|κ|≥|\d+\s?%)", re.I)
 
 _BOUNDED_SCOPE = re.compile(
-    r"\b(only|do not|don'?t|must not|never|in scope|out of scope|scope|bounded|limit(?:ed)?|"
-    r"single|exactly one|a single|branch|do NOT (?:touch|edit|push))\b", re.I)
+    r"(\b(?:only|do not|don'?t|must not|never|in scope|out of scope|scope|bounded|limit(?:ed)?|"
+    r"single|exactly one|a single|branch|that (?:file|tool|one))\b|"
+    r"\bon the\b.{0,24}\bpack\b|[\w./-]+\.(?:py|md|jsonl|json|ya?ml)\b)", re.I)
 
+# Abstention = a path for a PROBLEM. "report the accuracy" is a deliverable, not an abstention —
+# so "report" only counts when its object is a failure/blocker/count, never a result.
 _ABSTENTION_PATH = re.compile(
-    r"\b(if (?:blocked|unsure|uncertain|stuck|it fails|you can'?t)|abstain|report (?:back|the|any)|"
-    r"escalate|NO-?GO|candidate|OPEN|fail[- ]closed|stays? (?:false|candidate)|"
-    r"do not (?:proceed|push|merge)|ask (?:me|the|first))\b", re.I)
+    r"(\bif\b.{0,50}\b(?:blocked|unsure|uncertain|stuck|fails?|can'?t|cannot|diverges?|"
+    r"would change|lacks?|ambiguous|do not|drop)\b|"
+    r"\babstain\b|\bNO-?GO\b|\bfail[- ]closed\b|\bhold (?:it|the)\b|"
+    r"\breport (?:NO-?GO|the (?:count|failure|error|issue)|back if|any (?:failure|blocker|issue))\b|"
+    r"\bescalate\b|\bstays? (?:false|candidate)\b|\bdo not (?:proceed|push|merge)\b|"
+    r"\bask (?:me|the|first)\b|\bmark it (?:candidate|OPEN)\b)", re.I)
 
 _GROUNDING = re.compile(
     r"(/[\w./-]+|\b\w+\.(?:py|md|jsonl|json|ya?ml)\b|#\d+|\bPR\b|\bbranch\b|"

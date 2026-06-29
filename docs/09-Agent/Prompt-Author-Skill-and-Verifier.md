@@ -29,7 +29,8 @@ improving prompt intelligence" (which would trip `lint_claims`).
 | 1 — static scaffold | `.github/pull_request_template.md` | forces CI/seeds/label + gates at review time | shipped |
 | 2 — distilled skill | `.claude/skills/prompt-author/SKILL.md` | auto-triggering prompt/PR/handoff discipline | shipped |
 | 3 — the metric | `agent/prompt_quality_verifier.py` | machine score: success-criterion · scope · abstention · no-overclaim · grounding | shipped, 6 invariants + 7 tests |
-| C — gated skill | via `tools/sophia_skill_forge.py` (`synthesize_gate`) | a generator whose prompts must clear Layer 3 on held-out tasks before promotion | **OPEN** |
+| C — validation | `eval/prompt_quality/heldout_v1.jsonl` + `tools/eval_prompt_quality.py` | runs `prompt_quality_ok` over a labelled pack; reports precision/recall vs floor | shipped (dev-pack only) |
+| C — gated skill | via `tools/sophia_skill_forge.py` (`synthesize_gate`) | a generator whose prompts must clear a *generalised* gate on an independent pack before promotion | **OPEN** (needs pack v2) |
 
 ## The metric (`agent/prompt_quality_verifier.py`)
 
@@ -43,6 +44,20 @@ source of truth for what counts as an overclaim, whether in marketing prose or i
 `prompt_quality_ok(text) -> bool` is the predicate; `prompt_quality()` is a verifier-style callable
 (`v(text, record, ctx) -> {passed, reasons, detail}`) matching the `agent/*verifier*` convention, so
 it drops straight into the gate and the forge.
+
+## Layer-C validation (shipped, honest scope)
+
+`tools/eval_prompt_quality.py` runs `prompt_quality_ok` over `eval/prompt_quality/heldout_v1.jsonl`
+(24 labelled prompts: 12 well-formed, 12 with distinct failure modes). The pack **caught three real
+detector bugs** on first run (recall 0.58): an explicit `Success =` clause, a named file/pack as
+scope, and a "report the *deliverable*" false-positive in the abstention detector. After principled
+fixes it separates the pack at precision/recall 1.0.
+
+**Honest caveat (and a ledger OPEN item):** the detectors were tuned against this pack, so 1.0 here
+is *self-consistency, not generalization*. The harness verdict is `FLOOR-MET`, never "validated
+gate"; an independent, un-tuned pack v2 is the real held-out gate and is OPEN
+(`prompt-quality-gate-dev-pack-only-2026-06-29`). Until v2 clears without touching the detectors,
+treat Layer 3 as a lint with a passing dev-set, not a validated gate.
 
 ## Layer-C: the forge-gated prompt skill (OPEN design)
 
