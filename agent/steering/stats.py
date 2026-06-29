@@ -10,6 +10,23 @@ import random
 import statistics
 
 from provenance_bench.aggregate import _ci, KAPPA_FLOOR
+from provenance_bench.consensus import cohen_kappa  # re-exported for callers
+
+# Public API. ``cohen_kappa`` is a deliberate re-export (callers use
+# ``stats.cohen_kappa``); listing it in ``__all__`` marks the import as used so
+# CodeQL's py/unused-import does not flag it.
+__all__ = [
+    "SSA_THRESHOLDS",
+    "cohen_d",
+    "bootstrap_diff_ci",
+    "binarize_moved",
+    "ssa_verdict",
+    "residualized_d",
+    "holm_bonferroni",
+    "benjamini_hochberg",
+    "bootstrap_diff_p",
+    "cohen_kappa",
+]
 
 # Pre-registered SSA thresholds — fixed before any run (spec §"Locked decisions").
 SSA_THRESHOLDS = {
