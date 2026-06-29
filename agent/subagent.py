@@ -185,19 +185,35 @@ def delegate(
     store = RunStore(f"{parent_id}.delegation", runs_dir=harness.RUNS_DIR).fresh()
     store.log("delegate_start", parentGoal=parent_goal, nChildren=len(specs))
 
-    children: list[SubagentResult] = []
-    for i, spec in enumerate(specs, 1):
-        child = run_subagent(spec, parent_id=parent_id, index=i, client=client, approve_tools=approve_tools)
-        children.append(child)
-        store.log("subagent_done", index=i, **child.to_log())
+    from agent.thinking_trace import maybe_record_a2a, trace_scope
 
-    oks = [c for c in children if c.ok]
-    if not oks:
-        synthesis = ABSTAIN_NO_CHILDREN
-    elif synthesize:
-        synthesis = _synthesize(client, parent_goal, oks)
-    else:
-        synthesis = "\n\n".join(c.final_text for c in oks)
+    children: list[SubagentResult] = []
+    # Tie this delegation's A2A messages + the children's LLM calls to one trace id, and
+    # RESTORE the prior context on exit so the id never leaks into later, unrelated calls.
+    with trace_scope(trace_id=f"{parent_id}.delegation"):
+        for i, spec in enumerate(specs, 1):
+            label = spec.label or spec.goal[:40]
+            # parent -> child: the delegated task prompt is an A2A message in swarm mode.
+            maybe_record_a2a(sender=parent_id, receiver=f"{parent_id}.sub{i}-{label}", prompt=spec.goal, kind="delegate")
+            child = run_subagent(spec, parent_id=parent_id, index=i, client=client, approve_tools=approve_tools)
+            children.append(child)
+            store.log("subagent_done", index=i, **child.to_log())
+            # child -> parent: the child's synthesised answer (its contribution to the swarm).
+            maybe_record_a2a(
+                sender=child.task_id, receiver=parent_id, prompt=spec.goal, response=child.final_text,
+                ok=child.ok, cost_usd=child.cost_usd, kind="result",
+            )
+
+        oks = [c for c in children if c.ok]
+        if not oks:
+            synthesis = ABSTAIN_NO_CHILDREN
+        elif synthesize:
+            synthesis = _synthesize(client, parent_goal, oks)
+        else:
+            synthesis = "\n\n".join(c.final_text for c in oks)
+        # reduce: the parent folding child outputs into one answer is the synthesis leg.
+        maybe_record_a2a(sender=parent_id, receiver="synthesis", prompt=parent_goal, response=synthesis,
+                         ok=bool(oks), kind="synthesis")
 
     total_cost = sum(c.cost_usd for c in children)
     result = DelegationResult(

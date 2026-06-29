@@ -52,6 +52,34 @@ REWARD_VIOLATION = -1.0  # intrinsic fail-closed violation: the worst outcome
 REWARD_ABSTAIN = 0.5     # gate-clean refusal: reward-positive abstention (the fix)
 REWARD_CLEAN = 1.0       # gate-clean substantive answer
 
+# H2 — "graded craving" (docs/06-Roadmap/Atomic-Habits-for-Sophia.md).
+# Atomic Habits: make the *hardest* good behaviour the most attractive. A flat
+# abstention reward pays the same for an easy refusal and for resisting a strong
+# fabrication temptation. Graded craving scales the abstention reward by per-case
+# temptation in [0, 1] so a gate-clean refusal on a HIGH-temptation trap (one where
+# similar models fabricate) earns more — WITHOUT ever exceeding a substantive clean
+# answer, and WITHOUT ever dropping to/under zero (the abstention-collapse guard).
+# It is strictly opt-in: ``temptation=None`` reproduces the flat REWARD_ABSTAIN
+# exactly, so every existing caller is unchanged.
+REWARD_ABSTAIN_MAX = 0.9  # reward for a maximally-tempted clean refusal; < REWARD_CLEAN by design
+
+
+def graded_abstain_reward(temptation: float | None) -> float:
+    """Difficulty-graded reward-positive abstention (H2).
+
+    Maps temptation t in [0, 1] linearly onto [REWARD_ABSTAIN, REWARD_ABSTAIN_MAX]:
+    t=0 -> REWARD_ABSTAIN (the flat baseline), t=1 -> REWARD_ABSTAIN_MAX. Out-of-range
+    t is clamped. ``None`` returns the flat REWARD_ABSTAIN (backward-compatible).
+
+    Invariants (preserved for any t): 0 < reward <= REWARD_ABSTAIN_MAX < REWARD_CLEAN,
+    and the result is monotone non-decreasing in t. So abstention stays strictly
+    reward-positive and strictly below a substantive clean answer at every difficulty.
+    """
+    if temptation is None:
+        return REWARD_ABSTAIN
+    t = 0.0 if temptation < 0.0 else 1.0 if temptation > 1.0 else float(temptation)
+    return REWARD_ABSTAIN + (REWARD_ABSTAIN_MAX - REWARD_ABSTAIN) * t
+
 # Deterministic abstention markers. A gate-clean answer that contains one of
 # these is a principled refusal ("insufficient verified basis") rather than a
 # substantive claim — and is rewarded positively, not at zero.
@@ -102,7 +130,8 @@ def gate_violations(text: str) -> list[str]:
     return list(result.get("violations") or [])
 
 
-def reward(completion: Any, *, question: str | None = None) -> float:
+def reward(completion: Any, *, question: str | None = None,
+           temptation: float | None = None) -> float:
     """Bounded gate reward in ``[REWARD_MIN, REWARD_MAX]`` for one completion.
 
     ``question`` is accepted for caller symmetry but is INTENTIONALLY NOT passed
@@ -111,8 +140,13 @@ def reward(completion: Any, *, question: str | None = None) -> float:
     driven purely by the intrinsic fail-closed gate plus deterministic
     abstention detection.
 
+    ``temptation`` (H2 graded craving) optionally scales the *abstention* reward
+    by per-case fabrication temptation in [0, 1]. ``None`` (default) reproduces
+    the flat REWARD_ABSTAIN exactly — existing callers are unchanged. It only ever
+    affects the abstention branch; violations and clean answers are untouched.
+
     - intrinsic violation         -> REWARD_VIOLATION (negative)
-    - gate-clean abstention        -> REWARD_ABSTAIN  (positive; abstention-collapse fix)
+    - gate-clean abstention        -> graded_abstain_reward(temptation)  (>0, <=REWARD_ABSTAIN_MAX)
     - gate-clean substantive answer-> REWARD_CLEAN
     """
     del question  # deliberately unused; see docstring (trap-grader avoidance)
@@ -122,13 +156,13 @@ def reward(completion: Any, *, question: str | None = None) -> float:
         return REWARD_VIOLATION
 
     if is_abstention(text):
-        return REWARD_ABSTAIN
+        return graded_abstain_reward(temptation)
 
     # Gate-clean and not an abstention. A vacuous (empty) completion is neither a
     # substantive answer nor a principled refusal: floor it at the abstain level
     # rather than paying full clean reward for saying nothing.
     if len(text.strip()) < _MIN_SUBSTANTIVE_CHARS:
-        return REWARD_ABSTAIN
+        return graded_abstain_reward(temptation)
 
     return REWARD_CLEAN
 
@@ -158,11 +192,20 @@ def make_grpo_reward(**_kwargs: Any):
     any dataset without needing label/gold columns.
     """
 
-    def reward_fn(prompts: list, completions: list, **kwargs: Any) -> list[float]:
-        del prompts, kwargs
-        return [reward(comp) for comp in completions]
+    temptation_fn = _kwargs.get("temptation_fn")  # H2: (prompt, completion) -> float in [0,1]
 
-    reward_fn.__name__ = "sophia_gate_reward"
+    def reward_fn(prompts: list, completions: list, **kwargs: Any) -> list[float]:
+        del kwargs
+        if temptation_fn is None:
+            return [reward(comp) for comp in completions]
+        # Graded craving: pair each completion with its prompt's fabrication temptation.
+        ps = prompts if isinstance(prompts, list) else [prompts] * len(completions)
+        return [
+            reward(comp, temptation=temptation_fn(ps[i] if i < len(ps) else None, comp))
+            for i, comp in enumerate(completions)
+        ]
+
+    reward_fn.__name__ = "sophia_gate_reward_graded" if temptation_fn else "sophia_gate_reward"
     return reward_fn
 
 
@@ -193,16 +236,38 @@ def self_check() -> dict:
     # Determinism: same input, same reward.
     assert reward(abstain) == r_abstain, "reward must be deterministic"
 
+    # H2 graded craving invariants. Across temptation 0..1 a clean refusal must stay
+    # strictly positive, monotone non-decreasing, and strictly below a clean answer;
+    # and the flat default (temptation=None) must equal REWARD_ABSTAIN exactly.
+    assert reward(abstain, temptation=None) == REWARD_ABSTAIN, "flat default must be unchanged"
+    g0 = reward(abstain, temptation=0.0)
+    g_mid = reward(abstain, temptation=0.5)
+    g1 = reward(abstain, temptation=1.0)
+    assert g0 == REWARD_ABSTAIN, f"graded(0) must equal flat abstain, got {g0}"
+    assert g0 <= g_mid <= g1, f"graded craving must be monotone: {g0} <= {g_mid} <= {g1}"
+    assert 0.0 < g1 <= REWARD_ABSTAIN_MAX < r_clean, (
+        f"hardest abstention must be >0 and strictly below clean: 0 < {g1} <= "
+        f"{REWARD_ABSTAIN_MAX} < {r_clean}"
+    )
+    assert r_violation < g0, f"violation({r_violation}) must be < graded abstain min({g0})"
+    # Clamping: out-of-range temptation never breaches the bounds.
+    assert reward(abstain, temptation=-5.0) == REWARD_ABSTAIN
+    assert reward(abstain, temptation=5.0) == REWARD_ABSTAIN_MAX
+
     return {
         "clean": r_clean,
         "abstain": r_abstain,
         "violation": r_violation,
+        "gradedAbstain": {"t0": g0, "t0.5": g_mid, "t1": g1, "max": REWARD_ABSTAIN_MAX},
         "invariants": {
             "violationLtAbstain": r_violation < r_abstain,
             "abstainPositive": r_abstain > 0.0,
             "cleanGeAbstain": r_clean >= r_abstain,
+            "gradedMonotone": g0 <= g_mid <= g1,
+            "gradedPositiveBelowClean": 0.0 < g1 <= REWARD_ABSTAIN_MAX < r_clean,
+            "flatDefaultUnchanged": reward(abstain, temptation=None) == REWARD_ABSTAIN,
             "bounded": all(
-                REWARD_MIN <= x <= REWARD_MAX for x in (r_clean, r_abstain, r_violation)
+                REWARD_MIN <= x <= REWARD_MAX for x in (r_clean, r_abstain, r_violation, g1)
             ),
         },
     }

@@ -58,6 +58,12 @@ jobs:
     environment: runpod-paid
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    env:
+      IN_MODEL: ${{ github.event.inputs.model }}
+      IN_DRAFT: ${{ github.event.inputs.draft }}
+      IN_TOKENS: ${{ github.event.inputs.tokens }}
+      IN_GPU_TYPE: ${{ github.event.inputs.gpu_type }}
+      IN_INTERRUPTIBLE: ${{ github.event.inputs.interruptible }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -89,23 +95,23 @@ jobs:
         run: |
           python tools/runpod_gss_probe.py --dry-run \
             --branch "${{ github.ref_name }}" \
-            --model "${{ github.event.inputs.model }}" \
-            --draft "${{ github.event.inputs.draft }}" \
-            --tokens "${{ github.event.inputs.tokens }}" \
-            --gpu-type "${{ github.event.inputs.gpu_type }}"
+            --model "$IN_MODEL" \
+            --draft "$IN_DRAFT" \
+            --tokens "$IN_TOKENS" \
+            --gpu-type "$IN_GPU_TYPE"
 
       - name: Launch RunPod GSS probe (rents GPU, runs over SSH, deletes pod)
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
         run: |
           INTERRUPTIBLE=""
-          if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
+          if [ "$IN_INTERRUPTIBLE" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
           python tools/runpod_gss_probe.py --yes \
             --branch "${{ github.ref_name }}" \
-            --model "${{ github.event.inputs.model }}" \
-            --draft "${{ github.event.inputs.draft }}" \
-            --tokens "${{ github.event.inputs.tokens }}" \
-            --gpu-type "${{ github.event.inputs.gpu_type }}" \
+            --model "$IN_MODEL" \
+            --draft "$IN_DRAFT" \
+            --tokens "$IN_TOKENS" \
+            --gpu-type "$IN_GPU_TYPE" \
             $INTERRUPTIBLE
 
       - name: Show the GSS report in the run log
@@ -135,6 +141,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No report files to commit."
           else
-            git commit -m "results(gss): RunPod Tier-0 probe on ${{ github.event.inputs.model }} (real MoE go/no-go)"
+            git commit -m "results(gss): RunPod Tier-0 probe on $IN_MODEL (real MoE go/no-go)"
             git push origin HEAD:"${{ github.ref_name }}"
           fi

@@ -13,6 +13,10 @@ metadata:
 
 # Git & merge discipline (this repo)
 
+> **See also `spark-cluster-ops` §3-4** for the cluster addenda: the **git-crypt
+> worktree/cherry-pick `-c` bypass**, the **failed-`worktree add` collision recovery**
+> (`branch -f` → `reset --hard`), and shared-branch **rebase reconcile**.
+
 This repo has **many concurrent advisors** pushing and merging to `main` constantly. Every
 expensive mistake here came from acting on an **unverified local picture**: a fix PR built off
 `main` that was 28 commits behind; a duplicate PR for a problem another advisor already fixed;

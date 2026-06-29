@@ -519,6 +519,34 @@ def run_real(subject, subject_id: str, judges: list, *, seeds: int = 1, cache=No
         failures.append("no_decontam: the inline fixture is not the decontaminated, powered battery (build_focus_battery.py)")
     elif split_used != "private":
         failures.append(f"sealed_split_not_scored: scored on the '{split_used}' split; the held-out PRIVATE split has not been scored for the final claim")
+    # Boundary status is reported from the ACTUAL run (decontamination, N, power, seeds,
+    # which split was scored, and the verdict) — never a hardcoded string. A genuinely
+    # powered/decontaminated GO must say so honestly; a pilot must own being underpowered.
+    powered = (using_powered and mde <= MDE_TARGET
+               and n_distinct_tasks >= MIN_ITEMS_FOR_POWER and seeds >= MIN_SEEDS)
+    decontam_phrase = ("the decontaminated, powered battery (build_focus_battery.py)" if using_powered
+                       else "a small, non-decontaminated author battery")
+    power_phrase = (
+        f"powered (MDE@N={mde} <= {MDE_TARGET}, N={n_distinct_tasks} >= {MIN_ITEMS_FOR_POWER} distinct "
+        f"tasks, {seeds} >= {MIN_SEEDS} seeds)" if powered else
+        f"UNDERPOWERED (MDE@N={mde} vs target {MDE_TARGET}, N={n_distinct_tasks} vs {MIN_ITEMS_FOR_POWER} "
+        f"distinct tasks, {seeds} vs {MIN_SEEDS} seeds)"
+    )
+    split_phrase = ("scored on the SEALED held-out PRIVATE split" if (using_powered and split_used == "private")
+                    else f"scored on the '{split_used}' split (the held-out PRIVATE split is not yet scored)")
+    if failures:
+        boundary = (
+            f"REAL {'powered' if powered else 'pilot'} run: a live subject model + >= 2 independent judge "
+            f"families on {decontam_phrase} -> {power_phrase}; {split_phrase}. Candidate signal only; the "
+            f"gate stays NO-GO until a decontaminated, powered (N >= {MIN_ITEMS_FOR_POWER}), >= {MIN_SEEDS}-seed "
+            f"run clears every guardrail with a delta CI excluding 0. canClaimAGI:false."
+        )
+    else:
+        boundary = (
+            f"REAL powered run: a live subject model + >= 2 independent judge families on {decontam_phrase} "
+            f"-> {power_phrase}; {split_phrase}; every pre-registered guardrail held and the delta CI excludes "
+            f"0 (GO). Construct-bounded efficiency result, NOT a capability/AGI claim. canClaimAGI:false."
+        )
     strip = lambda d: {k: v for k, v in d.items() if not k.startswith("_")}  # noqa: E731
     return {
         "mode": "real",
@@ -542,12 +570,7 @@ def run_real(subject, subject_id: str, judges: list, *, seeds: int = 1, cache=No
         "go": not failures,
         "canClaimAGI": False,
         "criticalFailures": failures,
-        "boundary": (
-            "REAL pilot: a live subject model + >= 2 independent judge families, but on a small, "
-            "non-decontaminated author battery -> UNDERPOWERED. Candidate signal only; the gate "
-            "stays NO-GO until a decontaminated, powered (N >= 100), >= 3-seed run clears every "
-            "guardrail with a delta CI excluding 0. canClaimAGI:false."
-        ),
+        "boundary": boundary,
     }
 
 

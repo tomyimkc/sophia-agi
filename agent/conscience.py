@@ -54,6 +54,7 @@ class ConscienceDecision:
     courage: dict[str, Any] = field(default_factory=dict)
     temperance: dict[str, Any] = field(default_factory=dict)
     prosoche: dict[str, Any] = field(default_factory=dict)
+    virtueArbitration: dict[str, Any] = field(default_factory=dict)
     recommendedActions: tuple[dict[str, Any], ...] = ()
     boundary: str = "Sophia is an AGI-candidate verifier-gated epistemic framework; this decision is not proof of AGI."
 
@@ -77,6 +78,7 @@ class ConscienceDecision:
             "courage": self.courage,
             "temperance": self.temperance,
             "prosoche": self.prosoche,
+            "virtueArbitration": self.virtueArbitration,
             "recommendedActions": list(self.recommendedActions),
             "boundary": self.boundary,
         }
@@ -350,6 +352,35 @@ def conscience_check(
                 verdict = "revise"
                 reason = "attention gate: the output drifts off the active goal — refocus/trim to the anchor (drifting)"
 
+    # 12th path — Dikaiosyne Role B: the inter-virtue arbiter (the *Republic* harmony of the
+    # four cardinal virtues), opt-in via context["consultVirtues"]=True. It computes the
+    # courage / temperance / justice verdicts (reusing the 9th/10th-path reports when present)
+    # and runs the pre-registered lexical-priority arbiter
+    # (hard_prohibition > Wisdom > Justice > Courage > Temperance), attaching the harmonized
+    # posture as an AUDIT annotation under ``decision.virtueArbitration``. It is
+    # INFORMATIONAL-ONLY here — it never changes the conscience verdict, so it is byte-identical
+    # when off. Making the arbiter authoritative over the verdict is a separate, pre-registered
+    # measurement decision, not a silent behaviour change. canClaimAGI stays false.
+    virtue_arbitration: dict[str, Any] = {}
+    if context.get("consultVirtues"):
+        from agent.andreia import assess_courage
+        from agent.dikaiosyne import assess_justice
+        from agent.sophrosyne import assess_temperance
+        from agent.virtue_parliament import arbitrate
+        can_claim_agi = bool(context.get("canClaimAGI", False))
+        c_verdict = courage.get("verdict") or assess_courage(
+            text, samples=samples, context={"highRisk": high}).to_dict()["verdict"]
+        t_verdict = temperance.get("verdict") or assess_temperance(
+            text, context={"canClaimAGI": can_claim_agi, "proposedStop": verdict == "abstain"},
+        ).to_dict()["verdict"]
+        j_verdict = assess_justice(
+            text, context={"canClaimAGI": can_claim_agi},
+        ).to_dict()["verdict"]
+        virtue_arbitration = arbitrate(
+            wisdom=verdict, courage=c_verdict, temperance=t_verdict,
+            justice=j_verdict, hard_block=(verdict == "block"),
+        ).to_dict()
+
     decision = ConscienceDecision(
         verdict=verdict,
         reason=reason,
@@ -366,6 +397,7 @@ def conscience_check(
         courage=courage,
         temperance=temperance,
         prosoche=prosoche,
+        virtueArbitration=virtue_arbitration,
         recommendedActions=tuple(agenda_actions),
     )
 

@@ -130,13 +130,31 @@ specs are env-overridable: `VIRTUE_JUDGE_A` (default a capable Qwen-32B — dist
 
 ## 5. Running from the cloud session (egress-blocked) — via the GitHub bridge
 
-> **Bridge prerequisite:** the poller's allowlist (`tools/github_bridge_poll.py` on the
-> `spark-bridge` branch) must include the `--bench-virtues` token, and the spark-bridge
-> worktree must carry this updated `run_local_benchmarks.sh` (merge `main`/this branch in).
-> Until both are true the poller will *reject* a `--bench-virtues` command. Once they are:
-> queue `bridge/commands/<id>.json` with `args: "--bench-virtues --dry-run"` (no approval
-> needed) to verify the round-trip, then `args: "--bench-virtues --execute"` with a non-empty
-> `approvedBy` (human) for the powered run.
+**Enablement state:** the poller allowlist on `spark-bridge` already includes the
+`--bench-virtues` token (`tools/github_bridge_poll.py`, commit `7e6590c9`). Two operator
+steps remain before a `--bench-virtues` command will run:
+
+1. **Sync the worktree:** merge `main` into `spark-bridge` so its checkout carries the
+   `--bench-virtues` lane in `run_local_benchmarks.sh` **and** the virtue tools
+   (`build_*`/`label_*`/`run_*_eval`/`*_decision`/the `agent/` modules). A dry-run only
+   needs the lane; an `--execute` run needs the tools too. (Mind the documented untracked
+   `run_local_benchmarks.sh` *shadow* in that worktree — the poller must run the tracked one.)
+2. **Restart the poller:** `ALLOWLIST` is read once at process startup, so the live poller
+   keeps the *old* allowlist in memory until restarted — re-run the tmux command in
+   `tools/github_bridge_poll.py`'s docstring. Until then, a `--bench-virtues` command is
+   **rejected** (do not queue it before the restart, or it lands a stale `rejected` result).
+
+Then queue commands (cloud side: `push_files` to `refs/heads/spark-bridge`):
+
+```json
+// bridge/commands/2026-06-29-virtues-dryrun.json  (no approval needed)
+{"id": "2026-06-29-virtues-dryrun", "args": "--bench-virtues --dry-run", "createdBy": "claude", "approvedBy": ""}
+// bridge/commands/2026-06-29-virtues-exec.json  (powered; judge farm up)
+{"id": "2026-06-29-virtues-exec", "args": "--bench-virtues --execute", "createdBy": "claude", "approvedBy": "<human-handle>"}
+```
+
+Read results back from `bridge/results/<id>.json` / `bridge/STATUS.json` via the GitHub MCP.
+`--execute` requires a non-empty `approvedBy` (the poller's `GATED` check is unchanged).
 
 The cloud session cannot reach the farm directly. Queue the commands above through the
 `spark-bridge` message queue (`bridge/PROTOCOL.md`): write `bridge/commands/<id>.json`
@@ -144,6 +162,48 @@ with a non-empty `approvedBy`, and read results back from `bridge/results/<id>.j
 `bridge/STATUS.json` via the GitHub MCP. The poller on the Spark executes only
 allowlisted scripts. **Always** read `.claude/skills/wisdom-gpu-prebaked/SKILL.md`
 first (the anti-wastage runbook) and confirm zero leaked pods after any RunPod work.
+
+## 5b. Running on a rented RunPod GPU (when the Spark+Mac farm is unavailable)
+
+The free Spark+Mac farm (§2–§5) is **always preferred** — the judge/subject models are
+already resident there, so it is $0. RunPod is the **fallback** when the farm is down: it
+rents **one** 80GB GPU pod that serves the whole stack locally via ollama (subject + two
+independent judge families, distinguished by model name on one port), runs the identical
+§1–§3 pipeline, git-pushes the two public reports back, and self-deletes.
+
+- **Workflow:** `.github/workflows/virtue-evals-runpod.yml` (manual `workflow_dispatch`,
+  `confirm: RUN` gate, `runpod-paid` environment). Like every dispatch launcher it must also
+  exist on **`main`** for `workflow_dispatch` to register.
+- **Launcher:** `tools/runpod_virtue_evals.py` (creates the pod via the RunPod REST API; the
+  pod runs the job + pushes results via the run's `GITHUB_TOKEN` + self-deletes; `--wait`
+  keeps the job alive and deletes the pod when the fresh report lands).
+- **Secret:** repo Actions secret `RUNPOD_API_KEY`. No HF token needed (ollama models are public).
+
+**MANDATORY anti-wastage runbook** (read `.claude/skills/wisdom-gpu-prebaked/SKILL.md` first;
+these are the virtue-eval adaptations of its contract):
+1. **No pip step to die during.** Unlike the wisdom pilot, this job installs no Python deps
+   (the eval/label tools are stdlib-only; ollama is a single `curl` install), so the
+   pip-install restart-loop cannot occur. The one long step is the ollama model pull (~65GB
+   for 7B+32B+70B-q4) — the analogue of the wisdom pilot's on-pod weight download; the pod is
+   given a 120GB volume so it cannot fill. The restart-loop guards (`finish()` `sleep 3600` +
+   launcher delete-on-result-blob) are inherited verbatim.
+2. **Cheap pipeline-smoke FIRST, full run SECOND.** Validate the wiring for ~$0.30 before the
+   full ~$3–6 run by dispatching with **small** models + a tiny label cap, e.g.
+   `subject=qwen2.5:7b-instruct`, `judge_a=qwen2.5:14b-instruct`, `judge_b=llama3.1:8b`,
+   `label_limit=24`. (Judge B must differ from judge A and the subject, so a smoke uses small
+   *distinct* models — it tests the pipeline, not the κ floor.) Then run the full default
+   roster (32B + 70B-q4 judges, `label_limit` blank).
+3. **Watch the first ~6 minutes.** Poll the branch commits; ≥2 `pod heartbeat` commits within
+   ~5 min means a restart loop — cancel the run and delete the pod immediately (don't rely on
+   the `--wait` backstop alone). Note: cancelling the GH run does NOT stop a looping pod (it
+   can no longer push, but keeps billing) — delete the pod via the RunPod console / REST.
+4. **ALWAYS confirm zero leaked pods at the end:** the launcher leak-sweeps `sophia-virtue-evals-*`
+   before each launch and deletes on result, but verify with the runpod MCP (`list-pods`) or
+   `curl -sS https://rest.runpod.io/v1/pods -H "Authorization: Bearer $RUNPOD_API_KEY"` → `[]`.
+5. **Actions "success" is not proof of a result.** Confirm the artifacts actually landed:
+   `agi-proof/benchmark-results/sophrosyne/sophrosyne-measure-eval.public-report.json` and
+   `.../dikaiosyne/dikaiosyne-justice-eval.public-report.json`. If a run yields no report, read
+   `agi-proof/benchmark-results/runpod-virtue-evals/pod-selfreport.log` (+ `pod-envprobe.txt`).
 
 ## 6. On a result
 

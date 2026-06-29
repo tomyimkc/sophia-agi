@@ -59,8 +59,11 @@ def _norm(s: str) -> str:
 
 
 def _em(pred: str, golds: list[str]) -> int:
+    # Exact match AFTER SQuAD/HotpotQA normalisation: the normalised prediction must
+    # EQUAL a normalised gold (not merely contain one). Substring containment over-counts
+    # (e.g. a long answer that happens to embed the gold token), so require equality.
     p = _norm(pred)
-    return int(any(_norm(g) == p for g in golds) or any(_norm(g) and _norm(g) in p for g in golds))
+    return int(any(_norm(g) == p for g in golds))
 
 
 def _f1(pred: str, golds: list[str]) -> float:

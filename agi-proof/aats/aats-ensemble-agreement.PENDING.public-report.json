@@ -1,0 +1,28 @@
+{
+  "experimentId": "aats-auto-approval",
+  "arm": "ensembleAgreement",
+  "schema": "sophia.aats_pending_report.v1",
+  "status": "not_run",
+  "verdict": "NO-GO",
+  "go": false,
+  "canClaimAGI": false,
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "preregistration": "agi-proof/aats/measurement_spec.json",
+  "tool": "tools/ensemble_agreement_study.py",
+  "headline": "PENDING — diverse-ensemble agreement MACHINERY only; no two-MODEL-family judge run on a decontaminated set.",
+  "standalone": {
+    "note": "Offline demo (tools/ensemble_agreement_study.py --demo) runs two real DETERMINISTIC distinct-family authorship verifiers (temporal date-arithmetic vs provenance corpus). It demonstrates the agreement + error-correlation + AND-consensus machinery on real verifiers: the families miss DIFFERENT misattributions, so AND-consensus catches what either single verifier lets through. This certifies the MACHINERY, not a model-judge capability.",
+    "verifierFamilies": ["temporal(date-arithmetic)", "provenance(corpus-lookup)"],
+    "syntheticData": false
+  },
+  "criticalFailures": [
+    "no_model_judges: the powered arm needs >= 2 distinct MODEL families (judge != subject), plugged via tools/ensemble_agreement_study.py --judge-model; the offline arm uses deterministic verifiers only",
+    "no_decontam_run: the scored authorship items must pass tools/assert_decontam.py against the judges' training signal",
+    "no_agreement_ci: Cohen kappa / Gwet AC1 and the consensus-vs-single difference need bootstrap CIs over a real labeled set",
+    "breaker_not_asserted: the canary circuit-breaker must be ARMED and passing for a powered run (guardrail)"
+  ],
+  "requiredResponse": "Add a second distinct MODEL-family verifier (tools/ensemble_agreement_study.py --judge-model <spec> on the farm, Actions-gated), measure inter-judge kappa + error-correlation on a decontaminated authorship set, and promote only if AND-consensus false-approval is below the best single with a CI excluding 0 AND the judges' errors are decorrelated. High error-correlation is a NO-GO even at high agreement.",
+  "honestBound": "Intentionally PENDING. canClaimAGI false."
+}

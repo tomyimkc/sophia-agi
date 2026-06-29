@@ -29,6 +29,7 @@ deleted in a ``finally`` block plus a remote watchdog. canClaimAGI:false.
 from __future__ import annotations
 
 import argparse
+import shlex
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -66,7 +67,10 @@ def _remote_focus_script(args: argparse.Namespace) -> str:
     and copies the report back; it never invents a measured effect."""
     # The 3-arm eval entrypoint: deterministic survival-proxy by default (NO-GO,
     # exercises the math). On the farm, pass --model <spec> to it for the real run.
-    entry = args.eval_entrypoint or "tools/run_focus_frontier_eval.py"
+    # SECURITY: ``eval_entrypoint`` and ``model`` are interpolated into the bash script
+    # run over SSH, so shell-escape them with shlex.quote (mirrors tools/runpod_rlvr.py)
+    # to close the shell-injection sink — never interpolate raw dispatch input.
+    entry = shlex.quote(args.eval_entrypoint or "tools/run_focus_frontier_eval.py")
     live_cmd = f"python {entry} --write"
     if args.remote_mode == "live":
         live_cmd = (
@@ -77,7 +81,7 @@ def _remote_focus_script(args: argparse.Namespace) -> str:
             f"python {entry} --write"
         )
         if args.model:
-            live_cmd += f' --model "{args.model}" || echo "[focus-frontier] real-model arm refused/failed; honest NO-GO report stands"'
+            live_cmd += f' --model {shlex.quote(args.model)} || echo "[focus-frontier] real-model arm refused/failed; honest NO-GO report stands"'
     # On the farm, score the POWERED public split with a real subject + >= 2 judge
     # families (env keys/models supplied to the pod) when in live mode.
     powered = ""

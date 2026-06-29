@@ -87,7 +87,7 @@ def build_slice(zip_path: Path, *, public: int, private: int) -> list[dict]:
             if sum(estimate_tokens(p) for p in passages) <= PACK_BUDGET:
                 continue
             tasks.append({
-                "id": f"{t}-{row.get('_id', taken)[:12]}",
+                "id": f"{t}-{str(row.get('_id') or taken)[:12]}",
                 "question": q,
                 "goldAnswers": [str(a) for a in gold],
                 "passages": passages,
