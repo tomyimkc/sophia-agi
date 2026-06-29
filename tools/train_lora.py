@@ -308,6 +308,28 @@ def _resolve_target_modules(choice: str) -> Any:
     return "all-linear" if choice == "all-linear" else ATTN_MLP_MODULES
 
 
+def summarize_lora_targets(model: Any) -> dict:
+    """Count the LoRA-adapted modules by attn / expert / other.
+
+    For QAT to make the experts low-bit-robust they must be TRAINABLE — i.e. carry a LoRA adapter.
+    An MoE adapter that targets attention only (``expert == 0``) cannot co-adapt its experts no
+    matter how QAT is configured. Printing this at train start makes that visible up front instead
+    of discovering it four certify rounds later."""
+    attn = expert = other = 0
+    for name, module in model.named_modules():
+        # PEFT marks adapted layers with a lora_A ModuleDict/attr on the wrapper module.
+        if not hasattr(module, "lora_A"):
+            continue
+        if "experts" in name or "expert." in name:
+            expert += 1
+        elif any(name.endswith(s) for s in ("q_proj", "k_proj", "v_proj", "o_proj")):
+            attn += 1
+        else:
+            other += 1
+    return {"lora_attn": attn, "lora_expert": expert, "lora_other": other,
+            "lora_total": attn + expert + other}
+
+
 def build_model_and_tokenizer(
     model_id: str,
     four_bit: bool,
@@ -968,6 +990,16 @@ def main() -> int:
             lora_rank_alloc=args.lora_rank_alloc,
         )
 
+    if args.backend != "mlx":
+        lt = summarize_lora_targets(model)
+        print(f"LoRA targets: attn={lt['lora_attn']} expert={lt['lora_expert']} "
+              f"other={lt['lora_other']} total={lt['lora_total']}", flush=True)
+        model_has_experts = any("experts" in n for n, _ in model.named_modules())
+        if args.qat and lt["lora_expert"] == 0 and model_has_experts:
+            print("WARNING: 0 EXPERT modules carry a LoRA adapter — with --qat the experts cannot "
+                  "be co-adapted to the serving grid (they stay frozen). Use --target-modules "
+                  "attn-mlp and confirm experts load as per-expert nn.Linear.", flush=True)
+
     neftune_handle = attach_neftune(model, args.neftune_alpha)
     if neftune_handle:
         print(f"NEFTune enabled (alpha={args.neftune_alpha})", flush=True)
@@ -979,8 +1011,17 @@ def main() -> int:
             from training.qat import attach_qat
 
             wrapped = attach_qat(model, scheme=args.qat_scheme)
+            cov = getattr(model, "_qat_coverage", {})
             print(f"QAT enabled (scheme={args.qat_scheme}, lambda={args.qat_lambda}, "
-                  f"fake-quant on {wrapped} linear module(s))", flush=True)
+                  f"fake-quant on {wrapped} module(s): attn={cov.get('attn', '?')} "
+                  f"expert={cov.get('expert', '?')} other={cov.get('other', '?')})", flush=True)
+            # The blind spot that cost four certify rounds: if QAT reaches 0 experts on an MoE, the
+            # experts can't co-adapt to low-bit serving. Surface it at train time, loudly.
+            if cov.get("model_has_expert_params") and cov.get("expert", 0) == 0:
+                print("WARNING: QAT covered 0 EXPERT modules though the model has experts — the "
+                      "MoE experts will NOT be co-adapted to the serving grid and will degrade when "
+                      "served quantized. Check that experts load as per-expert nn.Linear and that "
+                      "--target-modules reaches them (see LoRA target summary above).", flush=True)
 
     if args.shard == "fsdp":
         # High/top-tier multi-GPU path: shard the frozen base across torch.distributed ranks.

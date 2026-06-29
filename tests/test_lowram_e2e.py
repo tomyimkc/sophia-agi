@@ -104,6 +104,27 @@ def test_end_to_end_train_account_compose_certify() -> None:
     assert np.isfinite(rep_q.mean_kl)
 
 
+def test_certify_lowram_offline_invariants() -> None:
+    """The certify glue's GPU-free logic: correct manual LoRA merge, served-only quantization
+    (quantizing lm_head is provably worse), and the honest whole-model memory ratio."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import certify_lowram as cl
+    ok, detail = cl.offline_invariants()
+    assert ok, detail["checks"]
+    # The first-attempt bug, encoded as a regression guard: extending NVFP4 to lm_head raises KL.
+    assert detail["served_only_mean_kl"] < detail["plus_lm_head_mean_kl"]
+    # The served matcher catches per-expert AND fused MoE expert weights (the OLMoE under-quant
+    # bug), but never the head, embeddings, norms, router gate, or stray LoRA tensors.
+    assert all(cl.is_served_param(n) for n in (
+        "model.layers.0.self_attn.q_proj.weight",
+        "model.layers.3.mlp.experts.7.down_proj.weight",
+        "model.layers.5.mlp.experts.gate_up_proj"))          # fused Parameter, no .weight
+    assert not any(cl.is_served_param(n) for n in (
+        "lm_head.weight", "model.embed_tokens.weight",
+        "model.layers.0.mlp.gate.weight",                    # router
+        "base_model.model.model.layers.0.self_attn.q_proj.lora_A.weight"))
+
+
 def test_runpod_qat_lowram_plan_is_cost_gated() -> None:
     sys.path.insert(0, str(ROOT / "tools"))
     import runpod_qat_lowram as rq

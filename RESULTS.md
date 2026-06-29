@@ -3,7 +3,7 @@
 <!-- GENERATED from agi-proof/benchmark-results/published-results.json by
      tools/build_results_page.py — do not edit by hand. -->
 
-_Last updated: 2026-06-27_
+_Last updated: 2026-06-29_
 
 **No-overclaim gate.** A number is **VALIDATED** only with ≥2 independent judges in consensus (judge ≠ subject), reported inter-judge agreement, ≥3 runs, and confidence intervals. Everything else is **illustrative** and labelled. Hidden-eval prompts are never published — only aggregates. See [SECURITY.md](SECURITY.md) and [methodology](docs/11-Platform/Provenance-Delta.md).
 
@@ -22,6 +22,14 @@ _Last updated: 2026-06-27_
 - Hallucination alone **42.8%** → gated **33.3%** · Δ **9.4% [4.3%, 15.2%]**
 - False-positive cost 0.0% · gate coverage 23.7%
 - ⚠ Single judge. An independent Claude audit panel re-judged all 46 cases and found this judge OVER-counted (76% agreement, 10 false positives), so the validated alone-rate is ~21.7%, not 42.8%. This row is illustrative ONLY and must not be quoted as a headline.
+
+### `google/gemma-3-4b-it + M3-SFT LoRA (sophia-wisdom-4b-pilot-seed0)` — source-discipline SFT adapter; corpus-bound pilot; weights reproducible-from-seed (not committed)
+
+- Blind pairwise adapter-vs-base judging, 268 source-discipline cases x 3 seeds, both judge families.
+- Adapter win-rate pooled over 3 seeds: **Qwen-7B 0.72 [0.687, 0.750]**, **Llama-3.3-70B 0.81 [0.777, 0.832]** — both 95% CIs exclude 0.5 (significant) on every seed.
+- Inter-judge kappa = 0.24 (seeds 0.23/0.28/0.20) — BELOW the 0.40 floor; prevalence-deflation (both judges agree ~75%, obsAgree 0.71-0.77), not disagreement (PABAK ~ 0.42).
+- An earlier run with a WEAK 2nd judge (Llama-3.1-8B-4bit) showed that family as a null/tie (~0.50) — a judge-capability artifact corrected by the 70B.
+- ⚠ CANDIDATE, NOT VALIDATED: the no-overclaim kappa>=0.40 floor is unmet (deflation artifact). The substantive claim — M3-SFT measurably improves source discipline, confirmed by two independent capable judge families across >=3 seeds — is well-supported by the win-rate panel, but the formal kappa gate is not met, so this is not a headline. Single subject + base (gemma-3-4b), corpus-bound. Artifacts: agi-proof/benchmark-results/wisdom-market/m3-2family-judge-70b/. See failure-ledger m3-sft-2family-judge-not-validated-2026-06-29.
 
 ## External-oracle evals (base-model accuracy via the harness)
 
