@@ -322,6 +322,7 @@ if [[ "${RUN_B}" -eq 1 ]]; then
       --train "${QAT_DATA}" \
       --output "${QAT_ADAPTER}" \
       --target-modules "${QAT_TARGET_MODULES:-attn-mlp}" \
+      --lora-dropout 0 \
       --qat --qat-scheme nvfp4 \
       --qat-lambda "${QAT_LAMBDA}" \
       --epochs "${QAT_EPOCHS}"
