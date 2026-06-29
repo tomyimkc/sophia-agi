@@ -33,11 +33,11 @@ on:
         type: choice
         options: [offline, live]
       task:
-        description: 'RLVR reward task: provenance / math (sympy) / code (hidden-tests-pass) / concept (concept-TBox gate)'
+        description: 'RLVR reward task: provenance / math (sympy) / code (hidden-tests-pass) / concept / invention (compositional, held-out-enforced)'
         required: true
         default: 'provenance'
         type: choice
-        options: [provenance, math, code, concept]
+        options: [provenance, math, code, concept, invention]
       model:
         description: 'Subject model (HF id). Default = code-capable Qwen2.5-Coder; GLM-4-9B scores 0/48 under the chat template (base too weak).'
         required: false
