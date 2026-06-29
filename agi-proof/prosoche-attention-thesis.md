@@ -88,10 +88,23 @@
 > promoted to `published-results.json` (that needs a naturalistic multi-axis battery + human
 > review), and `canClaimAGI` stays **false**: one corpus-bound efficiency receipt, not AGI.
 >
-> **Still open**: a naturalistic (non-adversarial, multi-axis) battery to test whether the edge
-> generalises beyond the key-not-recent construction; and the learned goal-extraction seam for
-> the derived-goal gap. The instrument, GPU lane, powered+sealed battery, anytime-valid gate,
-> and live panel all work end to end.
+> **Now also run (seventh pass) — a NATURALISTIC exploratory on real multi-doc QA.** To test
+> whether the synthetic GO generalises, a decontaminated slice of **LongBench v1 hotpotqa/2wikimqa**
+> (gold passage at a NATURAL varying position; graded vs the dataset's GOLD answer via EM/F1 + a
+> 2-family judge panel, κ=1.0, judge↔F1 agreement 0.97) was run with a **closed-book control**
+> (`tools/run_longbench_focus_eval.py`; `focus-longbench-exploratory.json`). Findings (N=30, 1 seed
+> — EXPLORATORY, not powered): at a tight budget (~4% of context) **all arms floored and closed-book
+> beat them (leakage/floor confound)**; at a fair budget (~17%) the floor lifts, leakage is
+> controlled, and the **expected ordering appears — anchored 0.30 > priority 0.23 > recency 0.13 >
+> closed-book 0.10**, with the anchored arm most token-efficient. **But Δ CI [−26, +10] includes 0
+> at N=30** — the direction is favourable yet UNCONFIRMED. Honest reading: the synthetic GO does
+> **not** trivially replicate, and naturalistic generalisation is **plausible but unproven** pending
+> a powered run.
+>
+> **Still open**: a POWERED naturalistic run (N≥400, ≥3 seeds, sealed split, pre-registered fair
+> budget) to confirm-or-refute the favourable direction; and the learned goal-extraction seam for
+> the derived-goal gap. The instrument, GPU lane, powered+sealed synthetic battery, naturalistic
+> harness + decontaminated LongBench slice, anytime-valid gate, and live panel all work end to end.
 >
 > **Why this doc exists.** The operator's ask: *"I have many gates to limit the AI's
 > action; I want the AI to know what its attention is — its goal / the rewards it
