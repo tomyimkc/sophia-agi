@@ -31,5 +31,7 @@
   "provenanceNote": "third-party web paragraphs carry NO provenance labels, so provenance-faithfulness (the wiki/-only contribution) is NOT measured here; this experiment isolates the recall lift only.",
   "status": "not_run",
   "harness": "tools/eval_okf_multihop_qa.py",
-  "execution": "farm only — datasets are not committed and there is no network in-session; download on the farm and pass --data"
+  "workflow": ".github/workflows/okf-multihop-recall.yml (manual workflow_dispatch; downloads HotpotQA dev-distractor, runs both arms with a fail-closed decontam gate, uploads the report artifact; does not auto-commit)",
+  "decontamNote": "a scan over zero training prompts is VACUOUS and is NOT a clean pass (the harness flags `vacuous` and fails closed); a real GO needs the corpora present and unlocked",
+  "execution": "farm/CI only — datasets are not committed and there is no in-session network; dispatch the workflow or pass --data"
 }

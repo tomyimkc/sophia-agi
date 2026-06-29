@@ -1,0 +1,65 @@
+name: okf-multihop-recall
+
+# Gated third-party benchmark: does OKF entity-graph recall (okf.extract.multi_hop_recall)
+# beat a vector-only baseline (agent.lexical_embed) on a standard multi-hop QA dataset, over
+# the SAME candidate pool? See docs/11-Platform/SAG-vs-OKF-Retrieval.md §4b and the
+# pre-registration in agi-proof/benchmark-results/okf-multihop/.
+#
+# MANUAL ONLY (workflow_dispatch): never runs on push/PR, spends no compute on its own, and
+# provisions NO GPU — the harness is pure-Python CPU. It downloads the canonical public
+# HotpotQA dev-distractor set, runs both arms with a fail-closed decontamination gate, and
+# uploads the report as an artifact. It does NOT commit the result: an operator reviews the
+# artifact and promotes the PENDING report by hand if the spec's GO criteria hold.
+#
+# No workflow inputs: every parameter is a fixed constant below, so there is zero untrusted
+# github.event expression anywhere (no GitHub Actions expression injection — CodeQL
+# actions/code-injection). To run 2WikiMultiHop or MuSiQue (different hosts / manual
+# download), edit DATA_URL + DATASET here, or add a committed config, rather than
+# re-introducing free-form dispatch inputs.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  recall:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Download dataset (canonical public HotpotQA dev-distractor)
+        env:
+          # Fixed constant. HotpotQA distractor dev set (Yang et al. 2018). For a HF mirror or
+          # 2Wiki/MuSiQue, change DATA_URL + DATASET here — do not add free-form inputs.
+          DATA_URL: http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_dev_distractor_v1.json
+        run: |
+          mkdir -p .data
+          curl -L --fail --retry 3 --retry-delay 5 -o .data/dataset.json "$DATA_URL"
+          echo "downloaded $(wc -c < .data/dataset.json) bytes"
+
+      - name: Run recall harness (fail-closed on decontamination leak)
+        env:
+          DATASET: hotpot
+          DATA_PATH: .data/dataset.json
+          OUT_PATH: agi-proof/benchmark-results/okf-multihop/okf-multihop-qa.hotpot.public-report.json
+        run: |
+          python tools/eval_okf_multihop_qa.py \
+            --data "$DATA_PATH" \
+            --dataset "$DATASET" \
+            --k 2 5 10 \
+            --check-decontam \
+            --out "$OUT_PATH"
+
+      - name: Upload recall report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: okf-multihop-recall-report
+          path: agi-proof/benchmark-results/okf-multihop/okf-multihop-qa.hotpot.public-report.json
+          if-no-files-found: ignore

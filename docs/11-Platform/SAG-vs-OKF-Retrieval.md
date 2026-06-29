@@ -141,6 +141,16 @@ GO criteria (in the spec): paired Recall@2 lift > 0 with a 95% CI excluding 0 ov
 slices/seeds, decontam clean, no regression at higher K. Until the farm run clears them,
 no third-party number is claimed.
 
+**One dispatch away.** `.github/workflows/okf-multihop-recall.yml` (manual
+`workflow_dispatch`, CPU-only, no GPU) downloads the canonical public HotpotQA
+dev-distractor set, runs both arms with a **fail-closed decontam gate**, and uploads the
+report as an artifact. It deliberately does *not* auto-commit — an operator reviews the
+artifact and promotes the PENDING report by hand only if the GO criteria hold. The
+decontam check flags a `vacuous` scan (corpora absent / git-crypt-locked) and fails
+closed, so a number can't be certified without the training corpora present. 2Wiki /
+MuSiQue run by editing the `DATA_URL`/`DATASET` constants (the workflow takes no
+free-form inputs, by the repo's injection-safe convention).
+
 ## 5. One-line takeaway
 
 Steal SAG's **event/entity extraction + multi-hop entity index**; ignore its serving

@@ -74,6 +74,16 @@ def test_both_arms_produce_valid_recall() -> None:
             assert 0.0 <= v <= 1.0
 
 
+def test_decontam_contract() -> None:
+    items = _fixture_items()
+    dc = mhq.check_decontam(items)
+    # the synthetic questions never leak; the only way `clean` is False is a vacuous scan
+    assert dc["exactLeaks"] == [] and dc["nearLeaks"] == []
+    assert dc["vacuous"] == (dc["trainPromptsScanned"] == 0)
+    # honest invariant: a real (non-vacuous) clean scan == no leaks; vacuous is NOT clean
+    assert dc["clean"] == (not dc["exactLeaks"] and not dc["nearLeaks"] and not dc["vacuous"])
+
+
 def test_graph_rank_is_total_order() -> None:
     # _graph_rank must return every paragraph index exactly once (deterministic, complete).
     items = _fixture_items()
@@ -87,6 +97,7 @@ def main() -> int:
     test_hotpot_normalizer_marks_gold()
     test_musique_normalizer_marks_gold()
     test_both_arms_produce_valid_recall()
+    test_decontam_contract()
     test_graph_rank_is_total_order()
     print("test_okf_multihop_qa: OK")
     return 0

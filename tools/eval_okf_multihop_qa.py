@@ -45,6 +45,8 @@ if str(ROOT) not in sys.path:
 from agent import lexical_embed  # noqa: E402
 from okf import extract  # noqa: E402
 from okf.wikilinks import normalize_target  # noqa: E402
+from tools.assert_decontam import TRAIN_GLOBS, _jaccard, _shingles  # noqa: E402
+from provenance_bench.dataset_guard import _load_jsonl as _guard_load_jsonl, normalize, prompt_of  # noqa: E402
 
 FIXTURE = ROOT / "agi-proof" / "benchmark-results" / "okf-multihop" / "fixtures" / "mini_multihop.jsonl"
 DEFAULT_KS = (2, 5, 10)
@@ -170,6 +172,42 @@ def _recall_at(order, gold, k) -> float:
     return len(topk & gold) / len(gold)
 
 
+def check_decontam(items, *, jaccard: float = 0.6, shingle: int = 5) -> dict:
+    """Assert dataset questions are disjoint from every committed training corpus.
+
+    Reuses the repo's shared decontam primitives (tools.assert_decontam TRAIN_GLOBS +
+    provenance_bench.dataset_guard). Layer 1: exact/normalized question overlap. Layer 2:
+    content-shingle near-duplicate (Jaccard). A GO requires `clean == true`.
+    """
+    train_prompts: list[str] = []
+    for g in TRAIN_GLOBS:
+        for p in sorted(ROOT.glob(g)):
+            for row in _guard_load_jsonl(p):
+                pr = prompt_of(row)
+                if pr:
+                    train_prompts.append(pr)
+    train_norm = {normalize(p) for p in train_prompts}
+    train_sh = [_shingles(p, shingle) for p in train_prompts]
+
+    exact: list[str] = []
+    near: list[dict] = []
+    for it in items:
+        q = it["question"]
+        if normalize(q) in train_norm:
+            exact.append(it.get("id"))
+            continue
+        qsh = _shingles(q, shingle)
+        worst = max((_jaccard(qsh, ts) for ts in train_sh), default=0.0)
+        if worst >= jaccard:
+            near.append({"id": it.get("id"), "jaccard": round(worst, 3)})
+    # A scan over zero training prompts (corpora absent / git-crypt-locked in this checkout)
+    # is VACUOUS — no leak can be found, so it must not be read as a real decontam pass.
+    vacuous = len(train_prompts) == 0
+    return {"trainPromptsScanned": len(train_prompts), "exactLeaks": exact,
+            "nearLeaks": near, "jaccardThreshold": jaccard, "shingleK": shingle,
+            "vacuous": vacuous, "clean": (not exact and not near and not vacuous)}
+
+
 def evaluate(items, ks=DEFAULT_KS) -> dict:
     arms = {"vector_only": _vector_rank, "graph_multihop": _graph_rank}
     sums = {a: {k: 0.0 for k in ks} for a in arms}
@@ -193,6 +231,9 @@ def main() -> int:
     ap.add_argument("--k", nargs="+", type=int, default=list(DEFAULT_KS), help="recall depths")
     ap.add_argument("--ner-backend", default="deterministic",
                     help="entity backend (farm: a real NER/LLM; default: deterministic floor)")
+    ap.add_argument("--check-decontam", action="store_true",
+                    help="assert questions are disjoint from training corpora (fail-closed)")
+    ap.add_argument("--out", help="write the JSON report to this path")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
 
@@ -210,9 +251,22 @@ def main() -> int:
     result["dataset"] = dataset
     result["isFixture"] = is_fixture
     result["nerBackend"] = args.ner_backend
+    result["canClaimAGI"] = False
+    result["claimCeiling"] = "candidate_only; canClaimAGI:false"
     result["honestBound"] = (
         "FIXTURE self-test — wiring only, NOT a result." if is_fixture else
         "third-party recall lift; provenance-faithfulness is NOT measurable on unlabeled web text.")
+
+    decontam_dirty = False
+    if args.check_decontam:
+        result["decontam"] = check_decontam(items)
+        decontam_dirty = not result["decontam"]["clean"]
+
+    if args.out:
+        out_path = Path(args.out)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
+        print(f"wrote report -> {out_path}", file=sys.stderr)
 
     if args.json:
         print(json.dumps(result, indent=2, ensure_ascii=False))
@@ -224,9 +278,13 @@ def main() -> int:
             print(f"  {arm:16} " + "  ".join(f"{k}={v}" for k, v in m.items()))
         print("  " + "-" * 50)
         print("  graph - vector   " + "  ".join(f"{k}={v}" for k, v in result["graphMinusVector"].items()))
+        if args.check_decontam:
+            dc = result["decontam"]
+            print(f"  decontam: {'CLEAN' if dc['clean'] else 'DIRTY ' + str(dc['exactLeaks'] + dc['nearLeaks'])}")
         print("-" * 64)
         print(result["honestBound"])
-    return 0
+    # Fail-closed: a decontamination leak on a real dataset is a hard stop.
+    return 2 if decontam_dirty else 0
 
 
 if __name__ == "__main__":
