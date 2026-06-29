@@ -286,7 +286,7 @@ training a VLM and **without** weakening any honesty machinery:
 |---|---|---|
 | 2.5D scene schema | objects carry optional scalar `z` (camera-frame depth; larger = farther) and `size` (real-world size, decoupled from apparent box area) | `multimodal_bench/data/visual_traps.json` (`_meta.depthSemantics`) |
 | Physical verifiers (judge-free) | `depth_order` (in-front/behind), `occludes` (box overlap **and** nearer), `bigger_than` (real size, not pixels), `distance_between`/`distance_cmp` (3D Euclidean) — all **fail closed** (False/None) on a missing object/field | `multimodal_bench/verifiers.py` |
-| 12 physical traps + controls | `depth_order`, `occlusion`, `size_illusion`, `distance` + `*_control` rows with mixed yes/no gold, so neither blanket-deny nor abstain-all wins; every gold re-derived by the verifier | `multimodal_bench/data/visual_traps.json` |
+| physical traps + controls (34 physical rows) | `depth_order`, `occlusion`, `size_illusion`, `distance` + `*_control` rows with mixed yes/no gold, so neither blanket-deny nor abstain-all wins; every gold re-derived by the verifier | `multimodal_bench/data/visual_traps.json` |
 | Depth-aware render | far→near paint order so the real-VLM PNG shows occlusion consistent with the `occludes` verifier (non-physical scenes render unchanged) | `multimodal_bench/render.py` |
 | Tests | depth/occlusion/size/distance verifier semantics + fail-closed + category/polarity coverage | `tests/test_multimodal_traps.py` |
 
