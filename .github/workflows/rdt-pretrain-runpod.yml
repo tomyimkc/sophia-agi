@@ -97,15 +97,13 @@ jobs:
           GH_PILOT_PAT: ${{ github.token }}
           RUNPOD_REGISTRY_AUTH_ID: ${{ github.event.inputs.registry_auth_id }}
         run: |
-          ARGS=""
-          if [ -n "$IN_TRAIN_ARGS" ]; then ARGS="--train-args \"$IN_TRAIN_ARGS\""; fi
-          GPU=""
-          if [ -n "$IN_GPU_TYPE" ]; then GPU="--gpu-type \"$IN_GPU_TYPE\""; fi
-          IMAGE=""
-          if [ -n "$IN_IMAGE" ]; then IMAGE="--image-name $IN_IMAGE"; fi
-          eval python tools/runpod_rdt_pretrain.py --yes --wait \
-            --branch "${{ github.ref_name }}" \
-            --mode "$IN_MODE" $ARGS $GPU $IMAGE
+          # Build argv as a bash array and append optional flags as separate, quoted
+          # elements — no eval, no unquoted expansion (avoids shell injection/word-splitting).
+          args=(--yes --wait --branch "${{ github.ref_name }}" --mode "$IN_MODE")
+          [ -n "$IN_TRAIN_ARGS" ] && args+=(--train-args "$IN_TRAIN_ARGS")
+          [ -n "$IN_GPU_TYPE" ] && args+=(--gpu-type "$IN_GPU_TYPE")
+          [ -n "$IN_IMAGE" ] && args+=(--image-name "$IN_IMAGE")
+          python tools/runpod_rdt_pretrain.py "${args[@]}"
 
       - name: Surface the pushed train report
         if: always()

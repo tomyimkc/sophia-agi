@@ -193,7 +193,12 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ts=$(date -u +%Y-%m-%dT%H-%M-%SZ)
-          out="agi-proof/proof-search/path-b-${IN_THEOREM}-${ts}.public-report.json"
+          # Sanitize the dispatch theorem to a safe slug for the filename/branch components: a
+          # raw value with '/', '..' or other metacharacters could traverse the workspace or
+          # produce an invalid branch name. The commit message below keeps the full theorem
+          # (a single quoted -m argument, not a path/ref).
+          slug=$(printf '%s' "$IN_THEOREM" | tr -c 'A-Za-z0-9._-' '_')
+          out="agi-proof/proof-search/path-b-${slug}-${ts}.public-report.json"
           mkdir -p agi-proof/proof-search
           [ -f agi-proof/proof-search/result.json ] && cp agi-proof/proof-search/result.json "$out"
           git add agi-proof/proof-search/*.public-report.json 2>/dev/null
@@ -201,7 +206,7 @@ jobs:
             echo "no report to commit"; exit 0
           fi
           # Evidence branch off main (ruleset forbids pushing to main directly).
-          branch="evidence/path-b-${IN_THEOREM}-${ts}"
+          branch="evidence/path-b-${slug}-${ts}"
           branch="${branch//:/-}"   # ':' is illegal in a branch name
           git checkout -b "$branch"
           git commit -m "evidence(path-b): Lean proof search ${IN_THEOREM} via ${IN_PROVIDER} (${{ steps.search.outputs.VERDICT || 'no-verdict' }})"

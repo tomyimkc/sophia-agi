@@ -141,21 +141,12 @@ jobs:
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
         run: |
-          INTERRUPTIBLE=""
-          if [ "$IN_INTERRUPTIBLE" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
-          NETVOL=""
-          if [ -n "$IN_NETWORK_VOLUME_ID" ]; then NETVOL="--network-volume-id $IN_NETWORK_VOLUME_ID"; fi
-          python tools/runpod_rlvr.py --yes \
-            --source git --branch "${{ github.ref_name }}" \
-            --remote-mode "$IN_REMOTE_MODE" \
-            --task "$IN_TASK" \
-            --reward "$IN_REWARD" \
-            --model "$IN_MODEL" \
-            --epochs "$IN_EPOCHS" \
-            --seed "$IN_SEED" \
-            --quant bf16 --vllm colocate \
-            --gpu-type "$IN_GPU_TYPE" \
-            $INTERRUPTIBLE $NETVOL
+          # argv as a bash array; optional flags appended as separate quoted elements
+          # (no unquoted expansion -> no shell injection/word-splitting from dispatch inputs).
+          args=(--yes --source git --branch "${{ github.ref_name }}" --remote-mode "$IN_REMOTE_MODE" --task "$IN_TASK" --reward "$IN_REWARD" --model "$IN_MODEL" --epochs "$IN_EPOCHS" --seed "$IN_SEED" --quant bf16 --vllm colocate --gpu-type "$IN_GPU_TYPE")
+          [ "$IN_INTERRUPTIBLE" = "true" ] && args+=(--interruptible)
+          [ -n "$IN_NETWORK_VOLUME_ID" ] && args+=(--network-volume-id "$IN_NETWORK_VOLUME_ID")
+          python tools/runpod_rlvr.py "${args[@]}"
 
       - name: Ingest the FRESH pod adapter-eval report into the SSIL Layer-1 gate
         if: always()

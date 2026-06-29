@@ -103,17 +103,13 @@ jobs:
           IN_MODE: ${{ github.event.inputs.mode }}
           IN_RUNS: ${{ github.event.inputs.runs }}
         run: |
-          LIMIT=""
-          if [ -n "$IN_LIMIT" ]; then LIMIT="--limit $IN_LIMIT"; fi
-          IMAGE=""
-          if [ -n "$IN_IMAGE" ]; then IMAGE="--image-name $IN_IMAGE"; fi
-          BENCH=""
-          if [ -n "$IN_BENCHMARK" ]; then BENCH="--bench-path $IN_BENCHMARK"; fi
-          python tools/runpod_wisdom_pilot_selfreport.py --yes --wait \
-            --branch "${{ github.ref_name }}" \
-            --seed "$IN_SEED" \
-            --mode "$IN_MODE" \
-            --runs "$IN_RUNS" $LIMIT $IMAGE $BENCH
+          # Build argv as a bash array; append optional flags as separate, quoted elements
+          # (no unquoted expansion -> no shell injection/word-splitting from dispatch inputs).
+          args=(--yes --wait --branch "${{ github.ref_name }}" --seed "$IN_SEED" --mode "$IN_MODE" --runs "$IN_RUNS")
+          [ -n "$IN_LIMIT" ] && args+=(--limit "$IN_LIMIT")
+          [ -n "$IN_IMAGE" ] && args+=(--image-name "$IN_IMAGE")
+          [ -n "$IN_BENCHMARK" ] && args+=(--bench-path "$IN_BENCHMARK")
+          python tools/runpod_wisdom_pilot_selfreport.py "${args[@]}"
 
       - name: Surface the pushed eval result (pull what the pod committed)
         if: always()

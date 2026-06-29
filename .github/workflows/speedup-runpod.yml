@@ -95,31 +95,18 @@ jobs:
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
         run: |
-          IMAGE=""
-          if [ -n "$IN_IMAGE" ]; then IMAGE="--image-name $IN_IMAGE"; fi
-          python tools/runpod_speedup.py --dry-run \
-            --source git --branch "${{ github.ref_name }}" \
-            --model "$IN_MODEL" \
-            --limit "$IN_LIMIT" \
-            --seed "$IN_SEED" \
-            --gpu-type "$IN_GPU_TYPE" \
-            $IMAGE
+          args=(--dry-run --source git --branch "${{ github.ref_name }}" --model "$IN_MODEL" --limit "$IN_LIMIT" --seed "$IN_SEED" --gpu-type "$IN_GPU_TYPE")
+          [ -n "$IN_IMAGE" ] && args+=(--image-name "$IN_IMAGE")
+          python tools/runpod_speedup.py "${args[@]}"
 
       - name: Launch RunPod speedup bench (rents GPU, runs over SSH, deletes pod)
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
         run: |
-          INTERRUPTIBLE=""
-          if [ "$IN_INTERRUPTIBLE" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
-          IMAGE=""
-          if [ -n "$IN_IMAGE" ]; then IMAGE="--image-name $IN_IMAGE"; fi
-          python tools/runpod_speedup.py --yes \
-            --source git --branch "${{ github.ref_name }}" \
-            --model "$IN_MODEL" \
-            --limit "$IN_LIMIT" \
-            --seed "$IN_SEED" \
-            --gpu-type "$IN_GPU_TYPE" \
-            $INTERRUPTIBLE $IMAGE
+          args=(--yes --source git --branch "${{ github.ref_name }}" --model "$IN_MODEL" --limit "$IN_LIMIT" --seed "$IN_SEED" --gpu-type "$IN_GPU_TYPE")
+          [ "$IN_INTERRUPTIBLE" = "true" ] && args+=(--interruptible)
+          [ -n "$IN_IMAGE" ] && args+=(--image-name "$IN_IMAGE")
+          python tools/runpod_speedup.py "${args[@]}"
 
       - name: Show the speedup report in the run log
         if: always()
