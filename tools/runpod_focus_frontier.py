@@ -57,6 +57,7 @@ from tools.runpod_rlvr import (  # noqa: E402
 REPORT_REL = "agi-proof/benchmark-results/prosoche/focus-efficiency.PENDING.public-report.json"
 ROBUST_REL = "agi-proof/benchmark-results/prosoche/prosoche-robustness.json"
 EVAL_REL = "agi-proof/benchmark-results/prosoche/focus-frontier-eval.PENDING.public-report.json"
+POWERED_REL = "agi-proof/benchmark-results/prosoche/focus-frontier-eval.powered-public.json"
 REMOTE_REPO = "/workspace/sophia-runpod/sophia-agi"
 
 
@@ -77,15 +78,26 @@ def _remote_focus_script(args: argparse.Namespace) -> str:
         )
         if args.model:
             live_cmd += f' --model "{args.model}" || echo "[focus-frontier] real-model arm refused/failed; honest NO-GO report stands"'
+    # On the farm, score the POWERED public split with a real subject + >= 2 judge
+    # families (env keys/models supplied to the pod) when in live mode.
+    powered = ""
+    if args.remote_mode == "live" and args.model:
+        powered = (
+            f'python {entry} --real --split public --max-workers 8 '
+            f'--out agi-proof/benchmark-results/prosoche/focus-frontier-eval.powered-public.json '
+            f'|| echo "[focus-frontier] powered run failed; honest reports stand"'
+        )
     return f"""
 set -Eeuo pipefail
 cd {REMOTE_REPO}
 echo "[focus-frontier] python: $(python --version 2>&1)"
+python tools/build_focus_battery.py --check
 python tools/run_focus_efficiency_frontier.py --write
 python tools/run_focus_efficiency_frontier.py --check
 python tools/run_prosoche_robustness.py --write
 {live_cmd}
 python {entry} --check
+{powered}
 echo "[focus-frontier] done; reports written."
 """
 
@@ -186,7 +198,7 @@ def main(argv: list[str] | None = None) -> int:
             log_path = tmpdir / "focus-frontier.log"
             cmd = _ssh_base(conn, key_path) + ["bash", "-s"]
             exit_code = _stream(cmd, log_path, input_text=_remote_focus_script(args))
-            for rel in (REPORT_REL, ROBUST_REL, EVAL_REL):
+            for rel in (REPORT_REL, ROBUST_REL, EVAL_REL, POWERED_REL):
                 _scp_from_pod(conn, key_path, f"{REMOTE_REPO}/{rel}", ROOT / rel)
             print(f"[focus-frontier] remote exit={exit_code}; reports copied back.")
             return exit_code

@@ -74,7 +74,8 @@ jobs:
           python tools/run_prosoche_robustness.py --check
           python tools/run_focus_frontier_eval.py --write
           python tools/run_focus_frontier_eval.py --check
-          echo "Offline frontier smoke OK (3-arm eval machinery runs; NO-GO by design — the measured run is the model-gated open item)."
+          python tools/build_focus_battery.py --check
+          echo "Offline frontier smoke OK (3-arm eval machinery + powered/decontaminated battery verified; NO-GO by design — the measured run is the model-gated open item)."
 
       # --- LIVE: paid pod, gated ------------------------------------------------- #
       - name: Preflight — confirm + secret present (live only)

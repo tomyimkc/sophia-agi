@@ -346,11 +346,34 @@ def run_mock(*, seed: int = 0) -> dict:
 # PILOT (MDE >> 0.10), so it can never be a GO no matter how clean the direction.
 MIN_ITEMS_FOR_POWER = 100
 MIN_SEEDS = 3
+MDE_TARGET = 0.10  # pre-registered: the powered regime requires MDE@N <= 0.10 (N ~ 400)
 
 
 def _task_question(task: dict) -> str:
     return (f"Using ONLY the context above, explain: {task['goal']}. "
             "If the context does not contain the answer, reply exactly: INSUFFICIENT CONTEXT.")
+
+
+def _retry(fn, *args, attempts: int = 5, base: float = 1.5, **kw):
+    """Call ``fn`` with exponential backoff on transient API errors (429 / 5xx).
+    Re-raises only after the last attempt; callers degrade a final failure to a
+    conservative outcome rather than crashing the whole run."""
+    import time
+    import urllib.error
+
+    for i in range(attempts):
+        try:
+            return fn(*args, **kw)
+        except urllib.error.HTTPError as exc:  # noqa: PERF203
+            if exc.code in (429, 500, 502, 503, 529) and i < attempts - 1:
+                time.sleep(base * (2 ** i))
+                continue
+            raise
+        except Exception:  # noqa: BLE001 — network blips: retry, then give up
+            if i < attempts - 1:
+                time.sleep(base * (2 ** i))
+                continue
+            raise
 
 
 def _judge_label(judge_complete, question: str, key: str, answer: str) -> str:
@@ -363,55 +386,83 @@ def _judge_label(judge_complete, question: str, key: str, answer: str) -> str:
     return "solved" if out.startswith("SOLVED") or ("SOLVED" in out and "UNSOLVED" not in out) else "unsolved"
 
 
-def run_real(subject, subject_id: str, judges: list, *, seeds: int = 1, cache=None) -> dict:
+def load_powered_battery(split: str = "public") -> "list[dict] | None":
+    """Load the committed powered battery (tools/build_focus_battery.py), filtered to a
+    split. Returns None if it has not been built yet (callers fall back to the inline
+    fixture)."""
+    p = RESULTS_DIR / "focus-frontier-battery.json"
+    if not p.exists():
+        return None
+    data = json.loads(p.read_text(encoding="utf-8"))
+    tasks = [t for t in data.get("tasks", []) if t.get("split") == split] if split else data.get("tasks", [])
+    return tasks or None
+
+
+def run_real(subject, subject_id: str, judges: list, *, seeds: int = 1, cache=None,
+             battery: "list[dict] | None" = None, max_workers: int = 1) -> dict:
     """subject: complete(system,user)->str. judges: list of (family_id, complete). Returns a report.
 
     A task is SOLVED only on judge CONSENSUS (all judges say solved) — conservative /
-    fail-closed. Inter-judge agreement (kappa/AC1) is reported across the first two
-    families. NO promotion happens here; the gate decides, and a small battery stays
-    NO-GO (underpowered) by the pre-registered power floor.
+    fail-closed. Pairwise inter-judge kappa is reported across all families. NO
+    promotion happens here; the gate decides, and an underpowered battery (MDE > 0.10)
+    stays NO-GO by the pre-registered power floor. ``max_workers`` > 1 fans the model
+    calls out concurrently so a powered (N >= 400) run is feasible.
     """
     from tools.eval_stats import cohen_kappa, gwet_ac1
 
-    tasks = build_battery()
+    tasks = battery if battery is not None else (load_powered_battery("public") or build_battery())
     families = [fid for fid, _ in judges]
-    distinct_families = len({f.split(":")[0] if ":" in f else f for f in families} | {subject_id.split(":")[0]})
     judge_families = len(set(families))
+    n_distinct_tasks = len(tasks)
 
+    subj_sys = ("Answer the user's question using ONLY the provided context. Be concise. "
+                "If the context lacks the answer, reply exactly: INSUFFICIENT CONTEXT.")
+
+    def _work(unit):
+        seed, t, arm = unit
+        q = _task_question(t)
+        key = next((s["text"] for s in t["segments"] if s.get("key")), "")
+        packed = _pack(arm, t)
+        errored = False
+        try:
+            answer = _retry(subject, subj_sys, f"CONTEXT:\n{packed['text']}\n\n{q}")
+        except Exception:  # noqa: BLE001 — a persistent subject failure -> conservative "no answer"
+            answer, errored = "INSUFFICIENT CONTEXT", True
+        votes = []
+        for _fid, jfn in judges:
+            try:
+                votes.append(_retry(_judge_label, jfn, q, key, answer))
+            except Exception:  # noqa: BLE001 — a persistent judge failure -> conservative "unsolved"
+                votes.append("unsolved")
+                errored = True
+        return (seed, t["id"], arm, {"id": f"{t['id']}#s{seed}", "tokens": packed["tokens"],
+                                     "solved": all(v == "solved" for v in votes),
+                                     "keptSafety": packed["keptSafety"], "goalShift": t["goalShift"],
+                                     "votes": votes, "errored": errored})
+
+    units = [(seed, t, arm) for seed in range(seeds) for t in tasks for arm in ARMS]
+    results: dict = {}
+    if max_workers > 1:
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=max_workers) as ex:
+            for seed, tid, arm, row in ex.map(_work, units):
+                results[(seed, tid, arm)] = row
+    else:
+        for u in units:
+            seed, tid, arm, row = _work(u)
+            results[(seed, tid, arm)] = row
+
+    # Aggregate in deterministic order (independent of thread completion order).
     arm_rows: dict[str, list] = {a: [] for a in ARMS}
-    judge_label_lists: list[list[str]] = [[] for _ in judges]  # per-judge labels on the anchored arm
-
-    def _ask(role, model, system, user):
-        if cache is not None:
-            ckey = f"{role}|{model}|{hash((system, user)) & 0xffffffff}"
-            if ckey in cache:
-                return cache[ckey]
-        out = (subject if role == "subject" else dict(judges)[model])(system, user)
-        if cache is not None:
-            cache[ckey] = out
-        return out
-
+    judge_label_lists: list[list[str]] = [[] for _ in judges]
     for seed in range(seeds):
         for t in tasks:
-            q = _task_question(t)
-            key = next((s["text"] for s in t["segments"] if s.get("key")), "")
             for arm in ARMS:
-                packed = _pack(arm, t)
-                ctx = packed["text"]
-                subj_sys = ("Answer the user's question using ONLY the provided context. Be concise. "
-                            "If the context lacks the answer, reply exactly: INSUFFICIENT CONTEXT.")
-                answer = _ask("subject", subject_id, subj_sys, f"CONTEXT:\n{ctx}\n\n{q}")
-                votes = []
-                for fid, jfn in judges:
-                    lbl = _judge_label(jfn, q, key, answer)
-                    votes.append(lbl)
-                solved = all(v == "solved" for v in votes)
+                row = results[(seed, t["id"], arm)]
+                arm_rows[arm].append(row)
                 if arm == "prosoche-anchored":
-                    for ji, v in enumerate(votes):
+                    for ji, v in enumerate(row["votes"]):
                         judge_label_lists[ji].append(v)
-                arm_rows[arm].append({"id": f"{t['id']}#s{seed}", "tokens": packed["tokens"],
-                                      "solved": solved, "keptSafety": packed["keptSafety"],
-                                      "goalShift": t["goalShift"], "votes": votes})
 
     def _arm_summary(arm):
         rows = arm_rows[arm]
@@ -439,30 +490,38 @@ def run_real(subject, subject_id: str, judges: list, *, seeds: int = 1, cache=No
     success_held = anchored["solvedRate"] >= pp["solvedRate"] - 0.02
     antifix_held = (anchored["goalShiftSolvedRate"] or 0.0) >= (pp["goalShiftSolvedRate"] or 0.0)
     safety_pruned = anchored["safetyPrunedCount"]
-    n_items = anchored["n"]
+    mde = round(mde_at_n(n_distinct_tasks, p0=0.5), 4)
+    using_powered = bool(tasks) and all("split" in t for t in tasks)
+    split_used = tasks[0].get("split") if using_powered else "inline"
 
     verdict = gate_verdict(baseline_is_real=True, judge_families=judge_families, delta=primary,
                            success_guardrail_held=success_held, antifixation_held=antifix_held,
                            safety_pruned=safety_pruned)
     failures = list(verdict["criticalFailures"])
-    # Pre-registered power + replication floors: a small single/low-seed battery is an
-    # UNDERPOWERED PILOT, never a GO — surfaced honestly, never tuned away.
-    if n_items < MIN_ITEMS_FOR_POWER:
-        failures.append(f"underpowered: N={n_items} < {MIN_ITEMS_FOR_POWER} items (MDE >> 0.10); this is a PILOT, not a powered result")
+    # Pre-registered power + replication + decontam floors — surfaced honestly, never tuned.
+    if mde > MDE_TARGET:
+        failures.append(f"underpowered: MDE@N={mde} > {MDE_TARGET} (N={n_distinct_tasks} distinct tasks)")
     if seeds < MIN_SEEDS:
         failures.append(f"insufficient_seeds: {seeds} < {MIN_SEEDS} seeds")
     kappa_ok = kappa is not None and kappa >= 0.40
     if not kappa_ok:
-        failures.append(f"judge_agreement: Cohen kappa={kappa} (AC1={ac1}) does not clear >= 0.40 (or is undefined on this small/degenerate label set)")
-    failures.append("no_decontam_no_private_split: this author battery is not decontaminated against the anchor corpus and has no held-out private split")
+        failures.append(f"judge_agreement: min pairwise Cohen kappa={kappa} does not clear >= 0.40 (or undefined on a degenerate label set)")
+    if not using_powered:
+        failures.append("no_decontam: the inline fixture is not the decontaminated, powered battery (build_focus_battery.py)")
+    elif split_used != "private":
+        failures.append(f"sealed_split_not_scored: scored on the '{split_used}' split; the held-out PRIVATE split has not been scored for the final claim")
     strip = lambda d: {k: v for k, v in d.items() if not k.startswith("_")}  # noqa: E731
     return {
         "mode": "real",
-        "status": "pilot",
+        "status": "powered" if (using_powered and mde <= MDE_TARGET) else "pilot",
         "subject": subject_id,
         "judges": families,
         "judgeFamilies": judge_families,
         "seeds": seeds,
+        "nDistinctTasks": n_distinct_tasks,
+        "split": split_used,
+        "mdeAtN": mde,
+        "apiErrors": sum(1 for a in ARMS for r in arm_rows[a] if r.get("errored")),
         "arms": {a: strip(arms[a]) for a in ARMS},
         "primaryDelta": primary,
         "interJudge": {"minPairwiseCohenKappa": kappa, "pairwiseCohenKappa": pair_kappas,
@@ -545,10 +604,9 @@ def _env_judges():
     jb_family = os.environ.get("FOCUS_JUDGE_B_FAMILY", "qwen")
     if not ja_model:
         return None
-    judges = [
-        (f"llmhub:{ja_family}", hub_complete(model=ja_model, max_tokens=8)),
-        (f"llmhub:{jb_family}", hub_complete(model=jb_model, max_tokens=8)),
-    ]
+    judges = [(f"llmhub:{ja_family}", hub_complete(model=ja_model, max_tokens=8))]
+    if jb_model and jb_model.lower() != "none":  # 'none' skips B (e.g. to use A + an OpenRouter family)
+        judges.append((f"llmhub:{jb_family}", hub_complete(model=jb_model, max_tokens=8)))
     # Optional third, INDEPENDENT family via OpenRouter (e.g. a non-US Mistral model).
     # Model id read from env so no specific id is hardcoded/committed; the artifact
     # records only the family label.
@@ -581,7 +639,12 @@ def _run_real_from_env(args) -> int:
     subject_model = os.environ.get("FOCUS_SUBJECT_MODEL", "deepseek-chat")
     subject_id = f"deepseek:{subject_model}"
     subject = ds_complete(model=subject_model, max_tokens=160)
-    report = run_real(subject, subject_id, judges, seeds=args.seeds, cache={})
+    battery = load_powered_battery(args.split) if args.split else None
+    if args.limit and battery:
+        battery = battery[: args.limit]
+    report = run_real(subject, subject_id, judges, seeds=args.seeds,
+                      battery=battery, max_workers=args.max_workers)
+    report["batterySource"] = (f"powered:{args.split}" if battery is not None else "inline-fixture")
     out = json.dumps(report, indent=2, ensure_ascii=False, sort_keys=True)
     if args.out:
         Path(args.out).parent.mkdir(parents=True, exist_ok=True)
@@ -601,7 +664,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--real", action="store_true",
                     help="run the REAL panel (subject=DeepSeek, judges=llmhub claude+qwen) from env keys")
     ap.add_argument("--seeds", type=int, default=1, help="(--real) number of passes")
-    ap.add_argument("--out", default="", help="(--real) write the pilot report JSON here")
+    ap.add_argument("--split", default="", help="(--real) powered-battery split: public|private (empty = inline fixture)")
+    ap.add_argument("--limit", type=int, default=0, help="(--real) cap the number of tasks (cheap sampling)")
+    ap.add_argument("--max-workers", type=int, default=1, help="(--real) concurrent model calls")
+    ap.add_argument("--out", default="", help="(--real) write the report JSON here")
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args(argv)
 

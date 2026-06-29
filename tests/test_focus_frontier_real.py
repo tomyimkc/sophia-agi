@@ -26,8 +26,10 @@ def _fake_judge(system: str, user: str) -> str:
 
 
 def _run():
+    from tools.run_focus_frontier_eval import build_battery
     judges = [("fake:alpha", _fake_judge), ("fake:beta", _fake_judge)]
-    return run_real(_fake_subject, "fake:subject", judges, seeds=1, cache=None)
+    # Inline fixture -> exercises the underpowered / no-decontam path deterministically.
+    return run_real(_fake_subject, "fake:subject", judges, seeds=1, cache=None, battery=build_battery())
 
 
 def test_real_path_runs_and_detects_direction():
@@ -59,7 +61,7 @@ def test_underpowered_pilot_is_nogo_despite_clean_effect():
     assert r["verdict"] == "NO-GO"
     joined = " ".join(r["criticalFailures"])
     assert "underpowered" in joined
-    assert "no_decontam_no_private_split" in joined
+    assert "no_decontam" in joined
     assert r["canClaimAGI"] is False
 
 
