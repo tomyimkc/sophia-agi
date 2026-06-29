@@ -42,22 +42,12 @@ from agent.verifiers import citation_faithful, provenance_faithful
 
 # Pre-registered scalarization weights (sum to 1.0). NOT tuned on any sealed split.
 # Report sensitivity rather than re-fitting these. See §9 OPEN ledger.
-#
-# The original five axes (sum 0.80) are scaled-down versions of the canonical
-# {provenance:.40, abstention:.25, citation:.20, overclaim:.10, consistency:.05}
-# (sum 1.0), with a sixth ``focus`` axis (.20) added for the Prosoche attention
-# regulator. Because ``scalarize`` normalises by the weight of the axes actually
-# PRESENT, this re-scaling is reward-preserving when ``focus`` is absent (no anchor
-# supplied): the five remaining axes keep their original ratios, so every existing
-# reward value is byte-identical. ``focus`` only participates when a case carries an
-# attention anchor (``case["anchor"]``).
 DEFAULT_WEIGHTS: dict[str, float] = {
-    "provenance": 0.32,   # E1 grounding — also the fail-closed dominator (.40 * 0.8)
-    "abstention": 0.20,   # E2 answer-vs-abstain appropriateness            (.25 * 0.8)
-    "citation": 0.16,     # E4 cited sources actually support the claim     (.20 * 0.8)
-    "overclaim": 0.08,    # calibration proxy                              (.10 * 0.8)
-    "consistency": 0.04,  # E6 no self-contradiction                       (.05 * 0.8)
-    "focus": 0.20,        # Prosoche allocation axis — on-goal vs drift/fixation
+    "provenance": 0.40,   # E1 grounding — also the fail-closed dominator
+    "abstention": 0.25,   # E2 answer-vs-abstain appropriateness
+    "citation": 0.20,     # E4 cited sources actually support the claim
+    "overclaim": 0.10,    # calibration proxy: unhedged certainty without grounding is penalised
+    "consistency": 0.05,  # E6 no self-contradiction within the completion
 }
 
 _OVERCLAIM = re.compile(
@@ -81,7 +71,6 @@ class AxisScores:
     citation: float | None = None
     overclaim: float | None = None
     consistency: float | None = None
-    focus: float | None = None  # Prosoche allocation axis (N/A unless an anchor is supplied)
     hard_violation: bool = False
     reasons: list[str] = field(default_factory=list)
 
@@ -92,7 +81,6 @@ class AxisScores:
             "citation": self.citation,
             "overclaim": self.overclaim,
             "consistency": self.consistency,
-            "focus": self.focus,
             "hardViolation": self.hard_violation,
             "reasons": list(self.reasons),
         }
@@ -171,18 +159,6 @@ def axis_scores(completion: str, *, case: dict | None = None, sources: list[str]
         s.reasons.append("self-contradiction")
     else:
         s.consistency = 1.0
-
-    # --- focus / attention allocation (Prosoche) ------------------------------------------
-    # N/A unless the case carries an attention anchor. Imported lazily so the base
-    # reward has no hard dependency on the Prosoche stack (and to avoid any import
-    # cycle: agent.prosoche must not import this module).
-    anchor = (case or {}).get("anchor")
-    if anchor:
-        from agent.prosoche import focus_reward_axis
-
-        s.focus = focus_reward_axis(text, anchor, goal_shift=bool((case or {}).get("goalShift")))
-        if s.focus < 0:
-            s.reasons.append("attention-drift" if not (case or {}).get("goalShift") else "fixation/ignored-shift")
 
     return s
 

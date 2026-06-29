@@ -1,0 +1,17 @@
+{
+  "canClaimAGI": false,
+  "candidateOnly": false,
+  "contentHash": "c9130beae1a6e0cedb03ae4dccdd14f9b58db4e4e07b4be78791ef9713662498",
+  "derivedFrom": "eval_prompt_set held-out pool (carved entity-disjoint by tools/carve_entity_disjoint_split.py)",
+  "files": {
+    "heldout": "heldout_v1.jsonl"
+  },
+  "humanReviewed": true,
+  "nCases": 73,
+  "nTrainEntitiesGuardedAgainst": 44,
+  "note": "Carved by tools/carve_entity_disjoint_split.py; human-reviewed and adopted 2026-06-29 as a sealed entity-disjoint held-out split. Maintainer-authored (not third-party); does not affect canClaimAGI.",
+  "schema": "sophia.entity_disjoint_split.v1",
+  "sealed": true,
+  "sharedWithTrain": [],
+  "trainingDisjoint": true
+}

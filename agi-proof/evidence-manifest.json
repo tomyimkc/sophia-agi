@@ -3,9 +3,9 @@
   "generated": "2026-06-29T15:09:38",
   "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
   "failureLedgerSummary": {
-    "openCount": 87,
+    "openCount": 86,
     "byStatus": {
-      "open": 87,
+      "open": 86,
       "resolved": 44,
       "other": 23
     },
@@ -18,7 +18,6 @@
       "andreia-derived-signal-routing-weak-on-raw-text-2026-06-29",
       "attribution-swap-verifier-2026-06-28",
       "capability-cell-not-yet-in-live-ssa-2026-06-23",
-      "chem-bio-capability-unproven-2026-06-29",
       "claimreview-obscure-pack-hypothesis-refuted-2026-06-27",
       "coding-novelty-oracle-missing-2026-06-29",
       "conformal-gate-wired-synthetic-only-2026-06-26",

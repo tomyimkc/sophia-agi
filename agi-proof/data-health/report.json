@@ -1,0 +1,81 @@
+{
+  "canClaimAGI": false,
+  "dhi": 0.6147,
+  "dimensions": {
+    "coverage": {
+      "inflationFlag": false,
+      "recordTarget": 500,
+      "records": 210,
+      "rowTarget": 10000,
+      "rows": 1560,
+      "rowsPerRecord": 7.43,
+      "score": 0.3144
+    },
+    "decontamStrength": {
+      "buildDecontaminationDrops": 92,
+      "layers": {
+        "entity": true,
+        "exact": true,
+        "shingle": true
+      },
+      "score": 1.0
+    },
+    "dedupHealth": {
+      "duplicateRate": 0.0453,
+      "score": 0.85,
+      "thresholdsPinned": false
+    },
+    "lineage": {
+      "manifestsCovered": 16,
+      "manifestsTotal": 16,
+      "registryPresent": true,
+      "score": 1.0
+    },
+    "mixBalance": {
+      "l1Distance": 0.7406,
+      "nFamilies": 7,
+      "score": 0.2594,
+      "worstOffenders": [
+        [
+          "settled_fact",
+          0.2765
+        ],
+        [
+          "general_retention",
+          0.1019
+        ],
+        [
+          "hk_bilingual",
+          0.0949
+        ]
+      ]
+    },
+    "provenanceCompleteness": {
+      "rows": 528,
+      "score": 0.5,
+      "withLicense": 0.0,
+      "withSource": 1.0
+    },
+    "reproducibility": {
+      "artifactsTotal": 17,
+      "artifactsWithHash": 9,
+      "score": 0.5294
+    }
+  },
+  "label": "operational/illustrative — NOT a no-overclaim result; never promoted to published-results.json",
+  "schema": "sophia.data_health.v1",
+  "source": {
+    "corpus": "training/corpus.jsonl",
+    "manifest": "training/local_sophia_v3/manifest.json",
+    "registry": "agi-proof/data-health/registry.json"
+  },
+  "weights": {
+    "coverage": 0.2,
+    "decontamStrength": 0.2,
+    "dedupHealth": 0.1,
+    "lineage": 0.1,
+    "mixBalance": 0.15,
+    "provenanceCompleteness": 0.15,
+    "reproducibility": 0.1
+  }
+}

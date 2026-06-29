@@ -1,0 +1,15 @@
+{
+  "l1Distance": 0.740641,
+  "note": "Mix-balance ratchet baseline (tools/assert_mix_balance.py). Lower is better; --update only after a measured improvement.",
+  "perFamily": {
+    "council": 0.045513,
+    "general_retention": 0.101923,
+    "hk_bilingual": 0.094872,
+    "moral_gate": 0.076282,
+    "settled_fact": 0.276538,
+    "source_discipline": 0.051282,
+    "tool_mcp": 0.094231
+  },
+  "schema": "sophia.mix_baseline.v1",
+  "tolerance": 0.02
+}

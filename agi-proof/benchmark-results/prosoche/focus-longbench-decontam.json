@@ -1,9 +1,0 @@
-{
-  "clean": true,
-  "jaccardThreshold": 0.5,
-  "maxJaccardVsTrain": 0.0,
-  "note": "Max word-5-shingle Jaccard of any task text vs the committed TRAINING corpus. NB: this guards train/eval leakage in THIS repo; it does NOT bound the subject model's parametric familiarity with HotpotQA (the closed-book control measures that).",
-  "schema": "sophia.focus_longbench_decontam.v1",
-  "shingle": 5,
-  "worstTaskId": null
-}

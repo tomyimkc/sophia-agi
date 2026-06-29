@@ -53,7 +53,6 @@ class ConscienceDecision:
     consequence: dict[str, Any] = field(default_factory=dict)
     courage: dict[str, Any] = field(default_factory=dict)
     temperance: dict[str, Any] = field(default_factory=dict)
-    prosoche: dict[str, Any] = field(default_factory=dict)
     virtueArbitration: dict[str, Any] = field(default_factory=dict)
     recommendedActions: tuple[dict[str, Any], ...] = ()
     boundary: str = "Sophia is an AGI-candidate verifier-gated epistemic framework; this decision is not proof of AGI."
@@ -77,7 +76,6 @@ class ConscienceDecision:
             "consequence": self.consequence,
             "courage": self.courage,
             "temperance": self.temperance,
-            "prosoche": self.prosoche,
             "virtueArbitration": self.virtueArbitration,
             "recommendedActions": list(self.recommendedActions),
             "boundary": self.boundary,
@@ -318,41 +316,7 @@ def conscience_check(
                 verdict = "escalate"
                 reason = "temperance gate: the abstain looks premature — effort is still valuable, escalate for explicit justification"
 
-    # 11th path — Prosoche attention gate (opt-in via context["consultProsoche"]=True,
-    # with an anchor in context["attentionAnchor"]). The kernel regulates truth, Andreia
-    # direction, Sophrosyne magnitude; none regulates *allocation* — whether the agent's
-    # effort is pointed at the goal. When consulted (and given an anchor), Prosoche
-    # annotates the decision and, conservatively, may:
-    #   - downgrade an off-goal ``allow`` to ``revise`` when attention says ``drifting``
-    #     (the output wandered off the goal — refocus/trim it), and
-    #   - upgrade an ``allow`` to ``escalate`` when attention says ``escalate`` (a safety
-    #     drift, a fixation on a stale goal, or an ambiguous shift — force an explicit
-    #     decision).
-    # SAFETY: it NEVER weakens a block/abstain/retrieve/clarify, and the gate's own
-    # "attention is not blindness" floor means a safety-relevant step is never treated as
-    # off-goal. Off by default; a no-op when no anchor is supplied.
-    prosoche: dict[str, Any] = {}
-    if context.get("consultProsoche") and context.get("attentionAnchor"):
-        from agent.prosoche import assess_attention
-        prosoche = assess_attention(
-            text,
-            context.get("attentionAnchor"),
-            context={
-                "goalShift": context.get("goalShift", False),
-                "canClaimAGI": context.get("canClaimAGI", False),
-            },
-        ).to_dict()
-        p_verdict = prosoche.get("verdict")
-        if verdict == "allow":
-            if p_verdict == "escalate":
-                verdict = "escalate"
-                reason = ("attention gate: " + str(prosoche.get("reason"))
-                          + " — escalate for an explicit re-focus decision")
-            elif p_verdict == "drifting":
-                verdict = "revise"
-                reason = "attention gate: the output drifts off the active goal — refocus/trim to the anchor (drifting)"
-
-    # 12th path — Dikaiosyne Role B: the inter-virtue arbiter (the *Republic* harmony of the
+    # 11th path — Dikaiosyne Role B: the inter-virtue arbiter (the *Republic* harmony of the
     # four cardinal virtues), opt-in via context["consultVirtues"]=True. It computes the
     # courage / temperance / justice verdicts (reusing the 9th/10th-path reports when present)
     # and runs the pre-registered lexical-priority arbiter
@@ -396,7 +360,6 @@ def conscience_check(
         consequence=consequence,
         courage=courage,
         temperance=temperance,
-        prosoche=prosoche,
         virtueArbitration=virtue_arbitration,
         recommendedActions=tuple(agenda_actions),
     )

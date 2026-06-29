@@ -132,6 +132,15 @@ TEAMS: dict[str, Team] = {
         default_k=1,
         max_steps=3,
     ),
+    "data": Team(
+        "data",
+        "Audit corpus health (DHI), train/eval contamination, and mix balance; propose "
+        "a prioritised, gated curation plan. Propose-only — NEVER mutate data; humans "
+        "approve curation. Backed by agent.data_analyst.",
+        frozenset({"python", "retrieve"}),
+        default_k=1,
+        max_steps=3,
+    ),
 }
 
 # ---------------------------------------------------------------------------
@@ -159,6 +168,11 @@ _CONTESTED_MARKERS = (
 _ENTITY_RISK_MARKERS = (
     "according to", "as said by", "attributed to", "misattribut", "credited to",
     "wrote", "founded", "invented", "originated", "据说", "出自", "归功于", "提出者",
+)
+_DATA_MARKERS = (
+    "dataset", "corpus", "training data", "decontaminat", "data quality",
+    "data health", "held-out", "heldout", "held out", "data mix", "curation",
+    "data management", "data lineage", "contamination", "数据集", "语料", "数据质量",
 )
 
 
@@ -313,9 +327,12 @@ class SwarmRouter:
         # A "hard signal" is a verifier-relevant feature (machine-checkable core, legal
         # claim, attribution risk, multi-hop, contested) that warrants fanning out the
         # relevant team EVEN on a short query — verifiability doesn't scale with length.
+        # A data/corpus/decontamination task routes to the data-analyst team even when
+        # the query is short (verifiability of the *data process* doesn't scale with length).
+        data_task = _hits(clean, _DATA_MARKERS) > 0
         hard_signal = (
             sig.quant or sig.legal or sig.entity_risk or sig.multi_hop
-            or sig.contested or sig.n_sub_queries > 1
+            or sig.contested or sig.n_sub_queries > 1 or data_task
         )
 
         # Fail-closed: no swarm on empty input, and a generic low-difficulty query with
@@ -371,6 +388,12 @@ class SwarmRouter:
             assignments.append(TeamAssignment("redteam", 1, budget,
                                               f"Try to refute the emerging answer to: {clean}"))
             reasons.append("hard+contested → redteam")
+
+        # 7. Data/corpus/decontamination task → the data-analyst curator team.
+        if data_task:
+            assignments.append(TeamAssignment("data", 1, budget,
+                                              f"Audit corpus health + contamination and propose a curation plan for: {clean}"))
+            reasons.append("data task → data")
 
         # Guard: if nothing matched but we're above the floor, fall back to a minimal
         # search+research swarm (the generic "go look it up properly" pair).

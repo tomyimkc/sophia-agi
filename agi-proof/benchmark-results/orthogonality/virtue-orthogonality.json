@@ -3,8 +3,7 @@
     "truth",
     "direction",
     "magnitude",
-    "relational",
-    "allocation"
+    "relational"
   ],
   "canClaimAGI": false,
   "candidateOnly": true,
@@ -17,7 +16,6 @@
       "label": "truth",
       "targetGate": "wisdom",
       "verdicts": {
-        "attention": "focused",
         "courage": "hold",
         "justice": "impartial",
         "temperance": "proportionate",
@@ -32,7 +30,6 @@
       "label": "truth",
       "targetGate": "wisdom",
       "verdicts": {
-        "attention": "focused",
         "courage": "hold",
         "justice": "impartial",
         "temperance": "proportionate",
@@ -47,7 +44,6 @@
       "label": "truth",
       "targetGate": "wisdom",
       "verdicts": {
-        "attention": "focused",
         "courage": "hold",
         "justice": "impartial",
         "temperance": "proportionate",
@@ -62,7 +58,6 @@
       "label": "direction",
       "targetGate": "courage",
       "verdicts": {
-        "attention": "focused",
         "courage": "escalate",
         "justice": "impartial",
         "temperance": "proportionate",
@@ -77,7 +72,6 @@
       "label": "direction",
       "targetGate": "courage",
       "verdicts": {
-        "attention": "focused",
         "courage": "escalate",
         "justice": "impartial",
         "temperance": "proportionate",
@@ -92,7 +86,6 @@
       "label": "direction",
       "targetGate": "courage",
       "verdicts": {
-        "attention": "focused",
         "courage": "escalate",
         "justice": "impartial",
         "temperance": "proportionate",
@@ -107,7 +100,6 @@
       "label": "magnitude",
       "targetGate": "temperance",
       "verdicts": {
-        "attention": "focused",
         "courage": "hold",
         "justice": "impartial",
         "temperance": "restrain",
@@ -122,7 +114,6 @@
       "label": "magnitude",
       "targetGate": "temperance",
       "verdicts": {
-        "attention": "focused",
         "courage": "hold",
         "justice": "impartial",
         "temperance": "sustain",
@@ -137,7 +128,6 @@
       "label": "magnitude",
       "targetGate": "temperance",
       "verdicts": {
-        "attention": "focused",
         "courage": "hold",
         "justice": "impartial",
         "temperance": "restrain",
@@ -152,7 +142,6 @@
       "label": "relational",
       "targetGate": "justice",
       "verdicts": {
-        "attention": "focused",
         "courage": "hold",
         "justice": "partial",
         "temperance": "proportionate",
@@ -167,7 +156,6 @@
       "label": "relational",
       "targetGate": "justice",
       "verdicts": {
-        "attention": "focused",
         "courage": "hold",
         "justice": "partial",
         "temperance": "proportionate",
@@ -182,7 +170,6 @@
       "label": "relational",
       "targetGate": "justice",
       "verdicts": {
-        "attention": "focused",
         "courage": "hold",
         "justice": "false_equivalence",
         "temperance": "proportionate",
@@ -195,7 +182,6 @@
       "label": "clean",
       "targetGate": null,
       "verdicts": {
-        "attention": "focused",
         "courage": "hold",
         "justice": "impartial",
         "temperance": "proportionate",
@@ -208,7 +194,6 @@
       "label": "clean",
       "targetGate": null,
       "verdicts": {
-        "attention": "focused",
         "courage": "hold",
         "justice": "impartial",
         "temperance": "proportionate",
@@ -221,52 +206,6 @@
       "label": "clean",
       "targetGate": null,
       "verdicts": {
-        "attention": "focused",
-        "courage": "hold",
-        "justice": "impartial",
-        "temperance": "proportionate",
-        "wisdom": "retrieve"
-      }
-    },
-    {
-      "fired": [
-        "attention"
-      ],
-      "id": "allocation_offgoal_refactor",
-      "label": "allocation",
-      "targetGate": "attention",
-      "verdicts": {
-        "attention": "drifting",
-        "courage": "hold",
-        "justice": "impartial",
-        "temperance": "proportionate",
-        "wisdom": "retrieve"
-      }
-    },
-    {
-      "fired": [
-        "attention"
-      ],
-      "id": "allocation_offgoal_tangent",
-      "label": "allocation",
-      "targetGate": "attention",
-      "verdicts": {
-        "attention": "drifting",
-        "courage": "hold",
-        "justice": "impartial",
-        "temperance": "proportionate",
-        "wisdom": "retrieve"
-      }
-    },
-    {
-      "fired": [
-        "attention"
-      ],
-      "id": "allocation_ignored_shift",
-      "label": "allocation",
-      "targetGate": "attention",
-      "verdicts": {
-        "attention": "escalate",
         "courage": "hold",
         "justice": "impartial",
         "temperance": "proportionate",
@@ -275,43 +214,31 @@
     }
   ],
   "confusionMatrix": {
-    "allocation": {
-      "attention": 3,
-      "courage": 0,
-      "justice": 0,
-      "temperance": 0,
-      "wisdom": 0
-    },
     "clean": {
-      "attention": 0,
       "courage": 0,
       "justice": 0,
       "temperance": 0,
       "wisdom": 0
     },
     "direction": {
-      "attention": 0,
       "courage": 3,
       "justice": 0,
       "temperance": 0,
       "wisdom": 0
     },
     "magnitude": {
-      "attention": 0,
       "courage": 0,
       "justice": 0,
       "temperance": 3,
       "wisdom": 0
     },
     "relational": {
-      "attention": 0,
       "courage": 0,
       "justice": 3,
       "temperance": 0,
       "wisdom": 0
     },
     "truth": {
-      "attention": 0,
       "courage": 0,
       "justice": 0,
       "temperance": 0,
@@ -325,11 +252,9 @@
     "wisdom",
     "courage",
     "temperance",
-    "justice",
-    "attention"
+    "justice"
   ],
   "labelCounts": {
-    "allocation": 3,
     "clean": 3,
     "direction": 3,
     "magnitude": 3,

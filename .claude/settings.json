@@ -22,17 +22,6 @@
           }
         ]
       }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .claude/hooks/skill_capture_nudge.sh"
-          }
-        ]
-      }
     ]
   }
 }

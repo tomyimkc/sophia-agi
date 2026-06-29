@@ -44,17 +44,15 @@ if str(ROOT) not in sys.path:
 from agent.andreia import assess_courage  # noqa: E402
 from agent.conscience import conscience_check  # noqa: E402
 from agent.dikaiosyne import assess_justice  # noqa: E402
-from agent.prosoche import assess_attention  # noqa: E402
 from agent.sophrosyne import assess_temperance  # noqa: E402
 
 BATTERY = ROOT / "agi-proof" / "benchmark-results" / "orthogonality" / "virtue_orthogonality_battery.json"
 OUT = ROOT / "agi-proof" / "benchmark-results" / "orthogonality" / "virtue-orthogonality.json"
 
-AXES = ("truth", "direction", "magnitude", "relational", "allocation")
-GATES = ("wisdom", "courage", "temperance", "justice", "attention")
+AXES = ("truth", "direction", "magnitude", "relational")
+GATES = ("wisdom", "courage", "temperance", "justice")
 # Which gate is the intended detector for each labelled axis.
-AXIS_GATE = {"truth": "wisdom", "direction": "courage", "magnitude": "temperance",
-             "relational": "justice", "allocation": "attention"}
+AXIS_GATE = {"truth": "wisdom", "direction": "courage", "magnitude": "temperance", "relational": "justice"}
 
 
 def _fires(item: dict) -> dict[str, bool]:
@@ -65,19 +63,12 @@ def _fires(item: dict) -> dict[str, bool]:
     j = assess_justice(text, irrelevant_class=item.get("justiceClass"),
                        relevant_class=item.get("justiceRelevantClass"),
                        context=item.get("justiceContext") or {}).to_dict()["verdict"]
-    # Attention/Prosoche is undefined without a goal, so it is evaluated ONLY against
-    # an explicit anchor; with no anchor it is silent (an item that declares no goal
-    # cannot be "off-goal"). Fires on any non-focused verdict.
-    anchor = item.get("prosocheAnchor")
-    p = (assess_attention(text, anchor, context=item.get("prosocheContext") or {}).to_dict()["verdict"]
-         if anchor else "focused")
     return {
         "wisdom": w in {"block", "abstain", "revise"},
         "courage": c == "escalate",
         "temperance": t in {"restrain", "sustain", "escalate"},
         "justice": j in {"partial", "false_equivalence"},
-        "attention": anchor is not None and p != "focused",
-        "_verdicts": {"wisdom": w, "courage": c, "temperance": t, "justice": j, "attention": p},
+        "_verdicts": {"wisdom": w, "courage": c, "temperance": t, "justice": j},
     }
 
 
