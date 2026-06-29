@@ -1,0 +1,101 @@
+{
+  "dataset": "gsm8k-test.jsonl",
+  "dataset_is_style_sample": false,
+  "model": "ollama:qwen2.5:32b-instruct",
+  "scorer": "numeric",
+  "n": 20,
+  "correct": 19,
+  "accuracy": 0.95,
+  "oracle": "external gold answer (numeric exact-match) \u2014 independent of the provenance gate",
+  "results": [
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": false
+    },
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": true
+    },
+    {
+      "id": null,
+      "correct": true
+    }
+  ],
+  "sparkIteration": true,
+  "registeredResult": false,
+  "canClaimAGI": false,
+  "benchName": "gsm8k-exactmatch",
+  "utc": "20260629T061712Z",
+  "host": "dgx-spark-gb10",
+  "subject": "ollama:qwen2.5:32b-instruct",
+  "lane": "spark-continuous",
+  "mainHead": "7259ac25"
+}
