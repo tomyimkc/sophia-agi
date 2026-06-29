@@ -33,11 +33,17 @@ on:
         type: choice
         options: [offline, live]
       task:
-        description: 'RLVR reward task: provenance / math (sympy) / code (hidden-tests-pass) / concept (concept-TBox gate)'
+        description: 'RLVR reward task: provenance / math (sympy) / code (hidden-tests-pass) / concept / step (process: every step verified)'
         required: true
         default: 'provenance'
         type: choice
-        options: [provenance, math, code, concept]
+        options: [provenance, math, code, concept, step]
+      step_domain:
+        description: 'For task=step only: per-step oracle + held-out split (math needs sympy; physics pure-Python)'
+        required: false
+        default: 'math'
+        type: choice
+        options: [math, physics]
       reward:
         description: 'Reward signal (provenance task): verifier / gate (single-axis) / multiaxis (Thesis D dense — M1 collapse arm)'
         required: true
@@ -110,6 +116,7 @@ jobs:
             --source git --branch "${{ github.ref_name }}" \
             --remote-mode "${{ github.event.inputs.remote_mode }}" \
             --task "${{ github.event.inputs.task }}" \
+            --step-domain "${{ github.event.inputs.step_domain }}" \
             --reward "${{ github.event.inputs.reward }}" \
             --gpu-type "${{ github.event.inputs.gpu_type }}"
 
@@ -123,6 +130,7 @@ jobs:
             --source git --branch "${{ github.ref_name }}" \
             --remote-mode "${{ github.event.inputs.remote_mode }}" \
             --task "${{ github.event.inputs.task }}" \
+            --step-domain "${{ github.event.inputs.step_domain }}" \
             --reward "${{ github.event.inputs.reward }}" \
             --epochs "${{ github.event.inputs.epochs }}" \
             --seed "${{ github.event.inputs.seed }}" \

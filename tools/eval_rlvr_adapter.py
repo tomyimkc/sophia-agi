@@ -43,8 +43,10 @@ from provenance_bench import (  # noqa: E402
     math_reward,
     ontology_rl_dataset,
     ontology_rl_reward,
+    physics_dataset,
     rl_dataset,
     rl_reward,
+    step_reward,
 )
 
 OUT = ROOT / "agi-proof" / "benchmark-results" / "rlvr.adapter-eval.json"
@@ -374,6 +376,103 @@ def run_eval_math(args: argparse.Namespace) -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# Step (process) task — held-out VERIFIED-CORRECT rate before/after on UNSEEN
+# families. pass@1 here is STRICTER than the math task: the final answer must be
+# correct AND every intermediate step machine-verified (agent.step_verifier), so
+# a right answer reached via a wrong step does NOT pass. Judge-free.
+# --------------------------------------------------------------------------- #
+def _mock_completion_step(prob: dict, *, improved: bool) -> str:
+    if improved:
+        # A fully verifiable two-step derivation ending at the gold.
+        return f"STEP: {prob['gold']} | restate target\nSTEP: {prob['gold']} | final answer"
+    return "STEP: 0 | guess\nSTEP: 0 | final answer"  # base deliberately wrong
+
+
+def _score_step(problems: list, completions: dict, domain: str) -> dict:
+    rows, rewards, pass1, vsc_sum = [], [], 0, 0.0
+    by_family: dict = {}
+    for p in problems:
+        text = completions.get(p["id"], "")
+        reward, detail = step_reward.reward_for_completion(text, p["gold"], domain=domain)
+        rewards.append(float(reward))
+        ok = int(detail.get("verdict") == "accepted")  # verified-correct, not just right
+        pass1 += ok
+        vsc_sum += float(detail.get("vsc") or 0.0)
+        by_family.setdefault(p["family"], []).append(ok)
+        rows.append({"problem_id": p["id"], "family": p["family"], "reward": reward, "detail": detail})
+    n = len(problems)
+    return {
+        "n": n,
+        "meanReward": round(statistics.mean(rewards), 4) if rewards else 0.0,
+        "passAt1": round(pass1 / n, 4) if n else 0.0,
+        "verifiedStepCoverage": round(vsc_sum / n, 4) if n else 0.0,
+        "passAt1ByFamily": {f: round(sum(v) / len(v), 4) for f, v in by_family.items()},
+        "rows": rows,
+    }
+
+
+def run_eval_step(args: argparse.Namespace) -> dict:
+    domain = args.step_domain
+    if domain == "physics":
+        data = physics_dataset.build_physics_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+    else:
+        data = math_dataset.build_math_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+    problems = data["eval_problems"]
+    if args.limit:
+        problems = problems[: args.limit]
+    if data["family_intersection"]:
+        raise SystemExit(f"contaminated split: {data['family_intersection']}")
+
+    if args.mode == "mock":
+        base = {p["id"]: _mock_completion_step(p, improved=False) for p in problems}
+        adapter = {p["id"]: _mock_completion_step(p, improved=True) for p in problems}
+        model_desc = "mock"
+    else:
+        if not args.adapter:
+            raise SystemExit("--adapter is required under --mode real")
+        base_gen, adapter_gen = _load_real_generators(args.model, args.adapter, max_new_tokens=args.max_new_tokens)
+        base, adapter = {}, {}
+        for i, p in enumerate(problems, 1):
+            print(f"[eval-step] {i}/{len(problems)} {p['id']}", flush=True)
+            wrapped = step_reward.STEP_INSTRUCTION + p["prompt"]
+            base[p["id"]] = base_gen(wrapped)
+            adapter[p["id"]] = adapter_gen(wrapped)
+        model_desc = args.model
+
+    base_score = _score_step(problems, base, domain)
+    adapter_score = _score_step(problems, adapter, domain)
+    delta = round(adapter_score["passAt1"] - base_score["passAt1"], 4)
+    report = {
+        "benchmark": "rlvr-adapter-heldout",
+        "task": "step",
+        "stepDomain": domain,
+        "mode": args.mode,
+        "model": model_desc,
+        "adapter": str(args.adapter) if args.adapter else None,
+        "claimStatus": (
+            "Open — per-run held-out verified-correct comparison on UNSEEN families. "
+            "Capability claim requires >=3 seeds + no-overclaim aggregation (CI excludes 0)."
+        ),
+        "split": {
+            "evalProblems": len(problems), "seed": args.seed, "evalFrac": args.eval_frac,
+            "evalFamilies": sorted({p["family"] for p in problems}),
+            "familyIntersection": data["family_intersection"],
+        },
+        "base": {k: v for k, v in base_score.items() if k != "rows"},
+        "adapterScore": {k: v for k, v in adapter_score.items() if k != "rows"},
+        "delta": {"passAt1": delta},
+        "checks": {
+            "contaminationFree": not data["family_intersection"],
+            "adapterImprovesVerifiedCorrect": delta > 0,
+            "noRegression": delta >= 0,
+        },
+        "rows": {"base": base_score["rows"], "adapter": adapter_score["rows"]},
+    }
+    report["passed"] = all(report["checks"].values())
+    return report
+
+
+# --------------------------------------------------------------------------- #
 # Code task — held-out pass@1 before/after on UNSEEN task families.
 # Reward = hidden-tests-pass (provenance_bench.code_exec; deterministic, no judge),
 # so pass@1 IS the capability number; no false-positive axis (every item has a test).
@@ -580,9 +679,12 @@ def run_eval_concept(args: argparse.Namespace) -> dict:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--mode", choices=["mock", "real"], default="mock")
-    ap.add_argument("--task", choices=["provenance", "math", "code", "concept"], default="provenance",
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "step"], default="provenance",
                     help="provenance (provenance_faithful), math (sympy math_equivalent), "
-                         "code (hidden-tests-pass via code_exec), or concept (concept-TBox gate)")
+                         "code (hidden-tests-pass via code_exec), concept (concept-TBox gate), "
+                         "or step (process: every step verified -> verified-correct rate)")
+    ap.add_argument("--step-domain", choices=["math", "physics"], default="math",
+                    help="for --task step: which held-out RL split + per-step oracle to use")
     ap.add_argument("--model", default="zai-org/glm-4-9b-chat-hf")
     ap.add_argument("--adapter", type=Path, default=None)
     ap.add_argument("--out", type=Path, default=OUT)
@@ -602,6 +704,8 @@ def main(argv: list[str] | None = None) -> int:
         report = run_eval_code(args)
     elif args.task == "concept":
         report = run_eval_concept(args)
+    elif args.task == "step":
+        report = run_eval_step(args)
     else:
         report = run_eval(args)
     _write(args.out, report)
