@@ -26,7 +26,7 @@
         "properties": {
           "team": {
             "type": "string",
-            "enum": ["search", "research", "math_verify", "legal", "ontology", "redteam"],
+            "enum": ["search", "research", "math_verify", "legal", "ontology", "redteam", "data"],
             "description": "Which expert/agent-team (the catalogue in agent.swarm_router.TEAMS)."
           },
           "k": {

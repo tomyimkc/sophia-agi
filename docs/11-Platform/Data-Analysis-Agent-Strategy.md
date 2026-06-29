@@ -46,6 +46,23 @@ A Data Analysis Agent that owns these three numbers — and is graded by the sam
 measurement contract everything else here is — is the single most leveraged thing the
 repo is missing on the data axis.
 
+> **Implementation status (shipped in this change).** The *machinery* of Phases 0–3
+> and 5 is now in the repo, deterministic and CI-gated:
+>
+> | Piece | Artifact | State |
+> |---|---|---|
+> | **DHI scorecard** (Phase 0) | `tools/data_health_report.py` → `agi-proof/data-health/report.json` (`--check` gated) | **DHI=0.6507** baseline committed |
+> | **Data asset registry** (Phase 1) | `tools/build_data_registry.py` → `agi-proof/data-health/registry.json` (`--check` gated) | 15 assets, sha256-anchored |
+> | **Entity-level decontam** (Phase 2) | `tools/assert_entity_decontam.py` | surfaces 40 shared entities / 151 fully-covered eval prompts |
+> | **Entity-disjoint split carver** (Phase 3) | `tools/carve_entity_disjoint_split.py` (dry-run default) | 75 disjoint candidates, proof `sharedWithTrain=[]` |
+> | **Data Analysis Agent** (Phase 5) | `agent/data_analyst.py` + `"data"` team in `agent/swarm_router.py` | propose-only, fail-closed |
+>
+> Still open (data work + GPU, tracked in the failure ledger): reaching the DHI/mix/volume
+> targets (Phase 4), the source→checkpoint→eval lineage edges (Phase 1 extension), a
+> human-approved committed clean split + gating it (Phase 3), and running the continual
+> flywheel (Phase 6). The machinery is here; the *measured improvement* is the next session's
+> job — and stays under the same no-overclaim gate.
+
 ---
 
 ## 1. What already exists (don't rebuild this)
@@ -312,13 +329,16 @@ re-runs decontam + lint + DHI `--check`; drift fails the build.
   [`wisdom-gpu-prebaked`](../../.claude/skills/wisdom-gpu-prebaked/SKILL.md) (cheap
   validation first, watch for restart loops, zero leaked pods).
 
-## 8. Failure-ledger items to open with this work
+## 8. Failure-ledger items opened with this work
 
-- `data-health-index-baseline-pending` — DHI defined but no committed baseline yet (Phase 0).
-- `data-lineage-graph-not-wired` — passport↔manifest↔checkpoint↔eval graph absent (Phase 1).
-- `entity-level-decontam-missing` — decontam is lexical only (Phase 2; subsumes the SEIB row-level audit).
-- `mix-balance-gate-absent` — no CI gate on domain/language mix (Phase 4).
-- `data-analyst-agent-not-implemented` — the curator role itself (Phase 5).
+These are recorded in [`../../agi-proof/failure-ledger.md`](../../agi-proof/failure-ledger.md)
+(all OPEN/Partial — the machinery exists, the measured improvement does not yet):
+
+- `data-health-index-below-target-2026-06-29` — DHI baseline committed (0.6507) but below a healthy-process target (Phase 0 done; targets open).
+- `data-lineage-graph-partial-2026-06-29` — asset registry built; source→checkpoint→eval edges still absent (Phase 1 partial).
+- `entity-decontam-diagnostic-not-gated-2026-06-29` — entity layer measures the SEIB leak (151 fully-covered) but runs diagnostic-only until a clean split exists (Phase 2 done; gating open).
+- `mix-balance-gate-absent-2026-06-29` — DHI measures mix; no standalone CI gate + targets unmet (Phase 4 open).
+- `data-analyst-flywheel-not-run-2026-06-29` — agent built and propose-only; the audit→plan→gated-build→re-measure loop not yet run (Phase 5 done; Phase 6 open).
 
 ---
 
