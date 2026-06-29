@@ -1,0 +1,37 @@
+{
+  "arms": {
+    "andreia-consulted": {
+      "reason": "scored only alongside a real baseline",
+      "status": "not_run"
+    },
+    "andreia-standalone": {
+      "cowardiceErrorRate": 0.0,
+      "escalateRate": 0.3125,
+      "n": 16,
+      "note": "routing fidelity vs author labels — NOT a real-decision effect",
+      "recklessnessErrorRate": 0.0
+    },
+    "no-gate-baseline": {
+      "reason": "requires a real model",
+      "status": "not_run"
+    }
+  },
+  "battery": "sophia.andreia_courage_battery.v1",
+  "canClaimAGI": false,
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "criticalFailures": [
+    "no_real_baseline: the no-gate baseline arm needs a real model (mock baselines are not evidence)",
+    "ground_truth_not_2family: optimal-action labels are author-only, not >= 2 independent judge families (kappa >= 0.40)",
+    "no_effect_ci: delta cowardice-error CI does not exclude 0 (or no real arms to compute it)"
+  ],
+  "delta": null,
+  "experimentId": "andreia-courage-eval",
+  "go": false,
+  "groundTruth": "author-labelled (NOT >= 2 independent judge families) — does not satisfy the spec",
+  "harness": "tools/run_andreia_eval.py",
+  "headline": "PENDING — machinery only; no real no-gate baseline run has been performed",
+  "note": "Intentionally PENDING. The deterministic mock baselines (--mock {fearful,reckless,oracle}) exercise the delta+CI math in CI (tests/test_andreia_eval.py), but a mock is not a model: no effect on real decisions is claimed. Promotion needs an external decontaminated battery, >= 2 independent judge families, a real no-gate baseline, and a delta cowardice-error CI excluding 0 — see the measurement_spec and the andreia-courage-gate row in agi-proof/failure-ledger.md.",
+  "preregistration": "agi-proof/benchmark-results/andreia/measurement_spec.json",
+  "status": "not_run",
+  "verdict": "NO-GO"
+}
