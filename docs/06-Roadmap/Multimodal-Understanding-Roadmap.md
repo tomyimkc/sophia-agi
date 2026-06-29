@@ -270,3 +270,37 @@ no-overclaim footing (37 tests). What remains is genuinely hardware/weights-gate
 and tracked in the failure ledger: a live VLM-GRPO run, real-VLM headline runs
 through the multi-family consensus judge, and real CLIP/SigLIP probes — none of
 which is asserted as a capability here.
+
+### Physical / 2.5D extension (workstream A, the metric axes) — ✅ landed (offline)
+
+The literature's consistent finding (2025–2026) is that VLMs are *semantically*
+strong but *metrically* blind — they infer spatial relations from co-occurrence
+priors, not geometry, and fail at depth, occlusion, real-world size, and distance
+(SPHERE, Open3D-VQA, Ego3D-Bench; the field's fix is to inject depth — DepthVLM,
+SD-VLM, Depth Anything V2). That blindness is the *same* failure mode as the
+phantom-object trap, so it belongs in Sophia's verifier-first idiom. This slice
+ports the moat to the physical axes ASI most needs from an image — **without**
+training a VLM and **without** weakening any honesty machinery:
+
+| Piece | What landed | File |
+|---|---|---|
+| 2.5D scene schema | objects carry optional scalar `z` (camera-frame depth; larger = farther) and `size` (real-world size, decoupled from apparent box area) | `data/visual_traps.json` (`_meta.depthSemantics`) |
+| Physical verifiers (judge-free) | `depth_order` (in-front/behind), `occludes` (box overlap **and** nearer), `bigger_than` (real size, not pixels), `distance_between`/`distance_cmp` (3D Euclidean) — all **fail closed** (False/None) on a missing object/field | `multimodal_bench/verifiers.py` |
+| 12 physical traps + controls | `depth_order`, `occlusion`, `size_illusion`, `distance` + `*_control` rows with mixed yes/no gold, so neither blanket-deny nor abstain-all wins; every gold re-derived by the verifier | `data/visual_traps.json` |
+| Depth-aware render | far→near paint order so the real-VLM PNG shows occlusion consistent with the `occludes` verifier (non-physical scenes render unchanged) | `multimodal_bench/render.py` |
+| Tests | depth/occlusion/size/distance verifier semantics + fail-closed + category/polarity coverage | `tests/test_multimodal_traps.py` |
+
+The suite is now **47 traps across 14 categories**. The physical rows inherit the
+existing reward (`correct > abstain > wrong`), the contamination-free family split
+(they enter as new families — `depth_order`/`depth`/`distance_control` etc.), and
+the no-overclaim gate for free. Honesty bound: the depth/size fields are *authored*
+ground truth over structured scenes — they measure the harness and reference
+behaviours, **not** pixel perception. A real VLM (and, for pixel-derived depth, a
+monocular metric backend such as Depth Anything V2 wired as the verifier's evidence
+source) is required before any physical-understanding number is a headline —
+registered OPEN as `physical-spatial-verifier-real-vlm-not-run-2026-06-29`. Run:
+
+```
+python tools/run_multimodal_traps.py --answer mock:grounded --runs 3   # 0 hallucination on the 47-trap suite
+python tools/run_multimodal_reward.py                                  # reward + family-disjoint split incl. physical rows
+```

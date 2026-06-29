@@ -11,13 +11,25 @@ ground-truth objects/texts and returns a plain bool/int — no model in the loop
 A scene is::
 
     {"width": int, "height": int,
-     "objects": [{"label": str, "box": [x, y, w, h]}, ...],
+     "objects": [{"label": str, "box": [x, y, w, h],
+                  "z": float, "size": float}, ...],   # z/size optional
      "texts":   [{"value": str, "box": [x, y, w, h]}, ...]}
 
 Boxes are ``[x, y, w, h]`` in a top-left origin plane (y grows downward), so
 ``above`` means *smaller* center-y. The verifiers assume at most one object per
 referenced label in a trap scene (the data is authored that way); ``count`` is
 the exception and counts all matching objects.
+
+**Physical / 2.5D dimension (optional fields).** An object may also carry a scalar
+``z`` (camera-frame depth; *larger = farther from the camera*) and a scalar
+``size`` (real-world size proxy in consistent units, decoupled from apparent box
+size — a near small thing can have a *bigger* box than a far large thing). These
+give judge-free ground truth for the physical-world axes VLMs are weakest on —
+depth ordering, occlusion, real-vs-apparent size, and 3D separation — mirroring
+the field's finding that VLMs are semantically strong but metrically blind. Like
+``relation``, every physical verifier returns ``False`` (never raises) when a
+referenced object is missing or lacks the field it needs, so an ungroundable
+physical question fails closed rather than guessing.
 """
 
 from __future__ import annotations
@@ -70,6 +82,107 @@ def relation(scene: dict, a: str, rel: str, b: str) -> bool:
     if rel == "above":
         return ay < by
     return ay > by  # below
+
+
+# --- physical / 2.5D verifiers (depth · occlusion · real size · distance) -- #
+# The metric-grounding family: judge-free ground truth over the optional ``z``
+# (depth; larger == farther) and ``size`` (real-world size proxy) fields. These
+# are the visual twin of the math/code RLVR verifiers for the *physical* axes a
+# VLM hallucinates on — it sees co-occurrence priors, not geometry. Each returns
+# a plain bool/float and fails closed (False / None) on a missing object/field.
+
+_DEPTH_RELATIONS = ("in_front_of", "behind")
+
+
+def depth(scene: dict, label: str) -> "float | None":
+    """The camera-frame depth ``z`` of ``label`` (None if absent or unset)."""
+    o = _find(scene, label)
+    return None if o is None else o.get("z")
+
+
+def depth_order(scene: dict, a: str, rel: str, b: str) -> bool:
+    """Whether ``a`` is ``in_front_of`` / ``behind`` ``b`` by depth.
+
+    ``in_front_of`` means *smaller* z (nearer the camera). False if either object
+    is missing or has no ``z`` — an ungroundable ordering, never a guess.
+    """
+    if rel not in _DEPTH_RELATIONS:
+        raise ValueError(f"unknown depth relation {rel!r}; expected one of {_DEPTH_RELATIONS}")
+    za, zb = depth(scene, a), depth(scene, b)
+    if za is None or zb is None:
+        return False
+    return za < zb if rel == "in_front_of" else za > zb
+
+
+def _boxes_overlap(b1: "list[float]", b2: "list[float]") -> bool:
+    """Whether two ``[x, y, w, h]`` boxes share any 2D area (touching edges = no)."""
+    x1, y1, w1, h1 = b1
+    x2, y2, w2, h2 = b2
+    ix = min(x1 + w1, x2 + w2) - max(x1, x2)
+    iy = min(y1 + h1, y2 + h2) - max(y1, y2)
+    return ix > 0 and iy > 0
+
+
+def occludes(scene: dict, a: str, b: str) -> bool:
+    """Whether ``a`` occludes ``b``: their boxes overlap AND ``a`` is nearer.
+
+    Occlusion needs *both* image-plane overlap and a depth ordering (the nearer
+    object hides the farther). Overlap with the wrong depth order, or no overlap,
+    is not occlusion. False if either object is missing or has no ``z``.
+    """
+    oa, ob = _find(scene, a), _find(scene, b)
+    if oa is None or ob is None:
+        return False
+    za, zb = oa.get("z"), ob.get("z")
+    if za is None or zb is None:
+        return False
+    return _boxes_overlap(oa["box"], ob["box"]) and za < zb
+
+
+def bigger_than(scene: dict, a: str, b: str) -> bool:
+    """Whether ``a`` is larger than ``b`` in *real-world* ``size`` (not apparent box).
+
+    The size-illusion check: a near small object can fill more pixels than a far
+    large one, so apparent box area lies. False if either lacks a ``size``.
+    """
+    oa, ob = _find(scene, a), _find(scene, b)
+    if oa is None or ob is None:
+        return False
+    sa, sb = oa.get("size"), ob.get("size")
+    if sa is None or sb is None:
+        return False
+    return sa > sb
+
+
+def distance_between(scene: dict, a: str, b: str) -> "float | None":
+    """3D Euclidean distance between object centers over (center_x, center_y, z).
+
+    ``z`` defaults to 0 when unset (a flat scene). None if either object missing.
+    """
+    oa, ob = _find(scene, a), _find(scene, b)
+    if oa is None or ob is None:
+        return None
+    (ax, ay), (bx, by) = _center(oa["box"]), _center(ob["box"])
+    az, bz = oa.get("z", 0.0), ob.get("z", 0.0)
+    return ((ax - bx) ** 2 + (ay - by) ** 2 + (az - bz) ** 2) ** 0.5
+
+
+_DISTANCE_OPS = {
+    ">": lambda d, v: d > v, "<": lambda d, v: d < v,
+    ">=": lambda d, v: d >= v, "<=": lambda d, v: d <= v,
+}
+
+
+def distance_cmp(scene: dict, a: str, b: str, op: str, value: float) -> bool:
+    """Whether ``distance_between(a, b) <op> value`` — a yes/no metric claim.
+
+    False (fail-closed) if the distance is undeterminable (object missing).
+    """
+    fn = _DISTANCE_OPS.get(op)
+    if fn is None:
+        raise ValueError(f"unknown distance op {op!r}; expected one of {sorted(_DISTANCE_OPS)}")
+    d = distance_between(scene, a, b)
+    return False if d is None else fn(d, value)
 
 
 def point_in_box(box: "list[float]", x: float, y: float) -> bool:
@@ -169,6 +282,11 @@ _CHECK_FNS = {
     "chart_extreme": lambda s, c: chart_extreme(s, c["which"]),
     "table_cell": lambda s, c: table_cell(s, c["row"], c["col"]),
     "doc_field": lambda s, c: doc_field(s, c["name"]),
+    # physical / 2.5D checks (all resolve to bool -> yesno traps with `expect`)
+    "depth_order": lambda s, c: depth_order(s, c["a"], c["rel"], c["b"]),
+    "occlusion": lambda s, c: occludes(s, c["a"], c["b"]),
+    "bigger": lambda s, c: bigger_than(s, c["a"], c["b"]),
+    "distance_cmp": lambda s, c: distance_cmp(s, c["a"], c["b"], c["op"], c["value"]),
 }
 
 

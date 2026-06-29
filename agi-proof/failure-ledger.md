@@ -1488,6 +1488,35 @@ perception (the report labels every rung).
 
 **Required response:** Run `tools/probe_vision_encoder.py --encoder clip:<id>` /
 `siglip:<id>` on a machine with the weights; report recall@1 + CI per encoder.
+
+## physical-spatial-verifier-real-vlm-not-run-2026-06-29
+
+**Status:** OPEN. The physical / 2.5D verifier family (depth ordering, occlusion,
+real-vs-apparent size, 3D separation — `multimodal_bench/verifiers.py`:
+`depth_order` / `occludes` / `bigger_than` / `distance_cmp`) and its 12-row trap
+extension (`data/visual_traps.json`: `depth_order`, `occlusion`, `size_illusion`,
+`distance` + discrimination controls) are built and machine-checked offline: every
+gold label is re-derived by the judge-free verifier (`gold_matches_check`,
+`tests/test_multimodal_traps.py`), the reference mocks behave correctly
+(`mock:grounded` → 0 hallucination, `mock:credulous` → 1.0), and the rows flow
+family-disjoint into the visual RLVR split. No **real VLM** has been measured on
+these physical axes.
+
+**Claim impact:** Blocks any claim that the suite measures a real model's
+physical-world understanding (metric depth, occlusion, size constancy, distance).
+The offline numbers exercise the harness and the reference behaviours, NOT pixel
+perception — scenes are structured 2.5D specs, not images, and the depth/size
+fields are authored ground truth, not estimated from pixels. `canClaimAGI` stays
+False.
+
+**Required response:** Run a real vision backend (`tools/run_multimodal_traps.py
+--answer openai:<vlm> --include-synth`) — with `multimodal_bench/render.py`
+rasterising the depth-ordered scenes — and clear the no-overclaim gate on the
+physical categories (≥2 distinct-family judges, Cohen's κ ≥ 0.40, ≥3 runs, 95%
+bootstrap CI). For *pixel-derived* depth (not authored z), wire a monocular metric
+backend (e.g. Depth Anything V2) as the verifier's evidence source so the metric
+ground truth is measured, not declared.
+
 **Gate hardening (2026-06-24, retention gate):** The original W2 promote verdict was reached on a
 gate that read only the eval ladder + the protected-floor proof — it had **no old-task retention
 term**, so it promoted v3 despite the learning-under-shift report showing a `-50.0pp` old-benchmark
