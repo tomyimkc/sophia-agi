@@ -1,0 +1,70 @@
+name: thinking-bench
+
+# Thinking-log pipeline benchmark. On PRs touching the feature it runs the CPU/offline
+# MECHANISM check (capture coverage + A2A distill yield) — no key, no GPU, no RunPod.
+# Manually dispatch with a `model` to also run the real-model CoT faithfulness pass, which
+# needs the matching API-key secret configured in the repo. The faithfulness number is a
+# measurement, never a GO/claim — this workflow does not promote anything.
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "Model spec for the real-model faithfulness pass (e.g. anthropic, deepseek). Empty = offline only."
+        required: false
+        default: ""
+  pull_request:
+    branches: [main]
+    paths:
+      - "agent/model.py"
+      - "agent/thinking_trace.py"
+      - "agent/a2a.py"
+      - "agent/subagent.py"
+      - "agent/a2a_distill.py"
+      - "tools/run_thinking_bench.py"
+      - "tests/test_thinking_trace.py"
+      - "scripts/run_local_benchmarks.sh"
+      - ".github/workflows/thinking-bench.yml"
+
+concurrency:
+  group: thinking-bench-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  thinking-bench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Unit tests (reasoning capture + A2A logging + distill, offline)
+        run: python tests/test_thinking_trace.py
+
+      - name: Offline pipeline benchmark (capture coverage + A2A distill yield)
+        run: python tools/run_thinking_bench.py --offline
+
+      # Real-model CoT faithfulness pass — only when manually dispatched with a model.
+      # Provide whatever key the chosen provider needs as a repo secret; the runner
+      # auto-falls back to "not run" (mock) if the key is absent, so this never hard-fails.
+      - name: Real-model faithfulness pass (manual, needs key)
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.model != '' }}
+        env:
+          SOPHIA_MODEL_PROVIDER: ${{ github.event.inputs.model }}
+          SOPHIA_CAPTURE_THINKING: "1"
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python tools/run_thinking_bench.py --model "${{ github.event.inputs.model }}"
+
+      - name: Upload benchmark receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: thinking-bench-receipt
+          path: agent/memory/thinking/bench/thinking-bench.json
+          if-no-files-found: ignore
