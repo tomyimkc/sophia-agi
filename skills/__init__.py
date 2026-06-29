@@ -31,6 +31,7 @@ from skills.council_adjudicate import council_adjudicate
 from skills.self_extend_probe import self_extend_probe
 from skills.trajectory_eval import agent_trajectory_eval
 from skills.sentinel_watch import sentinel_watch
+from skills.andreia import courage_advocate
 
 __all__ = [
     # registry / bridge
@@ -46,4 +47,6 @@ __all__ = [
     "agent_trajectory_eval",
     # SophiaArk skills
     "sentinel_watch",
+    # Andreia (courage) skills
+    "courage_advocate",
 ]
