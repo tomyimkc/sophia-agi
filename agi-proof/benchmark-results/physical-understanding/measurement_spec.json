@@ -8,7 +8,7 @@
     "metric-gate block-rate (multimodal_bench/metric_gate.py) — confident physical claims re-checked against a depth source"
   ],
   "primaryMetric": "hallucination rate on the physical trap rows (lower is better), real VLM vs the credulous-baseline reference; grounding rate reported alongside",
-  "primaryN": "15 physical rows x >=3 runs",
+  "primaryN": "34 physical rows x >=3 runs",
   "primaryMDE": null,
   "guardrails": {
     "judge": {
@@ -28,7 +28,7 @@
   "ranking": "guardrails first (judge agreement + metric-gate), then physical grounding/hallucination; never rank on the small-N point estimate alone.",
   "claimCeiling": "candidate_only; canClaimAGI:false; narrow corpus-bound feasibility; authored scenes are not natural images.",
   "honestLimits": [
-    "N=15 physical rows is far below the power needed for a tight effect — coarse GO/NO-GO only; the headline gap to expand this is the first follow-up.",
+    "N=34 physical rows (doubled from the initial 15) is still below the power needed for a tight effect — treat as a coarse GO/NO-GO and keep expanding the suite before any powered claim.",
     "scenes are structured 2.5D specs rendered to simple PNGs, NOT natural photographs — a real-photo benchmark is a separate, larger build.",
     "authored z/size measure the harness; only the depth-anything (pixel-derived) source measures perception, and it needs weights (BLOCKER until wired).",
     "no first-party frontier VLM/judge (GPT/Claude/Gemini egress-blocked in CI) — use an OpenAI-compatible vision endpoint or the local/RunPod judge farm.",
