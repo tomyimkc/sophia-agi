@@ -33,3 +33,4 @@
 {"utc":"20260629T043626Z","bench":"lean-passk","file":"lean-passk-20260629T043626Z.json"}
 {"utc":"20260629T043640Z","bench":"roofline-fp4","file":"roofline-fp4-20260629T043640Z.json"}
 {"utc":"20260629T043655Z","bench":"nvfp4-quant-invariants","file":"nvfp4-quant-invariants-20260629T043655Z.json"}
+{"utc":"20260629T044518Z","bench":"gsm8k-exactmatch","file":"gsm8k-exactmatch-20260629T044518Z.json"}
