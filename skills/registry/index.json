@@ -1,6 +1,6 @@
 {
   "schema": "sophia.skill_registry.unified_index.v1",
-  "count": 19,
+  "count": 21,
   "layers": {
     "A": "agent-skill (.claude)",
     "B": "harness-registry",
@@ -52,26 +52,36 @@
       "reliability": null
     },
     {
-      "id": "runpod-mcp",
+      "id": "rlvr-harness-traps",
       "layer": "A",
-      "description": "Manage RunPod infrastructure through MCP — create/list/stop GPU pods, check pod and serverless-endpoint status, manage templates, network volumes, and container registries via natural language. Use when the user wants pod running status, to launch/terminate a RunPod pod, inspect a serverless endpoint, or asks about \"RunPod MCP\". Wraps the official @runpod/mcp-server (RunPod REST API). Requires a RUNPOD_API_KEY. metadata: short-description: \"Official RunPod MCP server — manage pods/endpoints, check status\" source: \"https://docs.runpod.io/get-started/mcp-servers\" package: \"@runpod/mcp-server\"",
+      "description": "Run when an RLVR / eval-harness number looks wrong or \"too clean\" BEFORE you act on it — a 0/N pass rate on BOTH base and adapter, per-seed metrics that won't reconcile across a sweep, a \"broken verifier\" (passAt1 0/0 or VSC), a PEFT \"Target modules {...} not found\", or a real uplift recorded as NO-GO. Most of these are MEASUREMENT ARTIFACTS, not capability or idea failures. Use to diagnose the artifact, pick the metric that is actually load-bearing (passAt1 / VSC, not meanReward), pin a multi-seed sweep for comparability, and uphold the no-overclaim rule — the HARNESS is the deliverable; canClaimAGI stays false. metadata: short-description: \"Diagnose RLVR/eval-harness artifacts: 0/N-both, chat-template, sweep comparability, step-RLVR metrics, all-linear footgun, no-overclaim\"",
       "triggers": [
-        "manage",
-        "runpod",
-        "infrastructure",
-        "through",
-        "mcp",
-        "create",
-        "list",
-        "stop",
-        "gpu",
-        "pods",
-        "check",
-        "pod"
+        "run",
+        "rlvr",
+        "eval",
+        "harness",
+        "number",
+        "looks",
+        "wrong",
+        "too",
+        "clean",
+        "you",
+        "act",
+        "pass"
       ],
-      "body_ref": ".claude/skills/runpod-mcp/SKILL.md",
+      "body_ref": ".claude/skills/rlvr-harness-traps/SKILL.md",
       "verifier_ref": null,
       "reliability": null
+    },
+    {
+      "id": "runpod-mcp",
+      "layer": "A",
+      "description": "(encrypted — unlock to index)",
+      "triggers": [],
+      "body_ref": ".claude/skills/runpod-mcp/SKILL.md",
+      "verifier_ref": null,
+      "reliability": null,
+      "encrypted": true
     },
     {
       "id": "session-handover",
@@ -120,46 +130,44 @@
     {
       "id": "sophia-agi",
       "layer": "A",
-      "description": "Operate the Sophia AGI repo: provenance corpus (validate attributions, run the epistemic gate, score benchmarks) AND the local verifier-gated training substrate (build/decontaminate packs, W2 promotion gate, continual feedback loop). Use when the user mentions Sophia AGI, source discipline, provenance, attribution traps, corpus validation, benchmark scoring, local training, adapter promotion, RSI/continual learning, or runs /sophia-agi. Prefer MCP tools (sophia_validate, sophia_gate_check, sophia_benchmark_*) when the sophia-agi MCP server is enabled. metadata: short-description: \"Sophia AGI corpus + epistemic gate + training-substrate operator\"",
-      "triggers": [
-        "operate",
-        "sophia",
-        "agi",
-        "repo",
-        "provenance",
-        "corpus",
-        "validate",
-        "attributions",
-        "run",
-        "epistemic",
-        "gate",
-        "score"
-      ],
+      "description": "(encrypted — unlock to index)",
+      "triggers": [],
       "body_ref": ".claude/skills/sophia-agi/SKILL.md",
+      "verifier_ref": null,
+      "reliability": null,
+      "encrypted": true
+    },
+    {
+      "id": "spark-cluster-ops",
+      "layer": "A",
+      "description": "Run BEFORE launching any GPU job, opening a worktree/cherry-pick on this git-crypt repo, pushing to a shared feature branch, creating or deleting a RunPod pod, or coordinating with peer agents on the sophia-agi cluster (DGX Spark + Mac Studio + RunPod x86 + the bridge serializer). This repo runs 5+ concurrent Claude/Copilot/ops sessions on ONE checkout and ONE shared 128 GB Spark GPU; the local checkout is stale the moment it is read, and a stray heavy GPU load can silently KILL an in-flight cert/train. Use to: pick the right box for a workload, hold the one-GPU-job invariant, recover from git-crypt-broken worktrees, reconcile shared-branch rebases, and avoid the pod-deletion / cost-gate traps. Augments (does not replace) git-discipline, ci-artifact-drift, session-handover. metadata: short-description: \"Operate the Spark+Mac+RunPod multi-agent cluster: box selection, GPU gating, git-crypt worktrees, shared-branch rebase, pod discipline\"",
+      "triggers": [
+        "run",
+        "launching",
+        "any",
+        "gpu",
+        "job",
+        "opening",
+        "worktree",
+        "cherry",
+        "pick",
+        "git",
+        "crypt",
+        "repo"
+      ],
+      "body_ref": ".claude/skills/spark-cluster-ops/SKILL.md",
       "verifier_ref": null,
       "reliability": null
     },
     {
       "id": "wisdom-gpu-prebaked",
       "layer": "A",
-      "description": "Run Sophia-Wisdom-4B GPU jobs (SFT/ORPO/eval on RunPod) WITHOUT wasting GPU credit. Use whenever launching tools/runpod_wisdom_pilot_selfreport.py or the wisdom-pilot-runpod workflow, or when a pod restart-loops / dies during setup, or when the user mentions the pre-baked image, pip-install death loop, RunPod wastage, or \"don't waste resources again\". Wraps the pre-baked CUDA image (docker/wisdom-pilot) + the mandatory cost-guard runbook.",
-      "triggers": [
-        "run",
-        "sophia",
-        "wisdom",
-        "gpu",
-        "jobs",
-        "sft",
-        "orpo",
-        "eval",
-        "runpod",
-        "without",
-        "wasting",
-        "credit"
-      ],
+      "description": "(encrypted — unlock to index)",
+      "triggers": [],
       "body_ref": ".claude/skills/wisdom-gpu-prebaked/SKILL.md",
       "verifier_ref": null,
-      "reliability": null
+      "reliability": null,
+      "encrypted": true
     },
     {
       "id": "ci-path-selection",
