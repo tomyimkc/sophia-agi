@@ -15,7 +15,6 @@ from pathlib import Path
 
 from okf import graph as okf_graph
 from okf import page as okf_page
-from okf.schema import as_list
 
 ROOT = Path(__file__).resolve().parents[1]
 TRADITIONS_PATH = ROOT / "data" / "traditions.json"

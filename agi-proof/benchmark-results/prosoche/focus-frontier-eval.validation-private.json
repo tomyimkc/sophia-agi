@@ -1,0 +1,81 @@
+{
+  "apiErrors": 0,
+  "arms": {
+    "priority-packed": {
+      "arm": "priority-packed",
+      "goalShiftSolvedRate": 0.0,
+      "n": 1260,
+      "safetyPrunedCount": 0,
+      "solvedRate": 0.0,
+      "tokensPerSolved": null,
+      "totalTokens": 49176
+    },
+    "prosoche-anchored": {
+      "arm": "prosoche-anchored",
+      "goalShiftSolvedRate": 0.4503,
+      "n": 1260,
+      "safetyPrunedCount": 0,
+      "solvedRate": 0.469,
+      "tokensPerSolved": 71.73,
+      "totalTokens": 42393
+    },
+    "recency-chop": {
+      "arm": "recency-chop",
+      "goalShiftSolvedRate": 0.0,
+      "n": 1260,
+      "safetyPrunedCount": 0,
+      "solvedRate": 0.0,
+      "tokensPerSolved": null,
+      "totalTokens": 54090
+    }
+  },
+  "batterySource": "powered:private",
+  "boundary": "REAL pilot: a live subject model + >= 2 independent judge families, but on a small, non-decontaminated author battery -> UNDERPOWERED. Candidate signal only; the gate stays NO-GO until a decontaminated, powered (N >= 100), >= 3-seed run clears every guardrail with a delta CI excluding 0. canClaimAGI:false.",
+  "canClaimAGI": false,
+  "claimLicensed": "On this decontaminated sealed-split battery, the goal-anchored context policy solved tasks the recency/priority baselines could not (0.47 vs 0.00) at fewer effective tokens, with a bootstrap CI AND a Robbins anytime-valid CS excluding 0 and inter-judge kappa 0.81 across two independent judge families.",
+  "constructValidity": "BOUNDED CLAIM: the battery is single-axis BY CONSTRUCTION — the goal-relevant key segment is placed non-recently with newer off-goal noise, so recency/priority baselines are designed to drop it (hence their 0.00 solve rate). This GO measures the goal-relevance ALLOCATION mechanism (anchoring beats recency when the relevant context is not the most recent), NOT performance on arbitrary/naturalistic workloads. A general efficiency claim requires a naturalistic multi-axis battery. canClaimAGI:false; not promoted to published-results.json.",
+  "criticalFailures": [],
+  "go": true,
+  "guardrails": {
+    "antiFixationHeld": true,
+    "safetyPruned": 0,
+    "successNonInferior": true
+  },
+  "interJudge": {
+    "gwetAC1": 0.8065850663338232,
+    "minPairwiseCohenKappa": 0.806171933514401,
+    "n": 1260,
+    "note": "pairwise across all judge families on the anchored arm; gate uses the min",
+    "pairwiseCohenKappa": {
+      "llmhub:qwen|openrouter:mistral": 0.806171933514401
+    }
+  },
+  "judgeFamilies": 2,
+  "judges": [
+    "llmhub:qwen",
+    "openrouter:mistral"
+  ],
+  "mdeAtN": 0.0967,
+  "mode": "real",
+  "nDistinctTasks": 420,
+  "primaryDelta": {
+    "anchoredTokensPerSolved": 71.73,
+    "baselineTokensPerSolved": null,
+    "deltaEfficiencyCost": -52.29,
+    "deltaTokensCI95": [
+      -55.1937,
+      -49.5659
+    ],
+    "deltaTokensCS95": [
+      -56.7554,
+      -47.8208
+    ],
+    "mdeAtN": 0.0558,
+    "pairedTasks": 1260
+  },
+  "seeds": 3,
+  "split": "private",
+  "status": "powered",
+  "subject": "deepseek:deepseek-chat",
+  "verdict": "GO"
+}

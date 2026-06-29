@@ -36,20 +36,11 @@ from pretraining.architecture.vgrd import (
     run_study as vgrd_run_study,
     vgrd_decide,
 )
-from pretraining.architecture.ple import (
-    PLELM,
-    offline_invariants as ple_offline_invariants,
-    run as run_ple_probe,
-)
 from pretraining.architecture.run_arch import run as run_arch_probe
 from pretraining.architecture.run_sparse_quant import run as run_sparse_quant
 
 __all__ = [
     "MoELM",
-    # Per-Layer Embeddings (lookup-heavy capacity at matched compute)
-    "PLELM",
-    "ple_offline_invariants",
-    "run_ple_probe",
     # P7 router-policy ablation
     "SCOPE_KEY",
     "p7_offline_invariants",
@@ -65,6 +56,5 @@ __all__ = [
     "vgrd_run_study",
     # study entry points
     "run_arch_probe",
-    "run_ple_probe",
     "run_sparse_quant",
 ]

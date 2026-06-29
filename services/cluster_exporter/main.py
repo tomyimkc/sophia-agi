@@ -166,6 +166,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         server.serve_forever()
     except KeyboardInterrupt:
+        # Ctrl-C is the normal way to stop this long-running server; shut down
+        # cleanly via the finally block below without a noisy traceback.
         pass
     finally:
         server.server_close()

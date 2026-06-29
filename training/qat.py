@@ -327,83 +327,6 @@ def qat_penalty(model: Any, *, scheme: str = "int8", lam: float = 1e-3,
 
 
 # ---------------------------------------------------------------------------
-# 3b. QAT-consistency loss — train the quantized forward to MATCH the fp forward's
-#     next-token distribution (T6). This is the OUTPUT-space analog of quant_push_penalty
-#     and is co-designed with the serving gate: serving/lowram_eval.LowRamGate certifies a
-#     BF16-vs-low-bit next-token mean-KL <= 0.05, so penalising that same KL at train time
-#     optimises directly against the metric the certifier measures, instead of hoping the
-#     weight-space penalty transfers to output behaviour.
-# ---------------------------------------------------------------------------
-
-def _softmax_np(z):
-    z = np.asarray(z, dtype=np.float64)
-    z = z - z.max(axis=-1, keepdims=True)
-    e = np.exp(z)
-    return e / e.sum(axis=-1, keepdims=True)
-
-
-def next_token_kl_ref(p_logits, q_logits, *, mask=None) -> float:
-    """KL(softmax(p) || softmax(q)) averaged over rows — the pure-numpy reference for the
-    torch consistency loss. ``p`` is the fp 'teacher', ``q`` the quantized 'student'; with a
-    boolean ``mask`` only the marked rows (e.g. completion tokens) are averaged. >= 0, and
-    exactly 0 iff the two logit rows induce the same distribution."""
-    if not _HAVE_NUMPY:
-        raise RuntimeError("numpy required")
-    p = _softmax_np(p_logits)
-    q = _softmax_np(q_logits)
-    kl = np.sum(p * (np.log(p + 1e-12) - np.log(q + 1e-12)), axis=-1)
-    if mask is not None:
-        mask = np.asarray(mask, dtype=bool)
-        if mask.any():
-            return float(kl[mask].mean())
-    return float(kl.mean())
-
-
-def qat_consistency_kl(model: Any, batch: dict, *, lam: float = 1e-3,
-                       temperature: float = 1.0):  # pragma: no cover - torch-only
-    """Next-token KL between the fp forward (teacher) and the fake-quant forward (student).
-
-    Requires :func:`attach_qat` to be active: ``qat_forward`` returns the fp forward in eval
-    mode and the STE-fake-quant forward in train mode, so one model yields both. The teacher
-    pass is detached (no grad); the student pass carries gradient, so the trainable params
-    (the LoRA adapter over a frozen base) learn to make the SERVED low-bit forward reproduce
-    the fp next-token distribution — exactly what serving/lowram_eval.LowRamGate certifies.
-
-    Costs a second forward per step; gate it behind ``--qat-consistency``. KL is averaged over
-    completion positions (``labels != -100``) when labels are present, else over real tokens.
-    """
-    import torch
-    import torch.nn.functional as F
-
-    input_ids = batch["input_ids"]
-    attn = batch.get("attention_mask")
-    labels = batch.get("labels")
-
-    was_training = model.training
-    model.eval()  # eval => qat_forward returns the fp forward => fp 'teacher' logits
-    with torch.no_grad():
-        teacher = model(input_ids=input_ids, attention_mask=attn).logits
-    if was_training:
-        model.train()  # restore the fake-quant 'student' forward (with grad)
-    student = model(input_ids=input_ids, attention_mask=attn).logits
-
-    # next-token alignment: position t predicts token t+1.
-    t = teacher[:, :-1, :]
-    s = student[:, :-1, :]
-    if labels is not None:
-        keep = labels[:, 1:] != -100
-    elif attn is not None:
-        keep = attn[:, 1:].bool()
-    else:
-        keep = torch.ones(s.shape[:-1], dtype=torch.bool, device=s.device)
-    tlp = F.log_softmax(t / temperature, dim=-1)
-    slp = F.log_softmax(s / temperature, dim=-1)
-    kl = (tlp.exp() * (tlp - slp)).sum(-1)  # KL(teacher || student) per position
-    kl = kl[keep].mean() if keep.any() else kl.mean()
-    return lam * kl
-
-
-# ---------------------------------------------------------------------------
 # 4. Offline invariants
 # ---------------------------------------------------------------------------
 
@@ -476,15 +399,6 @@ def offline_invariants() -> "tuple[bool, dict]":
     cov_attn_only = summarize_qat_coverage(["model.layers.0.self_attn.q_proj"])
     checks["coverage_flags_zero_experts"] = cov_attn_only["expert"] == 0
     detail["coverage_full"] = cov_full
-
-    # 7. QAT-consistency KL reference (T6): zero when teacher==student, positive otherwise,
-    #    always non-negative — the metric the serving gate (LowRamGate next-token KL) certifies.
-    zl = rng.standard_normal((8, 12))
-    checks["consistency_kl_zero_on_equal"] = abs(next_token_kl_ref(zl, zl)) < 1e-9
-    checks["consistency_kl_positive_on_diff"] = next_token_kl_ref(zl, zl + 0.5 * rng.standard_normal((8, 12))) > 0.0
-    masked = next_token_kl_ref(zl, zl, mask=[True, False, True, False, True, False, True, False])
-    checks["consistency_kl_masked_zero_on_equal"] = abs(masked) < 1e-9
-    detail["consistency_kl_demo"] = round(next_token_kl_ref(zl, zl + 0.5 * rng.standard_normal((8, 12))), 5)
 
     ok = all(checks.values())
     return ok, {"checks": checks, **detail}

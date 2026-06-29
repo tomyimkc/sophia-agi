@@ -1,0 +1,16 @@
+{
+  "n": 24,
+  "tp": 12,
+  "fp": 0,
+  "tn": 12,
+  "fn": 0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "accuracy": 1.0,
+  "minPrecision": 0.8,
+  "minRecall": 0.8,
+  "promoted": true,
+  "verdict": "FLOOR-MET",
+  "caveat": "heldout_v1 is the DEVELOPMENT pack the detectors were tuned against; floor-met here shows self-consistency, NOT generalization. An independent, un-tuned pack (v2) is the real held-out gate and is OPEN — do not call this a validated gate until v2 clears.",
+  "errors": []
+}

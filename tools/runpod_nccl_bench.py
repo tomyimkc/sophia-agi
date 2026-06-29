@@ -46,7 +46,6 @@ from tools.runpod_rlvr import (  # noqa: E402 — reuse the proven pod lifecycle
     _rsync_repo_to_pod,
     _scp_from_pod,
     _ssh_base,
-    _startup_cmd,  # noqa: F401 — referenced via _build_create_payload
     _stream,
     _wait_ssh_login,
 )
@@ -90,7 +89,7 @@ echo "[nccl] done; report at {REMOTE_REPORT}"
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ts = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--api-key-env", default="RUNPOD_API_KEY")
+    ap.add_argument("--api-key-env", default="RUNPOD_API_KEY", dest="key_env_name")
     ap.add_argument("--api-key-file", type=Path, default=None)
     ap.add_argument("--yes", action="store_true", help="actually create a paid pod")
     ap.add_argument("--dry-run", action="store_true", help="print payload + remote script, no pod")
@@ -177,16 +176,18 @@ def main(argv: list[str] | None = None) -> int:
         raise RunPodError("all-reduce needs --gpu-count >= 2")
     if args.ssh_endpoint:
         return run_on_existing_pod(args)
-    api_key = os.environ.get(args.api_key_env, "")
+    api_key = os.environ.get(args.key_env_name, "")
     if not api_key and args.api_key_file:
         api_key = args.api_key_file.read_text(encoding="utf-8").strip()
 
     # Display the sanitized payload + remote script first; dry-run needs no SSH tooling.
-    display_payload = _build_create_payload(args, "ssh-ed25519 …", api_key=api_key)
-    sanitized = json.loads(json.dumps(display_payload))
-    if "RUNPOD_API_KEY" in sanitized["env"]:
-        sanitized["env"]["RUNPOD_API_KEY"] = _redact(api_key)
-    print(f"[runpod] api key env={args.api_key_env}, value={_redact(api_key)}")
+    # CodeQL taint is object-level: build the display payload from placeholders so the
+    # real key never enters the logged object (overwriting a copied field is not enough).
+    sanitized = _build_create_payload(args, "ssh-ed25519 …", api_key=_redact(api_key))
+    # Log only the key's length (an int) — never any character of the secret itself.
+    key_len = len(api_key)
+    masked_key = "" if key_len == 0 else ("***" if key_len <= 12 else f"***(len={key_len})")
+    print(f"[runpod] api key env={args.key_env_name}, value={masked_key}")
     print("[runpod] create payload (sanitized):")
     print(json.dumps(sanitized, indent=2))
     print("[runpod] remote benchmark script:")
@@ -198,7 +199,7 @@ def main(argv: list[str] | None = None) -> int:
     if not args.yes:
         raise RunPodError("Refusing to create a paid pod without --yes. Use --dry-run first.")
     if not api_key:
-        raise RunPodError(f"Set {args.api_key_env}=<RunPod API key> before running.")
+        raise RunPodError(f"Set {args.key_env_name}=<RunPod API key> before running.")
     for tool in ("ssh", "scp", "ssh-keygen"):
         if not shutil.which(tool):
             raise RunPodError(f"{tool} not found on PATH")
@@ -209,7 +210,6 @@ def main(argv: list[str] | None = None) -> int:
         payload = _build_create_payload(args, public_key, api_key=api_key)
         pod_id = ""
         conn: PodConnection | None = None
-        exit_code = 1
         try:
             try:
                 pod = _api_request("POST", "/pods", api_key, payload)

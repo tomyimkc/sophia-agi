@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Callable
+from typing import Callable
 
 PKG = Path(__file__).resolve().parents[1]   # pretraining/
 

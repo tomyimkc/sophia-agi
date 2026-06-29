@@ -24,7 +24,7 @@ kind (`DOMAIN_KIND`). Unknown domains fall back to ``provenance`` for back-compa
 from __future__ import annotations
 
 import re
-from typing import Any, Callable
+from typing import Callable
 
 # (ok, reasons)
 ScoreFn = Callable[[dict, str, dict], "tuple[bool, list[str]]"]

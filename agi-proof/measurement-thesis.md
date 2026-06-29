@@ -79,37 +79,6 @@ Every pillar below is a deterministic check; the headline ones run in `fast-ci` 
    on the powered axis with the simple baseline included (9); the manifest headlines RECORDS (not rows)
    and flags volume inflation when rows/record exceeds the ceiling (8).
 
-## Worked example: "a small distilled model carries a frontier teacher's reasoning"
-
-A recurring external claim is that a ~12B model, distilled from a frontier teacher and served
-4-bit on ~8 GB, "matches" or "carries" that teacher's reasoning. Treated as a *claim about the
-model*, it is the same shape as the −0.118 retention episode in reverse: an impression that
-survives only until the instrument is built. The IEC turns the slogan into a gated measurement
-or it stays an anecdote. Concretely, before any such claim could be reported here:
-
-1. **Quantify uncertainty.** "Feels like the teacher" → a measured uplift with a paired CI; a
-   bare win rate is rejected by `lint_claims`.
-2. **Power first.** Pre-register MDE + required N in `measurement_spec.json`; refuse a verdict
-   when MDE(N) exceeds the effect (`eval_stats`).
-3. **Triangulate ≥2 constructs.** Deterministic markers + an LLM-judge panel of ≥2 independent
-   families (judge ≠ subject), with reported inter-judge agreement (`claim_gate`).
-4. **Decontaminate.** The teacher may have memorised public benchmarks, so its distilled traces
-   are checked against the held-out eval (exact + shingle near-dup) before they can train the
-   student — `tools/assert_decontam.py` now globs the distillation outputs, and
-   `tools/distill_export.py` diverts any eval-colliding trace to a decontaminated bucket.
-5. **Anytime-valid + private split.** The distil → re-judge → resample loop is optional
-   stopping, so the gate fires on a confidence sequence, and the headline rests on a private,
-   non-self-authored split.
-6. **Bound the low-RAM half separately.** A 4-bit serving result may claim only what
-   `serving/lowram_eval.LowRamGate` measures — a BF16-vs-low-bit next-token KL bound (which
-   `tools/train_lora.py --qat-consistency` now optimises against directly) — never "frontier
-   reasoning on 8 GB". The efficiency framing (`tools/build_efficiency_frontier.py`) reports
-   score-per-active-param / per-byte with CIs, not a slogan.
-
-The point is not that the claim is false; it is that, absent this instrument, it is
-**unresolved** — `candidate_only; canClaimAGI:false` — exactly like the −0.118 point estimate
-on N=34.
-
 ## The one-line discipline
 
 > A number without a CI is a rumor; a CI without a pre-registered MDE is theater; a single construct
