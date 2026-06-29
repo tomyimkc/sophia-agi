@@ -67,3 +67,4 @@ jobs:
           python tests/test_novelty_dag.py
           python tests/test_leiden_alignment.py
           python tests/test_judge_registry.py
+          python tests/test_semantic_grounding.py

@@ -1,0 +1,47 @@
+{
+  "experimentId": "semantic-grounding-3arm",
+  "question": "Does grounding word meaning in explicit OKF definitions (A1) and composing meaning with a symbolic concept grammar (A2) beat an ungrounded distributional baseline (A0) on definition-faithfulness (D1) and compositional derivation (D2)?",
+  "constructs": [
+    "D1 deterministic word-sense match (agent.lexical_embed)",
+    "D1 deterministic provenance verifier (agent.verifiers.provenance_faithful)",
+    "D2 symbolic reference reasoner (agent.datalog_engine least-fixed-point)"
+  ],
+  "arms": {
+    "A0": "base model only (pure distributional)",
+    "A1": "base + OKF definition retrieval (provenance-carrying)",
+    "A2": "base + retrieval + symbolic compose/abstain (datalog tool)"
+  },
+  "primaryMetric": "paired delta per metric vs A0 (A1-A0 and A2-A0), counting CI-clean improvements",
+  "primaryN": "D1=26 cases, D2=14 cases, x >=3 seeds (Phase 1 must scale N before any claim)",
+  "primaryMDE": 0.10,
+  "guardrails": {
+    "taskSuccess": {
+      "rule": "answer-rate / fluency on D1+D2 does not regress vs A0 (CI-clear of 0)"
+    },
+    "datasetValidity": {
+      "rule": "D2_dataset_valid == true (committed gold matches the Datalog derivation)"
+    },
+    "protected": {
+      "rule": "no protected_history/religion identity claims enter the D2 axiom seed; cross-tradition stays abstain"
+    }
+  },
+  "stoppingRule": "anytime-valid confidence sequence (tools/eval_stats.confidence_sequence_mean) REQUIRED for any peeked metric",
+  "decontam": "tools/assert_semantic_grounding_decontam.py — independent exact/normalized + content-shingle (Jaccard) disjointness of eval prompts vs committed training packs",
+  "ranking": "guardrails first, then count + magnitude of CI-clean A1/A2 improvements over A0",
+  "claimCeiling": "candidate_only; canClaimAGI:false; narrow seed-bound feasibility; a faithfulness/composition result, NOT understanding",
+  "honestLimits": [
+    "small N (D1=26, D2=14) — underpowered for a 10pt effect; report mde_at_n and treat single-run deltas as coarse",
+    "D1 distractors are lexically-near siblings, an easy floor (not adversarial paraphrase)",
+    "D2 is a closed-world grounding verdict over hand-written axioms, not a truth oracle",
+    "A2 on D2 is near-ceiling by construction (it calls the same engine the scorer derives gold with) so it measures TOOL-USE COMPLIANCE, not unaided reasoning; the load-bearing comparison is A0 vs A1 (does grounding context help) and A1 vs A2 (does the symbolic tool help)"
+  ],
+  "peekedMetrics": [],
+  "enforcement": {
+    "build": "python -m eval.semantic_grounding.build_dataset --check (drift gate)",
+    "score": "python -m eval.semantic_grounding.score --self-test (seam check)",
+    "run": "python tools/run_semantic_grounding_eval.py --model <spec> --seeds 3 --write",
+    "claim_gate": "tools/claim_gate.py --prefix semantic-grounding --spec <this file> (power, uncertainty, construct-family, decontam, magnitude)",
+    "decontam": "tools/assert_semantic_grounding_decontam.py",
+    "lint_claims": "tools/lint_claims.py — no-overclaim copy stays exit-0"
+  }
+}
