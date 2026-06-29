@@ -26,6 +26,9 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     check_claim,
     check_concept_edge,
     andreia_benchmark_tool,
+    temperance_assess_tool,
+    intemperance_check_tool,
+    sophrosyne_benchmark_tool,
     conformal_decide_tool,
     conscience_benchmark_tool,
     courage_assess_tool,
@@ -352,6 +355,44 @@ def sophia_cowardice_check(text: str, context_json: str = "{}") -> str:
 def sophia_andreia_benchmark() -> str:
     """Deterministic candidate self-benchmark for the Andreia courage gate routing."""
     return dumps(andreia_benchmark_tool())
+
+
+@mcp.tool()
+def sophia_temperance_assess(text: str, context_json: str = "{}") -> str:
+    """Sophrosyne temperance gate — the measure/magnitude regulator.
+
+    Decides whether the measured move is proportionate|restrain|sustain|escalate,
+    modelling temperance as Aristotle's mean: MQ = expenditure - demand, gated by the
+    next unit's marginal value. Catches excess (verbosity/over-hedging/over-tooling/
+    runaway loops) AND deficiency (premature stop/under-answer/truncation). NEVER
+    suppresses a required verification step (temperance is not negligence).
+    Deterministic candidate infrastructure, not AGI proof. Read-only.
+    """
+    try:
+        context = json.loads(context_json or "{}")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid context_json: {exc}"})
+    if not isinstance(context, dict):
+        return dumps({"error": "context_json must be a JSON object"})
+    return dumps(temperance_assess_tool(text, context=context))
+
+
+@mcp.tool()
+def sophia_intemperance_check(text: str, context_json: str = "{}") -> str:
+    """Detect intemperate expenditure: excess (verbosity, hedge-stacking, runaway loops)
+    or deficiency (premature stop, truncation, under-answer). Informational — it can only
+    recommend trimming or continuing, never suppress a required output. Read-only."""
+    try:
+        context = json.loads(context_json or "{}")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid context_json: {exc}"})
+    return dumps(intemperance_check_tool(text, context=context if isinstance(context, dict) else {}))
+
+
+@mcp.tool()
+def sophia_sophrosyne_benchmark() -> str:
+    """Deterministic candidate self-benchmark for the Sophrosyne temperance gate routing."""
+    return dumps(sophrosyne_benchmark_tool())
 
 
 @mcp.tool()

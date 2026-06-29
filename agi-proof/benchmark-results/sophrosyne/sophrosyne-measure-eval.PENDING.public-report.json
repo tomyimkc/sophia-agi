@@ -1,0 +1,38 @@
+{
+  "arms": {
+    "no-gate-baseline": {
+      "reason": "requires a real model/agent",
+      "status": "not_run"
+    },
+    "sophrosyne-consulted": {
+      "reason": "scored only alongside a real baseline",
+      "status": "not_run"
+    },
+    "sophrosyne-standalone": {
+      "deficiencyErrorRate": 0.0,
+      "escalateRate": 0.3125,
+      "excessErrorRate": 0.0,
+      "n": 16,
+      "note": "routing fidelity vs author labels — NOT a real-decision effect"
+    }
+  },
+  "battery": "sophia.sophrosyne_measure_battery.v1",
+  "canClaimAGI": false,
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "criticalFailures": [
+    "no_real_baseline: the no-gate baseline arm needs a real model/agent (mock baselines are not evidence)",
+    "ground_truth_not_2family: optimal-measure labels are author-only, not >= 2 independent judge families (kappa >= 0.40)",
+    "no_effect_ci: delta excess/deficiency-error CIs do not both exclude 0 (or no real arms to compute them)",
+    "no_task_success_guardrail: task-success guardrail (delta success >= -0.02) needs a real task run"
+  ],
+  "delta": null,
+  "experimentId": "sophrosyne-measure-eval",
+  "go": false,
+  "groundTruth": "author-labelled (NOT >= 2 independent judge families) — does not satisfy the spec",
+  "harness": "tools/run_sophrosyne_eval.py",
+  "headline": "PENDING — machinery only; no real no-gate baseline run has been performed",
+  "note": "Intentionally PENDING. The deterministic mock baselines (--mock {profligate,miserly,oracle}) exercise the delta+CI math in CI (tests/test_sophrosyne_eval.py), but a mock is not a model: no effect on real decisions is claimed. Promotion needs an external decontaminated task set, >= 2 independent judge families, a real no-gate baseline, delta excess- AND deficiency-error CIs excluding 0, and the task-success guardrail — see the measurement_spec and the sophrosyne-temperance-gate row in agi-proof/failure-ledger.md.",
+  "preregistration": "agi-proof/benchmark-results/sophrosyne/measurement_spec.json",
+  "status": "not_run",
+  "verdict": "NO-GO"
+}
