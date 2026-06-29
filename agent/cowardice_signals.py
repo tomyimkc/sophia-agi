@@ -84,7 +84,7 @@ def detect_cowardice(
     text: str,
     *,
     context: dict[str, Any] | None = None,
-    semantic_backend: "Callable[[str], float] | None" = None,
+    semantic_backend: Callable[[str], float] | None = None,
 ) -> CowardiceDecision:
     """Flag a retreat that looks driven by fear/social cost rather than by risk.
 
