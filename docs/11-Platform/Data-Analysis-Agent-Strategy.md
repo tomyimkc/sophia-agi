@@ -54,7 +54,7 @@ repo is missing on the data axis.
 > | **DHI scorecard** (Phase 0) | `tools/data_health_report.py` → `agi-proof/data-health/report.json` (`--check` gated) | **DHI=0.6507** baseline committed |
 > | **Data asset registry** (Phase 1) | `tools/build_data_registry.py` → `agi-proof/data-health/registry.json` (`--check` gated) | 15 assets, sha256-anchored |
 > | **Entity-level decontam** (Phase 2) | `tools/assert_entity_decontam.py` | surfaces 40 shared entities / 151 fully-covered eval prompts |
-> | **Entity-disjoint split carver** (Phase 3) | `tools/carve_entity_disjoint_split.py`; staged candidate at `agi-proof/data-health/seib_entity_disjoint_candidate/`; adoption runbook → [`Entity-Disjoint-Split-Adoption.md`](./Entity-Disjoint-Split-Adoption.md) | 75 disjoint cases staged for review, proof `sharedWithTrain=[]` |
+> | **Entity-disjoint split carver** (Phase 3) | `tools/carve_entity_disjoint_split.py`; staged candidate at `agi-proof/data-health/seib_entity_disjoint_candidate/`; adoption runbook → [`Entity-Disjoint-Split-Adoption.md`](./Entity-Disjoint-Split-Adoption.md) | 73 disjoint cases staged for review, proof `sharedWithTrain=[]` |
 > | **Mix-balance ratchet gate** (Phase 4) | `tools/assert_mix_balance.py` + `mix-baseline.json` (in CI) | pins L1=0.7406; fails any PR that worsens the skew |
 > | **Data Analysis Agent** (Phase 5) | `agent/data_analyst.py` + `"data"` team in `agent/swarm_router.py` | propose-only, fail-closed |
 >
@@ -337,7 +337,7 @@ These are recorded in [`../../agi-proof/failure-ledger.md`](../../agi-proof/fail
 
 - `data-health-index-below-target-2026-06-29` — DHI baseline committed (0.6507) but below a healthy-process target (Phase 0 done; targets open).
 - `data-lineage-graph-partial-2026-06-29` — asset registry built; source→checkpoint→eval edges still absent (Phase 1 partial).
-- `entity-decontam-candidate-staged-not-gated-2026-06-29` — entity layer measures the SEIB leak (151 fully-covered); a clean 75-case split is now staged for human review, not yet adopted/gated (Phase 2 done; Phase 3 staged; gating open).
+- `entity-decontam-candidate-staged-not-gated-2026-06-29` — entity layer measures the SEIB leak (151 fully-covered); a clean 73-case split is now staged for human review, not yet adopted/gated (Phase 2 done; Phase 3 staged; gating open). Agent content-review (2026-06-29) removed 2 non-attribution finance probes that leaked in via an `attributedAuthor:"multiple"` sentinel being mis-recognised as an entity — fixed at source in `build_entity_vocab` (`_SENTINELS` stoplist).
 - `mix-balance-gate-ratchet-not-at-target-2026-06-29` — mix-balance ratchet gate now in CI (prevents regression); mix still far from target (Phase 4 gate done; targets open).
 - `data-analyst-flywheel-not-run-2026-06-29` — agent built and propose-only; the audit→plan→gated-build→re-measure loop not yet run (Phase 5 done; Phase 6 open).
 

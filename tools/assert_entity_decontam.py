@@ -47,6 +47,14 @@ TRAIN_SOURCES = [
 ]
 MAX_ENTITY_TOKENS = 5
 _STOP = {"the", "a", "an", "of", "on", "in", "to", "and", "school"}
+# Authorship-STATUS placeholders used in the gold tables (e.g. attributedAuthor
+# "multiple" for collectively-authored works like the I Ching). These are not named
+# entities; admitting them to the vocab causes false-positive entity matches against
+# unrelated prompts (e.g. "burn multiple" in a finance probe). Never treat as entities.
+_SENTINELS = {
+    "multiple", "unknown", "anonymous", "anon", "various", "collective",
+    "disputed", "uncertain", "traditional", "unattributed", "none", "na",
+}
 _TOKEN_RE = re.compile(r"\w+", re.UNICODE)
 
 
@@ -68,6 +76,8 @@ def build_entity_vocab() -> dict[str, str]:
             return
         if len(toks) == 1 and (toks[0] in _STOP or len(toks[0]) < 4):
             return                       # skip bare stopwords / tiny tokens
+        if all(t in _SENTINELS for t in toks):
+            return                       # skip authorship-status placeholders, not entities
         vocab.setdefault(" ".join(toks), cat)
 
     if ATTRIBUTIONS.exists():

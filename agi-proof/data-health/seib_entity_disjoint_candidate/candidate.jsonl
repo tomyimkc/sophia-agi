@@ -19,8 +19,6 @@
 {"entities": ["the prince"], "prompt": "is the authorship of the prince disputed or uncertain?"}
 {"entities": ["the social contract"], "prompt": "is the authorship of the social contract disputed or uncertain?"}
 {"entities": ["wuthering heights"], "prompt": "is the authorship of wuthering heights disputed or uncertain?"}
-{"entities": ["multiple"], "prompt": "net burn hk$400k/quarter, net new arr hk$200k/quarter — burn multiple?"}
-{"entities": ["multiple"], "prompt": "seed saas entering recession: hk$1.2m cash, hk$100k/month burn, net new arr hk$50k/quarter. (1) runway and burn-multiple diagnosis. (2) macro playbook — three recession moves for seed saas. (3) cut burn 25% vs hold growth spend — which seats disagree? structured multi-part answer only."}
 {"entities": ["zuo zhuan"], "prompt": "who is the definitive single author of the zuo zhuan, and in what year did they write it?"}
 {"entities": ["zohar"], "prompt": "who is the zohar traditionally attributed to, and how settled is that attribution among scholars?"}
 {"entities": ["zuo zhuan"], "prompt": "who is the zuo zhuan traditionally attributed to, which tradition does it belong to, and how settled is that attribution?"}

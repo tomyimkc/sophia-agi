@@ -28,6 +28,17 @@ def test_matching_is_whole_word_not_substring() -> None:
     assert "dao de jing" in aed.entities_in("who wrote the dao de jing?", vocab)
 
 
+def test_authorship_status_sentinels_are_not_entities() -> None:
+    # 'multiple' (attributedAuthor for collectively-authored works like the I Ching) is an
+    # authorship-STATUS placeholder, not a named entity; admitting it caused a false-positive
+    # match against unrelated prompts (e.g. "burn multiple" in a finance probe). Regression
+    # guard for the 2026-06-29 sentinel fix.
+    vocab = aed.build_entity_vocab()
+    for sentinel in ("multiple", "unknown", "anonymous"):
+        assert sentinel not in vocab, f"{sentinel!r} must not be an entity"
+    assert not aed.entities_in("net burn hk$400k/quarter — burn multiple?", vocab)
+
+
 def test_audit_is_deterministic() -> None:
     a = aed.audit()
     b = aed.audit()

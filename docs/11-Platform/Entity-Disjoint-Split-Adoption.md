@@ -2,7 +2,7 @@
 
 > **Why this exists.** `tools/carve_entity_disjoint_split.py` staged a clean,
 > entity-disjoint held-out **candidate** at
-> `agi-proof/data-health/seib_entity_disjoint_candidate/` (75 cases, machine-proof
+> `agi-proof/data-health/seib_entity_disjoint_candidate/` (73 cases, machine-proof
 > `sharedWithTrain=[]`). Adopting it is a **human decision** (Leiden value 2: humans own
 > results) — the agent proposes, you dispose. This is the exact, copy-pasteable runbook
 > to review it, promote it to a sealed eval surface, and flip the entity-contamination
@@ -38,7 +38,18 @@
 
 ## 2. Step 1 — Content review (the part only a human can do)
 
-The set is small (75 cases) — review **all** of them:
+> **Agent review log (2026-06-29).** A DataAnalyst pass over the (then 75-case) candidate
+> found 2 defects: prompts `net burn hk$400k/quarter … burn multiple?` and the seed-SaaS
+> recession probe were **not** authorship traps — they leaked in because
+> `attributedAuthor:"multiple"` (a collective-authorship sentinel for I Ching / Book of
+> Songs in `data/attributions.json`) was mis-recognised as a named entity and matched
+> "burn **multiple**". Fixed at source via a `_SENTINELS` stoplist in
+> `build_entity_vocab`; the candidate is now **73 cases, all attribution probes**. Gold is
+> derivable for all of them (72 directly tabled in `wikidata_snapshot.json` /
+> `misattributions.json`; case "isaac newton wrote the mahabharata?" is a derivable
+> *negative*). This is the agent proposing — a human still owns the final content sign-off below.
+
+The set is small (73 cases) — review **all** of them:
 ```bash
 python - <<'PY'
 import json
@@ -159,7 +170,7 @@ If review or any gate fails, nothing is committed yet — `git checkout -- .` /
 | Step | Command / edit | Pass condition |
 |---|---|---|
 | Verify disjoint | `assert_entity_decontam --eval-file <candidate> --fail-covered 0` | exit 0 |
-| Review | eyeball all 75 cases | every box in §2 |
+| Review | eyeball all 73 cases | every box in §2 |
 | Promote | copy → `data/seib_entity_disjoint/` + sealed manifest | files exist, `candidateOnly:false` |
 | Register | add glob in `dataset_guard.EVAL_GLOBS`; `assert_decontam.py` | exit 0 |
 | Gate | add `--eval-file … --fail-covered 0` to `ci.yml` | exit 0 |
