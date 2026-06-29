@@ -48,6 +48,12 @@ on:
         default: 'verifier'
         type: choice
         options: [verifier, gate, multiaxis]
+      graded_craving:
+        description: 'H2 (reward=gate only): scale reward-positive abstention by prompt fabrication temptation. true = HST graded arm; false = flat arm.'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['false', 'true']
       epochs:
         description: 'Training epochs (live mode)'
         required: false
@@ -99,6 +105,7 @@ jobs:
       IN_TASK: ${{ github.event.inputs.task }}
       IN_MODEL: ${{ github.event.inputs.model }}
       IN_REWARD: ${{ github.event.inputs.reward }}
+      IN_GRADED_CRAVING: ${{ github.event.inputs.graded_craving }}
       IN_EPOCHS: ${{ github.event.inputs.epochs }}
       IN_SEED: ${{ github.event.inputs.seed }}
       IN_GPU_TYPE: ${{ github.event.inputs.gpu_type }}
@@ -129,13 +136,9 @@ jobs:
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
         run: |
-          python tools/runpod_rlvr.py --dry-run \
-            --source git --branch "${{ github.ref_name }}" \
-            --remote-mode "$IN_REMOTE_MODE" \
-            --task "$IN_TASK" \
-            --reward "$IN_REWARD" \
-            --model "$IN_MODEL" \
-            --gpu-type "$IN_GPU_TYPE"
+          dry_args=(--dry-run --source git --branch "${{ github.ref_name }}" --remote-mode "$IN_REMOTE_MODE" --task "$IN_TASK" --reward "$IN_REWARD" --model "$IN_MODEL" --gpu-type "$IN_GPU_TYPE")
+          [ "$IN_GRADED_CRAVING" = "true" ] && dry_args+=(--graded-craving)
+          python tools/runpod_rlvr.py "${dry_args[@]}"
 
       - name: Launch RunPod RLVR (rents GPU, runs over SSH, deletes pod)
         env:
@@ -144,6 +147,7 @@ jobs:
           # argv as a bash array; optional flags appended as separate quoted elements
           # (no unquoted expansion -> no shell injection/word-splitting from dispatch inputs).
           args=(--yes --source git --branch "${{ github.ref_name }}" --remote-mode "$IN_REMOTE_MODE" --task "$IN_TASK" --reward "$IN_REWARD" --model "$IN_MODEL" --epochs "$IN_EPOCHS" --seed "$IN_SEED" --quant bf16 --vllm colocate --gpu-type "$IN_GPU_TYPE")
+          [ "$IN_GRADED_CRAVING" = "true" ] && args+=(--graded-craving)
           [ "$IN_INTERRUPTIBLE" = "true" ] && args+=(--interruptible)
           [ -n "$IN_NETWORK_VOLUME_ID" ] && args+=(--network-volume-id "$IN_NETWORK_VOLUME_ID")
           python tools/runpod_rlvr.py "${args[@]}"

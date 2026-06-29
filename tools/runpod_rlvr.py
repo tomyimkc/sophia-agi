@@ -394,6 +394,7 @@ fi
 $SOPHIA_LAUNCH tools/run_rlvr.py \\
   --task "$SOPHIA_TASK" \\
   --reward "$SOPHIA_REWARD" \\
+  $SOPHIA_GRADED_FLAG \\
   --model "$SOPHIA_MODEL" \\
   --quant "$SOPHIA_QUANT" \\
   --vllm "$SOPHIA_VLLM" \\
@@ -448,6 +449,7 @@ export PIP_CACHE_DIR=/workspace/.cache/pip
 export SOPHIA_MODEL={shlex.quote(args.model)}
 export SOPHIA_TASK={shlex.quote(args.task)}
 export SOPHIA_REWARD={shlex.quote(args.reward)}
+export SOPHIA_GRADED_FLAG={shlex.quote("--graded-craving" if args.graded_craving else "")}
 export SOPHIA_QUANT={shlex.quote(args.quant)}
 export SOPHIA_VLLM={shlex.quote(args.vllm)}
 export SOPHIA_EPOCHS={shlex.quote(str(args.epochs))}
@@ -612,6 +614,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--remote-mode", choices=["offline", "live"], default="live", help="run only remote offline smoke test or full live GRPO")
     ap.add_argument("--task", choices=["provenance", "math", "code", "concept"], default="provenance", help="RLVR reward task: provenance (provenance_faithful), math (sympy math_equivalent), code (hidden-tests-pass via code_exec), or concept (concept-TBox gate; no extra deps)")
     ap.add_argument("--reward", choices=["verifier", "gate", "multiaxis"], default="verifier", help="reward signal (provenance task): verifier (default), gate (single-axis), or multiaxis (Thesis D dense reward; M1 collapse comparison)")
+    ap.add_argument("--graded-craving", action="store_true", help="H2 (reward=gate only): scale reward-positive abstention by prompt fabrication temptation (HST graded arm). Flat arm omits this flag.")
     ap.add_argument("--quant", choices=["bf16", "4bit"], default="bf16")
     ap.add_argument("--vllm", choices=["none", "server", "colocate"], default="none")
     ap.add_argument("--epochs", type=float, default=1.0)
@@ -661,6 +664,8 @@ def _run_local(args: argparse.Namespace) -> int:
         "--vllm", args.vllm, "--epochs", str(args.epochs), "--seed", str(args.seed),
         "--out", str(out_path),
     ]
+    if args.graded_craving:
+        cmd.append("--graded-craving")
     if args.remote_mode == "offline":
         # run_rlvr's own --dry-run is the offline reward-wiring check (no GPU, no model load).
         cmd.append("--dry-run")

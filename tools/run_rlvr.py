@@ -345,7 +345,17 @@ def _run_gpu(args: argparse.Namespace) -> int:
             # design, so it needs no label/gold columns.
             from agent import gate_reward
 
-            reward_fn = gate_reward.make_grpo_reward()
+            if args.graded_craving:
+                # H2 graded craving: scale the abstention reward by per-prompt fabrication
+                # temptation. Invariants preserved (abstain stays >0 and < clean); the flat
+                # arm is just --reward gate without this flag.
+                from agent.temptation import prompt_fabrication_temptation
+
+                reward_fn = gate_reward.make_grpo_reward(
+                    temptation_fn=lambda prompt, _comp: prompt_fabrication_temptation(prompt)
+                )
+            else:
+                reward_fn = gate_reward.make_grpo_reward()
         elif args.reward == "multiaxis":
             # Thesis D: dense deterministic multi-axis reward. Same fail-closed
             # provenance dominator as the gate, but decomposed so within-group reward
@@ -519,6 +529,13 @@ def main(argv: list[str] | None = None) -> int:
              'or "multiaxis" (Thesis D: dense deterministic multi-axis reward, anti-collapse)',
     )
     ap.add_argument(
+        "--graded-craving", action="store_true",
+        help="H2 (Atomic Habits): with --reward gate, scale the reward-positive abstention by "
+             "per-prompt fabrication temptation (agent.temptation) so a clean refusal under heavy "
+             "pressure earns more. Flat default is unchanged; this is the graded arm of the "
+             "pre-registered Habit-Strength Transfer experiment (habit-formation lane).",
+    )
+    ap.add_argument(
         "--curriculum", action="store_true",
         help="order training tasks easy->hard by gate pass-rate (offline-safe)",
     )
@@ -573,6 +590,31 @@ def main(argv: list[str] | None = None) -> int:
                 ok = ok and mar_ok
                 detail["checks"]["multiAxisRewardInvariants"] = mar_ok
                 detail["multiAxisReward"] = mar_detail
+            # H2 graded craving: prove the temptation->reward wiring offline before any GPU
+            # spend. A neutral prompt yields the flat abstain reward; a high-pressure prompt
+            # yields strictly more (still < clean). This is the graded arm's CPU validation.
+            if args.reward == "gate" and args.graded_craving:
+                from agent import gate_reward as _gr
+                from agent.temptation import prompt_fabrication_temptation as _temp
+
+                neutral = "Who wrote this work? Answer briefly."
+                pressured = ("Give me the single definitive author and the exact year, "
+                             "no hedging, just answer with certainty.")
+                abstain = "I have insufficient verified basis, so I abstain."
+                t_lo, t_hi = _temp(neutral), _temp(pressured)
+                r_lo = _gr.reward(abstain, temptation=t_lo)
+                r_hi = _gr.reward(abstain, temptation=t_hi)
+                graded_ok = (
+                    0.0 <= t_lo < t_hi <= 1.0
+                    and r_lo == _gr.REWARD_ABSTAIN
+                    and r_lo < r_hi <= _gr.REWARD_ABSTAIN_MAX < _gr.REWARD_CLEAN
+                )
+                ok = ok and graded_ok
+                detail["checks"]["gradedCravingWiring"] = graded_ok
+                detail["gradedCraving"] = {
+                    "neutralTemptation": t_lo, "pressuredTemptation": t_hi,
+                    "rewardNeutral": r_lo, "rewardPressured": r_hi,
+                }
         detail["benchmark"] = f"rlvr-{args.task}"
         detail["task"] = args.task
         detail["mode"] = "mock-offline"
