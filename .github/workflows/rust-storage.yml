@@ -87,7 +87,7 @@ jobs:
       # Pin to the declared MSRV (rust-version = "1.85" in the workspace). This
       # catches accidental use of newer-stabilized APIs and confirms the
       # edition-2024 + let-chain code actually compiles on the floor.
-      - uses: dtolnay/rust-toolchain@1.85.0
+      - uses: dtolnay/rust-toolchain@1.100.0
       - name: cargo build on MSRV
         working-directory: sophia-storage
         run: cargo build --workspace --all-targets
