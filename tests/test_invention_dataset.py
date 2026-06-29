@@ -17,8 +17,23 @@ import pytest
 
 from provenance_bench import invention_dataset as inv
 
+# Enable the isolated grader for this module's exec-path tests, matching the sibling
+# code-exec test modules (test_code_rlvr / test_code_verifier / ...). setdefault respects
+# an explicit opt-out (SOPHIA_ALLOW_CODE_EXEC=0 exported before import).
+os.environ.setdefault("SOPHIA_ALLOW_CODE_EXEC", "1")
 EXEC_ON = os.environ.get("SOPHIA_ALLOW_CODE_EXEC", "0").strip().lower() in ("1", "true", "yes", "on")
 exec_only = pytest.mark.skipif(not EXEC_ON, reason="needs SOPHIA_ALLOW_CODE_EXEC=1")
+
+
+@pytest.fixture(autouse=True)
+def _pin_code_exec(monkeypatch):
+    """Pin SOPHIA_ALLOW_CODE_EXEC per-test (monkeypatch auto-restores) so the exec path
+    is deterministic in the FULL suite: another module (test_execution_verifiers) pops
+    this env var at teardown, so an @exec_only test (import-time EXEC_ON was True) could
+    otherwise run with exec OFF at runtime and fail depending on collection order. No-ops
+    when exec was deliberately disabled at import (then the @exec_only tests just skip)."""
+    if EXEC_ON:
+        monkeypatch.setenv("SOPHIA_ALLOW_CODE_EXEC", "1")
 
 
 @pytest.mark.parametrize("depth", [2, 3])
