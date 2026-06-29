@@ -76,10 +76,21 @@ def main(argv=None) -> int:
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--include-synth", action="store_true",
                     help="also include the verifier-checked chart/table/document traps")
+    scope = ap.add_mutually_exclusive_group()
+    scope.add_argument("--categories",
+                       help="comma-separated category allowlist (scope the eval to these only)")
+    scope.add_argument("--physical", action="store_true",
+                       help="scope to the physical/2.5D axes (depth, occlusion, size, distance)")
     ap.add_argument("--json", action="store_true", help="emit the full report as JSON")
     args = ap.parse_args(argv)
 
     traps = runner.load_all_traps() if args.include_synth else runner.load_traps()
+    if args.physical:
+        traps = runner.filter_by_category(traps, runner.PHYSICAL_CATEGORIES)
+    elif args.categories:
+        traps = runner.filter_by_category(traps, [c.strip() for c in args.categories.split(",") if c.strip()])
+    if not traps:
+        ap.error("no traps match the requested categories")
     answer_fn = resolve_answer_fn(args.answer)
     judge_fn, judge_specs = _build_judge(args.judge_specs)
 

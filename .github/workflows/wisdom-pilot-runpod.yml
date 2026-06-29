@@ -86,7 +86,9 @@ jobs:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           GH_PILOT_PAT: ${{ github.token }}
-        run: python tools/runpod_wisdom_pilot_selfreport.py --dry-run --branch "${{ github.ref_name }}" --mode "${{ github.event.inputs.mode }}" --runs "${{ github.event.inputs.runs }}"
+          IN_MODE: ${{ github.event.inputs.mode }}
+          IN_RUNS: ${{ github.event.inputs.runs }}
+        run: python tools/runpod_wisdom_pilot_selfreport.py --dry-run --branch "${{ github.ref_name }}" --mode "$IN_MODE" --runs "$IN_RUNS"
 
       - name: Launch SSH-free pilot on RunPod (pod self-reports via git push; waits until done)
         env:
@@ -94,18 +96,20 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           GH_PILOT_PAT: ${{ github.token }}
           RUNPOD_REGISTRY_AUTH_ID: ${{ github.event.inputs.registry_auth_id }}
+          IN_LIMIT: ${{ github.event.inputs.limit }}
+          IN_IMAGE: ${{ github.event.inputs.image }}
+          IN_BENCHMARK: ${{ github.event.inputs.benchmark }}
+          IN_SEED: ${{ github.event.inputs.seed }}
+          IN_MODE: ${{ github.event.inputs.mode }}
+          IN_RUNS: ${{ github.event.inputs.runs }}
         run: |
-          LIMIT=""
-          if [ -n "${{ github.event.inputs.limit }}" ]; then LIMIT="--limit ${{ github.event.inputs.limit }}"; fi
-          IMAGE=""
-          if [ -n "${{ github.event.inputs.image }}" ]; then IMAGE="--image-name ${{ github.event.inputs.image }}"; fi
-          BENCH=""
-          if [ -n "${{ github.event.inputs.benchmark }}" ]; then BENCH="--bench-path ${{ github.event.inputs.benchmark }}"; fi
-          python tools/runpod_wisdom_pilot_selfreport.py --yes --wait \
-            --branch "${{ github.ref_name }}" \
-            --seed "${{ github.event.inputs.seed }}" \
-            --mode "${{ github.event.inputs.mode }}" \
-            --runs "${{ github.event.inputs.runs }}" $LIMIT $IMAGE $BENCH
+          # Build argv as a bash array; append optional flags as separate, quoted elements
+          # (no unquoted expansion -> no shell injection/word-splitting from dispatch inputs).
+          args=(--yes --wait --branch "${{ github.ref_name }}" --seed "$IN_SEED" --mode "$IN_MODE" --runs "$IN_RUNS")
+          [ -n "$IN_LIMIT" ] && args+=(--limit "$IN_LIMIT")
+          [ -n "$IN_IMAGE" ] && args+=(--image-name "$IN_IMAGE")
+          [ -n "$IN_BENCHMARK" ] && args+=(--bench-path "$IN_BENCHMARK")
+          python tools/runpod_wisdom_pilot_selfreport.py "${args[@]}"
 
       - name: Surface the pushed eval result (pull what the pod committed)
         if: always()

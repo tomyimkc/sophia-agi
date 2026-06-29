@@ -13,6 +13,11 @@ metadata:
 
 # Session handover
 
+> **See also `spark-cluster-ops` §1:** `SESSION-COORDINATION.md` is the **live, untracked**
+> cross-session ownership ledger (CLAIM/OWNS/DONE) — read + append it before launching expensive
+> work to avoid double-launch across concurrent agents. It complements (does not replace) the dated
+> `SESSION-HANDOVER-*.md` durable state.
+
 Work here is picked up by many sessions across devices and agents. Continuity is carried by
 **handover documents**, not memory. This skill standardizes reading the latest one at the start
 and writing the next one at the end.

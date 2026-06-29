@@ -73,6 +73,11 @@ jobs:
     timeout-minutes: 240
     env:
       HF_HOME: /home/runner/.cache/huggingface
+      IN_TASK: ${{ inputs.task }}
+      IN_REMOTE_MODE: ${{ inputs.remote_mode }}
+      IN_MODEL: ${{ inputs.model }}
+      IN_EPOCHS: ${{ inputs.epochs }}
+      IN_SEED: ${{ inputs.seed }}
     steps:
       - uses: actions/checkout@v7
 
@@ -95,7 +100,7 @@ jobs:
         run: |
           # This is the same offline smoke the RunPod path runs first; it verifies
           # the reward machinery before spending Spark time on a model load.
-          python tools/run_rlvr.py --task "${{ inputs.task }}" --model mock --dry-run
+          python tools/run_rlvr.py --task "$IN_TASK" --model mock --dry-run
 
       - name: "Run RLVR on the Spark (--local: no pod, no SSH, no RunPod cost)"
         run: |
@@ -105,11 +110,11 @@ jobs:
           # flag that lets a dispatch override this — it would produce un-runnable or
           # un-registerable numbers.
           python tools/runpod_rlvr.py --local --yes \
-            --task "${{ inputs.task }}" \
-            --remote-mode "${{ inputs.remote_mode }}" \
-            --model "${{ inputs.model }}" \
-            --epochs "${{ inputs.epochs }}" \
-            --seed "${{ inputs.seed }}" \
+            --task "$IN_TASK" \
+            --remote-mode "$IN_REMOTE_MODE" \
+            --model "$IN_MODEL" \
+            --epochs "$IN_EPOCHS" \
+            --seed "$IN_SEED" \
             --quant bf16 --vllm none
 
       - name: Annotate artifacts with the iteration-only provenance boundary

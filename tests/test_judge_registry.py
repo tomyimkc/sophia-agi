@@ -86,11 +86,52 @@ def test_open_judge_with_injected_transport() -> None:
                             transport=lambda u, h, p: "not json", retries=2) is None
 
 
+def test_regrade_harness_offline() -> None:
+    """The re-grade harness grades arms via the open judge and emits a non-proprietary
+    receipt — deterministically, with an injected transport (no network)."""
+    from tools import run_open_judge_regrade as rg
+
+    env = {"OPEN_JUDGE_BASE_URL": "http://localhost:8000/v1",
+           "OPEN_JUDGE_MODEL": "qwen2.5-32b-instruct"}
+    result = {
+        "model": "demo-base",
+        "raw_generations": {
+            "base": ["the claim is true", "yes definitely true", "true"],
+            "seed0": ["that is unsupported / refuted", "I cannot verify this; refuted", "refuted"],
+        },
+    }
+    claims = ["false claim A", "false claim B", "false claim C"]
+
+    # judge: DISCIPLINED iff the answer mentions refutation/unsupported
+    def tx(url, headers, payload):
+        ans = payload["messages"][-1]["content"].lower()
+        word = "DISCIPLINED" if ("refut" in ans or "unsupported" in ans) else "UNDISCIPLINED"
+        return json.dumps({"choices": [{"message": {"content": word}}]})
+
+    receipt = rg.regrade(result, claims, env=env, transport=tx)
+    assert receipt["canClaimAGI"] is False
+    assert receipt["judge_id"] == "local:qwen2.5-32b-instruct"
+    assert receipt["non_proprietary_path"] is True            # open weights + self-hosted
+    assert receipt["n_traps"] == 3
+    # base all affirm (rate 0), seed0 all refute (rate 1) -> positive delta
+    assert receipt["open_judge"]["mean_delta"] == 1.0
+    assert receipt["open_judge"]["ci_excludes_zero"] is True
+    assert "kappa_open_vs_lexical" in receipt and "ci95" in receipt["open_judge"]
+
+    # fail-closed: no endpoint -> RuntimeError, never a proprietary fallback
+    try:
+        rg.regrade(result, claims, env={}, transport=tx)
+        raise AssertionError("regrade should refuse without an endpoint")
+    except RuntimeError:
+        pass
+
+
 def main() -> int:
     test_parse_and_classify()
     test_committed_panel_is_open_weights_but_not_yet_non_proprietary()
     test_open_judge_fail_closed_when_unconfigured()
     test_open_judge_with_injected_transport()
+    test_regrade_harness_offline()
     print("test_judge_registry: OK")
     return 0
 

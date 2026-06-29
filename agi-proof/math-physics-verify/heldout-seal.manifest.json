@@ -1,0 +1,182 @@
+{
+  "schema": "sophia.math_physics_heldout_seal.v1",
+  "packId": "math-physics-verify-packs-2026-06-29",
+  "sealedAt": "2026-06-29T00:00:00+00:00",
+  "visibility": "public (synthetic training-oracle packs; not the evidence held-out)",
+  "note": "These are SYNTHETIC training-oracle packs (the difficulty ladder + the misstep-injection verifier-eval). Per oracle-split.md they are NOT citable as MATH/miniF2F/PutnamBench benchmark evidence. The evidence held-out (licensed external + third-party-authored) is sealed separately at Phase 5 (currently external-licensed / EMPTY).",
+  "generatorPolicy": "Curriculum/RLVR generators MUST NOT read sealed evidence paths; train on synthetic verifier-checked packs only.",
+  "cleanExternalClaimPath": "agi-proof/math-physics-verify/third-party-heldout/ (third-party-authored, salted; currently EMPTY)",
+  "files": [
+    {
+      "path": "data/math_physics_ladder.jsonl",
+      "sha256": "43f0e2bb3b12e9bb7ba316aaa7d9886d0c532348e7cc200b2115879b635cee33",
+      "itemCount": 10,
+      "items": [
+        {
+          "id": "L1_arith",
+          "sha256": "f94e2b6de69b43c4a8d546fd648aa46191f8960977716d802d070a7cf41ed2e8"
+        },
+        {
+          "id": "L1_units",
+          "sha256": "4bbbcb72d4defcbe3e1a78dd09bc9ce507e475ac54721ae3499f337240b46623"
+        },
+        {
+          "id": "L2_algebra",
+          "sha256": "4566bcf2cefd8d0ae858ec05f3f019b3eec491465565060305774588e0e72261"
+        },
+        {
+          "id": "L2_newton",
+          "sha256": "30caff0f804981abe3124f88d2296ce9f48b1adab38536a4e8ada959126e5e3f"
+        },
+        {
+          "id": "L3_identity",
+          "sha256": "f6d6433d6028d3d01568c9b06669abdd2e38f23058d10bb9a0652beeca812a23"
+        },
+        {
+          "id": "L3_energy",
+          "sha256": "3f51ecb1965d9036a068616e0390fd56ea18a7c849699b300fcd0ad8065ae401"
+        },
+        {
+          "id": "L4_trig",
+          "sha256": "6fc2c51ef13de415ca81a31d637ea3b1ba0599f5ebce58cc496b30e6b54100b3"
+        },
+        {
+          "id": "L5_lean_lemma",
+          "sha256": "5c2065d308254ecdc87c1610d6be234ba7ef3cacdfec8b5cc5cb15205cf87f54"
+        },
+        {
+          "id": "L6_riemann",
+          "sha256": "c906510264e4e2340aa09d0ce35809df335c9bb782d332f9203d0f8560cfc600"
+        },
+        {
+          "id": "L6_navier_stokes",
+          "sha256": "8693dbd320416bd233c938e078e61c845f9e7ef8ae3ceff1929041d7fa3748e2"
+        }
+      ]
+    },
+    {
+      "path": "data/misstep_pack.jsonl",
+      "sha256": "5576091287fa37b81c9b0f26ca99fe29bc8275b0a0bc5088a510110a9e8f1af3",
+      "itemCount": 29,
+      "items": [
+        {
+          "id": "expand_sq_clean",
+          "sha256": "d56879bba5d878410e5db8c15dd0a2c66b83720b65e9980db729e9f62528ad87"
+        },
+        {
+          "id": "expand_sq_sign",
+          "sha256": "b516e832b5471d52b4cdb2627c97b8e41cd2440a26eeb379e307ba0dde323a54"
+        },
+        {
+          "id": "expand_sq_dropfactor",
+          "sha256": "f1e1fc3758029bafdaa53a7c4916c650adf6fc3e8625b1c08d2542d14cb176e7"
+        },
+        {
+          "id": "diff_squares_clean",
+          "sha256": "0fe851470d6200611ba12b71d9995598760876970a4c755ba62b80b62e33e5bb"
+        },
+        {
+          "id": "diff_squares_sign",
+          "sha256": "0b39ea67a2163d5004fe5847e949406be38fa1cfd0d236510088accbb9311718"
+        },
+        {
+          "id": "combine_linear_clean",
+          "sha256": "cd496ce6066db51e091b6b50033cbe24e262d942f55262902abe9bb5f5a42a2e"
+        },
+        {
+          "id": "combine_linear_arith",
+          "sha256": "24e94a40ff642eef478f96e6652c608721f00fe05642ae3c5aa70c1cd162e888"
+        },
+        {
+          "id": "factor_cancel_clean",
+          "sha256": "597261ddee95600ce2d7fc0f60fb20a1ea7578416df205e8df781a8a8c4be759"
+        },
+        {
+          "id": "factor_cancel_sign",
+          "sha256": "1321d3710bd1b45a9a313152ce5531868a21fb0e3a2712e4c5c1e84f6d637c82"
+        },
+        {
+          "id": "cube_binomial_clean",
+          "sha256": "9574749b6edd7f38457b238d31a69db2686d09687e406f8bdf0889a55f980402"
+        },
+        {
+          "id": "cube_binomial_dropfactor",
+          "sha256": "281abfe1c548ae20d0b31383fa6a286299f127d324ea10c5e72c15954a4d545d"
+        },
+        {
+          "id": "distribute_clean",
+          "sha256": "e0a5e3c989b0b9a634a371dc8443571241e08d6bd8fdc3072ea01f4c5ca23e59"
+        },
+        {
+          "id": "distribute_dropfactor",
+          "sha256": "b988e68f4ea5fb946c5aee07911628d8f95c76204e47e55cbf1e644bff3dd359"
+        },
+        {
+          "id": "trig_pyth_clean",
+          "sha256": "5f4c93469cb9817db331b277be775daf63981bbf12ce32a57d88eb4c44df95fd"
+        },
+        {
+          "id": "fraction_add_clean",
+          "sha256": "dac1e9b84b67cc15ed0dc8a86df4a1f6389497c40799e17afa437f68fa9c9520"
+        },
+        {
+          "id": "fraction_add_arith",
+          "sha256": "934ea331e4b57519885ce48606ff7be0d8a93aa8bb9cc8fb01d3fc567f122949"
+        },
+        {
+          "id": "ab_identity_clean",
+          "sha256": "589580ac98a23d88e31e0f5de3de6d1e6bdeb43f4327a435bc4fba51315424c5"
+        },
+        {
+          "id": "ab_identity_sign",
+          "sha256": "41a68e1548c3858e5fca665068c137142ee91804644c15aa760b857c0e63c80e"
+        },
+        {
+          "id": "newton_units_clean",
+          "sha256": "fe1a8455b8fc04092fd619dc852fc8d630bb2d2d4d7007b1b004a7610e063afc"
+        },
+        {
+          "id": "newton_dim_error",
+          "sha256": "d60d19f1af226a10abc28ec7022ac044b16ab02794d3bf2c35001cf8c7d10757"
+        },
+        {
+          "id": "energy_units_clean",
+          "sha256": "c12e13dc3e53b230b74ad0646055fe8cc612acfde98f1e97073b6218bc3adb93"
+        },
+        {
+          "id": "energy_dim_error",
+          "sha256": "52f027cfd635f48d63b4e019ea9890a6fce178a0705b13d066ee407faeae944f"
+        },
+        {
+          "id": "power_units_clean",
+          "sha256": "1c7b1c28d66f7e71384a70a7f47b5f3cea15844f86ad1a9422dc656d62a329a1"
+        },
+        {
+          "id": "power_dim_error",
+          "sha256": "5b6fc7f3843cc4c4b6592b1309b74a38d6be4d97f7cc9b8fac7a7f5ef9bdf12d"
+        },
+        {
+          "id": "length_conv_clean",
+          "sha256": "e0f46087e89c239831b4c75c966e4a00973ea2c0caae304606d9ab52d7f7425e"
+        },
+        {
+          "id": "length_value_error",
+          "sha256": "9c917dd94da30fd55d1329522d79dcbe3dd7d17cf10392b16f2d9d8743b9c38a"
+        },
+        {
+          "id": "time_conv_clean",
+          "sha256": "c15042e2e7cee0d32f163f7eddbd63c97a704a35e467bb8947ee815d0b917409"
+        },
+        {
+          "id": "time_value_error",
+          "sha256": "0bf08c0361ebe4b6a7f33ba363f94fdc156b4aa93b45518a734776e8563cb56f"
+        },
+        {
+          "id": "charge_units_clean",
+          "sha256": "1989d6f64047112f2f51416cfa0eb8b7f3c80dbb683125472bccada2ba38a10b"
+        }
+      ]
+    }
+  ],
+  "canClaimAGI": false
+}
