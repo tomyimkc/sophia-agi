@@ -114,10 +114,19 @@ def _train_prompts() -> list[str]:
     return prompts
 
 
-def audit() -> dict:
+def _eval_prompts(eval_file: "Path | None") -> list[str]:
+    """Eval surface to audit. Default = the full repo eval set; with eval_file, scope to
+    that one JSONL (used to gate a freshly-promoted, entity-disjoint split)."""
+    if eval_file is None:
+        return sorted(eval_prompt_set(root=ROOT))
+    prompts = {pr for row in _load_jsonl(Path(eval_file)) if (pr := prompt_of(row))}
+    return sorted(prompts)
+
+
+def audit(eval_file: "Path | None" = None) -> dict:
     vocab = build_entity_vocab()
     train_prompts = _train_prompts()
-    eval_prompts = sorted(eval_prompt_set(root=ROOT))
+    eval_prompts = _eval_prompts(eval_file)
 
     train_entities: set[str] = set()
     for pr in train_prompts:
@@ -160,9 +169,11 @@ def main(argv: list[str] | None = None) -> int:
                     help="exit 1 if more than N eval prompts are FULLY entity-covered by train")
     ap.add_argument("--fail-shared", type=int, default=None,
                     help="exit 1 if more than N entities are shared between train and eval")
+    ap.add_argument("--eval-file", type=Path, default=None,
+                    help="scope the eval surface to this one JSONL (e.g. gate a promoted entity-disjoint split)")
     args = ap.parse_args(argv)
 
-    rep = audit()
+    rep = audit(eval_file=args.eval_file)
     if args.json:
         print(json.dumps(rep, indent=2, ensure_ascii=False))
     else:

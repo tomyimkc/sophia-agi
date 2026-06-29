@@ -46,3 +46,14 @@ def test_threshold_gate_behaviour() -> None:
     assert aed.main(["--fail-covered", "0"]) == 1        # contamination present → fails
     assert aed.main(["--fail-covered", "100000"]) == 0   # generous bound → passes
     assert aed.main([]) == 0                              # default is report-only
+
+
+def test_scoped_eval_file_gates_the_clean_candidate() -> None:
+    # The staged entity-disjoint candidate must pass --fail-covered 0 when the eval
+    # surface is scoped to it (the checklist's adoption gate).
+    cand = ROOT / "agi-proof" / "data-health" / "seib_entity_disjoint_candidate" / "candidate.jsonl"
+    assert cand.exists()
+    rep = aed.audit(eval_file=cand)
+    assert rep["nEvalPromptsFullyCovered"] == 0
+    assert rep["nSharedEntities"] == 0
+    assert aed.main(["--eval-file", str(cand), "--fail-covered", "0"]) == 0

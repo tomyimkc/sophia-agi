@@ -54,7 +54,7 @@ repo is missing on the data axis.
 > | **DHI scorecard** (Phase 0) | `tools/data_health_report.py` → `agi-proof/data-health/report.json` (`--check` gated) | **DHI=0.6507** baseline committed |
 > | **Data asset registry** (Phase 1) | `tools/build_data_registry.py` → `agi-proof/data-health/registry.json` (`--check` gated) | 15 assets, sha256-anchored |
 > | **Entity-level decontam** (Phase 2) | `tools/assert_entity_decontam.py` | surfaces 40 shared entities / 151 fully-covered eval prompts |
-> | **Entity-disjoint split carver** (Phase 3) | `tools/carve_entity_disjoint_split.py`; staged candidate at `agi-proof/data-health/seib_entity_disjoint_candidate/` | 75 disjoint cases staged for review, proof `sharedWithTrain=[]` |
+> | **Entity-disjoint split carver** (Phase 3) | `tools/carve_entity_disjoint_split.py`; staged candidate at `agi-proof/data-health/seib_entity_disjoint_candidate/`; adoption runbook → [`Entity-Disjoint-Split-Adoption.md`](./Entity-Disjoint-Split-Adoption.md) | 75 disjoint cases staged for review, proof `sharedWithTrain=[]` |
 > | **Mix-balance ratchet gate** (Phase 4) | `tools/assert_mix_balance.py` + `mix-baseline.json` (in CI) | pins L1=0.7406; fails any PR that worsens the skew |
 > | **Data Analysis Agent** (Phase 5) | `agent/data_analyst.py` + `"data"` team in `agent/swarm_router.py` | propose-only, fail-closed |
 >
