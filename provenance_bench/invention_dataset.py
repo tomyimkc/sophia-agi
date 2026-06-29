@@ -267,6 +267,52 @@ def build_invention_eval_suite(
     }
 
 
+def build_invention_rl_dataset(*, seed: int = 0, depths: tuple[int, ...] = (2, 3, 4),
+                               eval_frac: float = 0.3, target_n: int = 150) -> dict:
+    """RL TRAINING rows from the invention TRAIN compositions.
+
+    Mirrors :func:`build_invention_eval_suite`'s depths/eval_frac at the SAME seed, so
+    the train split is disjoint from the powered eval suite by construction
+    (decontaminated). Each row carries the hidden ``test`` AND a ``holdout`` (the
+    private 2nd unshown input set) so the guarded reward
+    (``code_integrity.make_grpo_reward``) floors input special-casing IN-LOOP during
+    GRPO — closing the gap where a policy passes shown inputs but fails held-out ones
+    (only caught at eval otherwise). Eval stays the powered suite via
+    ``eval_rlvr_adapter --task invention``.
+    """
+    import hashlib
+    import random as _random
+
+    # Bound the train set so a 1-epoch GRPO run stays comparable to the code lane
+    # (~150 rows), and sample BALANCED per depth (depth-4 has combinatorially more
+    # compositions; an unbalanced pool would drown out depth-2/3 where the eval gain is).
+    real_depths = [d for d in depths if d >= 2]
+    per = max(1, target_n // len(real_depths)) if (target_n and real_depths) else None
+    rows: list[dict] = []
+    for d in real_depths:
+        tr = build_invention_dataset(depth=d, eval_frac=eval_frac, seed=seed)["train_tasks"]
+        drows = [{
+            "prompt": t["prompt"],
+            "test": t["test"],
+            "holdout": t["private_test"],
+            "family": "-".join(t["composition"]) if isinstance(t.get("composition"), (list, tuple)) else str(t.get("composition")),
+            "task_id": t["id"],
+        } for t in tr]
+        if per and len(drows) > per:
+            drows = _random.Random(seed + d).sample(drows, per)
+        rows.extend(drows)
+    rows.sort(key=lambda r: r["task_id"])
+    seal = hashlib.sha256("\n".join(r["task_id"] for r in rows).encode()).hexdigest()
+    return {
+        "train_rows": rows,
+        "eval_rows": [],  # held-out eval is the powered suite (eval_rlvr_adapter --task invention)
+        "train_sealed": seal,
+        "eval_sealed": "",
+        "depths": list(depths),
+        "seed": seed,
+    }
+
+
 def offline_invariants(*, depth: int = 2, eval_frac: float = 0.3, seed: int = 0) -> "tuple[bool, dict]":
     """Assert the open-invention instrument is sound (no torch, no GPU, no exec):
     compositions are train/eval disjoint, every eval primitive is seen in train,
