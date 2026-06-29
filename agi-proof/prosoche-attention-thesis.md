@@ -60,10 +60,22 @@
 > A real candidate signal, not a validated result (`focus-frontier-eval.pilot.public-report.json`;
 > `tests/test_focus_frontier_real.py` covers the path with fake models).
 >
-> **Still open** (needs scale, not new code): a decontaminated, powered (N ≥ 100),
-> ≥3-seed run to move the pilot to a VALIDATED GO/NO-GO, and the learned goal-extraction
-> seam that would close the derived-goal gap. The instrument, the GPU lane, and the live
-> panel all work; only the powered run remains.
+> **Now also run (fifth pass) — a REAL POWERED public run.** On the **N=400 public split
+> of the decontaminated battery** (`focus-frontier-battery.json`; MDE 0.099; max
+> train-shingle Jaccard 0.0) with a live DeepSeek subject and **two independent non-US
+> judge families** (Qwen via llmhub + Mistral via OpenRouter): anchored solved **0.475**
+> vs **0.00** for both baselines, Δeff **−52.8 (95% CI [−57.9, −47.9])**, inter-judge
+> **κ = 0.81**, all guardrails held, 0 API errors (`focus-frontier-eval.powered-public.json`).
+> **Power + decontam + ≥2 families + κ≥0.40 + Δ-CI-excludes-0 + guardrails ALL pass on real
+> models at scale.** The gate is still **NO-GO** on exactly two pre-registered items:
+> seeds<3 and the sealed PRIVATE split not yet scored. One disciplined step from a
+> validated verdict — not a GO.
+>
+> **Still open** (the last two criteria + a refinement): a ≥3-seed run (at temperature > 0
+> for genuine variance) and a powered SEALED private split (enlarge the held-out split to
+> ~400) to reach a VALIDATED GO/NO-GO; plus the learned goal-extraction seam for the
+> derived-goal gap. The instrument, the GPU lane, the powered battery, and the live panel
+> all work end to end.
 >
 > **Why this doc exists.** The operator's ask: *"I have many gates to limit the AI's
 > action; I want the AI to know what its attention is — its goal / the rewards it
