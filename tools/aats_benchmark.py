@@ -40,7 +40,7 @@ if str(ROOT) not in sys.path:
 
 from tools.aats_conformal_calibration import calibration_curve, choose_operating_point  # noqa: E402
 from tools.ensemble_agreement_study import evaluate_ensemble  # noqa: E402
-from tools.eval_stats import bootstrap_ci_paired, fixed_n_ci_mean, mcnemar  # noqa: E402
+from tools.eval_stats import fixed_n_ci_mean, mcnemar  # noqa: E402
 from tools.fit_conformal_policy import synthetic_rows  # noqa: E402
 from tools.verify_generate_census import census  # noqa: E402
 
@@ -237,16 +237,16 @@ def benchmark_breaker() -> dict:
         return lambda t: (t in good_text) or (id_by_text.get(t) in leakset)
 
     scenarios = {
-        "perfect": (lambda t: t in {it["text"] for it in items if it["gold"]}, False),
-        "leaky-all": (lambda _t: True, True),
-        "partial-10": (partial_leak(0.10), True),
-        "partial-50": (partial_leak(0.50), True),
+        "perfect": lambda t: t in {it["text"] for it in items if it["gold"]},
+        "leaky-all": lambda _t: True,
+        "partial-10": partial_leak(0.10),
+        "partial-50": partial_leak(0.50),
     }
     results = []
     detection_complete = True
-    for name, (approver, expect_trip) in scenarios.items():
+    for name, approver in scenarios.items():
         br = CircuitBreaker()
-        rep = br.check_canaries(approver, canaries)
+        br.check_canaries(approver, canaries)           # mutates breaker state
         approved_bad = [it.id for it in canaries if (not it.expect_approve) and approver(it.text)]
         tripped = br.tripped
         # the breaker must trip iff at least one known-bad canary was approved
