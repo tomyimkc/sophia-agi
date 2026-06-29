@@ -1,0 +1,35 @@
+{
+  "experimentId": "okf-multihop-qa",
+  "question": "On standard multi-hop QA datasets (HotpotQA distractor / 2WikiMultiHop / MuSiQue), does OKF entity-graph recall (okf.extract.multi_hop_recall, expanding through a shared-entity index) recall the gold supporting paragraphs better than a vector-only baseline (agent.lexical_embed cosine) over the SAME candidate pool?",
+  "constructs": [
+    "supporting-paragraph Recall@K (fraction of an item's gold paragraphs retrieved in top-K)",
+    "graph-minus-vector recall lift (paired per item; positive = the entity graph helps)",
+    "multi-hop necessity (lift concentrated at small K, where a vector-only view misses the bridged paragraph)"
+  ],
+  "primaryMetric": "graph_multihop Recall@2 minus vector_only Recall@2, paired per question",
+  "secondaryMetrics": [
+    "Recall@{2,5,10} per arm",
+    "graph-minus-vector lift at each K",
+    "ablation: max_hops=0 (direct) vs max_hops=2"
+  ],
+  "arms": [
+    "vector_only (lexical_embed cosine rank over the candidate paragraphs — the baseline)",
+    "graph_multihop (entity-index expansion + provenance-floor recall over the same pool)"
+  ],
+  "datasets": ["hotpotqa-distractor-dev", "2wikimultihopqa-dev", "musique-ans-dev"],
+  "decontam": "questions asserted disjoint from every committed training corpus via tools/assert_decontam primitives before any number is reported",
+  "entityBackend": {
+    "default": "deterministic proper-noun + title extractor (offline floor)",
+    "farmUpgrade": "real NER/LLM backend via --ner-backend (what SAG uses); graph machinery unchanged"
+  },
+  "goCriteria": [
+    "graph_multihop Recall@2 - vector_only Recall@2 > 0 with a paired 95% CI excluding 0, over >= 3 dataset slices/seeds",
+    "decontam CLEAN (zero question leakage into training corpora)",
+    "no regression at higher K (graph Recall@10 >= vector Recall@10 - 0.02)"
+  ],
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "provenanceNote": "third-party web paragraphs carry NO provenance labels, so provenance-faithfulness (the wiki/-only contribution) is NOT measured here; this experiment isolates the recall lift only.",
+  "status": "not_run",
+  "harness": "tools/eval_okf_multihop_qa.py",
+  "execution": "farm only — datasets are not committed and there is no network in-session; download on the farm and pass --data"
+}

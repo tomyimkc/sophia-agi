@@ -1,0 +1,28 @@
+{
+  "experimentId": "okf-multihop-qa",
+  "battery": "sophia.okf_multihop_qa.v1",
+  "status": "not_run",
+  "canClaimAGI": false,
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "datasets": {
+    "hotpotqa-distractor-dev": {"status": "not_run", "reason": "dataset not committed; download + run on the farm"},
+    "2wikimultihopqa-dev": {"status": "not_run", "reason": "dataset not committed; download + run on the farm"},
+    "musique-ans-dev": {"status": "not_run", "reason": "dataset not committed; download + run on the farm"}
+  },
+  "arms": {
+    "vector_only": {"status": "not_run", "reason": "requires a real dataset slice"},
+    "graph_multihop": {"status": "not_run", "reason": "requires a real dataset slice"}
+  },
+  "primaryMetric": "graph_multihop Recall@2 minus vector_only Recall@2 (paired per question)",
+  "result": null,
+  "criticalFailures": [
+    "datasets_not_run: HotpotQA / 2Wiki / MuSiQue have not been downloaded or evaluated",
+    "no_effect_ci: the paired graph-minus-vector recall lift has no measured CI yet",
+    "decontam_not_run: question-vs-training-corpus disjointness has not been asserted on the real datasets",
+    "entity_backend_is_floor: only the deterministic proper-noun extractor exists; the real NER/LLM backend is unwired"
+  ],
+  "provenanceNote": "third-party web paragraphs are unlabeled, so provenance-faithfulness is NOT part of this experiment; the wiki/-only faithfulness result lives in eval/okf_recall (tools/eval_okf_recall.py).",
+  "harness": "tools/eval_okf_multihop_qa.py",
+  "spec": "agi-proof/benchmark-results/okf-multihop/measurement_spec.json",
+  "honestBound": "Harness + synthetic-fixture wiring are validated offline; NO third-party number is claimed. Tracked in the failure ledger: okf-multihop-recall-lift-not-shown-firstparty-2026-06-29."
+}

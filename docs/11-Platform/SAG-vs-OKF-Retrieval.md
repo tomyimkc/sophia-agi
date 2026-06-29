@@ -82,10 +82,16 @@ something we have — just not productized as an extracted event/entity index.
    matched + its effective rank + the hop that contributed it. SAG's search-trace, but
    provenance-colored. → **shipped:** `okf/trace.py` (`trace_records` / `format_trace`),
    CLI `python tools/eval_okf_recall.py --trace "<query>"`.
-5. **Decontaminated multi-hop QA benchmark.** → **shipped (first-party):**
-   `tools/eval_okf_recall.py` over 10 self-authored, decontaminated probes on `wiki/`.
-   The standard HotpotQA / 2Wiki / MuSiQue datasets remain a **gated TODO**. See §5 for
-   the honest result.
+5. **Decontaminated multi-hop QA benchmark.** → **first-party shipped:**
+   `tools/eval_okf_recall.py` over 10 self-authored, decontaminated probes on `wiki/`
+   (faithfulness validated; see §4a). **Third-party scaffolded, gated:**
+   `tools/eval_okf_multihop_qa.py` runs OKF entity-graph recall vs a vector-only
+   baseline on HotpotQA / 2Wiki / MuSiQue, with HotpotQA/2Wiki/MuSiQue normalizers, a
+   deterministic entity floor (real NER/LLM is the `--ner-backend` farm seam), and a
+   synthetic wiring fixture. Pre-registered (`agi-proof/benchmark-results/okf-multihop/`
+   `measurement_spec.json` + byte-stable `…PENDING.public-report.json`, status
+   `not_run`). The datasets aren't committed and there's no in-session network, so the
+   real run is **farm-only**. See §4b.
 6. **(Optional, off critical path) Provenance-colored graph viz.** Color nodes by
    `effectiveConfidenceRank`; draw contradiction-ledger edges. SAG literally cannot
    render this — it has no provenance.
@@ -115,6 +121,25 @@ tradition-hub siblings; that was fixed with inverse-frequency (`1/df`) bridge we
 tests, not yet at benchmark scale. Logged in the failure ledger
 (`okf-multihop-recall-lift-not-shown-firstparty-2026-06-29`). Do not quote R@5=1.0 as a
 capability headline — it is first-party and lexically saturated.
+
+## 4b. Third-party benchmark scaffold (gated, farm-only)
+
+`tools/eval_okf_multihop_qa.py` is the SAG-comparable harness: same candidate pool,
+two arms — `vector_only` (`agent.lexical_embed` cosine) vs `graph_multihop`
+(`okf.extract.multi_hop_recall`) — reporting supporting-paragraph Recall@{2,5,10} and
+the paired graph-minus-vector lift, with a decontam pre-check.
+
+Two honesty constraints are baked in:
+- **No provenance on web text.** HotpotQA/2Wiki/MuSiQue paragraphs are unlabeled, so the
+  provenance-faithfulness metric (§4a) is *not* computable there — this harness isolates
+  the **recall lift** only. Faithfulness stays a `wiki/`-only result.
+- **Nothing claimed from the fixture.** With no `--data`, it runs a 3-item synthetic
+  fixture purely to validate wiring; the output is banner-flagged "not a result." The
+  real datasets are downloaded and run on the farm (`--data … --dataset hotpot`).
+
+GO criteria (in the spec): paired Recall@2 lift > 0 with a 95% CI excluding 0 over ≥3
+slices/seeds, decontam clean, no regression at higher K. Until the farm run clears them,
+no third-party number is claimed.
 
 ## 5. One-line takeaway
 
