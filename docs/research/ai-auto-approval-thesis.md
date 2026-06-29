@@ -231,6 +231,23 @@ root (lint + decontam + receipt + canaries) stays deterministic and outside the 
 4. **Canary circuit-breaker harness.** Seed known-bad items; verify the breaker trips and reverts to
    human-only. This is a safety mechanism, so it ships *before* any autonomy is enabled.
 
+### Status: implemented offline (candidate-only)
+
+All four are built and run deterministically with no model (`make aats-experiments`). They are
+candidate-only machinery — the model-gated arms (two-model-family judges, real labeled outcome rows)
+are *not* run, so nothing here is a validated capability. The harnesses:
+
+| # | Experiment | Tool / module | Offline result on the shipped demo |
+|---|---|---|---|
+| 1 | Verify/generate cost census | `tools/verify_generate_census.py` | Envelope = arithmetic, authorship.temporal, authorship.provenance, legal, code (each MEASURED deterministic + offline + independent); `other` escalates |
+| 2 | Diverse-ensemble agreement | `tools/ensemble_agreement_study.py` (core `evaluate_ensemble`) | Two real distinct-family authorship verifiers: error-correlation −0.25, bothWrong 0, so AND-consensus false-approval 0.0 vs 0.33 single |
+| 3 | Conformal abstention calibration | `tools/aats_conformal_calibration.py` (drives `agent/conformal_gate.py`) | Price-of-guarantee curve; on the synthetic set no operating point meets ε=0.05 → escalate-everything (refuses rather than over-approves) |
+| 4 | Canary circuit-breaker | `agent/auto_approval_breaker.py` + `tools/run_canary_breaker.py` | Latching breaker: sound approver stays armed; a leaky (rubber-stamp) approver trips it to human-only; fail-closed on corrupt state |
+
+Tests: `tests/test_aats_experiments.py` (deterministic, dependency-free). These exercise the *machinery*;
+promotion past candidate requires the model-gated arms under the standard measurement contract
+(≥2 judge families, κ≥0.40, ≥3 seeds, CIs, decontam).
+
 ---
 
 ## 6. Bottom line
