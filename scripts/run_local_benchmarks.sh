@@ -138,42 +138,60 @@ CERT_NEVAL="${CERT_NEVAL:-256}"
 DRY_RUN=1            # default: print the plan, execute nothing
 RUN_A=0
 RUN_B=0
+RUN_VIRTUES=0        # cardinal-virtue benchmarks (Sophrosyne + Dikaiosyne real GO-path eval)
 RUN_TRAIN=0          # gate the long/destructive QAT train behind an explicit flag
 
 usage() {
   cat <<'EOF'
-Usage: scripts/run_local_benchmarks.sh [--all|--bench-a|--bench-b] [--execute] [--run-train] [-h]
+Usage: scripts/run_local_benchmarks.sh [--all|--bench-a|--bench-b|--bench-virtues] [--execute] [--run-train] [-h]
 
-  --bench-a     Run Benchmark A only (≥2-family VALIDATED judging of M3-SFT uplift).
-  --bench-b     Run Benchmark B only (low-RAM NVFP4 certification).
-  --all         Run both (default if no bench is selected).
-  --execute     Actually run the commands. WITHOUT this flag the script DRY-RUNS (prints only).
-  --run-train   In Benchmark B, also run the QAT train step (long, GPU). Default: skip & certify
-                an existing adapter at QAT_ADAPTER.
-  -h, --help    Show this help.
+  --bench-a        Run Benchmark A only (≥2-family VALIDATED judging of M3-SFT uplift).
+  --bench-b        Run Benchmark B only (low-RAM NVFP4 certification).
+  --bench-virtues  Run the cardinal-virtue real GO-path evals (Sophrosyne + Dikaiosyne):
+                   build+decontam batteries, 2-family judge labelling, real-baseline 3-arm
+                   scoring. Two judge families + a baseline model required (judge != subject).
+  --all            Run A and B (default if no bench is selected). Virtues are opt-in (not in --all).
+  --execute        Actually run the commands. WITHOUT this flag the script DRY-RUNS (prints only).
+  --run-train      In Benchmark B, also run the QAT train step (long, GPU). Default: skip & certify
+                   an existing adapter at QAT_ADAPTER.
+  -h, --help       Show this help.
 
 Key env overrides: SPARK_HOST MAC_HOST SPARK_PORT MAC_PORT JUDGES JUDGE_CONFIG
   SEEDS ANSWERS_DIR ANSWERS_PREFIX JUDGE_OUT_DIR JUDGMENTS UPLIFT_OUT
   QAT_BASE QAT_ADAPTER QAT_DATA QAT_EPOCHS QAT_LAMBDA CERT_CALIB CERT_OUT CERT_NEVAL PYTHON
+  VIRTUE_JUDGE_A VIRTUE_JUDGE_B VIRTUE_JUDGE_A_NAME VIRTUE_JUDGE_B_NAME VIRTUE_SUBJECT VIRTUE_SEEDS
 EOF
 }
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --bench-a)   RUN_A=1 ;;
-    --bench-b)   RUN_B=1 ;;
-    --all)       RUN_A=1; RUN_B=1 ;;
-    --execute)   DRY_RUN=0 ;;
-    --dry-run)   DRY_RUN=1 ;;   # explicit no-op (dry-run is the default); keeps bridge cmds robust
-    --run-train) RUN_TRAIN=1 ;;
-    -h|--help)   usage; exit 0 ;;
+    --bench-a)       RUN_A=1 ;;
+    --bench-b)       RUN_B=1 ;;
+    --bench-virtues) RUN_VIRTUES=1 ;;
+    --all)           RUN_A=1; RUN_B=1 ;;
+    --execute)       DRY_RUN=0 ;;
+    --dry-run)       DRY_RUN=1 ;;   # explicit no-op (dry-run is the default); keeps bridge cmds robust
+    --run-train)     RUN_TRAIN=1 ;;
+    -h|--help)       usage; exit 0 ;;
     *) echo "ERROR: unknown argument: $1" >&2; usage; exit 2 ;;
   esac
   shift
 done
 
-# Default to running both benchmarks if neither was selected.
-if [[ "${RUN_A}" -eq 0 && "${RUN_B}" -eq 0 ]]; then RUN_A=1; RUN_B=1; fi
+# Default to running both M3 benchmarks ONLY if no lane at all was selected. A bare
+# --bench-virtues must NOT silently also run A+B (it has its own GPU cost profile).
+if [[ "${RUN_A}" -eq 0 && "${RUN_B}" -eq 0 && "${RUN_VIRTUES}" -eq 0 ]]; then RUN_A=1; RUN_B=1; fi
+
+# Cardinal-virtue eval config. Two distinct judge families, BOTH stronger than and DISTINCT
+# from the baseline subject (judge != subject). Judge A defaults to a CAPABLE Qwen (32B, NOT
+# the 7B SPARK_JUDGE_MODEL, which equals the subject and would both self-judge and deflate κ —
+# the M3 weak-judge lesson). Override any of these to retarget. SUBJECT = no-gate/no-auditor baseline.
+VIRTUE_JUDGE_A="${VIRTUE_JUDGE_A:-ollama:qwen2.5:32b-instruct@http://${SPARK_HOST}:${SPARK_PORT}/v1}"
+VIRTUE_JUDGE_B="${VIRTUE_JUDGE_B:-openai:${MAC_JUDGE_MODEL}@http://${MAC_HOST}:${MAC_PORT}/v1}"
+VIRTUE_JUDGE_A_NAME="${VIRTUE_JUDGE_A_NAME:-qwen}"
+VIRTUE_JUDGE_B_NAME="${VIRTUE_JUDGE_B_NAME:-llama}"
+VIRTUE_SUBJECT="${VIRTUE_SUBJECT:-ollama:qwen2.5:7b-instruct@http://${SPARK_HOST}:${SPARK_PORT}/v1}"
+VIRTUE_SEEDS="${VIRTUE_SEEDS:-3}"
 
 # ── Helpers ───────────────────────────────────────────────────────────────────────────────────
 hr()  { printf '%s\n' "────────────────────────────────────────────────────────────────────────────"; }
@@ -202,6 +220,7 @@ echo "Sophia-AGI local benchmark runner"
 echo "  mode:        $([[ "${DRY_RUN}" -eq 1 ]] && echo DRY-RUN || echo EXECUTE)"
 echo "  benchmark A: $([[ "${RUN_A}" -eq 1 ]] && echo yes || echo no)"
 echo "  benchmark B: $([[ "${RUN_B}" -eq 1 ]] && echo yes || echo no) (run-train: $([[ "${RUN_TRAIN}" -eq 1 ]] && echo yes || echo no))"
+echo "  virtues:     $([[ "${RUN_VIRTUES}" -eq 1 ]] && echo yes || echo no)"
 echo "  repo root:   ${ROOT}"
 echo "  python:      ${PY}"
 cost_guard_reminder
@@ -335,6 +354,43 @@ if [[ "${RUN_B}" -eq 1 ]]; then
   echo
   echo "Benchmark B done. Report: ${CERT_OUT}. On PASS you may claim ONLY: 'served-quant retains"
   echo "BF16 next-token behavior to a measured bound' — nothing more (Cheap-Compute-Boundary.md)."
+fi
+
+# ════════════════════════════════════════════════════════════════════════════════════════════
+# BENCHMARK VIRTUES — cardinal-virtue real GO-path evals (Sophrosyne + Dikaiosyne)
+# The PR-275 Andreia methodology, generalized. Full runbook: docs/11-Platform/Cardinal-Virtue-Benchmarks.md
+# ════════════════════════════════════════════════════════════════════════════════════════════
+if [[ "${RUN_VIRTUES}" -eq 1 ]]; then
+  cost_guard_reminder
+  echo "  virtue judges: A=${VIRTUE_JUDGE_A_NAME} (${VIRTUE_JUDGE_A})  B=${VIRTUE_JUDGE_B_NAME} (${VIRTUE_JUDGE_B})"
+  echo "  virtue subject (no-gate baseline): ${VIRTUE_SUBJECT}  seeds=${VIRTUE_SEEDS}"
+
+  step "V0 — Regenerate + freeze the external batteries (deterministic; pre-registration)"
+  run "${PY}" tools/build_sophrosyne_external_battery.py
+  run "${PY}" tools/build_dikaiosyne_external_battery.py
+
+  step "V1 — Decontam (pillar 6): battery prompts disjoint from all training corpora"
+  run "${PY}" tools/assert_sophrosyne_decontam.py
+  run "${PY}" tools/assert_dikaiosyne_decontam.py
+
+  step "V2 — Label with 2 independent judge families (consensus ground truth; κ≥0.40 gate)"
+  run "${PY}" tools/label_sophrosyne_battery.py \
+    --judge-a "${VIRTUE_JUDGE_A}" --judge-a-name "${VIRTUE_JUDGE_A_NAME}" \
+    --judge-b "${VIRTUE_JUDGE_B}" --judge-b-name "${VIRTUE_JUDGE_B_NAME}"
+  run "${PY}" tools/label_dikaiosyne_battery.py \
+    --judge-a "${VIRTUE_JUDGE_A}" --judge-a-name "${VIRTUE_JUDGE_A_NAME}" \
+    --judge-b "${VIRTUE_JUDGE_B}" --judge-b-name "${VIRTUE_JUDGE_B_NAME}"
+
+  step "V3 — Score 3 arms vs a REAL no-gate/no-auditor baseline (paired Δ + bootstrap CI)"
+  run "${PY}" tools/run_sophrosyne_eval.py --model "${VIRTUE_SUBJECT}" --seeds "${VIRTUE_SEEDS}" --write
+  run "${PY}" tools/run_dikaiosyne_eval.py --model "${VIRTUE_SUBJECT}" --seeds "${VIRTUE_SEEDS}" --write
+
+  echo
+  echo "Virtue benchmarks done. Receipts:"
+  echo "  agi-proof/benchmark-results/sophrosyne/sophrosyne-measure-eval.public-report.json"
+  echo "  agi-proof/benchmark-results/dikaiosyne/dikaiosyne-justice-eval.public-report.json"
+  echo "GO promotes via published-results.json + build_results_page.py; NO-GO stays candidate"
+  echo "(log measured numbers in the temperance/justice ledger). canClaimAGI stays false."
 fi
 
 echo

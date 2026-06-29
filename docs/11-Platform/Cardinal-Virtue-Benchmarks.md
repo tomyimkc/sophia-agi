@@ -114,7 +114,29 @@ Wires an LLM-judge backend through the `detect_intemperance(...)` /
 close the regex paraphrase-brittleness half — but the dominant derived-signal weakness
 (e.g. demand estimation) is separate, so this alone does **not** license a raw-text claim.
 
+### One-command lane (local or via the bridge)
+
+All of steps 1–3 are wired into the benchmark dispatcher as a single opt-in lane:
+
+```bash
+scripts/run_local_benchmarks.sh --bench-virtues            # dry-run: prints the plan
+scripts/run_local_benchmarks.sh --bench-virtues --execute  # runs it (judge farm must be up)
+```
+
+It is **not** part of `--all` (its GPU/judge-farm cost profile is separate). Judge/subject
+specs are env-overridable: `VIRTUE_JUDGE_A` (default a capable Qwen-32B — distinct from the
+7B baseline subject, per the M3 κ-deflation lesson), `VIRTUE_JUDGE_B` (Mac Llama-70B),
+`VIRTUE_SUBJECT`, `VIRTUE_SEEDS`.
+
 ## 5. Running from the cloud session (egress-blocked) — via the GitHub bridge
+
+> **Bridge prerequisite:** the poller's allowlist (`tools/github_bridge_poll.py` on the
+> `spark-bridge` branch) must include the `--bench-virtues` token, and the spark-bridge
+> worktree must carry this updated `run_local_benchmarks.sh` (merge `main`/this branch in).
+> Until both are true the poller will *reject* a `--bench-virtues` command. Once they are:
+> queue `bridge/commands/<id>.json` with `args: "--bench-virtues --dry-run"` (no approval
+> needed) to verify the round-trip, then `args: "--bench-virtues --execute"` with a non-empty
+> `approvedBy` (human) for the powered run.
 
 The cloud session cannot reach the farm directly. Queue the commands above through the
 `spark-bridge` message queue (`bridge/PROTOCOL.md`): write `bridge/commands/<id>.json`
