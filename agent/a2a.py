@@ -108,6 +108,7 @@ class AgentCard:
     security_schemes: tuple[str, ...] = ("apiKey",)  # apiKey | oauth2 | mtls | none
     provider: str = "Sophia-AGI"
     provenance_discipline: bool = True
+    contract_version: str = ""  # sophia_contract version this peer honors (see agent/a2a_integrations.py)
 
     def skill_ids(self) -> frozenset[str]:
         return frozenset(s.id for s in self.skills)
@@ -132,7 +133,8 @@ class AgentCard:
             "skills": [s.to_dict() for s in self.skills],
             # Sophia extension: peers can rely on the fail-closed / abstaining contract.
             "x-sophia": {"provenanceDiscipline": self.provenance_discipline,
-                         "reduce": "fail_closed_synthesis"},
+                         "reduce": "fail_closed_synthesis",
+                         **({"contractVersion": self.contract_version} if self.contract_version else {})},
         }
 
     def validate(self) -> tuple[bool, list[str]]:
