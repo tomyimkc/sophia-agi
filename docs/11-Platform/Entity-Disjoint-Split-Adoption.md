@@ -1,5 +1,15 @@
 # Adopting the entity-disjoint held-out split — human-review checklist
 
+> **✅ ADOPTED 2026-06-29.** This runbook has been executed: the 73-case split was
+> human-approved and sealed at `data/seib_entity_disjoint/` (`heldout_v1.jsonl` +
+> `manifest.json` `sealed:true, candidateOnly:false`), registered in
+> `dataset_guard.EVAL_GLOBS`, and `assert_entity_decontam --eval-file
+> data/seib_entity_disjoint/heldout_v1.jsonl --fail-covered 0` is now a hard CI gate.
+> Registry 15→16 assets, DHI 0.6507→0.6518; ledger item
+> `entity-decontam-candidate-staged-not-gated-2026-06-29` is **Closed**. The split is
+> maintainer-authored (not third-party) — `canClaimAGI` stays false. The checklist below
+> is retained as the reproducible procedure (and for re-carving / future refreshes).
+
 > **Why this exists.** `tools/carve_entity_disjoint_split.py` staged a clean,
 > entity-disjoint held-out **candidate** at
 > `agi-proof/data-health/seib_entity_disjoint_candidate/` (73 cases, machine-proof

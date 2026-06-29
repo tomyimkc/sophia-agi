@@ -53,6 +53,19 @@
       "trainingDisjoint": false
     },
     {
+      "candidateOnly": false,
+      "contentHash": "c9130beae1a6e0cedb03ae4dccdd14f9b58db4e4e07b4be78791ef9713662498",
+      "id": "seib_entity_disjoint",
+      "kind": "benchmark",
+      "manifest": "data/seib_entity_disjoint/manifest.json",
+      "manifestSha256": "311ae8a3ffc2cf987c504596b561f1950717cc21996cd7479e11777df09ca0f7",
+      "path": "data/seib_entity_disjoint",
+      "rows": 73,
+      "schema": "sophia.entity_disjoint_split.v1",
+      "sealed": true,
+      "trainingDisjoint": true
+    },
+    {
       "candidateOnly": true,
       "contentHash": "50a0bfab6b9690aabdc7d9346a2487b900e87bd77647e81e81d292d06ace7e7b",
       "id": "team_agents_benchmark",
@@ -201,12 +214,12 @@
   "schema": "sophia.data_registry.v1",
   "summary": {
     "byKind": {
-      "benchmark": 5,
+      "benchmark": 6,
       "dataset": 3,
       "training": 7
     },
-    "nAssets": 15,
-    "nSealed": 4,
-    "nWithContentHash": 7
+    "nAssets": 16,
+    "nSealed": 5,
+    "nWithContentHash": 8
   }
 }

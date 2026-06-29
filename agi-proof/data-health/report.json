@@ -1,6 +1,6 @@
 {
   "canClaimAGI": false,
-  "dhi": 0.6507,
+  "dhi": 0.6518,
   "dimensions": {
     "coverage": {
       "inflationFlag": false,
@@ -26,8 +26,8 @@
       "thresholdsPinned": false
     },
     "lineage": {
-      "manifestsCovered": 8,
-      "manifestsTotal": 8,
+      "manifestsCovered": 9,
+      "manifestsTotal": 9,
       "registryPresent": true,
       "score": 1.0
     },
@@ -57,9 +57,9 @@
       "withSource": 1.0
     },
     "reproducibility": {
-      "artifactsTotal": 9,
-      "artifactsWithHash": 8,
-      "score": 0.8889
+      "artifactsTotal": 10,
+      "artifactsWithHash": 9,
+      "score": 0.9
     }
   },
   "label": "operational/illustrative — NOT a no-overclaim result; never promoted to published-results.json",

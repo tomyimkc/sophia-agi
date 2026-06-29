@@ -18,7 +18,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 # Held-out sets that training must never overlap.
-EVAL_GLOBS = ["eval/**/*.jsonl", "data/wisdom_market_benchmark/*.jsonl"]
+EVAL_GLOBS = [
+    "eval/**/*.jsonl",
+    "data/wisdom_market_benchmark/*.jsonl",
+    "data/seib_entity_disjoint/*.jsonl",   # adopted entity-disjoint held-out split (2026-06-29)
+]
 EVAL_PACKS = ["agi-proof/baseline-ablation/abstain-pack-2026-06-22.json"]
 SEAL_MANIFEST = "agi-proof/sophia-math-code-curriculum/heldout-seal.manifest.json"
 TEAM_AGENTS_MANIFEST = ROOT / "data" / "team_agents_benchmark" / "manifest.json"
