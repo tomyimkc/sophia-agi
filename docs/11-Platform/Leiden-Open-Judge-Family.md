@@ -39,9 +39,11 @@ agreement reported (Cohen κ ≥ 0.40 or a CI excluding zero).
 ## Remaining acceptance criteria
 
 1. ✅ A self-hostable open judge backend + an openness registry, with offline tests.
-2. ◐ Re-grade harness + manual workflow landed (`tools/run_open_judge_regrade.py`,
-   `.github/workflows/open-judge-regrade.yml`), tested offline with an injected transport.
-   **Still required:** an actual run against a self-hosted open endpoint with κ reported.
+2. ◐ Re-grade harness + two dispatch paths landed: `tools/run_open_judge_regrade.py` with
+   `.github/workflows/open-judge-regrade.yml` (bring-your-own endpoint) and the all-in-one
+   `tools/runpod_open_judge_regrade.py` + `.github/workflows/open-judge-runpod.yml` (pod serves
+   vLLM + re-grades + self-deletes). Tested offline (injected transport / `--dry-run`).
+   **Still required:** an actual GPU run (needs a working `RUNPOD_API_KEY`) with κ reported.
 3. ✅ The receipt records judge openness (`judge_independence` in `leiden-compliance.json`).
 4. ✅ A failure-ledger entry opened (`open-judge-non-proprietary-validation-2026-06-29`); it
    will be **closed** when criterion 2's real run lands.
@@ -51,13 +53,23 @@ compliance receipt and this gap stays `in_progress`.
 
 ## The remaining run (operator step — metered, gated)
 
-The real non-proprietary corroboration needs a GPU and therefore is **not** done automatically:
+The real non-proprietary corroboration needs a GPU. Two ready paths exist:
 
-1. Stand up a self-hosted, OpenAI-compatible **open-weights** endpoint (per the
-   `wisdom-gpu-prebaked` runbook; RunPod jobs go through GitHub Actions, never local SSH).
-2. Set repo secrets `OPEN_JUDGE_BASE_URL`, `OPEN_JUDGE_MODEL` (and optional
-   `OPEN_JUDGE_API_KEY`).
-3. Dispatch the `open-judge-regrade` workflow on a saved generation set.
-4. Review the emitted receipt (delta + CI, κ vs the local heuristic families,
-   `non_proprietary_path: true`); if it corroborates, close the ledger entry and upgrade the
-   autonomy value to `operationalized`.
+- **All-in-one on RunPod (recommended):** `.github/workflows/open-judge-runpod.yml`
+  (launcher `tools/runpod_open_judge_regrade.py`). A pod serves the open-weights model with
+  vLLM on localhost, runs `tools/run_open_judge_regrade.py` against it, pushes the receipt, and
+  self-deletes — the same self-report pattern as the wisdom pilot, with the restart-loop
+  guards. No external endpoint to expose.
+- **Bring-your-own endpoint:** `.github/workflows/open-judge-regrade.yml` against an existing
+  self-hosted endpoint via `OPEN_JUDGE_BASE_URL` / `OPEN_JUDGE_MODEL` secrets.
+
+To run the RunPod path:
+
+1. Read `.claude/skills/wisdom-gpu-prebaked` (cost guardrail). Ensure a **working**
+   `RUNPOD_API_KEY` repo Actions secret is set (the old one was revoked per #276 — rotate it).
+2. Dispatch `open-judge-runpod` with `confirm=RUN` (default model `Qwen/Qwen2.5-7B-Instruct`
+   for a cheap first validation). A free dry-run runs first; the paid `launch` job then **pends
+   for human approval** on the `runpod-paid` environment (never self-approve).
+3. The pod pushes `agi-proof/benchmark-results/wisdom-market/open-judge-regrade.json`. Review it
+   (delta + CI, κ vs the local heuristic families, `non_proprietary_path: true`); if it
+   corroborates, close the ledger entry and upgrade the autonomy value to `operationalized`.
