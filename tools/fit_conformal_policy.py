@@ -50,19 +50,21 @@ REPORT_PATH = ROOT / "agi-proof" / "benchmark-results" / "conformal-policy.publi
 DEFAULT_ALPHAS = (0.05, 0.1, 0.2)
 
 
-def synthetic_rows(n: int, *, seed: int = 1729) -> list[dict]:
+def synthetic_rows(n: int, *, seed: int = 1729, sep: float = 8.0) -> list[dict]:
     """Deterministic rows where P(correct) decreases with nonconformity (noisy signal).
 
     A realistic calibration set: the score separates correct from incorrect, but
     imperfectly — so the conformal guarantee is non-trivial. Reproducible from ``seed``;
-    NOT real data (``syntheticData: true`` in the report).
+    NOT real data (``syntheticData: true`` in the report). ``sep`` is the logistic
+    steepness (higher = cleaner separation between correct and incorrect); the default
+    8.0 preserves the original behaviour and is used by the standard report.
     """
     rng = random.Random(seed)
     rows = []
     for i in range(n):
         s = rng.random()  # nonconformity in [0,1]
-        # logistic: low nonconformity -> likely correct; k controls separation.
-        p_correct = 1.0 / (1.0 + math.exp(8.0 * (s - 0.5)))
+        # logistic: low nonconformity -> likely correct; sep controls separation.
+        p_correct = 1.0 / (1.0 + math.exp(sep * (s - 0.5)))
         correct = rng.random() < p_correct
         risk = "high" if s > 0.66 else "normal"
         rows.append({"id": f"syn{i}", "risk": risk, "nonconformity": round(s, 6), "correct": correct})
