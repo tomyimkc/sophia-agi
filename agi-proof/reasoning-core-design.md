@@ -177,10 +177,12 @@ This is the payoff of post-training over from-scratch:
    pre-registered, powered eval producing a GO receipt. The torch plumbing is
    structure-validated, not CI-executed.
 2. Live seams — retrieve (`faithfulness_seams.make_ai_search_retrieve` on `agent.ai_search`)
-   is conformance-checked against the real committed RAG index; verify
-   (`make_entailment_verify`) is wired in the `agent.source_verifier` idiom with a
-   deterministic `lexical_entailment` placeholder so the reward is computable on-box.
-   **Open:** a real entailment LLM behind the verify seam (the placeholder is lexical, not
-   semantic).
+   is conformance-checked against the real committed RAG index. Verify
+   (`make_entailment_verify`) now runs a **real entailment LLM**
+   (`make_llm_entailment` / `entailment_from_provider` over `agent.deepseek_llm` /
+   `agent.llmhub_llm`; keys in gitignored `private/secrets/`), live-verified end-to-end,
+   with the deterministic `lexical_entailment` as the offline/no-key fallback and a
+   fail-closed-to-`irrelevant` guard on network errors. Selectable via
+   `run_rlvr --task faithfulness --entailment-provider {deepseek,llmhub}`.
 3. `counterfactual_grounding_rate` power calc + private held-out split — not yet computed.
 4. ≥2-family judge validation of the faithfulness construct — not yet run.

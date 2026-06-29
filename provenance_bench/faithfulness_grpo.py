@@ -318,10 +318,22 @@ def train(args: Any) -> int:
                             lr=getattr(args, "lr", 1e-5))
 
     policy = TorchPolicy(model, tok)
+    # Verify seam: a REAL entailment LLM when a provider is configured (keys in the
+    # gitignored private/secrets/), else the deterministic lexical placeholder. Network
+    # failures fail closed to "irrelevant" inside the adapter, so a flaky API never
+    # crashes the rollout.
+    entail_provider = getattr(args, "entailment_provider", None)
+    if entail_provider:
+        entailment = seams.entailment_from_provider(
+            entail_provider, model=getattr(args, "entailment_model", None))
+        print(f"verify seam: live entailment via {entail_provider}")
+    else:
+        entailment = seams.lexical_entailment
+        print("verify seam: lexical placeholder (no --entailment-provider given)")
     seams_d = dict(
         retrieve=seams.make_ai_search_retrieve(top_k=getattr(args, "top_k", 6)),
         extract_claims=seams.heuristic_extract_claims,
-        verify_claim=seams.make_entailment_verify(seams.lexical_entailment),
+        verify_claim=seams.make_entailment_verify(entailment),
         check_correct=lambda a, g: bool(g) and str(g).lower() in a.lower(),
     )
     cases = cases_from_rl_dataset(seed=getattr(args, "seed", 0),

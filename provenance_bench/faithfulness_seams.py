@@ -133,6 +133,62 @@ def lexical_entailment(claim_text: str, source_text: str) -> str:
 _mock_entailment = lexical_entailment
 
 
+_ENTAILMENT_SYS = (
+    "You are a strict entailment checker for a retrieval-grounded reasoning system. "
+    "Given a CLAIM and a SOURCE, decide whether the SOURCE supports the CLAIM. Reply with "
+    "EXACTLY one lowercase word and nothing else: 'entails' (the source supports the claim), "
+    "'contradicts' (the source refutes it), or 'irrelevant' (the source neither supports nor "
+    "refutes it). Judge only from the source text; do not use outside knowledge."
+)
+
+
+def make_llm_entailment(complete: Callable[[str, str], str]) -> Callable[[str, str], str]:
+    """Wrap a ``complete(system, user) -> str`` LLM callable (e.g. from
+    ``agent.deepseek_llm.make_complete`` / ``agent.llmhub_llm.make_complete``) into the
+    ``entailment_fn(claim_text, source_text) -> "entails"|"contradicts"|"irrelevant"``
+    contract that ``make_entailment_verify`` consumes. This is the REAL semantic
+    verifier behind the verify seam (the ``lexical_entailment`` placeholder's upgrade).
+    Fails closed to ``"irrelevant"`` on any unparseable reply (the verdict then drives
+    an unsupported -> non-positive reward, never a false "supported")."""
+    def entailment_fn(claim_text: str, source_text: str) -> str:
+        user = f"CLAIM: {claim_text}\nSOURCE: {source_text}\nOne word:"
+        try:
+            out = (complete(_ENTAILMENT_SYS, user) or "").strip().lower()
+        except Exception:  # noqa: BLE001 — network/parse failure must not crash the rollout
+            return "irrelevant"
+        if "contradict" in out:
+            return "contradicts"
+        if "entail" in out:
+            return "entails"
+        return "irrelevant"
+
+    return entailment_fn
+
+
+def entailment_from_provider(
+    provider: str,
+    *,
+    model: str | None = None,
+    api_key_file: str | None = None,
+) -> Callable[[str, str], str]:
+    """Build a live entailment_fn from a provider name. ``provider`` is ``"deepseek"``
+    or ``"llmhub"`` (the repo's two OpenAI-compatible clients). Keys come from the
+    client's env var / ``api_key_file`` (default ``private/secrets/<provider>_api_key``,
+    which is gitignored) — never hardcoded."""
+    key_file = api_key_file or f"private/secrets/{provider}_api_key"
+    if provider == "deepseek":
+        from agent import deepseek_llm
+        complete = deepseek_llm.make_complete(
+            model=model or deepseek_llm.DEFAULT_MODEL, api_key_file=key_file, max_tokens=5)
+    elif provider == "llmhub":
+        from agent import llmhub_llm
+        complete = llmhub_llm.make_complete(
+            model=model or "gemini-2.5-flash-lite", api_key_file=key_file, max_tokens=5)
+    else:
+        raise ValueError(f"unknown entailment provider {provider!r} (use 'deepseek' or 'llmhub')")
+    return make_llm_entailment(complete)
+
+
 def conformance_check() -> tuple[bool, dict]:
     """Assert every live adapter conforms to the rollout interface. The retrieve
     adapter is exercised against the REAL committed RAG index (offline); the rollout
@@ -204,5 +260,7 @@ __all__ = [
     "make_entailment_verify",
     "heuristic_extract_claims",
     "lexical_entailment",
+    "make_llm_entailment",
+    "entailment_from_provider",
     "conformance_check",
 ]

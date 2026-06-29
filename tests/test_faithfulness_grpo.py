@@ -102,6 +102,23 @@ def test_entailment_verify_maps_verdicts() -> None:
     assert verify({"text": "Plato wrote it", "support_chunk_ids": []}, ctx) == "unsupported"
 
 
+def test_llm_entailment_adapter_parses_and_fails_closed() -> None:
+    """The LLM-entailment adapter maps a model's word to a verdict and fails closed to
+    'irrelevant' on a network/parse error — never a false 'entails'. No live call (mock
+    complete fn), matching the repo convention that CI never hits the live providers."""
+    def fake_complete(reply):
+        return lambda system, user: reply
+
+    assert fs.make_llm_entailment(fake_complete("entails"))("a", "b") == "entails"
+    assert fs.make_llm_entailment(fake_complete("CONTRADICTS."))("a", "b") == "contradicts"
+    assert fs.make_llm_entailment(fake_complete("hmm not sure"))("a", "b") == "irrelevant"
+
+    def boom(system, user):
+        raise RuntimeError("network down")
+
+    assert fs.make_llm_entailment(boom)("a", "b") == "irrelevant"  # fail closed
+
+
 def main() -> int:
     test_group_advantages_sum_to_zero_and_normalize()
     test_collapsed_group_has_zero_advantage()
@@ -113,6 +130,7 @@ def main() -> int:
     test_seam_conformance_passes()
     test_ai_search_retrieve_returns_rollout_shaped_chunks()
     test_entailment_verify_maps_verdicts()
+    test_llm_entailment_adapter_parses_and_fails_closed()
     print("test_faithfulness_grpo: OK")
     return 0
 

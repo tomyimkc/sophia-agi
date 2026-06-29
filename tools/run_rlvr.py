@@ -536,6 +536,14 @@ def main(argv: list[str] | None = None) -> int:
         help="order training tasks easy->hard by gate pass-rate (offline-safe)",
     )
     ap.add_argument("--curriculum-samples", type=int, default=1)
+    # faithfulness-task knobs (ignored by other tasks)
+    ap.add_argument("--entailment-provider", choices=["deepseek", "llmhub"], default=None,
+                    help="faithfulness: use a live entailment LLM behind the verify seam "
+                         "(keys from private/secrets/<provider>_api_key); default = lexical placeholder")
+    ap.add_argument("--entailment-model", default=None,
+                    help="faithfulness: override the entailment model id for --entailment-provider")
+    ap.add_argument("--top-k", type=int, default=6, help="faithfulness: retrieved chunks per query")
+    ap.add_argument("--limit", type=int, default=None, help="faithfulness: cap the number of training cases")
     args = ap.parse_args(argv)
 
     if args.model == "mock" or args.dry_run:
