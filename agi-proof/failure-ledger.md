@@ -1532,7 +1532,7 @@ families fixed before any number exists) in
 step-by-step `RUNBOOK.md`; the physical split is scoped via
 `tools/run_multimodal_traps.py --physical` and the GPU/judge path goes through
 `.github/workflows/open-judge-runpod.yml` (cost-gated, human-triggered). Honest
-caveat recorded in the spec: the physical split is only 15 rows — coarse GO/NO-GO
+caveat recorded in the spec: the physical split is 34 rows — coarse GO/NO-GO
 until the suite is expanded.
 
 **Gate hardening (2026-06-24, retention gate):** The original W2 promote verdict was reached on a

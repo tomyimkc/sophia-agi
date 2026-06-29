@@ -558,6 +558,215 @@
       "trap_answer": 345,
       "check": {"type": "distance", "a": "bench", "b": "cloud", "tol": 10.0},
       "reason": "The cloud is far behind the bench; ignoring depth under-counts the distance. True 3D ~356, depth-blind 2D ~345."
+    },
+    {
+      "id": "depth-person-front-car",
+      "category": "depth_order",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "person", "box": [80, 300, 70, 160], "z": 2.0}, {"label": "car", "box": [300, 260, 180, 110], "z": 7.0}], "texts": []},
+      "question": "Is the person in front of the car (nearer the camera)?",
+      "answer_type": "yesno",
+      "gold_answer": "yes",
+      "trap_answer": "no",
+      "check": {"type": "depth_order", "a": "person", "rel": "in_front_of", "b": "car", "expect": true},
+      "reason": "The person's depth (z=2) is smaller than the car's (z=7), so the person is nearer."
+    },
+    {
+      "id": "depth-book-behind-laptop",
+      "category": "depth_order",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "book", "box": [60, 120, 90, 70], "z": 9.0}, {"label": "laptop", "box": [280, 260, 160, 120], "z": 3.0}], "texts": []},
+      "question": "Is the book behind the laptop (farther from the camera)?",
+      "answer_type": "yesno",
+      "gold_answer": "yes",
+      "trap_answer": "no",
+      "check": {"type": "depth_order", "a": "book", "rel": "behind", "b": "laptop", "expect": true},
+      "reason": "The book (z=9) is farther than the laptop (z=3)."
+    },
+    {
+      "id": "depth-bird-front-tree",
+      "category": "depth_order",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "bird", "box": [200, 80, 50, 40], "z": 2.0}, {"label": "tree", "box": [40, 40, 110, 400], "z": 8.0}], "texts": []},
+      "question": "Is the bird in front of the tree?",
+      "answer_type": "yesno",
+      "gold_answer": "yes",
+      "trap_answer": "no",
+      "check": {"type": "depth_order", "a": "bird", "rel": "in_front_of", "b": "tree", "expect": true},
+      "reason": "The bird (z=2) is nearer than the tree (z=8) despite the tree's larger footprint."
+    },
+    {
+      "id": "depth-flower-front-fence-2",
+      "category": "depth_control",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "flower", "box": [210, 360, 40, 60], "z": 6.0}, {"label": "fence", "box": [40, 330, 420, 90], "z": 2.0}], "texts": []},
+      "question": "Is the flower in front of the fence (nearer the camera)?",
+      "answer_type": "yesno",
+      "gold_answer": "no",
+      "trap_answer": "yes",
+      "check": {"type": "depth_order", "a": "flower", "rel": "in_front_of", "b": "fence", "expect": false},
+      "reason": "The flower (z=6) is farther than the fence (z=2); the small bright flower primes 'closer' but isn't."
+    },
+    {
+      "id": "depth-house-behind-car-2",
+      "category": "depth_control",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "house", "box": [300, 140, 180, 280], "z": 2.0}, {"label": "car", "box": [60, 300, 200, 110], "z": 7.0}], "texts": []},
+      "question": "Is the house behind the car (farther from the camera)?",
+      "answer_type": "yesno",
+      "gold_answer": "no",
+      "trap_answer": "yes",
+      "check": {"type": "depth_order", "a": "house", "rel": "behind", "b": "car", "expect": false},
+      "reason": "The house (z=2) is nearer than the car (z=7); a large building reads 'background' but here it is in front."
+    },
+    {
+      "id": "depth-cup-front-bottle-2",
+      "category": "depth_control",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "cup", "box": [120, 320, 60, 70], "z": 5.0}, {"label": "bottle", "box": [300, 300, 50, 120], "z": 2.0}], "texts": []},
+      "question": "Is the cup in front of the bottle?",
+      "answer_type": "yesno",
+      "gold_answer": "no",
+      "trap_answer": "yes",
+      "check": {"type": "depth_order", "a": "cup", "rel": "in_front_of", "b": "bottle", "expect": false},
+      "reason": "The cup (z=5) is farther than the bottle (z=2)."
+    },
+    {
+      "id": "occ-car-occludes-bench",
+      "category": "occlusion",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "car", "box": [150, 200, 160, 120], "z": 2.0}, {"label": "bench", "box": [200, 250, 180, 90], "z": 6.0}], "texts": []},
+      "question": "Does the car partly hide (occlude) the bench behind it?",
+      "answer_type": "yesno",
+      "gold_answer": "yes",
+      "trap_answer": "no",
+      "check": {"type": "occlusion", "a": "car", "b": "bench", "expect": true},
+      "reason": "The boxes overlap and the car (z=2) is nearer than the bench (z=6)."
+    },
+    {
+      "id": "occ-sign-occludes-door",
+      "category": "occlusion",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "sign", "box": [180, 160, 120, 120], "z": 2.0}, {"label": "door", "box": [210, 150, 90, 260], "z": 5.0}], "texts": []},
+      "question": "Does the sign occlude the door behind it?",
+      "answer_type": "yesno",
+      "gold_answer": "yes",
+      "trap_answer": "no",
+      "check": {"type": "occlusion", "a": "sign", "b": "door", "expect": true},
+      "reason": "Overlapping boxes with the sign (z=2) nearer than the door (z=5)."
+    },
+    {
+      "id": "occ-cup-plate-no-overlap",
+      "category": "occlusion_control",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "cup", "box": [40, 60, 60, 60], "z": 3.0}, {"label": "plate", "box": [360, 360, 90, 90], "z": 5.0}], "texts": []},
+      "question": "Does the cup occlude the plate?",
+      "answer_type": "yesno",
+      "gold_answer": "no",
+      "trap_answer": "yes",
+      "check": {"type": "occlusion", "a": "cup", "b": "plate", "expect": false},
+      "reason": "The cup is nearer but the boxes do not overlap, so there is no occlusion."
+    },
+    {
+      "id": "occ-book-laptop-wrongorder",
+      "category": "occlusion_control",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "book", "box": [220, 220, 90, 90], "z": 7.0}, {"label": "laptop", "box": [200, 200, 160, 120], "z": 2.0}], "texts": []},
+      "question": "Does the book occlude the laptop?",
+      "answer_type": "yesno",
+      "gold_answer": "no",
+      "trap_answer": "yes",
+      "check": {"type": "occlusion", "a": "book", "b": "laptop", "expect": false},
+      "reason": "The boxes overlap, but the book (z=7) is behind the laptop (z=2), so the laptop occludes the book."
+    },
+    {
+      "id": "size-house-bigger-than-flower",
+      "category": "size_illusion",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "house", "box": [340, 200, 70, 60], "z": 12.0, "size": 8.0}, {"label": "flower", "box": [60, 300, 150, 180], "z": 1.0, "size": 0.2}], "texts": []},
+      "question": "In real life, is the house actually bigger than the flower, even though the flower fills more of this image?",
+      "answer_type": "yesno",
+      "gold_answer": "yes",
+      "trap_answer": "no",
+      "check": {"type": "bigger", "a": "house", "b": "flower", "expect": true},
+      "reason": "The flower is near and fills a larger box, but the house's real size (8.0) dwarfs the flower's (0.2)."
+    },
+    {
+      "id": "size-flower-bigger-than-house",
+      "category": "size_illusion",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "house", "box": [340, 200, 70, 60], "z": 12.0, "size": 8.0}, {"label": "flower", "box": [60, 300, 150, 180], "z": 1.0, "size": 0.2}], "texts": []},
+      "question": "In real life, is the flower actually bigger than the house?",
+      "answer_type": "yesno",
+      "gold_answer": "no",
+      "trap_answer": "yes",
+      "check": {"type": "bigger", "a": "flower", "b": "house", "expect": false},
+      "reason": "The flower only LOOKS bigger because it is near; its real size (0.2) is tiny next to the house (8.0)."
+    },
+    {
+      "id": "size-ball-bigger-than-tree-control",
+      "category": "size_control",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "ball", "box": [220, 360, 50, 50], "z": 2.0, "size": 0.3}, {"label": "tree", "box": [40, 40, 120, 400], "z": 2.0, "size": 7.0}], "texts": []},
+      "question": "In real life, is the ball actually bigger than the tree?",
+      "answer_type": "yesno",
+      "gold_answer": "no",
+      "trap_answer": "yes",
+      "check": {"type": "bigger", "a": "ball", "b": "tree", "expect": false},
+      "reason": "At the same depth the tree's box is also larger, and its real size (7.0) dwarfs the ball's (0.3)."
+    },
+    {
+      "id": "dist-tree-house-far",
+      "category": "distance",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "tree", "box": [40, 60, 90, 300], "z": 3.0}, {"label": "house", "box": [360, 360, 120, 120], "z": 80.0}], "texts": []},
+      "question": "Are the tree and the house more than 250 units apart in the scene?",
+      "answer_type": "yesno",
+      "gold_answer": "yes",
+      "trap_answer": "no",
+      "check": {"type": "distance_cmp", "a": "tree", "b": "house", "op": ">", "value": 250, "expect": true},
+      "reason": "Their 3D separation (~403 units) exceeds 250."
+    },
+    {
+      "id": "dist-cup-plate-close",
+      "category": "distance_control",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "cup", "box": [100, 100, 40, 40], "z": 2.0}, {"label": "plate", "box": [150, 130, 50, 40], "z": 3.0}], "texts": []},
+      "question": "Are the cup and the plate more than 250 units apart in the scene?",
+      "answer_type": "yesno",
+      "gold_answer": "no",
+      "trap_answer": "yes",
+      "check": {"type": "distance_cmp", "a": "cup", "b": "plate", "op": ">", "value": 250, "expect": false},
+      "reason": "The cup and plate sit side by side (~63 units apart), well under 250."
+    },
+    {
+      "id": "dist-book-laptop-close",
+      "category": "distance_control",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "book", "box": [80, 80, 60, 50], "z": 2.0}, {"label": "laptop", "box": [150, 110, 90, 60], "z": 3.0}], "texts": []},
+      "question": "Are the book and the laptop more than 250 units apart in the scene?",
+      "answer_type": "yesno",
+      "gold_answer": "no",
+      "trap_answer": "yes",
+      "check": {"type": "distance_cmp", "a": "book", "b": "laptop", "op": ">", "value": 250, "expect": false},
+      "reason": "The book and laptop are adjacent on a desk (~92 units apart), far under 250."
+    },
+    {
+      "id": "dist-measure-tree-bird",
+      "category": "distance_measure",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "tree", "box": [40, 60, 90, 360], "z": 3.0}, {"label": "bird", "box": [360, 80, 40, 30], "z": 130.0}], "texts": []},
+      "question": "How far apart are the tree and the bird (in units)?",
+      "answer_type": "measure",
+      "gold_answer": 352,
+      "trap_answer": 329,
+      "check": {"type": "distance", "a": "tree", "b": "bird", "tol": 10.0},
+      "reason": "A large depth gap the flat image hides. True 3D ~352, depth-blind 2D ~329."
+    },
+    {
+      "id": "dist-measure-car-cloud",
+      "category": "distance_measure",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "car", "box": [60, 330, 160, 90], "z": 2.0}, {"label": "cloud", "box": [300, 40, 160, 80], "z": 110.0}], "texts": []},
+      "question": "How far apart are the car and the cloud (in units)?",
+      "answer_type": "measure",
+      "gold_answer": 395,
+      "trap_answer": 380,
+      "check": {"type": "distance", "a": "car", "b": "cloud", "tol": 10.0},
+      "reason": "The cloud sits far behind the car. True 3D ~395, depth-blind 2D ~380."
+    },
+    {
+      "id": "dist-measure-person-house",
+      "category": "distance_measure",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "person", "box": [80, 320, 70, 160], "z": 2.0}, {"label": "house", "box": [340, 80, 150, 150], "z": 120.0}], "texts": []},
+      "question": "How far apart are the person and the house (in units)?",
+      "answer_type": "measure",
+      "gold_answer": 405,
+      "trap_answer": 387,
+      "check": {"type": "distance", "a": "person", "b": "house", "tol": 10.0},
+      "reason": "Ignoring the depth gap under-counts the distance. True 3D ~405, depth-blind 2D ~387."
     }
   ]
 }
