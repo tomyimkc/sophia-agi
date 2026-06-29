@@ -52,7 +52,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from tools.runpod_rlvr import _api_request, _redact, RunPodError  # noqa: E402
+from tools.runpod_rlvr import _api_request, RunPodError  # noqa: E402
 # Reuse the battle-tested pod lifecycle helpers (leak sweep, fresh-blob completion detect,
 # restart-loop guard) verbatim from the wisdom pilot — same proven anti-wastage controls.
 from tools.runpod_wisdom_pilot_selfreport import (  # noqa: E402
@@ -288,13 +288,17 @@ def parse_args(argv=None):
 
 def main(argv=None) -> int:
     args = parse_args(argv)
-    api_key = os.environ.get(args.api_key_env, "")
-    gh_pat = os.environ.get(args.gh_token_env, "")
 
     if args.dry_run:
-        payload = _build_payload(args, _redact(api_key), _redact(gh_pat))
+        # Dry-run shows the payload STRUCTURE only. It deliberately does NOT read the real
+        # secrets — the placeholders below are literals, not env-derived — so no secret value
+        # can ever reach stdout (and CodeQL has no env->print taint path to flag).
+        payload = _build_payload(args, "<RUNPOD_API_KEY>", "<GH_PILOT_PAT>")
         print(json.dumps(payload, indent=2))
         return 0
+
+    api_key = os.environ.get(args.api_key_env, "")
+    gh_pat = os.environ.get(args.gh_token_env, "")
     for name, val in (("RUNPOD_API_KEY", api_key), (args.gh_token_env, gh_pat)):
         if not val:
             raise RunPodError(f"missing env {name}")
