@@ -97,7 +97,6 @@ def run() -> dict:
                      "fired": [g for g in GATES if fired[g]],
                      "verdicts": fired["_verdicts"],
                      "targetGate": AXIS_GATE.get(label)})
-    n = len(rows)
     off_diagonal = sum(
         confusion[ax][g] for ax in AXES for g in GATES if g != AXIS_GATE[ax]
     )
