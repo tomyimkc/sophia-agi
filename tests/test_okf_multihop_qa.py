@@ -84,6 +84,47 @@ def test_decontam_contract() -> None:
     assert dc["clean"] == (not dc["exactLeaks"] and not dc["nearLeaks"] and not dc["vacuous"])
 
 
+def test_ner_backend_seam_dispatches() -> None:
+    # Register a mock entity backend and confirm the harness routes through it (proves the
+    # --ner-backend seam works without needing a real model in CI).
+    calls = {"n": 0}
+
+    def _mock(title, text):
+        calls["n"] += 1
+        return ["shared_bridge_entity"]  # force every paragraph to share one entity
+
+    mhq._ENTITY_BACKENDS["__mock__"] = _mock
+    try:
+        item = _fixture_items()[0]
+        events = mhq._events_for_item(item, ner_backend="__mock__")
+        assert calls["n"] == len(item["paragraphs"])
+        assert all(e.entities == ("shared_bridge_entity",) for e in events)
+        # the harness honors the backend end-to-end via evaluate()
+        res = mhq.evaluate(_fixture_items(), ks=(2,), ner_backend="__mock__")
+        assert "graph_multihop" in res["arms"]
+    finally:
+        del mhq._ENTITY_BACKENDS["__mock__"]
+
+
+def test_unknown_backend_is_treated_as_llm_model() -> None:
+    # An unknown backend name must NOT be silently treated as deterministic — it routes to
+    # the LLM path, which is fail-closed without an API key. We assert it raises rather than
+    # quietly returning floor entities (so a typo'd model id can't fake a "model" run).
+    import os
+    saved = {k: os.environ.pop(k, None) for k in ("ANTHROPIC_API_KEY", "CLAUDE_API_KEY")}
+    try:
+        raised = False
+        try:
+            mhq.extract_entities("T", "Some text.", backend="definitely-not-a-real-model")
+        except Exception:
+            raised = True
+        assert raised, "unknown backend must hit the fail-closed LLM path, not the floor"
+    finally:
+        for k, v in saved.items():
+            if v is not None:
+                os.environ[k] = v
+
+
 def test_graph_rank_is_total_order() -> None:
     # _graph_rank must return every paragraph index exactly once (deterministic, complete).
     items = _fixture_items()
@@ -98,6 +139,8 @@ def main() -> int:
     test_musique_normalizer_marks_gold()
     test_both_arms_produce_valid_recall()
     test_decontam_contract()
+    test_ner_backend_seam_dispatches()
+    test_unknown_backend_is_treated_as_llm_model()
     test_graph_rank_is_total_order()
     print("test_okf_multihop_qa: OK")
     return 0

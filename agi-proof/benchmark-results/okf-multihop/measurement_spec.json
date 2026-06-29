@@ -19,8 +19,9 @@
   "datasets": ["hotpotqa-distractor-dev", "2wikimultihopqa-dev", "musique-ans-dev"],
   "decontam": "questions asserted disjoint from every committed training corpus via tools/assert_decontam primitives before any number is reported",
   "entityBackend": {
-    "default": "deterministic proper-noun + title extractor (offline floor)",
-    "farmUpgrade": "real NER/LLM backend via --ner-backend (what SAG uses); graph machinery unchanged"
+    "default": "deterministic proper-noun + title extractor (offline floor; reproducible, no key)",
+    "llmCeiling": "WIRED: --ner-backend <model-id> calls the repo LLM client (agent.llm) for real NER; fail-closed (exit 2) without ANTHROPIC_API_KEY/CLAUDE_API_KEY; per-paragraph parse failures fall back to the floor (logged). The CI workflow stays on the floor; the LLM ceiling is an operator/farm run with a key.",
+    "note": "report both floor and ceiling — the lift over vector-only should be shown at the deterministic floor too, so it is not an artifact of LLM-NER quality alone"
   },
   "goCriteria": [
     "graph_multihop Recall@2 - vector_only Recall@2 > 0 with a paired 95% CI excluding 0, over >= 3 dataset slices/seeds",

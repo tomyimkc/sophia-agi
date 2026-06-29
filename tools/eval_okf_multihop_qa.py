@@ -111,12 +111,8 @@ NORMALIZERS = {"hotpot": normalize_hotpot, "2wiki": normalize_hotpot,
 
 # ----------------------------------------------------------------- entity extraction
 
-def extract_entities(title: str, text: str) -> "list[str]":
-    """Deterministic entity proxies for a raw paragraph: the title + proper-noun runs.
-
-    The farm upgrade replaces this with a real NER/LLM backend (--ner-backend); the
-    graph-recall machinery downstream is identical whatever fills this slot.
-    """
+def _deterministic_entities(title: str, text: str) -> "list[str]":
+    """The offline floor: the paragraph title + capitalized proper-noun runs."""
     ents = [normalize_target(title)] if title else []
     for m in _PROPER.finditer(text or ""):
         phrase = m.group(1)
@@ -128,11 +124,69 @@ def extract_entities(title: str, text: str) -> "list[str]":
     return ents
 
 
-def _events_for_item(item) -> "list[extract.EventUnit]":
+def _extract_json_array(s: str) -> "list":
+    """Pull the first JSON array out of an LLM reply (tolerant of prose/code fences)."""
+    start = s.find("[")
+    end = s.rfind("]")
+    if start == -1 or end <= start:
+        return []
+    try:
+        arr = json.loads(s[start:end + 1])
+        return [str(x) for x in arr] if isinstance(arr, list) else []
+    except (json.JSONDecodeError, ValueError):
+        return []
+
+
+_LLM_NER_SYSTEM = (
+    "You are a named-entity extractor. Given a paragraph, return ONLY a JSON array of the "
+    "salient entities (people, places, organizations, works, dates, concepts) as short "
+    "strings. No prose, no keys — just the array."
+)
+
+
+def _llm_entities(title: str, text: str, *, model: str) -> "list[str]":
+    """Real NER via the repo LLM client (farm path). Fail-closed without an API key.
+
+    A per-paragraph parse failure falls back to the deterministic floor for THAT paragraph
+    (logged), so one bad reply cannot silently tank a long run; absence of a key raises
+    (fail-closed) rather than degrading the whole benchmark to the floor unannounced.
+    """
+    from agent import llm  # lazy: never imported on the deterministic path / in CI
+
+    import os
+    os.environ.setdefault("ANTHROPIC_MODEL", model)
+    reply = llm.complete(_LLM_NER_SYSTEM, f"Title: {title}\n\n{text}", max_tokens=400)
+    raw = _extract_json_array(reply)
+    if not raw:
+        print(f"[ner] empty/unparsable LLM reply for {title!r}; using deterministic floor",
+              file=sys.stderr)
+        return _deterministic_entities(title, text)
+    ents = [normalize_target(title)] if title else []
+    for phrase in raw:
+        slug = normalize_target(phrase)
+        if slug and slug not in ents:
+            ents.append(slug)
+    return ents
+
+
+# Backend registry. Unknown names are treated as a model id for the LLM backend, so
+# `--ner-backend claude-sonnet-4-6` works without a code change.
+_ENTITY_BACKENDS = {"deterministic": _deterministic_entities}
+
+
+def extract_entities(title: str, text: str, backend: str = "deterministic") -> "list[str]":
+    """Entity proxies for a raw paragraph via the named backend (default: offline floor)."""
+    fn = _ENTITY_BACKENDS.get(backend)
+    if fn is not None:
+        return fn(title, text)
+    return _llm_entities(title, text, model=backend)
+
+
+def _events_for_item(item, ner_backend: str = "deterministic") -> "list[extract.EventUnit]":
     """One EventUnit per candidate paragraph (rank neutral — no provenance on web text)."""
     events = []
     for i, p in enumerate(item["paragraphs"]):
-        ents = extract_entities(p["title"], p["text"])
+        ents = extract_entities(p["title"], p["text"], backend=ner_backend)
         events.append(extract.EventUnit(
             id=f"{item['id']}::p{i}", page_id=f"{item['id']}::p{i}",
             text=f"{p['title']}. {p['text']}", entities=tuple(ents),
@@ -153,9 +207,9 @@ def _vector_rank(item) -> "list[int]":
     return [int(doc_id) for doc_id, _ in ranked]
 
 
-def _graph_rank(item) -> "list[int]":
+def _graph_rank(item, ner_backend: str = "deterministic") -> "list[int]":
     """OKF entity-graph recall: multi_hop_recall over the paragraph entity index."""
-    events = _events_for_item(item)
+    events = _events_for_item(item, ner_backend)
     hits = extract.multi_hop_recall(item["question"], events, max_hops=2, top_k=len(events))
     order = [int(h.event.page_id.split("::p")[1]) for h in hits]
     # append any paragraph the recall never surfaced, preserving determinism
@@ -208,8 +262,9 @@ def check_decontam(items, *, jaccard: float = 0.6, shingle: int = 5) -> dict:
             "vacuous": vacuous, "clean": (not exact and not near and not vacuous)}
 
 
-def evaluate(items, ks=DEFAULT_KS) -> dict:
-    arms = {"vector_only": _vector_rank, "graph_multihop": _graph_rank}
+def evaluate(items, ks=DEFAULT_KS, ner_backend: str = "deterministic") -> dict:
+    arms = {"vector_only": _vector_rank,
+            "graph_multihop": lambda it: _graph_rank(it, ner_backend)}
     sums = {a: {k: 0.0 for k in ks} for a in arms}
     n = len(items)
     for item in items:
@@ -238,8 +293,8 @@ def main() -> int:
     args = ap.parse_args()
 
     if args.ner_backend != "deterministic":
-        print(f"[gated] --ner-backend={args.ner_backend!r} is a farm seam; not wired here.",
-              file=sys.stderr)
+        print(f"[ner] using LLM entity backend model={args.ner_backend!r} "
+              "(fail-closed without ANTHROPIC_API_KEY/CLAUDE_API_KEY).", file=sys.stderr)
 
     is_fixture = args.data is None
     path = FIXTURE if is_fixture else Path(args.data)
@@ -247,7 +302,12 @@ def main() -> int:
     dataset = "fixture" if is_fixture else args.dataset
     items = NORMALIZERS[dataset](raw)
 
-    result = evaluate(items, ks=tuple(args.k))
+    try:
+        result = evaluate(items, ks=tuple(args.k), ner_backend=args.ner_backend)
+    except RuntimeError as exc:
+        # Fail-closed: the LLM NER backend needs an API key. Clean message, no traceback.
+        print(f"[fail-closed] NER backend {args.ner_backend!r}: {exc}", file=sys.stderr)
+        return 2
     result["dataset"] = dataset
     result["isFixture"] = is_fixture
     result["nerBackend"] = args.ner_backend

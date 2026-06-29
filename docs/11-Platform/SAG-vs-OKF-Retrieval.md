@@ -137,6 +137,13 @@ Two honesty constraints are baked in:
   fixture purely to validate wiring; the output is banner-flagged "not a result." The
   real datasets are downloaded and run on the farm (`--data … --dataset hotpot`).
 
+**Entity backend — floor and ceiling.** The default is the deterministic proper-noun
+floor (reproducible, no key — what the CI workflow uses). The LLM ceiling is now *wired*,
+not just a seam: `--ner-backend <model-id>` calls the repo LLM client for real NER and is
+**fail-closed** (exit 2, clean message) without an API key, with per-paragraph parse
+failures falling back to the floor (logged). Report both — the recall lift should hold at
+the floor too, so it isn't an artifact of LLM-NER quality alone.
+
 GO criteria (in the spec): paired Recall@2 lift > 0 with a 95% CI excluding 0 over ≥3
 slices/seeds, decontam clean, no regression at higher K. Until the farm run clears them,
 no third-party number is claimed.
