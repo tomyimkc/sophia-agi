@@ -49,6 +49,29 @@ def test_d1_dataset_shape():
         assert len(ids) == len(set(ids))          # no duplicate candidates
 
 
+def test_folds_present_and_prompts_disjoint():
+    for fname in ("d1_definition_faithfulness.jsonl", "d2_compositional_derivation.jsonl"):
+        cases = list(score.load_cases(build_dataset.DATA / fname).values())
+        folds = {c["fold"] for c in cases}
+        assert folds == {"train", "eval"}, (fname, folds)
+        train = {c["prompt"] for c in cases if c["fold"] == "train"}
+        evalp = {c["prompt"] for c in cases if c["fold"] == "eval"}
+        assert not (train & evalp), f"{fname}: train/eval prompt overlap"
+
+
+def test_training_gen_draws_train_fold_only():
+    from tools.wiki_to_sense_training import collect
+    data = collect(include_eval_fold=False)
+    assert data["decontaminated"] is True
+    assert data["evalConceptsHeldout"] > 0 and data["evalWorldsHeldout"] > 0
+    assert data["sft"], "train-fold SFT rows should be non-empty"
+    # No emitted D1 row may reference an eval-fold concept.
+    eval_concepts = {c["goldConceptId"] for c in score.load_cases(
+        build_dataset.DATA / "d1_definition_faithfulness.jsonl").values() if c["fold"] == "eval"}
+    emitted = {r["metadata"].get("pageId") for r in data["sft"] if r["metadata"]["source"] == "sense-grounding-d1"}
+    assert not (emitted & eval_concepts)
+
+
 def test_parse_verdict_priority():
     assert score.parse_verdict({"verdict": "abstain"}) == "abstain"
     assert score.parse_verdict({"completion": "This is a clear violation of disjointness."}) == "violation"

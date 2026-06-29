@@ -27,9 +27,16 @@ eval/semantic_grounding/
   build_dataset.py   # projects D1 from wiki/concept + generates D2 from the AXIOM_WORLDS seed
   score.py           # deterministic scorer + Datalog reference reasoner + --self-test
   data/
-    d1_definition_faithfulness.jsonl   # 26 cases (generated; CI checks for drift)
-    d2_compositional_derivation.jsonl  # 14 cases (generated; gold = engine-derived)
+    d1_definition_faithfulness.jsonl   # 34 cases (generated; CI checks for drift)
+    d2_compositional_derivation.jsonl  # 41 cases over 10 worlds (gold = engine-derived)
 ```
+
+Every case carries a deterministic `fold` (`train` / `eval`, ~70/30 via
+`build_dataset.fold_of`). The Phase-2 training generator
+(`tools/wiki_to_sense_training.py`) draws the **train** fold only; a Phase-2 uplift is
+measured on the **eval** fold (`run_semantic_grounding_eval.py --fold eval`). The two
+folds are disjoint **by construction**, so there is no train/eval leakage to argue about
+— `tools/assert_semantic_grounding_decontam.py` also asserts it.
 
 ## Run
 
@@ -63,9 +70,10 @@ Each completion is a JSON object keyed by case `id`:
 
 ## Honest limits (pre-registered)
 
-- **N is small** (D1=26, D2=14). This is a candidate seam, not a powered result; report the
-  MDE (`tools/eval_stats.mde_at_n`) and treat single-run deltas as coarse. Phase 1 must scale
-  the item count and run ≥3 seeds before any claim.
+- **N is still small** (D1=34, D2=41; eval fold smaller still). This is a candidate seam, not a
+  powered result; report the MDE (`tools/eval_stats.mde_at_n`) and treat single-run deltas as
+  coarse. Phase 1 must scale the item count and run ≥3 seeds before any claim. Grow the OKF
+  concept corpus (via the wiki librarian) to enlarge D1 further.
 - D1 distractors are lexically-near sibling glosses, not adversarial paraphrases — an easy
   floor, not a stress test.
 - D2 lives in a **closed world**: a verdict is grounding relative to the axioms we wrote down,

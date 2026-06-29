@@ -48,8 +48,11 @@ def _load(name: str) -> list[dict]:
     return [json.loads(ln) for ln in (DATA / name).read_text(encoding="utf-8").splitlines() if ln.strip()]
 
 
-def load_cases() -> list[dict]:
-    return _load("d1_definition_faithfulness.jsonl") + _load("d2_compositional_derivation.jsonl")
+def load_cases(fold: str = "all") -> list[dict]:
+    cases = _load("d1_definition_faithfulness.jsonl") + _load("d2_compositional_derivation.jsonl")
+    if fold != "all":
+        cases = [c for c in cases if c.get("fold") == fold]
+    return cases
 
 
 # ----------------------------------------------------------------- offline mock
@@ -173,8 +176,8 @@ def paired_delta(base: dict[str, float], arm: dict[str, float]) -> dict:
     }
 
 
-def run(*, mock: bool, model: str | None, seeds: int) -> dict:
-    cases = load_cases()
+def run(*, mock: bool, model: str | None, seeds: int, fold: str = "all") -> dict:
+    cases = load_cases(fold)
     client = None
     if not mock:
         from agent.model import ModelClient  # lazy: only needed for a real run
@@ -199,6 +202,7 @@ def run(*, mock: bool, model: str | None, seeds: int) -> dict:
         "mock": mock,
         "model": model,
         "seeds": seeds,
+        "fold": fold,
         "candidateOnly": True,
         "canClaimAGI": False,
         "note": ("MOCK plumbing self-test — illustrative deltas, NOT a capability measurement"
@@ -214,13 +218,15 @@ def _main(argv: list[str]) -> int:
     ap.add_argument("--mock", action="store_true", help="offline deterministic plumbing self-test")
     ap.add_argument("--model", default=None, help="model spec for a real farm run")
     ap.add_argument("--seeds", type=int, default=1)
+    ap.add_argument("--fold", choices=("all", "train", "eval"), default="all",
+                    help="restrict eval cases to a fold (use 'eval' to measure a Phase-2 uplift)")
     ap.add_argument("--write", action="store_true", help="write report under agi-proof/benchmark-results/")
     args = ap.parse_args(argv)
 
     if not args.mock and not args.model:
         ap.error("pass --mock (offline) or --model <spec> (real run)")
 
-    out = run(mock=args.mock, model=args.model, seeds=args.seeds)
+    out = run(mock=args.mock, model=args.model, seeds=args.seeds, fold=args.fold)
     print(json.dumps(out, indent=2))
 
     if args.mock:

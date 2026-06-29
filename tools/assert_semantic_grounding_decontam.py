@@ -31,15 +31,23 @@ EVAL_GLOBS = [
 ]
 
 
-def _eval_prompts() -> list[str]:
-    out: list[str] = []
+def _rows() -> list[dict]:
+    out: list[dict] = []
     for g in EVAL_GLOBS:
         for p in sorted(ROOT.glob(g)):
-            for row in _load_jsonl(p):
-                pr = row.get("prompt") or ""
-                if pr:
-                    out.append(pr)
+            out.extend(_load_jsonl(p))
     return out
+
+
+def _eval_prompts() -> list[str]:
+    return [r["prompt"] for r in _rows() if r.get("prompt")]
+
+
+def _fold_disjointness() -> tuple[int, list[str]]:
+    """Internal check: no train-fold prompt may equal an eval-fold prompt."""
+    train = {normalize(r["prompt"]) for r in _rows() if r.get("fold") == "train" and r.get("prompt")}
+    evalp = {normalize(r["prompt"]) for r in _rows() if r.get("fold") == "eval" and r.get("prompt")}
+    return len(train) + len(evalp), sorted(train & evalp)
 
 
 def main() -> int:
@@ -78,15 +86,19 @@ def main() -> int:
                 near.append((round(j, 3), pr[:80], e[:80]))
                 break
 
-    clean = not exact and not near
+    n_fold, fold_overlap = _fold_disjointness()
+    clean = not exact and not near and not fold_overlap
     print(f"SEMANTIC-GROUNDING DECONTAM: nEval={len(eval_prompts)} nTrain(unique)={len(seen)} "
-          f"| exact={len(exact)} near-dup(J>={args.jaccard})={len(near)}")
+          f"| exact={len(exact)} near-dup(J>={args.jaccard})={len(near)} "
+          f"| internal train/eval-fold overlap={len(fold_overlap)} (of {n_fold} prompts)")
     for pr in exact[:15]:
         print(f"  EXACT LEAK: «{pr[:90]}»")
     for j, t, e in near[:15]:
         print(f"  NEAR-DUP J={j}: train«{t}»  ~  eval«{e}»")
+    for pr in fold_overlap[:15]:
+        print(f"  FOLD OVERLAP: «{pr[:90]}»")
     if clean:
-        print("OK — semantic-grounding eval prompts are disjoint from committed training packs.")
+        print("OK — eval prompts disjoint from training packs, and the train/eval folds are disjoint.")
         return 0
     print("FAIL — contamination found. Fix before training/claiming.")
     return 1

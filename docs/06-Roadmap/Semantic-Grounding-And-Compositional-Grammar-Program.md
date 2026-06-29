@@ -207,7 +207,13 @@ ledger, not tuned away.**
 
 ### Phase 2 — train, only if Phase 1 shows signal (I6)
 
-Extend `tools/wiki_to_training.py` → sense-grounding SFT/DPO; train a small LoRA via
+*(Implemented:* `eval/semantic_grounding/` now carries a deterministic train/eval **fold**
+on every case (`build_dataset.fold_of`), `tools/wiki_to_sense_training.py` emits SFT/DPO from
+the **train** fold only, and the uplift is measured on the **eval** fold
+(`run_semantic_grounding_eval.py --fold eval`) — so train/eval are disjoint by construction.
+The OKF concept corpus was grown to enlarge D1; grow it further via the librarian to scale N.)*
+
+Train a small LoRA on the train-fold SFT/DPO via
 **GitHub Actions → RunPod** — the `.github/workflows/rlvr-runpod.yml` dispatch /
 `tools/runpod_rlvr.py --task concept --reward verifier` path (read `wisdom-gpu-prebaked`
 first; never local SSH; `--dry-run` before any paid run; the pod is always deleted in the

@@ -12,8 +12,9 @@
     "A2": "base + retrieval + symbolic compose/abstain (datalog tool)"
   },
   "primaryMetric": "paired delta per metric vs A0 (A1-A0 and A2-A0), counting CI-clean improvements",
-  "primaryN": "D1=26 cases, D2=14 cases, x >=3 seeds (Phase 1 must scale N before any claim)",
+  "primaryN": "D1=34 cases (24 train / 10 eval), D2=41 cases over 10 worlds (23 train / 18 eval), x >=3 seeds (Phase 1 must scale N before any claim)",
   "primaryMDE": 0.10,
+  "folds": "every case carries a deterministic train/eval fold (build_dataset.fold_of, ~70/30); Phase-2 training (tools/wiki_to_sense_training.py) uses the train fold only, the Phase-2 uplift is measured on the eval fold (run_semantic_grounding_eval.py --fold eval); folds are disjoint by construction",
   "guardrails": {
     "taskSuccess": {
       "rule": "answer-rate / fluency on D1+D2 does not regress vs A0 (CI-clear of 0)"
@@ -30,7 +31,7 @@
   "ranking": "guardrails first, then count + magnitude of CI-clean A1/A2 improvements over A0",
   "claimCeiling": "candidate_only; canClaimAGI:false; narrow seed-bound feasibility; a faithfulness/composition result, NOT understanding",
   "honestLimits": [
-    "small N (D1=26, D2=14) — underpowered for a 10pt effect; report mde_at_n and treat single-run deltas as coarse",
+    "small N (D1=34, D2=41; eval fold smaller still) — underpowered for a 10pt effect; report mde_at_n and treat single-run deltas as coarse",
     "D1 distractors are lexically-near siblings, an easy floor (not adversarial paraphrase)",
     "D2 is a closed-world grounding verdict over hand-written axioms, not a truth oracle",
     "A2 on D2 is near-ceiling by construction (it calls the same engine the scorer derives gold with) so it measures TOOL-USE COMPLIANCE, not unaided reasoning; the load-bearing comparison is A0 vs A1 (does grounding context help) and A1 vs A2 (does the symbolic tool help)"

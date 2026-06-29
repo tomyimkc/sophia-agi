@@ -42,6 +42,13 @@ def _stable_key(*parts: str) -> str:
     return hashlib.md5("\x1f".join(parts).encode("utf-8")).hexdigest()
 
 
+def fold_of(*parts: str) -> str:
+    """Deterministic ~70/30 train/eval split. The training generator draws only the
+    'train' fold and the Phase-2 uplift is measured only on the 'eval' fold, so they
+    are disjoint BY CONSTRUCTION — no train/eval leakage to argue about."""
+    return "eval" if int(_stable_key("fold", *parts), 16) % 10 < 3 else "train"
+
+
 # ----------------------------------------------------------------- D1 from wiki
 def _gloss(body: str) -> str:
     """The substantive definition paragraph of a concept page.
@@ -103,6 +110,7 @@ def build_d1() -> list[dict]:
         cases.append({
             "id": f"d1-{p.id}",
             "task": "definition",
+            "fold": fold_of("d1", p.id),
             "domain": p.meta.get("domain"),
             "term": term,
             "goldConceptId": p.id,
@@ -167,6 +175,112 @@ AXIOM_WORLDS: list[dict] = [
             ["subClassOf", "verb", "preposition"],          # abstain (silent)
         ],
     },
+    {
+        "world": "chemistry",
+        "source": "consensus classification of matter",
+        "axioms": [
+            ["subClassOf", "metal", "element"], ["subClassOf", "nonmetal", "element"],
+            ["subClassOf", "element", "pure_substance"], ["subClassOf", "compound", "pure_substance"],
+            ["subClassOf", "pure_substance", "matter"], ["subClassOf", "mixture", "matter"],
+            ["disjointWith", "element", "compound"], ["disjointWith", "pure_substance", "mixture"],
+            ["disjointWith", "metal", "nonmetal"],
+        ],
+        "claims": [
+            ["subClassOf", "metal", "matter"],          # entailed (3-hop)
+            ["subClassOf", "compound", "matter"],       # entailed (2-hop)
+            ["subClassOf", "metal", "nonmetal"],        # violation (metal⊥nonmetal)
+            ["subClassOf", "element", "compound"],      # violation (element⊥compound)
+            ["subClassOf", "gas", "matter"],            # abstain (silent)
+        ],
+    },
+    {
+        "world": "music",
+        "source": "consensus Western music notation taxonomy",
+        "axioms": [
+            ["subClassOf", "quarter_note", "note"], ["subClassOf", "half_note", "note"],
+            ["subClassOf", "note", "musical_symbol"], ["subClassOf", "rest", "musical_symbol"],
+            ["disjointWith", "note", "rest"],
+        ],
+        "claims": [
+            ["subClassOf", "quarter_note", "musical_symbol"],  # entailed (2-hop)
+            ["subClassOf", "quarter_note", "rest"],            # violation (note⊥rest)
+            ["subClassOf", "note", "clef"],                    # abstain (silent)
+        ],
+    },
+    {
+        "world": "cs_types",
+        "source": "consensus programming-language type hierarchy",
+        "axioms": [
+            ["subClassOf", "integer", "number"], ["subClassOf", "float", "number"],
+            ["subClassOf", "number", "scalar"], ["subClassOf", "scalar", "value"],
+            ["subClassOf", "string", "value"], ["disjointWith", "number", "string"],
+        ],
+        "claims": [
+            ["subClassOf", "integer", "value"],    # entailed (3-hop)
+            ["subClassOf", "float", "scalar"],     # entailed (2-hop)
+            ["subClassOf", "integer", "string"],   # violation (number⊥string)
+            ["subClassOf", "boolean", "value"],    # abstain (silent)
+        ],
+    },
+    {
+        "world": "plants",
+        "source": "consensus botanical subsumption",
+        "axioms": [
+            ["subClassOf", "rose", "flowering_plant"], ["subClassOf", "flowering_plant", "plant"],
+            ["subClassOf", "fern", "plant"], ["subClassOf", "moss", "plant"],
+            ["disjointWith", "flowering_plant", "fern"],
+        ],
+        "claims": [
+            ["subClassOf", "rose", "plant"],   # entailed (2-hop)
+            ["subClassOf", "rose", "fern"],    # violation (flowering⊥fern)
+            ["subClassOf", "rose", "moss"],    # abstain (silent)
+        ],
+    },
+    {
+        "world": "kinship",
+        "source": "consensus kinship relation subsumption",
+        "axioms": [
+            ["subClassOf", "parent", "ancestor"], ["subClassOf", "grandparent", "ancestor"],
+            ["subClassOf", "child", "descendant"], ["subClassOf", "ancestor", "relative"],
+            ["subClassOf", "descendant", "relative"], ["disjointWith", "ancestor", "descendant"],
+        ],
+        "claims": [
+            ["subClassOf", "parent", "relative"],     # entailed (2-hop)
+            ["subClassOf", "child", "relative"],      # entailed (2-hop)
+            ["subClassOf", "parent", "descendant"],   # violation (ancestor⊥descendant)
+            ["subClassOf", "sibling", "relative"],    # abstain (silent)
+        ],
+    },
+    {
+        "world": "food",
+        "source": "consensus culinary classification",
+        "axioms": [
+            ["subClassOf", "apple", "fruit"], ["subClassOf", "carrot", "vegetable"],
+            ["subClassOf", "fruit", "food"], ["subClassOf", "vegetable", "food"],
+            ["disjointWith", "fruit", "vegetable"],
+        ],
+        "claims": [
+            ["subClassOf", "apple", "food"],       # entailed (2-hop)
+            ["subClassOf", "carrot", "food"],      # entailed (2-hop)
+            ["subClassOf", "apple", "vegetable"],  # violation (fruit⊥vegetable)
+            ["subClassOf", "apple", "grain"],      # abstain (silent)
+        ],
+    },
+    {
+        "world": "polygons",
+        "source": "consensus Euclidean polygon hierarchy",
+        "axioms": [
+            ["subClassOf", "equilateral", "triangle"], ["subClassOf", "isosceles", "triangle"],
+            ["subClassOf", "triangle", "polygon"], ["subClassOf", "polygon", "shape"],
+            ["disjointWith", "triangle", "circle"],
+        ],
+        "claims": [
+            ["subClassOf", "equilateral", "shape"],      # entailed (3-hop)
+            ["subClassOf", "equilateral", "polygon"],    # entailed (2-hop)
+            ["subClassOf", "triangle", "circle"],        # violation (triangle⊥circle)
+            ["subClassOf", "equilateral", "isosceles"],  # abstain (true in reality, silent here)
+        ],
+    },
 ]
 
 
@@ -186,6 +300,7 @@ def build_d2() -> list[dict]:
             cases.append({
                 "id": f"d2-{w['world']}-{j}",
                 "task": "composition",
+                "fold": fold_of("d2", w["world"]),  # split by world (axioms stay together)
                 "world": w["world"],
                 "source": w["source"],
                 "axioms": w["axioms"],
