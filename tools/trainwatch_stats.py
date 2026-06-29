@@ -179,13 +179,17 @@ def main(argv=None) -> int:
     argv = sys.argv[1:] if argv is None else argv
     url = None
     args = []
-    for a in argv:
+    i = 0
+    while i < len(argv):
+        a = argv[i]
         if a.startswith("--url="):
             url = a.split("=", 1)[1]
-        elif a == "--url" and argv.index(a) + 1 < len(argv):
-            url = argv[argv.index(a) + 1]
-        elif a != url:
+        elif a == "--url" and i + 1 < len(argv):
+            url = argv[i + 1]
+            i += 1                      # consume the value (correct for repeated flags too)
+        else:
             args.append(a)
+        i += 1
     url = url or os.environ.get("TRAINWATCH_URL")
     try:
         src = _source(url)

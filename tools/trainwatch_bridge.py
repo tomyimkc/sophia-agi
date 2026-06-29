@@ -19,7 +19,6 @@ run — one bridge per training log. Zero deps beyond TrainWatch itself.
 from __future__ import annotations
 
 import argparse
-import os
 import re
 import sys
 import time
