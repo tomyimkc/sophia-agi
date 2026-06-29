@@ -247,6 +247,7 @@ def governed(tool_id: str, args: dict) -> dict:
             "mcp.governed", input={"tool_id": tool_id, "role": role, "clearance": clearance},
             output={"integrity": integrity}, level="DEFAULT", metadata={"side_effects": entry.side_effects})
     except Exception:
+        # audit span is best-effort; a tracing hiccup must never fail the governed call
         pass
 
     out = dict(result) if isinstance(result, dict) else {"result": result}

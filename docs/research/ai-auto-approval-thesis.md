@@ -254,6 +254,17 @@ breaker is tripped (opt-in — absent state file = no canary regime = no-op; see
 `agent/auto_approval_breaker.py:promotion_block_reason`). So a canary miss doesn't just escalate one
 artifact, it halts the autonomy switch itself.
 
+**Powered offline benchmark (`make aats-benchmark`).** The tiny demos are stress-tested on larger
+controlled batteries with uncertainty (`tools/aats_benchmark.py`, CIs + McNemar from `eval_stats`). On a 180-item authorship battery (168 misattributions) spanning all four catch-quadrants,
+the two distinct families each false-approve about half the misattributions (temporal ≈0.58,
+provenance ≈0.50) but **AND-consensus drops false-approval to ≈0.32** and catches significantly more bad
+items than the best single verifier (McNemar c=30, b=0, p≈0) — *and* it honestly still misses the
+"neither" quadrant (54 misattributions no family can catch), which is the real ceiling, not a number to
+optimise away. Split-conformal coverage holds within a risk bucket (validity 1.0) but a single
+normal-bucket threshold under-covers a mixed-risk stream (≈0.69) — motivating risk-bucketed policies. The
+canary breaker trips iff a covered known-bad is approved across perfect/leaky/partial-leak approvers.
+These are synthetic/controlled machinery characterisations (candidate-only), not model capability.
+
 **Model-gated arms scaffolded (not run).** The two arms that need a model farm are pre-registered in
 `agi-proof/aats/measurement_spec.json` (git-ancestry pre-registration via `claim_gate --assert-prereg`)
 with byte-stable `*.PENDING.public-report.json` artifacts (status `not_run`, verdict `NO-GO`, explicit

@@ -41,7 +41,7 @@ class LegalResolver:
         mode: str = "cache",
         sources: "list | None" = None,
         cache: "ResolutionCache | None" = None,
-        fetch: "Fetch | None" = None,
+        fetch: Fetch | None = None,
         timeout: int = 20,
         max_age_days: "int | None" = None,
     ) -> None:

@@ -35,11 +35,9 @@ Discipline (Sophia, preserved):
 
 from __future__ import annotations
 
-import hashlib
-import math
 import random
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
 
 from agent.verified_world_model import OutcomePair, accuracy
 

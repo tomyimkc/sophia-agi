@@ -199,7 +199,8 @@ def _http_get(url: str, timeout: int = 20) -> tuple[int, str]:
         os.close(fd)
         try:
             rc, code_str = _curl(["--max-time", str(timeout), "-o", tmp, "-w", "%{http_code}", url])
-            body = open(tmp, encoding="utf-8", errors="replace").read()
+            with open(tmp, encoding="utf-8", errors="replace") as _bf:
+                body = _bf.read()
         finally:
             os.unlink(tmp)
         if rc != 0:
