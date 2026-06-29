@@ -37,12 +37,6 @@ import json
 from pathlib import Path
 from typing import Iterable
 
-try:
-    import numpy as np
-    _HAVE_NUMPY = True
-except Exception:  # pragma: no cover
-    _HAVE_NUMPY = False
-
 ROOT = Path(__file__).resolve().parents[1]
 
 

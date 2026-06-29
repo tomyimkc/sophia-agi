@@ -98,6 +98,7 @@ def verify_in_project(project: Path, rel_lean: str, source: str, timeout_s: int)
             if original is not None:
                 target.write_text(original, encoding="utf-8")
         except OSError:
+            # best-effort restore of the scratch file; non-fatal if it fails
             pass
     err = (proc.stderr or "") + (proc.stdout or "")
     if proc.returncode == 0 and "error:" not in err.lower() and not _SORRY.search(err):

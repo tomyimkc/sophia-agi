@@ -40,7 +40,7 @@ from __future__ import annotations
 
 import argparse
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import torch
 import torch.nn as nn
@@ -309,12 +309,14 @@ class RDT(nn.Module):
                                    targets.reshape(-1), ignore_index=-100)
             if cfg.use_moe:
                 loss = loss + 1e-2 * aux_total / max(1, T)
+        # Always return a 3-tuple (logits, loss, extra) so the return shape is uniform;
+        # `extra` is the trajectory, the halt scores, or None depending on the flags.
         if return_trajectory:
             return logits, loss, torch.stack(traj, 1)        # [B, T, S, V]
         if return_halt:
             halt = torch.stack(halts, 1) if halts else None  # [B, T, S]
             return logits, loss, halt
-        return logits, loss
+        return logits, loss, None
 
     @torch.no_grad()
     def loop_trajectory(self, idx: torch.Tensor, pos: int = -1,
@@ -331,7 +333,7 @@ class RDT(nn.Module):
         self.eval()
         for _ in range(max_new_tokens):
             idx_cond = idx[:, -self.cfg.max_seq_len:]
-            logits, _ = self.forward(idx_cond, n_loop=n_loop)
+            logits, _, _ = self.forward(idx_cond, n_loop=n_loop)
             logits = logits[:, -1, :] / max(1e-6, temperature)
             if top_k is not None:
                 v, _ = torch.topk(logits, min(top_k, logits.size(-1)))
@@ -386,8 +388,8 @@ def self_test(verbose: bool = True) -> dict:
     model = RDT(cfg)
     idx = torch.randint(0, cfg.vocab_size, (2, 8))
     with torch.no_grad():
-        l2, _ = model(idx, n_loop=2)
-        l8, _ = model(idx, n_loop=8)
+        l2, _, _ = model(idx, n_loop=2)
+        l8, _, _ = model(idx, n_loop=8)
     depth_changes_output = bool((l2 - l8).abs().max() > 1e-4)
     assert depth_changes_output, "loop count had no effect — recurrence unused"
 
@@ -400,7 +402,7 @@ def self_test(verbose: bool = True) -> dict:
     first = last = None
     for step in range(120):
         opt.zero_grad()
-        _, loss = model(idx, tgt)
+        _, loss, _ = model(idx, tgt)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         opt.step()

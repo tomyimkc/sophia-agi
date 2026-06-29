@@ -35,7 +35,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
 
 # A prover emits an answer string. Sneaky answers are wrong-but-evasive; helpful answers
 # are disciplined controls. Deterministic fixtures keep the loop offline + reproducible.

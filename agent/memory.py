@@ -41,6 +41,7 @@ def log_decision(
             from agent.memory_consolidation import consolidate_result
             consolidate_result(question, answer, task_id=f"dec_{path.stem}", mode=mode)
         except Exception:
+            # opt-in consolidation is best-effort; never let it break decision logging
             pass
     return path
 

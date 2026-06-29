@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from okf import frontmatter, page as okf_page  # noqa: E402
+from okf import page as okf_page  # noqa: E402
 
 WIKI_DIR = ROOT / "wiki"
 
@@ -85,16 +85,16 @@ def render_home(by_type: dict) -> str:
         "# Sophia AGI — Provenance Wiki",
         "",
         "Auto-generated reference index of the **OKF belief graph**: *who wrote "
-        "what*, *which tradition owns which idea*, and which attributions are "
-        "explicitly **refused**.",
+        + "what*, *which tradition owns which idea*, and which attributions are "
+        + "explicitly **refused**.",
         "",
         "- Narrative thesis site → https://tomyimkc.github.io/sophia-agi/",
         "- Honest, gated results → "
-        "[RESULTS.md](https://github.com/tomyimkc/sophia-agi/blob/main/RESULTS.md)",
+        + "[RESULTS.md](https://github.com/tomyimkc/sophia-agi/blob/main/RESULTS.md)",
         "- Contribute → "
-        "[CONTRIBUTING.md](https://github.com/tomyimkc/sophia-agi/blob/main/CONTRIBUTING.md)"
-        " · [Good first issues]"
-        "(https://github.com/tomyimkc/sophia-agi/blob/main/GOOD_FIRST_ISSUES.md)",
+        + "[CONTRIBUTING.md](https://github.com/tomyimkc/sophia-agi/blob/main/CONTRIBUTING.md)"
+        + " · [Good first issues]"
+        + "(https://github.com/tomyimkc/sophia-agi/blob/main/GOOD_FIRST_ISSUES.md)",
         "",
     ]
     for key in _ordered_groups(by_type):

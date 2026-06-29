@@ -140,7 +140,7 @@ def run_demo(seed: int = 0) -> dict:
 
     rows = build_benchmark(seed)
     methods = {
-        "corroborated": lambda evs: corroborated_confidence(evs),
+        "corroborated": corroborated_confidence,
         "single": lambda evs: float(evs[0].confidence),                              # fair baseline
         "mean": lambda evs: sum(float(e.confidence) for e in evs) / len(evs),        # fair baseline
         "min": lambda evs: min(float(e.confidence) for e in evs),                    # contrast only (laundering guard, not a classifier)

@@ -30,8 +30,6 @@ from agent.cluster.health import Verdict, evaluate_node  # noqa: E402
 from agent.cluster.playbook import diagnose, primary_diagnosis  # noqa: E402
 from agent.cluster.provider import get_provider, sweep  # noqa: E402
 
-_GLYPH = {Verdict.PASS: "PASS", Verdict.WARN: "WARN", Verdict.FAIL: "FAIL"}
-
 
 def run_inspection(source: str, *, size: int, want_diagnose: bool,
                    inventory: str | None = None, ssh_key: str | None = None) -> list[dict]:
