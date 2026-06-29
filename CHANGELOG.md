@@ -4,6 +4,28 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+### Added — adopted the entity-disjoint held-out split (sealed + CI-gated)
+
+The 73-case entity-disjoint split (after the sentinel fix below) was human-approved and
+**adopted** as a sealed eval surface at `data/seib_entity_disjoint/` (`heldout_v1.jsonl` +
+`manifest.json` `sealed:true, candidateOnly:false, humanReviewed:true`). Registered in
+`provenance_bench/dataset_guard.EVAL_GLOBS` and gated fail-closed in CI via
+`assert_entity_decontam --eval-file data/seib_entity_disjoint/heldout_v1.jsonl
+--fail-covered 0` (gate-strengthening). Registry 15→16 assets; DHI 0.6507→0.6518. Ledger
+item `entity-decontam-candidate-staged-not-gated-2026-06-29` → Closed. The split is
+maintainer-authored (not third-party); `canClaimAGI` stays false and it is not promoted to
+published-results.json. The `DataAnalyst` now recognises the adopted split (stops proposing
+the already-done carve; re-points to the third-party residual).
+
+### Added — on-demand Google Fact Check live workflow
+
+`.github/workflows/google-factcheck-coverage.yml`: a `workflow_dispatch` job that injects
+the `GOOGLE_FACTCHECK_API_KEY` repo secret and runs the live ClaimReview coverage probe
+(`tools/run_google_factcheck_coverage.py`, optionally `factcheck_corroborate.py`), uploading
+the report as an artifact (never committed — volatile live data; key never printed). The
+integration itself already existed and was verified live (general claims 6/6 covered;
+literary-provenance 0/6 — the honest domain boundary).
+
 ### Fixed — entity vocab admitted authorship-status sentinels as named entities
 
 A `DataAnalyst` content-review of the staged entity-disjoint split candidate found 2

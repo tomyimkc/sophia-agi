@@ -1,78 +1,78 @@
-# Session Handover — 2026-06-29 (entity-vocab sentinel fix + split content-review)
+# Session Handover — 2026-06-29 (sentinel fix → split ADOPTED + fact-check CI + DataAnalyst)
 
 > Continues `SESSION-HANDOVER-2026-06-29-data-analysis-agent.md` (read that first for the
-> full Data-Analysis-Agent picture). This session executed the **agent's half of Next-Step
-> #1** — the content review of the staged entity-disjoint split — found and fixed a real
-> defect, and left adoption (a human curation step) **pending a decision**. `canClaimAGI`
-> stays **false**; nothing here promotes a result.
+> full Data-Analysis-Agent picture). This session reviewed the staged entity-disjoint
+> split, fixed a real defect, then — with human approval — **adopted the split** (sealed +
+> CI-gated), added an on-demand Google Fact Check CI workflow, and made the DataAnalyst
+> aware of the adoption. `canClaimAGI` stays **false**; nothing here promotes a published
+> result (the DHI is operational-only; the split is maintainer-authored, not third-party).
 
 ## 0. Git / repo state
-- **Branch `claude/data-analysis-agent-strategy-gxoekd-ghg5ad`** (tip `278518bb`), pushed,
-  working tree clean. It carries the 5 prior data-analysis commits (from `…-gxoekd`,
-  `b85b9f5`) **plus** this session's fix on top.
-- Not merged to `main`; **no PR** (none requested).
-- Note: the prior branch `…-gxoekd` (`b85b9f5`) is now the *base*; my branch is the live one.
+- **Branch `claude/data-analysis-agent-strategy-gxoekd-ghg5ad`** (tip `79b80a42`), pushed,
+  working tree clean. Carries the 5 prior data-analysis commits + this session's 5 commits.
+- **STALE vs origin/main: ~7 ahead / 20+ behind** (older `…-gxoekd` base; `main` moved).
+  Rebase onto fresh `origin/main` before any PR/merge — `failure-ledger.md`, `ci.yml`,
+  `dataset_guard.py` are contended files and will need conflict reconciliation. Not merged;
+  no PR (none requested).
+- Commits this session (newest first): `79b80a42` DataAnalyst adoption-aware ·
+  `1ca5f0d5` fact-check CI workflow · `fa4c7449` split ADOPTED (sealed+gated) ·
+  `b8b183d2` handover/changelog · `278518bb` sentinel fix (carve 75→73).
 
-## 1. What this session did (commit `278518bb`)
-A `DataAnalyst` content-review pass over the **75-case** staged entity-disjoint candidate
-found 2 cases that were **not authorship/attribution probes**: the HK$ SaaS *"burn
-multiple"* finance prompts. Root cause: `data/attributions.json` uses
-`attributedAuthor:"multiple"` as a **collective-authorship sentinel** (I Ching, Book of
-Songs); `build_entity_vocab` admitted `"multiple"` as a named entity, which matched the
-literal word "burn **multiple**" and pulled finance prompts into the carve.
-
-**Fix (at source):** a `_SENTINELS` stoplist in `tools/assert_entity_decontam.py` so
-authorship-*status* placeholders (multiple, unknown, anonymous, …) are never treated as
-entities. This makes the recognizer **more precise** (removes false positives) — it does
-**not** weaken any decontam gate (no real entity is named "multiple"). vocab 201→200.
-- Re-staged candidate: **73 cases**, all well-formed attribution traps, still
-  entity-disjoint (`sharedWithTrain=[]`, `--fail-covered 0` exit 0).
-- **Gold verified derivable for all 73** (72 directly in
-  `provenance_bench/data/wikidata_snapshot.json` / `misattributions.json`; the
-  newton/mahabharata case is a derivable *negative*).
-- Regression test added (`tests/test_assert_entity_decontam.py::test_authorship_status_sentinels_are_not_entities`).
-- Docs + ledger updated: strategy doc, adoption runbook (agent-review log added),
-  `failure-ledger.md` (75→73 + the fix).
+## 1. What this session did
+1. **Sentinel fix (`278518bb`)** — content-review of the 75-case candidate found 2
+   non-attribution finance probes ("burn multiple"); root cause was `attributedAuthor:
+   "multiple"` (collective-authorship sentinel) admitted as a named entity. Fixed via a
+   `_SENTINELS` stoplist in `build_entity_vocab` (vocab 201→200). Carve → **73 cases**,
+   all attribution traps, gold derivable for all, still entity-disjoint.
+2. **Split ADOPTED (`fa4c7449`)** — human-approved. Sealed at
+   `data/seib_entity_disjoint/heldout_v1.jsonl` + `manifest.json`
+   (`sealed:true, candidateOnly:false, humanReviewed:true`); registered in
+   `dataset_guard.EVAL_GLOBS`; **`assert_entity_decontam --eval-file
+   data/seib_entity_disjoint/heldout_v1.jsonl --fail-covered 0` is now a hard CI gate**
+   (`.github/workflows/ci.yml`). Registry 15→16 assets; **DHI 0.6507→0.6518**. Ledger
+   `entity-decontam-candidate-staged-not-gated-2026-06-29` → **Closed**.
+3. **Google Fact Check CI workflow (`1ca5f0d5`)** — `.github/workflows/google-factcheck-coverage.yml`,
+   a `workflow_dispatch` that injects the `GOOGLE_FACTCHECK_API_KEY` secret and runs the live
+   coverage probe (uploads artifact, never commits, key never printed). The integration was
+   already present + verified live this session (general 6/6, provenance 0/6 — the honest
+   domain gap). **ACTION FOR HUMAN:** add the repo secret `GOOGLE_FACTCHECK_API_KEY` (and
+   **rotate** the key that was pasted in chat) to use it from CI.
+4. **DataAnalyst adoption-aware (`79b80a42`)** — it no longer proposes "carve a split"
+   after adoption; it demotes that action and re-points to the residual (a third-party
+   pack). Top priority now correctly = `coverage` (0.314).
 
 ## 2. Verify (all green this session)
 ```bash
-python tools/lint_claims.py && python tools/assert_decontam.py && \
+make claim-check                                   # M3-pilot GO, M3-transfer GO, lint/decontam OK
 python tools/build_data_registry.py --check && python tools/data_health_report.py --check && \
 python tools/assert_mix_balance.py && python tools/validate_failure_ledger.py --check && \
-make claim-check   # M3-pilot GO, M3-transfer GO
+python tools/assert_decontam.py && \
+python tools/assert_entity_decontam.py --eval-file data/seib_entity_disjoint/heldout_v1.jsonl --fail-covered 0
 python -m pytest -q tests/test_data_health_report.py tests/test_build_data_registry.py \
   tests/test_assert_entity_decontam.py tests/test_carve_entity_disjoint_split.py \
-  tests/test_assert_mix_balance.py tests/test_data_analyst.py tests/test_swarm_router.py
-# 53 passed
+  tests/test_assert_mix_balance.py tests/test_data_analyst.py tests/test_swarm_router.py   # 54 passed
 ```
 
-## 3. ▶ Next step — the pending DECISION (human-owned curation)
-The split is now clean, agent-reviewed and gold-verified, but **adoption was NOT done** —
-sealing a held-out eval surface + flipping a CI gate is curation the contract reserves for
-humans, and no affirmative approval was obtained this session (the interactive prompt could
-not be delivered). **Default left in place: hold as candidate.**
-
-To adopt when a human approves the 73-case content, run
-`docs/11-Platform/Entity-Disjoint-Split-Adoption.md` steps 3–7:
-seal under `data/seib_entity_disjoint/` → add glob to `dataset_guard.EVAL_GLOBS` →
-`assert_entity_decontam --eval-file data/seib_entity_disjoint/heldout_v1.jsonl --fail-covered 0`
-in CI → regenerate registry/DHI → close `entity-decontam-candidate-staged-not-gated`.
-Verify-ready now:
-```bash
-python tools/assert_entity_decontam.py \
-  --eval-file agi-proof/data-health/seib_entity_disjoint_candidate/candidate.jsonl \
-  --fail-covered 0   # exit 0
-```
-Alternatives if not adopting: Phase 4 curation toward DHI/mix targets, or registry lineage
-edges (`data-lineage-graph-partial`) — both in the prior handover §4.
+## 3. ▶ Next steps (by leverage; all human-judgment + data + GPU)
+1. **Curate toward DHI/coverage targets** — now the DataAnalyst's top priority: records
+   210→500, rows 1560→10k, fix the mix (hk_bilingual/moral_gate/tool_mcp <1%→~10%, ZH share)
+   via the gated builders + `tools/spark_data_refinery.py`. Track records vs rows; `--update`
+   the mix baseline only after a real improvement; watch DHI rise.
+2. **Third-party entity-disjoint pack** — the only path that advances an external
+   generalization claim (`hidden-review-third-party-not-run`). The adopted split is
+   maintainer-authored; `canClaimAGI` stays false until a third-party hidden eval is beaten.
+3. **Registry lineage edges** (`data-lineage-graph-partial`) — extend the 16-asset registry
+   from manifest-level to a real source→shard→checkpoint→eval graph.
+4. **Rebase onto `origin/main`** before opening any PR (see §0 — contended files).
 
 ## 4. Read-first
-1. `SESSION-HANDOVER-2026-06-29-data-analysis-agent.md` (the base picture)
-2. `docs/11-Platform/Entity-Disjoint-Split-Adoption.md` (adoption runbook + agent-review log §2)
-3. `agi-proof/failure-ledger.md` → `entity-decontam-candidate-staged-not-gated-2026-06-29`
+1. `SESSION-HANDOVER-2026-06-29-data-analysis-agent.md` (base picture)
+2. `docs/11-Platform/Entity-Disjoint-Split-Adoption.md` (now marked ✅ ADOPTED)
+3. `agi-proof/failure-ledger.md` → entity-decontam item (Closed), data-health/lineage rows
 
 ## 5. Don't-break
-The drift/measurement gates that stayed green: `lint_claims`, `assert_decontam`,
-`build_data_registry --check`, `data_health_report --check`, `assert_mix_balance`,
-`validate_failure_ledger --check`, the 7 data-agent test files, and `make claim-check`
-(both claim gates GO). No gate relaxation; the DHI stays operational-only; `canClaimAGI` false.
+Gates green this session: `lint_claims`, `assert_decontam`, the new entity `--fail-covered 0`
+gate on the sealed split, `build_data_registry --check`, `data_health_report --check`,
+`assert_mix_balance`, `validate_failure_ledger --check`, `make claim-check` (both gates GO),
+and the data-agent test files (54 passed). No gate relaxation — the adoption STRENGTHENS the
+gate. DHI stays operational-only; `canClaimAGI` false.
