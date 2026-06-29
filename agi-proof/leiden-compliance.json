@@ -95,11 +95,13 @@
       "name": "Autonomous direction & non-proprietary tooling",
       "principle": "Humans shape research directions; the field favors non-proprietary, publicly governed tools.",
       "status": "partial",
-      "sophia_form": "Local-first, Apache-2.0, runs on owned hardware; remaining dependence on proprietary judge inference is the tracked gap (see open_gaps: open_model_judge_family).",
+      "sophia_form": "Local-first, Apache-2.0, runs on owned hardware. A self-hostable open-weights judge backend (agent/open_judge.py) and a judge-openness registry (agent/judge_registry.py) now exist; the value is fully met once a headline result is corroborated on a non-proprietary path (see open_gaps: open_model_judge_family).",
       "mechanisms": [
         "VISION.md",
         "LICENSE",
-        "SECURITY.md"
+        "SECURITY.md",
+        "agent/judge_registry.py",
+        "agent/open_judge.py"
       ],
       "missing_mechanisms": [],
       "evidence": [
@@ -107,7 +109,47 @@
           "artifact": "VISION.md",
           "exists": true
         }
-      ]
+      ],
+      "judge_independence": {
+        "judges": [
+          {
+            "id": "openrouter:deepseek/deepseek-chat",
+            "provider": "openrouter",
+            "model": "deepseek/deepseek-chat",
+            "open_weights": true,
+            "self_hostable": false,
+            "proprietary_inference": true,
+            "non_proprietary_path": false
+          },
+          {
+            "id": "openrouter:meta-llama/llama-3.3-70b-instruct",
+            "provider": "openrouter",
+            "model": "meta-llama/llama-3.3-70b-instruct",
+            "open_weights": true,
+            "self_hostable": false,
+            "proprietary_inference": true,
+            "non_proprietary_path": false
+          },
+          {
+            "id": "openrouter:mistralai/mistral-small-3.2-24b-instruct",
+            "provider": "openrouter",
+            "model": "mistralai/mistral-small-3.2-24b-instruct",
+            "open_weights": true,
+            "self_hostable": false,
+            "proprietary_inference": true,
+            "non_proprietary_path": false
+          }
+        ],
+        "n_total": 3,
+        "n_open_weights": 3,
+        "n_self_hostable": 0,
+        "n_non_proprietary_path": 0,
+        "has_open_weights_judge": true,
+        "has_self_hostable_judge": false,
+        "has_non_proprietary_path": false,
+        "open_judge_backend_present": true,
+        "headline_panel_source": "agi-proof/benchmark-results/wisdom-market/M3-pilot-judge.json"
+      }
     }
   ],
   "open_gaps": [
@@ -115,7 +157,8 @@
       "id": "open_model_judge_family",
       "summary": "Add an open-weights judge family so the >=2-judge-family validation rule no longer depends on proprietary inference services.",
       "serves_value": "autonomous_direction",
-      "status": "proposed",
+      "status": "in_progress",
+      "note": "Registry (agent/judge_registry.py) + self-hostable backend (agent/open_judge.py) landed; remaining: corroborate a headline result on a non-proprietary path and record judge openness in its receipt.",
       "design": "docs/11-Platform/Leiden-Open-Judge-Family.md"
     },
     {
