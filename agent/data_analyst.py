@@ -83,6 +83,9 @@ class CurationAction:
     priority: float          # weight * gap — biggest measured leverage first
     recommendation: str
     tool: str
+    # Visible-but-not-actionable markers (e.g. an already-adopted split) stay in the
+    # plan for transparency but must never be the plan's topPriority.
+    topPriorityEligible: bool = True
 
     def to_dict(self) -> dict:
         return {
@@ -190,6 +193,7 @@ class DataAnalyst:
                         "not another maintainer-authored carve."
                     ),
                     tool="commission third-party pack (failure-ledger: hidden-review-third-party-not-run)",
+                    topPriorityEligible=False,   # already adopted; visible but never topPriority
                 ))
             else:
                 actions.append(CurationAction(
@@ -205,6 +209,9 @@ class DataAnalyst:
                 ))
 
         actions.sort(key=lambda x: x.priority, reverse=True)
+        # topPriority reflects the strongest *actionable* lever; visible-but-not-actionable
+        # markers (e.g. an already-adopted split) are excluded even if they are the only action.
+        top = next((x for x in actions if x.topPriorityEligible), None)
         return {
             "status": "ok",
             "schema": SCHEMA,
@@ -212,7 +219,7 @@ class DataAnalyst:
             "proposeOnly": PROPOSE_ONLY,
             "dhi": a["dhi"],
             "nActions": len(actions),
-            "topPriority": actions[0].dimension if actions else None,
+            "topPriority": top.dimension if top is not None else None,
             "actions": [x.to_dict() for x in actions],
         }
 

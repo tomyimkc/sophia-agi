@@ -39,7 +39,10 @@ OUT = ROOT / "agi-proof" / "data-health" / "report.json"
 MANIFEST = ROOT / "training" / "local_sophia_v3" / "manifest.json"
 CORPUS = ROOT / "training" / "corpus.jsonl"
 REGISTRY = ROOT / "agi-proof" / "data-health" / "registry.json"
-DATA_MANIFEST_GLOB = "data/*/manifest.json"
+# Mirror build_data_registry.MANIFEST_GLOBS so DHI lineage/reproducibility
+# cover training/* manifests, not just data/* (else training artifacts are
+# silently ignored and the scores can be inflated).
+DATA_MANIFEST_GLOBS = ("data/*/manifest.json", "training/*/manifest.json")
 
 SCHEMA = "sophia.data_health.v1"
 
@@ -189,7 +192,10 @@ def score_provenance_completeness(corpus: list[dict]) -> dict:
 
 
 def _data_manifests() -> list[Path]:
-    return sorted(ROOT.glob(DATA_MANIFEST_GLOB))
+    manifests: set[Path] = set()
+    for g in DATA_MANIFEST_GLOBS:
+        manifests.update(ROOT.glob(g))
+    return sorted(manifests)
 
 
 def score_lineage() -> dict:
