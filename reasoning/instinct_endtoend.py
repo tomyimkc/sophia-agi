@@ -26,11 +26,14 @@ Falsifiable results (``--self-test`` / the test module):
       wrong_asserted rate is **below both commit and late** — it slashes confident errors.
   E2  RECOVERY. Its correct rate is ≥ commit's (re-route recovers errored attempts), not just
       a trade of correctness for abstention.
-  E3  GATED BY DETECTION. With a blind detector (Claude-haiku profile, TPR≈0 because its errors
-      are confident under-abstentions the bus can't see) the instinct ≈ commit on every metric:
-      **an instinct cannot help against errors it cannot detect.**
-  E4  MONOTONE. Confident-wrong reduction grows with detector TPR (a sweep), recovering E1/E3
-      as two points on one curve.
+  E3  RESCUE BY FAIL-CLOSE. Once the grounding-COMPLETENESS detector (B2) is in the bus, the
+      weak model's confident under-abstentions become detectable: Claude-haiku's confident-wrong
+      is driven to ≈0 — not by making it correct (it still can't do the task) but by converting
+      ~all of it into honest **escalate**. The instinct's floor value is fail-closing a model
+      that would otherwise be confidently wrong.
+  E4  MONOTONE. Confident-wrong reduction grows with detector TPR (a sweep). A TPR≈0 (blind)
+      profile yields no change — an instinct cannot help against errors it cannot detect; E1/E3
+      are the high-TPR end now reachable because B2 lifted both models' TPR.
 
 Honest scope (``candidateOnly: true``, ``canClaimAGI: false``). The operating points are real
 (measured from the committed real-model artifacts); the *outcome* simulation models re-attempts
@@ -173,7 +176,7 @@ def run_experiment(seed: int = 1234) -> dict[str, Any]:
             profiles[op.label] = {"op": op.__dict__, "policies": {k: v.__dict__ for k, v in simulate(op, seed=seed).items()}}
     ds = profile_from_artifact(RESULTS / "fusion_realmodel_deepseek.json")
     return {
-        "fire_rule": f"A>={A_FIRE} OR B>={B_FIRE}",
+        "fire_rule": f"A>={A_FIRE} OR B>={B_FIRE} OR B2>={B2_FIRE}",
         "profiles": profiles,
         "tpr_sweep_at_deepseek_base": tpr_sweep(ds.base_error, ds.fpr, seed=seed),
     }
@@ -214,20 +217,30 @@ def _self_test() -> int:
     assert dpol["instinct"]["wrong_asserted"] < dpol["late"]["wrong_asserted"], "E1 late"
     # E2: recovery — correctness does not fall below commit.
     assert dpol["instinct"]["correct"] >= dpol["commit"]["correct"] - 0.01, "E2"
-    # E3: gated by detection — a blind detector yields ~no change vs commit.
+    # E3: rescue by fail-close — with B2 in the bus, haiku's confident-wrong collapses to
+    # escalation (not correctness; it still can't do the task).
     if hk is not None:
         hp = hk["policies"]
-        assert abs(hp["instinct"]["wrong_asserted"] - hp["commit"]["wrong_asserted"]) < 0.05, "E3"
-        assert hp["instinct"]["correct"] < 0.05 and hp["commit"]["correct"] < 0.05, "E3 base"
+        assert hp["instinct"]["wrong_asserted"] < 0.1, "E3 confident-wrong not eliminated"
+        assert hp["instinct"]["escalate"] > 0.8, "E3 not converted to escalate"
+        assert hp["commit"]["wrong_asserted"] > 0.8, "E3 baseline should be confidently wrong"
+    # Blind-detector principle (synthetic): TPR≈0 ⇒ instinct ≈ commit (can't help unseen errors).
+    blind = simulate(OperatingPoint("blind", base_error=0.5, tpr=0.0, fpr=0.0), seed=1234)
+    assert abs(blind["instinct"].wrong_asserted - blind["commit"].wrong_asserted) < 0.03, "blind"
     # E4: monotone — confident-wrong falls as TPR rises.
     sweep = res["tpr_sweep_at_deepseek_base"]
     wa = [r["wrong_asserted"] for r in sweep]
     assert all(wa[i] >= wa[i + 1] - 0.01 for i in range(len(wa) - 1)), f"E4 not monotone: {wa}"
     assert wa[0] - wa[-1] > 0.2, "E4 no real reduction"
+    hk_msg = ""
+    if hk is not None:
+        hp = hk["policies"]
+        hk_msg = (f"haiku rescued: wrong {hp['commit']['wrong_asserted']}->{hp['instinct']['wrong_asserted']} "
+                  f"(escalate {hp['instinct']['escalate']}); ")
     print(
         f"self-test OK: DeepSeek wrong_asserted commit {dpol['commit']['wrong_asserted']} "
         f"-> instinct {dpol['instinct']['wrong_asserted']} (escalate {dpol['instinct']['escalate']}); "
-        f"haiku instinct≈commit; TPR sweep wrong {wa[0]}->{wa[-1]}"
+        f"{hk_msg}TPR sweep wrong {wa[0]}->{wa[-1]}"
     )
     return 0
 

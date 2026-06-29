@@ -38,8 +38,9 @@ def test_self_test_entrypoint():
 def test_profiles_from_real_artifacts():
     ds = profile_from_artifact(RESULTS / "fusion_realmodel_deepseek.json")
     hk = profile_from_artifact(RESULTS / "fusion_realmodel_llmhub-haiku.json")
-    assert 0.4 < ds.base_error < 0.7 and ds.tpr > 0.5  # DeepSeek: usable detector
-    assert hk.base_error >= 0.99 and hk.tpr < 0.1       # haiku: blind, task-failing
+    assert 0.4 < ds.base_error < 0.7 and ds.tpr > 0.5   # DeepSeek: usable detector
+    # haiku: still fails the task, but B2 now makes its under-abstentions detectable
+    assert hk.base_error >= 0.9 and hk.tpr > 0.8
 
 
 def test_e1_safety_win_with_usable_detector():
@@ -55,11 +56,20 @@ def test_e2_recovery_not_just_abstention():
     assert pol["instinct"].correct >= pol["commit"].correct - 0.01
 
 
-def test_e3_blind_detector_no_uplift():
+def test_e3_haiku_rescued_by_failclose():
+    # With B2 in the bus, haiku's confident-wrong collapses to escalation (not correctness).
     op = profile_from_artifact(RESULTS / "fusion_realmodel_llmhub-haiku.json")
     pol = simulate(op, seed=1234)
-    assert abs(pol["instinct"].wrong_asserted - pol["commit"].wrong_asserted) < 0.05
-    assert pol["instinct"].correct < 0.05
+    assert pol["commit"].wrong_asserted > 0.8          # baseline: confidently wrong
+    assert pol["instinct"].wrong_asserted < 0.1        # eliminated
+    assert pol["instinct"].escalate > 0.8              # converted to fail-closed escalate
+    assert pol["instinct"].correct < 0.2               # task still not solved
+
+
+def test_blind_detector_synthetic_no_uplift():
+    # The principle still holds for a genuinely blind detector (TPR 0): instinct ≈ commit.
+    pol = simulate(OperatingPoint("blind", base_error=0.5, tpr=0.0, fpr=0.0), seed=1234)
+    assert abs(pol["instinct"].wrong_asserted - pol["commit"].wrong_asserted) < 0.03
 
 
 def test_e4_confident_wrong_monotone_in_tpr():

@@ -1,327 +1,1296 @@
 {
   "report": {
-    "schema": "sophia.reasoning.fusion.realmodel.v1",
+    "schema": "sophia.reasoning.fusion.realmodel.v2",
     "model": "claude-haiku-4-5-20251001",
     "base_url": "https://api.llmhub.com.cn/v1",
     "n_cases": 50,
     "n_samples": 5,
     "temperature": 0.7,
-    "base_error": 1.0,
-    "d_prime_A": 0.3357,
-    "d_prime_B": 0.0,
-    "d_prime_fused": -0.0,
-    "auc_A": 0.5,
-    "auc_B": 0.5,
-    "auc_fused": 0.5,
-    "correlation": 0.0,
+    "base_error": 0.98,
+    "d_prime": {
+      "A": -5.3379,
+      "B": 0.0,
+      "B2": 14.5865,
+      "fused_equal": 2.9418,
+      "fused_qualityweighted": 14.5865
+    },
+    "auc": {
+      "A": 0.0204,
+      "B": 0.5,
+      "B2": 1.0,
+      "fused_equal": 1.0,
+      "fused_qualityweighted": 1.0
+    },
+    "qw_weights": {
+      "A": 0.0,
+      "B": 0.0,
+      "B2": 14.5865
+    },
     "breakeven_snr": 1.0,
-    "A_clears": false,
-    "B_clears": false,
-    "fused_clears": false,
+    "clears": {
+      "A": false,
+      "B": false,
+      "B2": true,
+      "fused_equal": true,
+      "fused_qualityweighted": true
+    },
     "candidateOnly": true,
     "level3Evidence": false,
-    "boundary": "single model = 1 family @ 1 seed; not promotable. Real-model d\u2032 for the fusion thesis; no-overclaim gate needs >=2 families, >=3 seeds, CI."
+    "boundary": "single model = 1 family @ 1 seed; qw weights fit in-sample (cross-val is a follow-up). Not promotable; no-overclaim gate needs >=2 families, >=3 seeds, CI."
   },
   "per_case": [
     {
       "id": "br_transitive_001",
       "is_error": true,
-      "A": 0.2,
-      "B": 0.0
+      "A": 0.0,
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_1"
+        ],
+        [
+          "primary_1"
+        ],
+        [
+          "primary_1"
+        ],
+        [
+          "primary_1"
+        ],
+        [
+          "primary_1"
+        ]
+      ]
     },
     {
       "id": "br_transitive_002",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_2"
+        ],
+        [
+          "primary_2"
+        ],
+        [
+          "primary_2"
+        ],
+        [
+          "primary_2"
+        ],
+        [
+          "primary_2"
+        ]
+      ]
     },
     {
       "id": "br_transitive_003",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_3"
+        ],
+        [
+          "primary_3"
+        ],
+        [
+          "primary_3"
+        ],
+        [
+          "primary_3"
+        ],
+        [
+          "primary_3"
+        ]
+      ]
     },
     {
       "id": "br_transitive_004",
       "is_error": true,
-      "A": 0.0,
-      "B": 0.0
+      "A": 0.4,
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "leaf_4",
+          "mid_4"
+        ],
+        [
+          "primary_4"
+        ],
+        [
+          "primary_4"
+        ],
+        [
+          "leaf_4",
+          "mid_4",
+          "primary_4"
+        ],
+        [
+          "primary_4"
+        ]
+      ]
     },
     {
       "id": "br_transitive_005",
-      "is_error": true,
+      "is_error": false,
       "A": 0.4,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 0.0,
+      "samples": [
+        [
+          "leaf_5",
+          "mid_5",
+          "primary_5"
+        ],
+        [
+          "primary_5"
+        ],
+        [
+          "leaf_5",
+          "mid_5",
+          "primary_5"
+        ],
+        [
+          "primary_5"
+        ],
+        [
+          "leaf_5",
+          "mid_5",
+          "primary_5"
+        ]
+      ]
     },
     {
       "id": "br_transitive_006",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_6"
+        ],
+        [
+          "primary_6"
+        ],
+        [
+          "primary_6"
+        ],
+        [
+          "primary_6"
+        ],
+        [
+          "primary_6"
+        ]
+      ]
     },
     {
       "id": "br_transitive_007",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_7"
+        ],
+        [
+          "primary_7"
+        ],
+        [
+          "primary_7"
+        ],
+        [
+          "primary_7"
+        ],
+        [
+          "primary_7"
+        ]
+      ]
     },
     {
       "id": "br_transitive_008",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_8"
+        ],
+        [
+          "primary_8"
+        ],
+        [
+          "primary_8"
+        ],
+        [
+          "primary_8"
+        ],
+        [
+          "primary_8"
+        ]
+      ]
     },
     {
       "id": "br_transitive_009",
       "is_error": true,
-      "A": 0.0,
-      "B": 0.0
+      "A": 0.2,
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_9"
+        ],
+        [
+          "leaf_9",
+          "mid_9",
+          "primary_9"
+        ],
+        [
+          "primary_9"
+        ],
+        [
+          "primary_9"
+        ],
+        [
+          "primary_9"
+        ]
+      ]
     },
     {
       "id": "br_transitive_010",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_10"
+        ],
+        [
+          "primary_10"
+        ],
+        [
+          "primary_10"
+        ],
+        [
+          "primary_10"
+        ],
+        [
+          "primary_10"
+        ]
+      ]
     },
     {
       "id": "br_transitive_011",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_11"
+        ],
+        [
+          "primary_11"
+        ],
+        [
+          "primary_11"
+        ],
+        [
+          "primary_11"
+        ],
+        [
+          "primary_11"
+        ]
+      ]
     },
     {
       "id": "br_transitive_012",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_12"
+        ],
+        [
+          "primary_12"
+        ],
+        [
+          "primary_12"
+        ],
+        [
+          "primary_12"
+        ],
+        [
+          "primary_12"
+        ]
+      ]
     },
     {
       "id": "br_transitive_013",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_13"
+        ],
+        [
+          "primary_13"
+        ],
+        [
+          "primary_13"
+        ],
+        [
+          "primary_13"
+        ],
+        [
+          "primary_13"
+        ]
+      ]
     },
     {
       "id": "br_transitive_014",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_14"
+        ],
+        [
+          "primary_14"
+        ],
+        [
+          "primary_14"
+        ],
+        [
+          "primary_14"
+        ],
+        [
+          "primary_14"
+        ]
+      ]
     },
     {
       "id": "br_transitive_015",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_15"
+        ],
+        [
+          "primary_15"
+        ],
+        [
+          "primary_15"
+        ],
+        [
+          "primary_15"
+        ],
+        [
+          "primary_15"
+        ]
+      ]
     },
     {
       "id": "br_transitive_016",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_16"
+        ],
+        [
+          "primary_16"
+        ],
+        [
+          "primary_16"
+        ],
+        [
+          "primary_16"
+        ],
+        [
+          "primary_16"
+        ]
+      ]
     },
     {
       "id": "br_transitive_017",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_17"
+        ],
+        [
+          "primary_17"
+        ],
+        [
+          "primary_17"
+        ],
+        [
+          "primary_17"
+        ],
+        [
+          "primary_17"
+        ]
+      ]
     },
     {
       "id": "br_transitive_018",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_18"
+        ],
+        [
+          "primary_18"
+        ],
+        [
+          "primary_18"
+        ],
+        [
+          "primary_18"
+        ],
+        [
+          "primary_18"
+        ]
+      ]
     },
     {
       "id": "br_transitive_019",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_19"
+        ],
+        [
+          "primary_19"
+        ],
+        [
+          "primary_19"
+        ],
+        [
+          "primary_19"
+        ],
+        [
+          "primary_19"
+        ]
+      ]
     },
     {
       "id": "br_transitive_020",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_20"
+        ],
+        [
+          "primary_20"
+        ],
+        [
+          "primary_20"
+        ],
+        [
+          "primary_20"
+        ],
+        [
+          "primary_20"
+        ]
+      ]
     },
     {
       "id": "br_transitive_021",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_21"
+        ],
+        [
+          "primary_21"
+        ],
+        [
+          "primary_21"
+        ],
+        [
+          "primary_21"
+        ],
+        [
+          "primary_21"
+        ]
+      ]
     },
     {
       "id": "br_transitive_022",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_22"
+        ],
+        [
+          "primary_22"
+        ],
+        [
+          "primary_22"
+        ],
+        [
+          "primary_22"
+        ],
+        [
+          "primary_22"
+        ]
+      ]
     },
     {
       "id": "br_transitive_023",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_23"
+        ],
+        [
+          "primary_23"
+        ],
+        [
+          "primary_23"
+        ],
+        [
+          "primary_23"
+        ],
+        [
+          "primary_23"
+        ]
+      ]
     },
     {
       "id": "br_transitive_024",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_24"
+        ],
+        [
+          "primary_24"
+        ],
+        [
+          "primary_24"
+        ],
+        [
+          "primary_24"
+        ],
+        [
+          "primary_24"
+        ]
+      ]
     },
     {
       "id": "br_transitive_025",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_25"
+        ],
+        [
+          "primary_25"
+        ],
+        [
+          "primary_25"
+        ],
+        [
+          "primary_25"
+        ],
+        [
+          "primary_25"
+        ]
+      ]
     },
     {
       "id": "br_transitive_026",
       "is_error": true,
-      "A": 0.0,
-      "B": 0.0
+      "A": 0.2,
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_26"
+        ],
+        [
+          "primary_26"
+        ],
+        [
+          "leaf_26",
+          "mid_26"
+        ],
+        [
+          "primary_26"
+        ],
+        [
+          "primary_26"
+        ]
+      ]
     },
     {
       "id": "br_transitive_027",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_27"
+        ],
+        [
+          "primary_27"
+        ],
+        [
+          "primary_27"
+        ],
+        [
+          "primary_27"
+        ],
+        [
+          "primary_27"
+        ]
+      ]
     },
     {
       "id": "br_transitive_028",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_28"
+        ],
+        [
+          "primary_28"
+        ],
+        [
+          "primary_28"
+        ],
+        [
+          "primary_28"
+        ],
+        [
+          "primary_28"
+        ]
+      ]
     },
     {
       "id": "br_transitive_029",
       "is_error": true,
-      "A": 0.0,
-      "B": 0.0
+      "A": 0.2,
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_29"
+        ],
+        [
+          "primary_29"
+        ],
+        [
+          "primary_29"
+        ],
+        [
+          "primary_29"
+        ],
+        [
+          "leaf_29",
+          "mid_29",
+          "primary_29"
+        ]
+      ]
     },
     {
       "id": "br_transitive_030",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_30"
+        ],
+        [
+          "primary_30"
+        ],
+        [
+          "primary_30"
+        ],
+        [
+          "primary_30"
+        ],
+        [
+          "primary_30"
+        ]
+      ]
     },
     {
       "id": "br_multisource_survives_031",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_31"
+        ],
+        [
+          "primary_31"
+        ],
+        [
+          "primary_31"
+        ],
+        [
+          "primary_31"
+        ],
+        [
+          "primary_31"
+        ]
+      ]
     },
     {
       "id": "br_multisource_survives_032",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_32"
+        ],
+        [
+          "primary_32"
+        ],
+        [
+          "primary_32"
+        ],
+        [
+          "primary_32"
+        ],
+        [
+          "primary_32"
+        ]
+      ]
     },
     {
       "id": "br_multisource_survives_033",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_33"
+        ],
+        [
+          "primary_33"
+        ],
+        [
+          "primary_33"
+        ],
+        [
+          "primary_33"
+        ],
+        [
+          "primary_33"
+        ]
+      ]
     },
     {
       "id": "br_multisource_survives_034",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_34"
+        ],
+        [
+          "primary_34"
+        ],
+        [
+          "primary_34"
+        ],
+        [
+          "primary_34"
+        ],
+        [
+          "primary_34"
+        ]
+      ]
     },
     {
       "id": "br_multisource_survives_035",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_35"
+        ],
+        [
+          "primary_35"
+        ],
+        [
+          "primary_35"
+        ],
+        [
+          "primary_35"
+        ],
+        [
+          "primary_35"
+        ]
+      ]
     },
     {
       "id": "br_multisource_survives_036",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_36"
+        ],
+        [
+          "primary_36"
+        ],
+        [
+          "primary_36"
+        ],
+        [
+          "primary_36"
+        ],
+        [
+          "primary_36"
+        ]
+      ]
     },
     {
       "id": "br_multisource_survives_037",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_37"
+        ],
+        [
+          "primary_37"
+        ],
+        [
+          "primary_37"
+        ],
+        [
+          "primary_37"
+        ],
+        [
+          "primary_37"
+        ]
+      ]
     },
     {
       "id": "br_multisource_survives_038",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_38"
+        ],
+        [
+          "primary_38"
+        ],
+        [
+          "primary_38"
+        ],
+        [
+          "primary_38"
+        ],
+        [
+          "primary_38"
+        ]
+      ]
     },
     {
       "id": "br_multisource_survives_039",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_39"
+        ],
+        [
+          "primary_39"
+        ],
+        [
+          "primary_39"
+        ],
+        [
+          "primary_39"
+        ],
+        [
+          "primary_39"
+        ]
+      ]
     },
     {
       "id": "br_multisource_survives_040",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_40"
+        ],
+        [
+          "primary_40"
+        ],
+        [
+          "primary_40"
+        ],
+        [
+          "primary_40"
+        ],
+        [
+          "primary_40"
+        ]
+      ]
     },
     {
       "id": "br_multiretract_041",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 3.0,
+      "samples": [
+        [
+          "independent_41",
+          "primary_41"
+        ],
+        [
+          "independent_41",
+          "primary_41"
+        ],
+        [
+          "independent_41",
+          "primary_41"
+        ],
+        [
+          "independent_41",
+          "primary_41"
+        ],
+        [
+          "independent_41",
+          "primary_41"
+        ]
+      ]
     },
     {
       "id": "br_multiretract_042",
       "is_error": true,
-      "A": 0.2,
-      "B": 0.0
+      "A": 0.4,
+      "B": 0.0,
+      "B2": 3.0,
+      "samples": [
+        [
+          "independent_42",
+          "primary_42"
+        ],
+        [
+          "independent_42",
+          "multi_42",
+          "primary_42"
+        ],
+        [
+          "independent_42",
+          "primary_42"
+        ],
+        [
+          "independent_42",
+          "primary_42"
+        ],
+        [
+          "independent_42",
+          "multi_42",
+          "primary_42"
+        ]
+      ]
     },
     {
       "id": "br_multiretract_043",
       "is_error": true,
-      "A": 0.0,
-      "B": 0.0
+      "A": 0.2,
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "independent_43",
+          "multi_43",
+          "primary_43"
+        ],
+        [
+          "independent_43",
+          "primary_43"
+        ],
+        [
+          "independent_43",
+          "multi_43",
+          "primary_43"
+        ],
+        [
+          "independent_43",
+          "multi_43",
+          "primary_43"
+        ],
+        [
+          "independent_43",
+          "multi_43",
+          "primary_43"
+        ]
+      ]
     },
     {
       "id": "br_multiretract_044",
       "is_error": true,
-      "A": 0.0,
-      "B": 0.0
+      "A": 0.2,
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "independent_44",
+          "multi_44",
+          "primary_44"
+        ],
+        [
+          "independent_44",
+          "multi_44",
+          "primary_44"
+        ],
+        [
+          "multi_44"
+        ],
+        [
+          "independent_44",
+          "multi_44",
+          "primary_44"
+        ],
+        [
+          "independent_44",
+          "multi_44",
+          "primary_44"
+        ]
+      ]
     },
     {
       "id": "br_multiretract_045",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "independent_45",
+          "multi_45",
+          "primary_45"
+        ],
+        [
+          "independent_45",
+          "multi_45",
+          "primary_45"
+        ],
+        [
+          "independent_45",
+          "multi_45",
+          "primary_45"
+        ],
+        [
+          "independent_45",
+          "multi_45",
+          "primary_45"
+        ],
+        [
+          "independent_45",
+          "multi_45",
+          "primary_45"
+        ]
+      ]
     },
     {
       "id": "br_notfound_046",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_46"
+        ],
+        [
+          "primary_46"
+        ],
+        [
+          "primary_46"
+        ],
+        [
+          "primary_46"
+        ],
+        [
+          "primary_46"
+        ]
+      ]
     },
     {
       "id": "br_notfound_047",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_47"
+        ],
+        [
+          "primary_47"
+        ],
+        [
+          "primary_47"
+        ],
+        [
+          "primary_47"
+        ],
+        [
+          "primary_47"
+        ]
+      ]
     },
     {
       "id": "br_notfound_048",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_48"
+        ],
+        [
+          "primary_48"
+        ],
+        [
+          "primary_48"
+        ],
+        [
+          "primary_48"
+        ],
+        [
+          "primary_48"
+        ]
+      ]
     },
     {
       "id": "br_notfound_049",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_49"
+        ],
+        [
+          "primary_49"
+        ],
+        [
+          "primary_49"
+        ],
+        [
+          "primary_49"
+        ],
+        [
+          "primary_49"
+        ]
+      ]
     },
     {
       "id": "br_notfound_050",
       "is_error": true,
       "A": 0.0,
-      "B": 0.0
+      "B": 0.0,
+      "B2": 2.0,
+      "samples": [
+        [
+          "primary_50"
+        ],
+        [
+          "primary_50"
+        ],
+        [
+          "primary_50"
+        ],
+        [
+          "primary_50"
+        ],
+        [
+          "primary_50"
+        ]
+      ]
     }
   ]
 }

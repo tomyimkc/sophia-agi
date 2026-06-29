@@ -283,39 +283,72 @@ Three honest lessons, two of them corrections:
 
 **Direct consequence for the architecture:** the bus needs a **third, complementary detector —
 grounding *completeness*** (orphaned claims structurally present but *missing* from the answer),
-the under-abstention mirror of B, also computable from `okf`. It would catch exactly haiku's
-failure. That is the next measurement (re-run both models with A + B_over + B_under, and use
-quality-weighted fusion). Recorded as an open item, not a solved one.
+the under-abstention mirror of B, also computable from `okf`. This was then *built and measured*
+— see §3e.
+
+### 3e. Third detector + quality-weighted fusion (executed) — the rescue
+
+Added **B2 = grounding-completeness** (`reasoning/instinct_fusion._reflex_B2`: orphaned claims
+missing from the answer) and **quality-weighted fusion** (`fuse()`, weight ∝ d′), then re-ran
+both models (schema v2; raw answer-sets now stored, so future re-scoring needs no API spend):
+
+| model | base err | d′ A | d′ B (over) | **d′ B2 (under)** | fused equal | fused qual-wtd |
+|---|---|---|---|---|---|---|
+| `deepseek-chat` | 0.58 | 0.45 | 1.11 | **1.60** | 2.71 | 5.19\* |
+| `claude-haiku-4-5` | 0.98 | −5.34 | 0.00 | **14.59** | 2.94 | 14.59\* |
+
+Findings:
+
+1. **B2 is the workhorse.** Both models' dominant real error is *under*-abstention (failing to
+   propagate the cascade), so the completeness detector is the strongest single signal — d′ 1.60
+   for DeepSeek and a near-perfect **14.6 for haiku** (it fires on 49/49 of haiku's errors). The
+   detector the 2-detector bus was missing is exactly the one real models needed.
+2. **The 3-detector equal fusion now beats the best single detector** (DeepSeek 2.71 > 1.60) —
+   §3c's "naive fusion underperforms" was a 2-detector artifact; a third *complementary* detector
+   restores the fusion gain.
+3. **Quality-weighting earns its keep on a harmful detector.** Haiku's self-consistency is
+   *anti*-correlated with error (d′ −5.34: it is *more* self-consistent when wrong). Equal fusion
+   drags that in (2.94); quality-weighting zeros A and B and keeps B2 (14.59). (\*The qual-wtd d′
+   is **in-sample-optimistic** — weights are fit on the same labels; cross-validation is the
+   honest follow-up. Equal-fusion is the trustworthy headline.)
 
 ### 3d. End-to-end: does firing the instinct actually improve the outcome?
 
 Everything above measures *detection*. The original thesis is about *outcome* — so
 [`reasoning/instinct_endtoend.py`](../../reasoning/instinct_endtoend.py) closes the loop: it
-feeds each real model's **measured operating point** (TPR/FPR via the fire rule `A≥0.6 OR B≥1`,
-read from the §3c artifacts) into the `instinct_gate` re-route policy and measures what the
-operator cares about — above all the **confident-wrong rate** (a wrong answer asserted as
-correct; in Sophia's idiom the worst outcome, far worse than an honest `escalate`).
+feeds each real model's **measured operating point** (TPR/FPR via the 3-detector fire rule
+`A≥0.6 OR B≥1 OR B2≥1`, read from the §3e artifacts) into the `instinct_gate` re-route policy and
+measures what the operator cares about — above all the **confident-wrong rate** (a wrong answer
+asserted as correct; in Sophia's idiom the worst outcome, far worse than an honest `escalate`).
 
 | model (TPR) | policy | correct | **wrong-asserted** | escalate | cost |
 |---|---|---|---|---|---|
-| DeepSeek (0.74) | commit | 0.46 | **0.54** | 0.00 | 1.0 |
-| | late self-correct | 0.51 | 0.49 | 0.00 | 2.0 |
-| | **instinct re-route** | **0.66** | **0.27** | 0.07 | 1.9 |
-| Claude-haiku (≈0) | commit | 0.00 | 1.00 | 0.00 | 1.0 |
-| | **instinct re-route** | 0.00 | 1.00 | 0.00 | 1.0 |
+| DeepSeek (1.0) | commit | 0.42 | **0.58** | 0.00 | 1.0 |
+| | late self-correct | 0.49 | 0.52 | 0.00 | 2.0 |
+| | **instinct re-route** | **0.79** | **0.00** | 0.21 | 2.5 |
+| Claude-haiku (1.0) | commit | 0.02 | **0.98** | 0.00 | 1.0 |
+| | **instinct re-route** | 0.08 | **0.00** | **0.92** | 3.9 |
 
-**The answer is yes — but strictly gated by detection.** With a usable detector (DeepSeek) the
-instinct **halves confident-wrong** (0.54→0.27) and *raises* correctness (0.46→0.66) at ~2×
-cost — far beating late self-correction, which is marginal (matching §1b). With a blind detector
-(haiku, whose confident under-abstentions the bus can't see) the instinct is **identical to
-doing nothing**. The TPR sweep makes it a law: confident-wrong falls **0.61→0.00** as detector
-recall goes 0→1 (correctness 0.39→0.81, escalate 0→0.19). So the entire end-to-end payoff of
-"change its mind" rides on the reflex's recall over the model's *actual* error modes — which is
-why §3c's grounding-completeness detector (to cover under-abstention) is the gating next step.
+**The answer is yes — once the bus can see the errors, the instinct converts confident-wrong
+into either a correct re-route or an honest escalation.** With B2 in the bus both models reach
+TPR≈1.0, and:
 
-*Honest scope:* operating points are real; the outcome sim models re-attempts as i.i.d. draws
-at the model's base error (`late` uses generic self-correction rates, not per-model measured),
-so it answers "what outcome would this detector profile yield under the policy," not a live
+- **DeepSeek (capable):** confident-wrong **0.58→0.00**, correctness **0.42→0.79** — re-routing
+  recovers most errors; the residue escalates. Far beats late self-correction (marginal, §1b).
+- **Claude-haiku (incapable at this task):** correctness barely moves (0.02→0.08 — it genuinely
+  can't do the cascade), **but confident-wrong collapses 0.98→0.00, converted into 0.92
+  escalation.** This is the instinct's *floor* value and the most Sophia-aligned result in the
+  whole study: a model that would otherwise be **confidently wrong on 98% of cases instead says
+  "I don't know" and escalates.** Fail-closed, by reflex.
+
+The TPR sweep is the underlying law: confident-wrong falls **0.65→0.00** as detector recall
+0→1; a genuinely blind detector (TPR 0) yields no change — *the instinct only helps against
+errors it can detect, which is why B2 was the unlock.*
+
+*Honest scope:* operating points are real; the outcome sim models re-attempts as i.i.d. draws at
+the model's base error (so for haiku, base 0.98, re-routes almost never land a correct answer —
+hence escalation, not correctness, is the win), and `late` uses generic self-correction rates.
+It answers "what outcome would this detector profile yield under the policy," not a live
 closed-loop model claim. `canClaimAGI` stays false.
 
 ## 4. From model to measured claim (pre-registration sketch)
@@ -379,14 +412,20 @@ To graduate this from `candidateOnly` to a real eval under the Instrumented Eval
 - **Real-model run (executed, DeepSeek + Claude-haiku):** partly overturns the synthetic story.
   okf grounding is the *workhorse* (DeepSeek d′ 1.44, self-consistency only 0.64); naive
   equal-weight fusion can *underperform the best detector* (1.30 < 1.44 at ρ=+0.33 → use
-  quality-weighted fusion); and both detectors are **blind to confident under-abstention**, the
-  dominant error mode of the weak model (haiku, fused d′≈0). Next: add a grounding-*completeness*
-  detector + quality-weighted fusion. canClaimAGI stays false.
-- **End-to-end outcome (the thesis answered):** feeding the real operating points into the
-  re-route policy, the instinct **halves the confident-wrong rate** (DeepSeek 0.54→0.27) and
-  raises correctness (0.46→0.66), beating late self-correction — but does **nothing** for a model
-  whose errors it can't see (haiku). Confident-wrong falls monotonically with detector recall.
-  *Re-routing helps exactly as far as the reflex can detect.*
+  quality-weighted fusion); and both detectors were **blind to confident under-abstention**, the
+  dominant error mode of the weak model (haiku).
+- **Third detector + weighted fusion (executed):** added **B2 = okf grounding-*completeness***
+  (under-abstention) + quality-weighted fusion. B2 is the real workhorse (DeepSeek d′ 1.60, haiku
+  **14.6**, firing on 49/49 of haiku's errors); the 3-detector fusion now **beats the best single
+  detector**, and weighting **zeros a harmful detector** (haiku's self-consistency is *anti*-
+  correlated with error). The bus the real models needed was the completeness detector.
+- **End-to-end outcome (the thesis answered):** with the full bus, the instinct converts
+  confident-wrong into a correct re-route or an honest escalation. **DeepSeek:** confident-wrong
+  **0.58→0.00**, correctness 0.42→0.79. **Haiku (the floor-value result):** it still can't do the
+  task (correct 0.02→0.08) **but its confident-wrong collapses 0.98→0.00, converted to 0.92
+  escalation** — a model that would be confidently wrong on 98% of cases instead says "I don't
+  know." *Re-routing helps exactly as far as the reflex can detect; escalation fail-closes the
+  rest.* canClaimAGI stays false.
 - This repo already has the *policy* substrate (ko-escalate, graded decision, AGM belief
   revision, consequence gate). The missing pieces are the **reflex bus** and the **interrupt
   controller** — and a no-overclaim eval, datasets for which already exist.
