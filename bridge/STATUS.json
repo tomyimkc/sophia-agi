@@ -1,6 +1,11 @@
 {
-  "updatedAt": "2026-06-29T05:47:25Z",
+  "updatedAt": "2026-06-29T06:37:57Z",
   "host": "spark-2f2d",
+  "running": "2026-06-29-bench-a-04",
+  "pendingCommands": [
+    "2026-06-29-bench-a-04",
+    "2026-06-29-nvfp4-v5-train-03"
+  ],
   "trainwatch": [
     {
       "id": "a92be4e1",
@@ -1004,6 +1009,5 @@
       "bytes": 2915,
       "mtime": "2026-06-29T04:51:17Z"
     }
-  ],
-  "pendingCommands": []
+  ]
 }
