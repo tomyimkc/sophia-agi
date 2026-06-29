@@ -25,7 +25,7 @@
   "evalCases": 60,
   "trainSealed": "aef7296970bada5c",
   "evalSealed": "d4f2f56ae0e5ae00",
-  "baseModelLicense": "glm-4-9b License (NOT MIT; commercial use needs Zhipu registration)",
+  "baseModelLicense": "Apache-2.0",
   "rewardSelected": "verifier",
   "collapse": {
     "steps": 82,

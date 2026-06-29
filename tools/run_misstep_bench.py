@@ -88,7 +88,7 @@ def run(pack_path: Path = PACK) -> dict:
     n = len(cases)
     decided = tp + tn + fp + fn
     corrupt = tn + fp + abstained_corrupt
-    clean = tp + fn + abstained_clean
+    decided_clean = tp + fn  # clean cases that produced a verdict (abstentions reported separately)
     return {
         "benchmark": "misstep_injection",
         "n": n,
@@ -96,7 +96,9 @@ def run(pack_path: Path = PACK) -> dict:
         "abstained": {"clean": abstained_clean, "corrupt": abstained_corrupt},
         "accuracy": round((tp + tn) / decided, 4) if decided else 0.0,
         "misstepCatchRecall": round(tn / corrupt, 4) if corrupt else None,
-        "falseAlarmRate": round(fn / clean, 4) if clean else None,
+        # False alarms among DECIDED clean cases only (FN/(TP+FN)); abstentions are not
+        # diluted into the denominator — they are reported via abstained.clean.
+        "falseAlarmRate": round(fn / decided_clean, 4) if decided_clean else None,
         "verifiedStepCoverage": round((tp + tn + fp + fn) / n, 4) if n else 0.0,
         "catchByErrorType": {
             t: {"caught": v["caught"], "total": v["total"], "abstain": v["abstain"],
