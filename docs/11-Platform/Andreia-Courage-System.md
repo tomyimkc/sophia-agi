@@ -16,8 +16,10 @@ act and it held back anyway — the *decision–action gap*
 ([Wang 2026, arXiv:2601.07767](https://arxiv.org/abs/2601.07767)).
 
 Andreia adds that missing faculty as an **orthogonal, deterministic, fail-closed**
-gate. It does not modify the conscience kernel and **never overrides a hard
-prohibition** — courage is not recklessness.
+gate that **never overrides a hard prohibition** — courage is not recklessness.
+It can run standalone, or as an **opt-in consulted path inside the conscience
+kernel** (see Integration below) that is off by default, so existing conscience
+behavior is byte-identical unless explicitly enabled.
 
 ## Model: courage as a phase transition
 
@@ -82,6 +84,28 @@ job is the **bottom-left (cowardice)**, which the fear-only kernel cannot see.
 - Benchmark + receipt: `tools/run_andreia_bench.py` + `data/andreia_courage_battery.json`
 - Audit trails: `agi-proof/courage-ledger.md`, plus the open claim in `agi-proof/failure-ledger.md`
 - Tests: `tests/test_andreia.py`
+
+## Integration (opt-in 9th consulted path)
+
+`conscience_check(..., context={"consultCourage": True})` consults Andreia after
+the conscience verdict is computed (mirroring the opt-in ConsequenceGate). It:
+
+- attaches the full courage report under `decision.courage`;
+- may upgrade an otherwise-quiet `abstain` to `escalate` **only** when the hold
+  looks fear-driven (a *confident* abstain on a high-cost-of-silence matter) —
+  forcing an explicit justification instead of a silent retreat.
+
+It never weakens a `block`/`allow`/`retrieve`/`clarify`, never overrides a hard
+prohibition, and is **off by default** (existing behavior unchanged). The
+upgrade is deliberately conservative: a confident abstain is rare by
+construction, which is exactly the cowardice case worth surfacing.
+
+## Path to a GO receipt
+
+See [`agi-proof/andreia-measurement-plan.md`](../../agi-proof/andreia-measurement-plan.md)
+for the pre-registered plan: external decontaminated battery, ≥2 independent
+judge families (κ ≥ 0.40), a raw-model baseline contrast, and an effect on the
+cowardice/recklessness error rates whose 95% CI excludes zero.
 
 ## Measurement boundary (read this)
 

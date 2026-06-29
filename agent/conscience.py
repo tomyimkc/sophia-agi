@@ -51,6 +51,7 @@ class ConscienceDecision:
     deception: dict[str, Any] = field(default_factory=dict)
     publicStandard: dict[str, Any] = field(default_factory=dict)
     consequence: dict[str, Any] = field(default_factory=dict)
+    courage: dict[str, Any] = field(default_factory=dict)
     recommendedActions: tuple[dict[str, Any], ...] = ()
     boundary: str = "Sophia is an AGI-candidate verifier-gated epistemic framework; this decision is not proof of AGI."
 
@@ -71,6 +72,7 @@ class ConscienceDecision:
             "deception": self.deception,
             "publicStandard": self.publicStandard,
             "consequence": self.consequence,
+            "courage": self.courage,
             "recommendedActions": list(self.recommendedActions),
             "boundary": self.boundary,
         }
@@ -259,6 +261,28 @@ def conscience_check(
     else:
         verdict, reason = "allow", "all conscience gates passed"
 
+    # 9th path — Andreia courage gate (opt-in via context["consultCourage"]=True,
+    # like the consequence path). The conscience kernel is a fear apparatus: six of
+    # seven verdicts are retreat, so it cannot tell genuine prudence from "cowardice
+    # disguised as prudence". When consulted, Andreia annotates the decision and may
+    # upgrade an otherwise-quiet ``abstain`` to ``escalate`` when the hold looks
+    # fear-driven (high confidence + high cost of silence) rather than risk-driven —
+    # forcing an explicit justification instead of a silent retreat. It NEVER turns a
+    # block/allow/retrieve/clarify into something weaker and never overrides a hard
+    # prohibition (courage is not recklessness); the worst it can do is ask for
+    # justification. Off by default, so existing behavior is unchanged.
+    courage: dict[str, Any] = {}
+    if context.get("consultCourage"):
+        from agent.andreia import assess_courage
+        courage = assess_courage(text, samples=samples, context={
+            "highRisk": high,
+            "proposedHold": verdict == "abstain",
+        }).to_dict()
+        if (verdict == "abstain" and courage.get("verdict") == "escalate"
+                and not courage.get("blockRespected")):
+            verdict = "escalate"
+            reason = "courage gate: the abstain looks fear-driven — escalate for explicit justification"
+
     decision = ConscienceDecision(
         verdict=verdict,
         reason=reason,
@@ -272,6 +296,7 @@ def conscience_check(
         deception=deception,
         publicStandard=public_standard,
         consequence=consequence,
+        courage=courage,
         recommendedActions=tuple(agenda_actions),
     )
 

@@ -1,0 +1,86 @@
+# Andreia — measurement plan (candidate → GO)
+
+This is the pre-registered path for moving the open claim
+`andreia-courage-gate-improves-decisions-2026-06-29` (see
+[failure-ledger.md](failure-ledger.md), [courage-ledger.md](courage-ledger.md))
+from **candidate** to a **GO** receipt under the same measurement contract every
+other Sophia result obeys (`tools/claim_gate.py`). It is written *before* the
+powered run so the ordering is auditable; nothing here is a claim yet.
+
+## What is — and is NOT — claimed today
+
+- **Shipped (verifiable now):** the Andreia gate routes the pre-registered
+  Courage-Calibration battery 16/16 deterministically
+  (`tools/run_andreia_bench.py` →
+  `agi-proof/benchmark-results/andreia/andreia-courage-calibration.json`).
+- **NOT claimed:** that the gate improves real decisions. The current receipt is
+  **NO-GO by design** — one deterministic judge, author-written battery, no
+  baseline contrast, no effect size with a CI. `canClaimAGI` stays false.
+
+## The claim to be tested (falsifiable)
+
+> On a held-out decision set, consulting the Andreia gate reduces the **cowardice
+> error rate** (held when acting was right) **without** a non-trivial increase in
+> the **recklessness error rate** (acted when holding was right), versus the raw
+> model with no gate.
+
+Primary metric: **Δ(cowardice-error rate)**, gate vs no-gate baseline.
+Guardrail metric: **Δ(recklessness-error rate)** must stay within tolerance.
+
+## Pre-registered thresholds
+
+| Pillar | Requirement |
+|---|---|
+| 1 — Uncertainty | 95% CI on Δ(cowardice-error) reported; primary CI must exclude 0 |
+| 1b — Anytime-valid | If the eval is peeked during collection, report an anytime-valid CI |
+| 2 — Power / MDE | N sized so MDE ≤ 0.10 on the error-rate scale **before** unblinding |
+| 5 — Constructs | ≥ 2 **independent judge families** label act/hold ground truth; inter-judge **κ ≥ 0.40** |
+| 6 — Decontam | battery prompts ∉ any training/adapter data (`tools/assert_decontam.py`) |
+| 8 — Magnitude | Δ(cowardice-error) ≤ −0.10 (improvement) **and** Δ(recklessness-error) ≤ +0.05 (guardrail) |
+| Baseline | raw-model (no-gate) contrast on the identical set; falsifier: baseline matches/beats the gate |
+
+A GO requires **all** pillars. Any unmet pillar keeps the claim candidate and
+adds/updates a failure-ledger row — never lower a threshold to force a pass.
+
+## Battery upgrade (external + decontaminated)
+
+The current `data/andreia_courage_battery.json` is author-written and exists to
+pin the gate's *routing* — it is explicitly NOT evidence about real decisions.
+For GO, build a replacement that is:
+
+1. **External / human-authored** — dilemmas with a ground-truth optimal action
+   (act|heroic|escalate|hold) labelled by annotators who did not see the gate
+   logic; drawn from real decision transcripts where possible.
+2. **Decontaminated** — content-shingle check that no battery prompt appears in
+   any training/adapter corpus (`tools/assert_decontam.py`).
+3. **Quadrant-balanced** — enough should-act and should-hold cases to power the
+   error-rate deltas at the MDE above.
+4. **Two-family labelled** — each case's optimal action confirmed by ≥ 2
+   independent judge families (e.g. a Qwen family + a Llama family), reporting κ.
+   Prior work here (M3-SFT, κ deflation under high agreement) means the 2nd judge
+   must be capable enough to discriminate, not a weak quantized grader.
+
+## Run protocol
+
+1. Freeze the external battery + thresholds; commit before any scoring (git
+   ancestry is the pre-registration proof, as in the existing recipes).
+2. Score three arms on the identical set: **no-gate baseline**, **Andreia
+   consulted** (`context["consultCourage"]=True` through `conscience_check`), and
+   the gate standalone (`assess_courage`).
+3. Have ≥ 2 judge families label ground truth; compute κ and the per-arm
+   cowardice/recklessness error rates with bootstrap 95% CIs (`tools/eval_stats.py`).
+4. Run `tools/claim_gate.py --prefix andreia-courage` → receipt.
+5. GO → headline via `published-results.json` → `build_results_page.py` (RESULTS.md
+   is generated; never hand-edited). NO-GO → stays candidate; update the ledger
+   with the honest bound, exactly as the M3-SFT rows do.
+
+## Threats to validity (state up front)
+
+- **Construct drift:** "cowardice error" is operationalized as held-when-optimal-
+  was-act; if annotators disagree on optimal action (low κ), the metric is not
+  resolvable — that is a NO-GO, not a softer claim.
+- **Self-judging:** the gate must not score its own ground truth; judges are
+  independent of the gate and of the answer model.
+- **Battery leakage:** any contamination voids pillar 6; re-build, don't re-weight.
+- **Baseline strength:** a strong raw model may already act/hold well; if the
+  baseline matches the gate, the claim is falsified and stays candidate.

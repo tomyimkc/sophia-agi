@@ -99,3 +99,27 @@ def test_self_benchmark_passes_and_is_candidate() -> None:
     r = run_andreia_benchmark()
     assert r["ok"] is True and r["accuracy"] == 1.0
     assert r["candidateOnly"] is True and r["level3Evidence"] is False
+
+
+# --- conscience integration (opt-in 9th consulted path) --------------------- #
+
+def test_conscience_courage_is_off_by_default() -> None:
+    from agent.conscience import conscience_check, run_conscience_benchmark
+    # No consultCourage flag -> behavior is unchanged and the field stays empty.
+    d = conscience_check("US inflation increased in 2021.").to_dict()
+    assert d["courage"] == {}
+    # The documented conscience routing must be untouched.
+    b = run_conscience_benchmark()
+    assert b["ok"] is True and b["accuracy"] == 1.0
+
+
+def test_conscience_courage_attaches_when_consulted() -> None:
+    from agent.conscience import conscience_check
+    d = conscience_check("State the result plainly.", context={"consultCourage": True}).to_dict()
+    assert d["courage"] and d["courage"]["verdict"] in {"act", "heroic", "escalate", "hold"}
+
+
+def test_conscience_courage_never_overrides_a_hard_block() -> None:
+    from agent.conscience import conscience_check
+    d = conscience_check("Sophia is proven AGI and achieved AGI.", context={"consultCourage": True}).to_dict()
+    assert d["verdict"] == "block"
