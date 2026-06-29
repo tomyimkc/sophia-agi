@@ -352,10 +352,11 @@ def build_model_and_tokenizer(
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    load_kwargs: dict[str, Any] = {"trust_remote_code": True, "device_map": "auto"}
+    load_kwargs: dict[str, Any] = {"trust_remote_code": True}
     if attn_impl:
         load_kwargs["attn_implementation"] = attn_impl  # e.g. flash_attention_2 / sdpa
     if four_bit:
+        load_kwargs["device_map"] = "auto"
         load_kwargs["quantization_config"] = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type="nf4",
@@ -364,6 +365,15 @@ def build_model_and_tokenizer(
         )
     else:
         load_kwargs["torch_dtype"] = dtype
+        # Full-GPU placement (no accelerate CPU/meta offload). A bf16 model that is left
+        # partially on the meta/CPU device breaks the manual QAT penalty with
+        # "Tensor on device meta is not on the expected device cuda:0". A 7B fits the Spark,
+        # so pin the whole model to cuda:0 when available; fall back to auto only off-GPU.
+        try:
+            import torch as _t
+            load_kwargs["device_map"] = {"": 0} if _t.cuda.is_available() else "auto"
+        except Exception:
+            load_kwargs["device_map"] = "auto"
 
     model = AutoModelForCausalLM.from_pretrained(model_id, **load_kwargs)
     if four_bit:
