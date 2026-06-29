@@ -287,6 +287,7 @@ _CHECK_FNS = {
     "occlusion": lambda s, c: occludes(s, c["a"], c["b"]),
     "bigger": lambda s, c: bigger_than(s, c["a"], c["b"]),
     "distance_cmp": lambda s, c: distance_cmp(s, c["a"], c["b"], c["op"], c["value"]),
+    "distance": lambda s, c: distance_between(s, c["a"], c["b"]),  # raw float (measure traps)
 }
 
 
@@ -316,6 +317,12 @@ def gold_matches_check(trap: dict) -> bool:
     gold = str(trap["gold_answer"]).strip().lower()
     if atype == "count":
         return resolved is not None and int(resolved) == int(trap["gold_answer"])
+    if atype == "measure":
+        # numeric measure (e.g. distance): the verifier's value must land within
+        # the trap's tolerance of the declared gold (labels stay machine-derived).
+        if resolved is None:
+            return False
+        return abs(float(resolved) - float(trap["gold_answer"])) <= float(check.get("tol", 0.0))
     if atype == "yesno":
         # presence/relation: verifier bool must match the declared expect, and the
         # gold must read 'yes' iff expect is True.

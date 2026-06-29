@@ -1499,8 +1499,16 @@ extension (`data/visual_traps.json`: `depth_order`, `occlusion`, `size_illusion`
 gold label is re-derived by the judge-free verifier (`gold_matches_check`,
 `tests/test_multimodal_traps.py`), the reference mocks behave correctly
 (`mock:grounded` → 0 hallucination, `mock:credulous` → 1.0), and the rows flow
-family-disjoint into the visual RLVR split. No **real VLM** has been measured on
-these physical axes.
+family-disjoint into the visual RLVR split. The slice now also ships a `measure`
+answer-type (free-form numeric distance, tolerance-scored — `data/visual_traps.json`
+`distance_measure` rows), a fail-closed **metric grounding gate**
+(`multimodal_bench/metric_gate.py`: a physical claim is accepted only if its cited
+region contains the subject AND the verifier confirms the relation/measure; else
+block + escalate), and a **depth-source seam** (`multimodal_bench/depth_backend.py`)
+whose default is authored z and whose pixel-derived Depth Anything V2 backend is
+recorded as a BLOCKER when torch/transformers/weights are absent (the
+`encoder_probe` discipline) — never a faked number. No **real VLM** and no
+**real (pixel-derived) depth** have been measured on these physical axes.
 
 **Claim impact:** Blocks any claim that the suite measures a real model's
 physical-world understanding (metric depth, occlusion, size constancy, distance).

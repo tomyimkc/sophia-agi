@@ -301,6 +301,33 @@ source) is required before any physical-understanding number is a headline —
 registered OPEN as `physical-spatial-verifier-real-vlm-not-run-2026-06-29`. Run:
 
 ```
-python tools/run_multimodal_traps.py --answer mock:grounded --runs 3   # 0 hallucination on the 47-trap suite
+python tools/run_multimodal_traps.py --answer mock:grounded --runs 3   # 0 hallucination on the suite
 python tools/run_multimodal_reward.py                                  # reward + family-disjoint split incl. physical rows
 ```
+
+**Metric grounding gate + depth seam (the re-check loop).** Beyond *scoring* a
+physical answer, the slice closes the workstream-A grounding loop: a VLM's metric
+claim is a hypothesis, re-checked before it is accepted.
+
+| Piece | What landed | File |
+|---|---|---|
+| `measure` answer-type | free-form numeric distance scored within a tolerance (gold = true 3D separation, distractor = the depth-blind 2D estimate) — the judge/verifier/mocks all handle it | `judge.py`, `verifiers.py`, `model.py`, `data/visual_traps.json` (`distance_measure`) |
+| Fail-closed metric gate | a claim is accepted only if its cited **region** contains the subject AND the judge-free verifier confirms the relation/measure; reversed depth order, the size illusion, and ungroundable regions are **blocked + escalated** (the metric twin of the GUI-action gate) | `multimodal_bench/metric_gate.py`, `tools/run_metric_gate.py` |
+| Depth-source seam | pluggable depth: `authored` z offline (default), or pixel-derived **Depth Anything V2** that renders the scene and samples per-object metric depth — recorded as a **blocker** when weights/deps are absent, never faked | `multimodal_bench/depth_backend.py` |
+
+Offline behaviour: the gate accepts 2/2 grounded claims and blocks 3/3 hallucinated
+ones (distinct reasons, all escalated); the Depth Anything source returns a clean
+blocker without weights, and the gate then fails closed (blocks every claim). The
+suite is now **50 traps**; `tests/test_metric_gate.py` covers the gate and the
+backend seam. Run:
+
+```
+python tools/run_metric_gate.py                          # authored depth: grounded accepted, hallucinated blocked
+python tools/run_metric_gate.py --depth depth-anything   # pixel depth: blocker until weights are wired
+```
+
+The honesty bound is unchanged and now doubly explicit: with the **authored**
+source the depth is declared, not seen; pixel-derived depth needs the Depth
+Anything V2 weights, tracked OPEN in the failure ledger
+(`physical-spatial-verifier-real-vlm-not-run-2026-06-29`). The gate is the
+machinery; no physical-understanding capability is claimed here.

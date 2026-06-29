@@ -45,7 +45,7 @@ def test_trap_ids_unique_and_fields_present():
     for t in traps:
         for f in ("scene", "question", "answer_type", "gold_answer", "trap_answer", "check", "reason"):
             assert f in t, f"{t['id']} missing {f}"
-        assert t["answer_type"] in ("yesno", "count", "text")
+        assert t["answer_type"] in ("yesno", "count", "text", "measure")
         assert str(t["gold_answer"]).lower() != str(t["trap_answer"]).lower()
 
 
@@ -116,6 +116,19 @@ def test_bigger_than_and_distance():
     assert verifiers.distance_cmp(scene, "car", "cup", "<", 250) is False
     assert verifiers.distance_between(scene, "car", "missing") is None
     assert verifiers.distance_cmp(scene, "car", "missing", ">", 1) is False  # fail-closed
+
+
+def test_measure_answer_type_judge_and_label():
+    # gold/verifier agreement already covered for all rows; here check the judge.
+    trap = {"answer_type": "measure", "gold_answer": 476, "trap_answer": 453,
+            "check": {"type": "distance", "tol": 10.0}}
+    assert J.lexical_judge("They are about 476 units apart.", trap).affirmed_gold is True
+    assert J.lexical_judge("About 453 units apart.", trap).hallucinated is True   # depth-blind 2D
+    assert J.lexical_judge("Roughly 800 units.", trap).hallucinated is True       # confident & wrong
+    assert J.lexical_judge("I can't tell the distance.", trap).abstained is True
+    # at least one measure trap exists and its gold matches the verifier within tol
+    measure = [t for t in runner.load_traps() if t["answer_type"] == "measure"]
+    assert measure and all(verifiers.gold_matches_check(t) for t in measure)
 
 
 def test_physical_categories_present_and_balanced():

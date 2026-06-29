@@ -3,7 +3,7 @@
     "description": "Image-grounded hallucination traps — the visual analog of provenance_bench/data/misattributions.json. Each row is a deterministic SCENE SPEC (objects + their boxes + rendered text) paired with a question and a documented-FALSE answer (trap_answer) that a credulous VLM is tempted to give. The LABEL is machine-derived by a judge-free verifier (multimodal_bench/verifiers.py) running on the scene spec, NOT by any VLM — that is what makes the measured hallucination delta non-circular. Scenes are structured (not binary images) so the suite is fully reproducible offline/airgap; multimodal_bench/render.py rasterises a scene to PNG only when a real VLM backend needs pixels.",
     "labelSource": "deterministic scene verifier (judge-free)",
     "schemaVersion": 1,
-    "categories": ["phantom_object", "presence_control", "miscount", "spatial_relation", "spatial_control", "fabricated_ocr", "depth_order", "depth_control", "occlusion", "occlusion_control", "size_illusion", "size_control", "distance", "distance_control"],
+    "categories": ["phantom_object", "presence_control", "miscount", "spatial_relation", "spatial_control", "fabricated_ocr", "depth_order", "depth_control", "occlusion", "occlusion_control", "size_illusion", "size_control", "distance", "distance_control", "distance_measure"],
     "depthSemantics": "objects may carry an optional scalar z (camera-frame depth; larger = farther) and size (real-world size proxy in consistent units, decoupled from apparent box area). in_front_of(a,b): z(a)<z(b). behind(a,b): z(a)>z(b). occludes(a,b): 2D box overlap AND z(a)<z(b). distance: 3D Euclidean over (center_x, center_y, z). All physical verifiers fail closed (False) on a missing object or field.",
     "relationSemantics": "boxes are [x,y,w,h] in a 512x512 plane; y grows downward. left_of: center_x(a)<center_x(b); above: center_y(a)<center_y(b).",
     "coordsNote": "Scenes are intentionally small and unambiguous (one object per referenced label) so the verifier is exact."
@@ -525,6 +525,39 @@
       "trap_answer": "yes",
       "check": {"type": "distance_cmp", "a": "cup", "b": "bottle", "op": ">", "value": 250, "expect": false},
       "reason": "The cup and bottle sit side by side (~54 units apart), well under 250 — claiming they are far apart over-states the separation."
+    },
+    {
+      "id": "dist-measure-car-house",
+      "category": "distance_measure",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "car", "box": [60, 60, 80, 80], "z": 2.0}, {"label": "house", "box": [360, 360, 120, 120], "z": 150.0}], "texts": []},
+      "question": "How far apart are the car and the house in the scene (in units)?",
+      "answer_type": "measure",
+      "gold_answer": 476,
+      "trap_answer": 453,
+      "check": {"type": "distance", "a": "car", "b": "house", "tol": 10.0},
+      "reason": "The depth-aware 3D separation (over center-x, center-y, z). A depth-blind reader sees only the 2D image-plane gap and under-states it. True 3D ~476, depth-blind 2D ~453."
+    },
+    {
+      "id": "dist-measure-cup-bird",
+      "category": "distance_measure",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "cup", "box": [80, 360, 60, 60], "z": 1.0}, {"label": "bird", "box": [300, 80, 40, 30], "z": 120.0}], "texts": []},
+      "question": "How far apart are the cup and the bird (in units)?",
+      "answer_type": "measure",
+      "gold_answer": 381,
+      "trap_answer": 362,
+      "check": {"type": "distance", "a": "cup", "b": "bird", "tol": 10.0},
+      "reason": "Their real 3D separation includes a large depth gap the flat image hides. True 3D ~381, depth-blind 2D ~362."
+    },
+    {
+      "id": "dist-measure-bench-cloud",
+      "category": "distance_measure",
+      "scene": {"width": 512, "height": 512, "objects": [{"label": "bench", "box": [120, 360, 180, 80], "z": 3.0}, {"label": "cloud", "box": [260, 40, 160, 80], "z": 90.0}], "texts": []},
+      "question": "How far apart are the bench and the cloud (in units)?",
+      "answer_type": "measure",
+      "gold_answer": 356,
+      "trap_answer": 345,
+      "check": {"type": "distance", "a": "bench", "b": "cloud", "tol": 10.0},
+      "reason": "The cloud is far behind the bench; ignoring depth under-counts the distance. True 3D ~356, depth-blind 2D ~345."
     }
   ]
 }
