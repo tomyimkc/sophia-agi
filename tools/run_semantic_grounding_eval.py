@@ -138,11 +138,19 @@ def build_prompt(arm: str, case: dict) -> str:
     return base + "\n\n[Reason step by step over only the listed facts.]"
 
 
+SUBJECT_SYSTEM = (
+    "You are answering a benchmark item. Be concise and follow the instructions exactly. "
+    "For a definition item, name the single correct definition and any author it must not be "
+    "attributed to. For a closed-world claim, answer exactly one of: entailed, violation, abstain."
+)
+
+
 def model_completion(arm: str, case: dict, client) -> dict:
-    """Generate one completion from a real model client (agent.model.ModelClient-like)."""
-    prompt = build_prompt(arm, case)
-    text = client.complete(prompt) if hasattr(client, "complete") else client.generate(prompt)
-    return {"id": case["id"], "completion": text}
+    """Generate one completion from a real agent.model.ModelClient."""
+    user = build_prompt(arm, case)
+    result = client.generate(SUBJECT_SYSTEM, user)
+    return {"id": case["id"], "completion": result.text if result.ok else "",
+            "ok": bool(result.ok), "error": result.error}
 
 
 # ----------------------------------------------------------------- arm scoring
@@ -180,17 +188,26 @@ def run(*, mock: bool, model: str | None, seeds: int, fold: str = "all") -> dict
     cases = load_cases(fold)
     client = None
     if not mock:
-        from agent.model import ModelClient  # lazy: only needed for a real run
-        client = ModelClient(model)
+        from agent.model import default_client  # lazy: only needed for a real run
+        client = default_client(model)
 
-    arms_out: dict[str, dict] = {}
-    for arm in ARMS:
-        if mock:
-            comps = {c["id"]: mock_completion(arm, c) for c in cases}
-        else:
-            comps = {c["id"]: model_completion(arm, c, client) for c in cases}
-        arms_out[arm] = score_arm(cases, comps)
+    seeds = max(1, seeds)
+    # Pool every (case, seed) observation; paired deltas key on "id#sN" so the seeds
+    # add real paired samples (a real model varies across seeds; mock is deterministic).
+    pooled_scores: dict[str, list] = {a: [] for a in ARMS}
+    primary: dict[str, dict[str, float]] = {a: {} for a in ARMS}
+    for seed in range(seeds):
+        for arm in ARMS:
+            if mock:
+                comps = {c["id"]: mock_completion(arm, c) for c in cases}
+            else:
+                comps = {c["id"]: model_completion(arm, c, client) for c in cases}
+            sa = score_arm(cases, comps)
+            pooled_scores[arm].extend(score_case(c, comps[c["id"]]) for c in cases)
+            for cid, flag in sa["primary"].items():
+                primary[arm][f"{cid}#s{seed}"] = flag
 
+    arms_out = {a: {"report": aggregate(pooled_scores[a]), "primary": primary[a]} for a in ARMS}
     base = arms_out["A0"]["primary"]
     deltas = {
         "A1_minus_A0": paired_delta(base, arms_out["A1"]["primary"]),
