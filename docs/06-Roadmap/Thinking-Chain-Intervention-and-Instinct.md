@@ -199,6 +199,21 @@ sampler is one pluggable function; a real model drops in via
 `run_reflex_eval(..., sampler=my_model_sampler)`, and that real number is the gated next step
 below, not asserted here. The *harness* is the deliverable; `canClaimAGI` stays `false`.
 
+**Real-model run — attempted, blocked (honest record).** The real sampler exists
+([`tools/run_reflex_openrouter.py`](../../tools/run_reflex_openrouter.py), OpenAI-compatible,
+key from env only). A run against OpenRouter (gpt-4o-mini + a second family) was attempted and
+**blocked at the provider**: the key authenticated (a valid `user_id` resolved) but every
+request returned `HTTP 403 "prohibited due to a violation of provider Terms Of Service"` — the
+sandbox's policy-enforcing egress IP is ToS-blocked by the provider, independent of key or
+model. So **no real-model d′ exists yet** (the synthetic number is the only one, and is not a
+model claim). The attempt also surfaced and fixed a harness-honesty bug: the tool originally
+folded API failures into the answer stream, which made an all-failed run masquerade as
+`base_error=1.0` (the model "getting everything wrong") — exactly the fabricated-metric trap the
+[rlvr-harness-traps](../../.claude/skills/rlvr-harness-traps/SKILL.md) discipline warns about.
+The tool now **fails loud** on any 4xx and never records a failed call as data. To get the real
+number: run the tool from a non-blocked network (your own machine) with a rotated key in
+`OPENROUTER_API_KEY` — `python tools/run_reflex_openrouter.py --model <m> --samples 5 --yes`.
+
 ---
 
 ## 4. From model to measured claim (pre-registration sketch)

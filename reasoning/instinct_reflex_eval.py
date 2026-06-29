@@ -175,17 +175,29 @@ class ReflexReport:
         return {k: getattr(self, k) for k in self.__dataclass_fields__}
 
 
+def _default_oracle(case: dict[str, Any], majority_answer: str | None) -> bool:
+    """Synthetic-sampler oracle: an item is errored iff the majority answer isn't CORRECT."""
+    return majority_answer != "CORRECT"
+
+
 def run_reflex_eval(
     *,
     competence: float = 0.62,
     seed: int = 1234,
     sampler: Callable[..., list[str]] = synthetic_sampler,
     reflex: Callable[[Sequence[str]], float] = self_consistency_reflex,
+    oracle: Callable[[dict[str, Any], str | None], bool] = _default_oracle,
     cases: list[dict[str, Any]] | None = None,
     bar: float | None = None,
 ) -> ReflexReport:
+    """Score a reflex's detectability against an oracle.
+
+    ``reflex`` reads only the (label-free) samples; ``oracle`` supplies the ground-truth
+    error label from the case. They are kept strictly separate so the reflex score never
+    sees ground truth — a real model drops in via ``sampler`` (raw answers) + ``oracle``
+    (compare the majority answer to the planted ``expectAbstain`` set).
+    """
     cases = cases if cases is not None else load_cases()
-    rng = random.Random(seed)
     scores_err: list[float] = []
     scores_clean: list[float] = []
     for i, case in enumerate(cases):
@@ -193,7 +205,7 @@ def run_reflex_eval(
         crng = random.Random(seed * 1009 + i)
         samples = sampler(case, crng, competence=competence)
         answer, _conf = self_consistency(samples)
-        is_error = (answer != "CORRECT")  # oracle: majority answer wrong?
+        is_error = oracle(case, answer)  # ground truth — never seen by the reflex
         score = reflex(samples)
         (scores_err if is_error else scores_clean).append(score)
     n = len(cases)
