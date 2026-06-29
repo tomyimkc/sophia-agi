@@ -300,11 +300,24 @@ intelligence*. An honest memorizer that abstains correctly on the unfamiliar is
 algorithms. So this repo does *not* adopt the "race to invention" framing; it logs
 novelty as its own tracked pillar (`coding-novelty-oracle-missing-2026-06-29`) with
 a disciplined path: an open-invention task generator (solution-families absent from
-every split), a recall-vs-derivation discriminator (the trajectory auditor + the
-public−private generalization gap as the measurement), and a pre-registered
-invention metric under the claim gate. Until that exists, coding results are
-reported as *derivation-honest on seen families*, never as *general coding
-capability*.
+every split), a recall-vs-derivation discriminator, and a pre-registered invention
+metric under the claim gate.
+
+**The instrument now exists (candidate).** `provenance_bench/invention_dataset.py`
+builds depth-`k` *pipeline* tasks — ordered compositions of primitive transforms
+(reverse, dedup, sort, …) — split so every eval composition is **absent from train**
+while every primitive is still **seen in train**. Solving eval therefore requires
+composing seen pieces in an unseen order: derivation, not recall, and
+decontaminated by construction. Its validity is self-proving — a *memorizer* policy
+scores recall 1.00 / derivation 0.00 while a *deriver* scores 1.00 on both, so the
+eval pass-rate (and the recall−derivation gap) measures invention
+(`discrimination()` / `offline_invariants()`; `tools/gen_invention_pack.py`). The
+hidden tests use the `pipeline` entry point, so the **same hardened grader** from
+Part 4 runs them — the anti-cheat layer and the novelty layer compose. Honest
+scope: this measures *compositional generalization* (a tractable proxy), not
+open-ended novelty; depth-1 is pure recall. No model has been run on it yet — until
+one is, coding results are reported as *derivation-honest on seen families*, never
+as *general coding capability*.
 
 ## The one-line discipline (coding edition)
 
