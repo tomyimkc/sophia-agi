@@ -5,7 +5,7 @@
     "hiddenEvalNote": "Hidden-eval prompts are never published; only aggregates + hashed commitments.",
     "schemaVersion": 1
   },
-  "lastUpdated": "2026-06-27",
+  "lastUpdated": "2026-06-29",
   "validated": [
     {
       "model": "ollama:dolphin-llama3:8b",
@@ -132,6 +132,19 @@
       "falsePositiveCost": 0.0,
       "coverage": 0.237,
       "caveat": "Single judge. An independent Claude audit panel re-judged all 46 cases and found this judge OVER-counted (76% agreement, 10 false positives), so the validated alone-rate is ~21.7%, not 42.8%. This row is illustrative ONLY and must not be quoted as a headline."
+    },
+    {
+      "model": "google/gemma-3-4b-it + M3-SFT LoRA (sophia-wisdom-4b-pilot-seed0)",
+      "modelNote": "source-discipline SFT adapter; corpus-bound pilot; weights reproducible-from-seed (not committed)",
+      "judge": "two independent families — Qwen2.5-7B (ollama/CUDA, DGX Spark) + Llama-3.3-70B-4bit (mlx/Metal, M3 Ultra Mac Studio, via openai-transport)",
+      "runs": 3,
+      "summary": [
+        "Blind pairwise adapter-vs-base judging, 268 source-discipline cases x 3 seeds, both judge families.",
+        "Adapter win-rate pooled over 3 seeds: **Qwen-7B 0.72 [0.687, 0.750]**, **Llama-3.3-70B 0.81 [0.777, 0.832]** — both 95% CIs exclude 0.5 (significant) on every seed.",
+        "Inter-judge kappa = 0.24 (seeds 0.23/0.28/0.20) — BELOW the 0.40 floor; prevalence-deflation (both judges agree ~75%, obsAgree 0.71-0.77), not disagreement (PABAK ~ 0.42).",
+        "An earlier run with a WEAK 2nd judge (Llama-3.1-8B-4bit) showed that family as a null/tie (~0.50) — a judge-capability artifact corrected by the 70B."
+      ],
+      "caveat": "CANDIDATE, NOT VALIDATED: the no-overclaim kappa>=0.40 floor is unmet (deflation artifact). The substantive claim — M3-SFT measurably improves source discipline, confirmed by two independent capable judge families across >=3 seeds — is well-supported by the win-rate panel, but the formal kappa gate is not met, so this is not a headline. Single subject + base (gemma-3-4b), corpus-bound. Artifacts: agi-proof/benchmark-results/wisdom-market/m3-2family-judge-70b/. See failure-ledger m3-sft-2family-judge-not-validated-2026-06-29."
     }
   ],
   "audit": {

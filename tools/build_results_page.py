@@ -73,6 +73,13 @@ def render(doc: dict) -> str:
 
     L += ["## Illustrative only (not headline-grade)", ""]
     for r in doc.get("illustrative") or []:
+        if r.get("summary"):                      # generic candidate entry: model/judge + bullet summary
+            L += [f"### `{r.get('model')}` — {r.get('modelNote', '')}", ""]
+            L += [f"- {b}" for b in r["summary"]]
+            if r.get("caveat"):
+                L.append(f"- ⚠ {r['caveat']}")
+            L.append("")
+            continue
         ci = r.get("deltaCI")
         d = _pct(r.get("delta")) + (f" [{_pct(ci[0])}, {_pct(ci[1])}]" if ci else "")
         L += [
