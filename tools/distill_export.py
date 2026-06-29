@@ -23,7 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent.gate import check_response  # noqa: E402
+from agent import outcome_oracle as oracle  # noqa: E402
 from agent.model import ModelClient, default_client  # noqa: E402
 from agent.prompts import MODE_PROMPTS  # noqa: E402
 from provenance_bench.dataset_guard import (  # noqa: E402
@@ -45,9 +45,14 @@ DEFAULT_PROMPTS: list[dict[str, Any]] = [
 
 
 def _sft_row(item_prompt: str, answer: str, *, teacher: str, item_id: Any,
-             provenance: str, extra: dict[str, Any] | None = None) -> dict[str, Any]:
-    """Build one SFT row, stamping the verification_provenance (T8) on the metadata."""
-    meta = {"source": "distillation", "teacher": teacher, "id": item_id,
+             provenance: str, source: str = "distillation",
+             extra: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Build one SFT row, stamping the verification_provenance (T8) on the metadata.
+
+    ``source`` distinguishes a teacher-distilled row ("distillation") from an on-policy
+    RLVR harvest ("rlvr_harvest", T3) — both share this single row schema so the dataset
+    builder and linters treat them uniformly."""
+    meta = {"source": source, "teacher": teacher, "id": item_id,
             "verification_provenance": provenance}
     if extra:
         meta.update(extra)
@@ -61,6 +66,19 @@ def _sft_row(item_prompt: str, answer: str, *, teacher: str, item_id: Any,
     }
 
 
+def _spec_of(item: dict[str, Any]) -> dict[str, Any]:
+    """Build the shared OracleSpec for an item — the SAME contract the RLVR reward uses,
+    plus the fail-closed advisor gate that distillation additionally requires."""
+    spec = {"epistemicGate": True}
+    for src, dst in (("mustInclude", "mustInclude"), ("mustAvoid", "mustAvoid"),
+                     ("expected", "expected"), ("regex", "regex"),
+                     ("mathEquivalent", "mathEquivalent"), ("code", "code"),
+                     ("citations", "citations")):
+        if item.get(src) is not None:
+            spec[dst] = item[src]
+    return spec
+
+
 def distill_one(item: dict[str, Any], client: ModelClient) -> dict[str, Any]:
     system = item.get("system") or MODE_PROMPTS["advisor"]
     prompt = item["prompt"]
@@ -68,14 +86,10 @@ def distill_one(item: dict[str, Any], client: ModelClient) -> dict[str, Any]:
     base = {"id": item.get("id"), "prompt": prompt, "costUsd": result.cost_usd, "model": result.model}
     if not result.ok or not result.text.strip():
         return {**base, "accepted": False, "reasons": [result.error or "empty"], "answer": result.text}
-    gate = check_response(result.text, mode="advisor", question=prompt)
-    lowered = result.text.lower()
-    missing = [k for k in item.get("mustInclude", []) if k.lower() not in lowered]
-    forbidden = [k for k in item.get("mustAvoid", []) if k.lower() in lowered]
-    accepted = gate.get("passed", False) and not missing and not forbidden
-    reasons = list(gate.get("warnings", [])) + list(gate.get("violations", []))
-    reasons += [f"missing:{k}" for k in missing] + [f"forbidden:{k}" for k in forbidden]
-    return {**base, "accepted": accepted, "answer": result.text, "reasons": reasons}
+    # Single outcome oracle (agent.outcome_oracle) — the verifier seam shared with RLVR.
+    verdict = oracle.evaluate(_spec_of(item), result.text, question=prompt)
+    return {**base, "accepted": verdict["passed"], "answer": result.text,
+            "reasons": verdict["reasons"], "checks": verdict.get("checks", {})}
 
 
 def _eval_contamination(prompt: str, evalset: set[str],

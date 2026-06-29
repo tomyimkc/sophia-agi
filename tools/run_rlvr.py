@@ -269,6 +269,49 @@ def _collapse_summary(log: dict) -> dict:
     }
 
 
+def _completion_text(c) -> str:
+    """Coerce a GRPO completion (a string, or a chat list of message dicts) to text."""
+    if isinstance(c, str):
+        return c
+    if isinstance(c, list):  # conversational format: take the last assistant turn
+        for m in reversed(c):
+            if isinstance(m, dict) and m.get("content"):
+                return str(m["content"])
+    return str(c)
+
+
+def _wrap_sft_harvester(reward_fn, *, model_id: str, threshold: float = 1.0):
+    """Wrap a GRPO reward fn to HARVEST verifier-passing rollouts as SFT rows (T3).
+
+    The reward IS the verifier, so a completion scoring at the pass ceiling
+    (``reward >= threshold``, default REWARD_MAX = 1.0) is a verified (prompt, answer)
+    pair — a free, on-policy SFT row for the next round, with no teacher spend. The
+    wrapper only observes; it never alters a reward. Returns ``(fn, rows)``.
+    """
+    rows: list[dict] = []
+    seen: set = set()
+
+    def _fn(*a, **kw):
+        rewards = reward_fn(*a, **kw)
+        prompts = kw.get("prompts") or (a[0] if len(a) > 0 else None)
+        completions = kw.get("completions") or (a[1] if len(a) > 1 else None)
+        if prompts and completions:
+            from tools.distill_export import PROV_PASSED, _sft_row
+            for p, c, r in zip(prompts, completions, rewards):
+                if r is None or r < threshold:
+                    continue
+                ptext, ctext = _completion_text(p), _completion_text(c)
+                key = (ptext, ctext)
+                if not ctext.strip() or key in seen:
+                    continue
+                seen.add(key)
+                rows.append(_sft_row(ptext, ctext, teacher=model_id, item_id=len(rows),
+                                     provenance=PROV_PASSED, source="rlvr_harvest"))
+        return rewards
+
+    return _fn, rows
+
+
 def _run_gpu(args: argparse.Namespace) -> int:
     """Live GRPO on a rented CUDA GPU. Validated by structure; not run in CI."""
     try:
@@ -373,6 +416,11 @@ def _run_gpu(args: argparse.Namespace) -> int:
     # per GRPO step. Reward collapse == within-group std -> 0 (constant reward => zero
     # advantage => no learning signal). This is the headline M1 measurement.
     reward_fn, _collapse_log = _wrap_collapse_logger(reward_fn, num_generations=args.num_generations)
+    # T3: optionally harvest verifier-passing rollouts as on-policy SFT rows for the next round.
+    _harvest_rows: list[dict] = []
+    if args.harvest_sft:
+        reward_fn, _harvest_rows = _wrap_sft_harvester(
+            reward_fn, model_id=args.model, threshold=args.harvest_threshold)
     train_rows = data["train_rows"]
     if args.curriculum:
         train_rows = _gate_curriculum_order(train_rows, samples=args.curriculum_samples)
@@ -496,6 +544,16 @@ def _run_gpu(args: argparse.Namespace) -> int:
         # run is expected to collapse (final std -> 0); multiaxis should stay > 0.
         "collapse": _collapse_summary(_collapse_log),
     }
+    # T3: write harvested on-policy SFT rows (verifier-passing rollouts) for the next round.
+    if args.harvest_sft:
+        args.harvest_sft.parent.mkdir(parents=True, exist_ok=True)
+        args.harvest_sft.write_text(
+            "\n".join(json.dumps(r, ensure_ascii=False) for r in _harvest_rows)
+            + ("\n" if _harvest_rows else ""), encoding="utf-8")
+        report["harvest"] = {"path": str(args.harvest_sft), "rows": len(_harvest_rows),
+                             "threshold": args.harvest_threshold,
+                             "note": "on-policy verifier-passing rollouts; decontaminate before reuse"}
+        print(f"harvested {len(_harvest_rows)} verifier-passing rollouts -> {args.harvest_sft}")
     _write_report(report, args.out)
     print("Live GRPO complete. Held-out pass@1 eval + gating is a separate step.")
     return 0
@@ -553,6 +611,11 @@ def main(argv: list[str] | None = None) -> int:
         help="order training tasks easy->hard by gate pass-rate (offline-safe)",
     )
     ap.add_argument("--curriculum-samples", type=int, default=1)
+    ap.add_argument("--harvest-sft", type=Path, default=None, metavar="PATH",
+                    help="T3: write verifier-passing rollouts to PATH as on-policy SFT rows "
+                         "(self-distillation from your own best verified behaviour; GPU path)")
+    ap.add_argument("--harvest-threshold", type=float, default=1.0,
+                    help="min reward to harvest a rollout (default 1.0 = REWARD_MAX, a full pass)")
     args = ap.parse_args(argv)
 
     if args.model == "mock" or args.dry_run:
