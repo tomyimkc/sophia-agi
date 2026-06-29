@@ -12,10 +12,11 @@ binary other than scripts/run_local_benchmarks.sh, and only with these flags:
   --dry-run --bench-a --bench-b --all --execute --run-train
 --execute / --run-train additionally require a non-empty `approvedBy`.
 
-Usage (on the Spark, inside the repo checkout):
-  git fetch origin spark-bridge && git checkout spark-bridge
-  python3 tools/github_bridge_poll.py --interval 30 \
-      --trainwatch http://127.0.0.1:8420/api/runs
+Keep it alive across sessions (fully detached):
+  setsid nohup python3 tools/github_bridge_poll.py --interval 30 \
+      --trainwatch http://127.0.0.1:8420/api/runs \
+      > ~/bridge-poll.log 2>&1 < /dev/null &
+  disown
   # one tick only:
   python3 tools/github_bridge_poll.py --once
 """
@@ -45,6 +46,22 @@ def _git(*args: str, cwd: Path, check: bool = True) -> subprocess.CompletedProce
                           capture_output=True, text=True)
 
 
+def _sync(cwd: Path, branch: str) -> None:
+    """Bring the local bridge branch up to date WITHOUT re-smudging encrypted
+    files every tick. fast-forward only touches changed (plaintext bridge/)
+    files; reset --hard is a last resort that rematerializes the whole tree
+    (and would re-run the git-crypt smudge filter)."""
+    _git("fetch", "origin", branch, cwd=cwd, check=False)
+    ff = _git("merge", "--ff-only", f"origin/{branch}", cwd=cwd, check=False)
+    if ff.returncode == 0:
+        return
+    rb = _git("pull", "--rebase", "origin", branch, cwd=cwd, check=False)
+    if rb.returncode == 0:
+        return
+    sys.stderr.write("[bridge] ff + rebase failed; last-resort reset --hard\n")
+    _git("reset", "--hard", f"origin/{branch}", cwd=cwd, check=False)
+
+
 def _push_with_retry(cwd: Path, branch: str) -> None:
     delay = 2
     for attempt in range(4):
@@ -54,7 +71,6 @@ def _push_with_retry(cwd: Path, branch: str) -> None:
         sys.stderr.write(f"[bridge] push failed (try {attempt+1}): {r.stderr.strip()}\n")
         time.sleep(delay)
         delay *= 2
-        # someone else may have pushed; rebase our bridge commits on top
         _git("pull", "--rebase", "origin", branch, cwd=cwd, check=False)
     sys.stderr.write("[bridge] push giving up this tick; will retry next tick\n")
 
@@ -127,9 +143,7 @@ def _run_command(root: Path, cmd: dict) -> dict:
 
 
 def tick(root: Path, branch: str, trainwatch_url: str) -> None:
-    _git("fetch", "origin", branch, cwd=root, check=False)
-    _git("checkout", branch, cwd=root, check=False)
-    _git("reset", "--hard", f"origin/{branch}", cwd=root, check=False)
+    _sync(root, branch)
 
     bridge = root / "bridge"
     (bridge / "commands").mkdir(parents=True, exist_ok=True)
@@ -158,7 +172,7 @@ def tick(root: Path, branch: str, trainwatch_url: str) -> None:
         else:
             sys.stderr.write(f"[bridge] running {cpath.stem}: {cmd.get('args')!r}\n")
             res = _run_command(root, cmd)
-        (bridge / "results" / f"{res['id'] or cpath.stem}.json").write_text(
+        (bridge / "results" / f"{res.get('id') or cpath.stem}.json").write_text(
             json.dumps(res, indent=2) + "\n")
         ran.append(res.get("id") or cpath.stem)
 
@@ -169,7 +183,8 @@ def tick(root: Path, branch: str, trainwatch_url: str) -> None:
     commit = _git("commit", "-m", status_line, cwd=root, check=False)
     if commit.returncode == 0:
         _push_with_retry(root, branch)
-    # else: nothing changed (no new status diff) -> skip push
+    sys.stderr.write(f"[bridge] tick done @ {status['updatedAt']} "
+                     f"pending={len(pending)} ran={len(ran)}\n")
 
 
 def main() -> int:
