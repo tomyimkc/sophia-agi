@@ -1,0 +1,75 @@
+{
+  "experimentId": "calibration-verifier-scaling",
+  "question": "Does a separate, trace-feature VERIFIER (trained on semantic-entropy + neighbour-corroboration + author/source-confidence, with NO access to the gold answer) predict answer correctness BETTER than the existing provenance-grounded confidence prior (balanced accuracy ~0.52, non-monotonic per the failure ledger), AND does its calibration (ECE) stay flat-or-improving as the base agent scales up rather than degrading the way raw model confidence usually does?",
+  "constructs": [
+    "correctness-discrimination (AUROC of the verifier's score vs binary answer correctness on held-out traces)",
+    "calibration-error (expected calibration error, ECE, of the verifier's probability vs empirical correctness)",
+    "scaling-monotonicity (sign of the ECE trend across >= 3 base-model sizes — does calibration get WORSE with scale, the usual failure, or hold/improve?)",
+    "delta-AUROC (learned trace-verifier minus provenance-confidence baseline; positive = the verifier adds signal beyond the source-quality prior)",
+    "delta-ECE (learned trace-verifier minus provenance-confidence baseline; negative = better-calibrated)"
+  ],
+  "primaryMetric": "delta AUROC of correctness prediction (trace-feature verifier minus provenance-confidence baseline), on a held-out, decontaminated trace set, paired per trace",
+  "secondaryMetrics": [
+    "delta ECE (trace-verifier minus provenance-confidence baseline; guardrail: must not worsen calibration)",
+    "per-arm AUROC and ECE",
+    "scaling-monotonicity: sign and magnitude of the ECE slope across >= 3 base sizes (the headline scaling claim)",
+    "risk-coverage / selective-accuracy at fixed coverage (does abstaining on low verifier-score traces raise answered accuracy?)"
+  ],
+  "arms": [
+    "provenance-confidence-baseline (the existing agent/grounded_confidence.py pooled source confidence — the current weak prior; REQUIRES the live grounded path, not run offline)",
+    "trace-feature-verifier (a small model/regressor over semantic_entropy + corroboration + authorConfidence trace features, trained on a disjoint split; the candidate)",
+    "raw-model-logprob-baseline (the base model's own sequence confidence — the usual overconfident-with-scale control to show the failure mode the verifier must beat)"
+  ],
+  "primaryN": "PENDING — requires a real, decontaminated trace corpus (agent question -> emitted answer -> gold-labelled correct/incorrect) with extracted trace features, split train/calibration/test, sized so MDE <= 0.05 on the AUROC scale at the test split (see primaryMDE). No real run has been performed; only the feature-extraction + scorer machinery is in-repo.",
+  "primaryMDE": 0.05,
+  "groundTruth": {
+    "rule": "answer correctness for each trace must be labelled by >= 2 INDEPENDENT judge families (judge != the answer agent, judge != the verifier being scored), reporting inter-judge agreement (kappa >= 0.40 OR Gwet AC1 with CI). AUROC/ECE are then computed deterministically from the verifier scores against those labels.",
+    "use": "GO/NO-GO — author-only or self-judged correctness labels do NOT satisfy this; a verifier scored against its own training labels voids the run"
+  },
+  "guardrails": {
+    "noAnswerLeakage": {
+      "rule": "the verifier's input features are derived ONLY from the reasoning trace and retrieved sources, NEVER from the gold answer or the correctness label; a feature audit (tools, PENDING) must confirm no label leakage before any AUROC is reported",
+      "use": "GO/NO-GO — leaked-label features produce an inflated AUROC that is not a result"
+    },
+    "baselineContrast": {
+      "rule": "the provenance-confidence baseline AND the raw-logprob baseline are scored on the IDENTICAL held-out traces; the falsifier is that the cheap provenance prior already matches the learned verifier",
+      "use": "GO/NO-GO — without both baselines there is no delta to claim"
+    },
+    "calibrationGuardrail": {
+      "rule": "delta ECE must stay <= 0 (the verifier must not buy discrimination at the cost of worse calibration); a higher AUROC with worse ECE is not a win",
+      "use": "GO/NO-GO"
+    },
+    "scalingHonesty": {
+      "rule": "the scaling-monotonicity claim requires >= 3 genuinely different base sizes on the SAME traces; a 2-point trend is reported as illustrative only, never as the scaling result",
+      "use": "GO/NO-GO for the scaling headline (the AUROC delta can still stand at a single size)"
+    },
+    "decontam": {
+      "rule": "test-split traces are disjoint from the verifier's training split AND from any base-model training/adapter corpus (tools/assert_decontam.py)",
+      "use": "GO/NO-GO"
+    }
+  },
+  "stoppingRule": "anytime-valid confidence sequence (tools/eval_stats.confidence_sequence_mean) REQUIRED for any peeked metric; fixed-n paired bootstrap CI (tools/eval_stats.bootstrap_ci_paired) only at the pre-specified test-split N",
+  "decontam": "trace corpus held disjoint across train/calibration/test and from base-model training (tools/assert_decontam.py); any synthetic seed traces are committed but excluded from training rows (tools/lint_training_rows.py)",
+  "magnitudeRule": "GO requires delta AUROC >= +0.05 with a 95% CI that EXCLUDES 0, AND delta ECE <= 0; the scaling headline additionally requires a non-positive ECE slope across >= 3 base sizes with a CI excluding a positive slope",
+  "ranking": "guardrails first (no answer-leakage, both baselines present, calibration guardrail), then primary delta AUROC, then delta ECE, then the scaling-monotonicity trend",
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "honestLimits": [
+    "the failure ledger already establishes the provenance confidence is a WEAK, non-monotonic predictor of correctness (balanced accuracy ~0.52); this experiment's whole point is to beat that bar, and a NULL/NEGATIVE (the learned verifier does NOT beat the cheap prior) is a valid, publishable outcome — log it, do not tune to GO",
+    "AUROC measures discrimination, not deployment safety; a verifier that ranks correct-above-incorrect can still be miscalibrated in absolute probability (hence ECE is a co-primary guardrail, not a footnote)",
+    "trace features (semantic entropy, corroboration, author confidence) are themselves proxies; a verifier that learns them can inherit their blind spots — out-of-distribution traces are explicitly out of scope of any claim here",
+    "the scaling claim is the hardest part: it needs >= 3 base sizes evaluated on identical traces, which is GPU-bound and must go through the GitHub Actions cost-guarded path, never local SSH",
+    "no real run has been performed; the committed artifact is preregistration_only and the verdict is NO-GO until the harness, the decontaminated trace corpus, and >= 2 judge families exist"
+  ],
+  "peekedMetrics": [],
+  "status": "preregistration_only",
+  "go": false,
+  "canClaimAGI": false,
+  "enforcement": {
+    "harness": "PENDING — tools/run_calibration_verifier_eval.py (to build): extract trace features from agent/semantic_entropy.py + agent/corroboration.py + agent/grounded_confidence.py, train the verifier on the train split, score the test split, emit AUROC/ECE per arm",
+    "stats": "tools/eval_stats.py — paired bootstrap CI (fixed-n) + anytime-valid confidence sequence (peeked) + mde_at_n power check on the AUROC delta",
+    "tests": "PENDING — tests/test_calibration_verifier_eval.py: feature-no-leakage audit, AUROC/ECE math on a deterministic mock, the delta+CI logic, and the not-run/NO-GO pending artifact",
+    "lint_claims": "tools/lint_claims.py — no-overclaim copy must hold for any prose that cites this result",
+    "decontam": "tools/assert_decontam.py — trace-split disjointness + base-corpus disjointness before any real run",
+    "note": "PRE-REGISTRATION ONLY. This is the T3 thesis from docs/09-Agent/notes/DiveIntoLLMs-Takeaways.md — the highest-leverage open calibration item. No model run has been performed; the claim is never auto-promoted and canClaimAGI stays false."
+  }
+}
