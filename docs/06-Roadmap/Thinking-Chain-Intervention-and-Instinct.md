@@ -428,6 +428,40 @@ and measure the actual flip/corrupt rates against this harness (gated; the hoste
 above are black-box, so steering can't be measured through them). It maps the design space and
 says *when* to edit vs restart; `canClaimAGI` stays false.
 
+### 3h. A stronger label-free reflex (the frontier §3f named) — modest real lift, hard limit
+
+§3f said the open frontier is a better *label-free / predictive* reflex (B/B2 are verifiers;
+exact self-consistency is weak, AUC 0.63 with CI overlapping chance).
+[`reasoning/instinct_labelfree.py`](../../reasoning/instinct_labelfree.py) tests softer agreement
+signals on the **stored** sample sets (zero API): exact-match (baseline), pairwise **Jaccard**,
+per-element membership **instability** (Gini 2p(1−p)), set-size dispersion, distinct-set entropy.
+
+| signal (DeepSeek, label-free) | AUC | 95% CI |
+|---|---|---|
+| exact self-consistency (baseline) | 0.629 | [0.473, 0.778] — *includes chance* |
+| jaccard | 0.637 | [0.477, 0.778] |
+| **instability (membership Gini)** | **0.668** | **[0.511, 0.812] — excludes chance** |
+| size_disp | 0.624 | [0.462, 0.765] |
+| entropy | 0.600 | [0.441, 0.760] |
+
+**Two honest findings:**
+
+1. **A soft signal does beat exact, and crosses the reliability line.** Per-element membership
+   *instability* (how often samples disagree on each individual claim, not whether whole answers
+   match) lifts AUC 0.63→0.67 and — the meaningful part — moves the CI from *including* chance to
+   *excluding* it. Exact-match is brittle (near-identical wrong sets read as "confident"); scoring
+   agreement per-claim recovers signal it throws away. A real, if **modest**, frontier improvement.
+2. **But agreement-based reflexes have a hard ceiling: confident-wrong models.** Every signal is
+   **anti-predictive on Claude-haiku** (AUC ≈ 0.02–0.03): haiku is *more* self-consistent when
+   wrong, so no amount of softening agreement helps. Confident, systematic errors are invisible to
+   *any* agreement signal — for those you need a non-agreement predictive signal (an activation
+   probe, logprob/perplexity calibration), which needs white-box access. This is the real wall, and
+   it's the same wall the injection half (§3g) hits: black-box hosted models can't be probed.
+
+Net: the label-free reflex can be pushed a little (use per-element instability, not exact match),
+but the deep limit is structural — agreement can't catch a model that's confidently, consistently
+wrong; closing that needs model internals. `canClaimAGI` stays false.
+
 ## 4. From model to measured claim (pre-registration sketch)
 
 To graduate this from `candidateOnly` to a real eval under the Instrumented Evaluation Contract

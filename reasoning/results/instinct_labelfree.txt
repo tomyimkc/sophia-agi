@@ -1,0 +1,23 @@
+Stronger label-free reflexes — soft agreement vs exact self-consistency
+========================================================================
+
+MODEL deepseek-chat  (N=50, clean=21)  [exact≡A drift 0.0]
+  signal            AUC          AUC 95% CI
+  exact           0.629  [0.473, 0.778]   (baseline)
+  jaccard         0.637  [0.477, 0.778]
+  instability     0.668  [0.511, 0.812]  <- best
+  size_disp       0.624  [0.462, 0.765]
+  entropy         0.600  [0.441, 0.760]
+  => best=instability  beats_exact=True  excludes_chance=True
+
+MODEL claude-haiku-4-5-20251001  (N=50, clean=1)  [exact≡A drift 0.0]
+  signal            AUC          AUC 95% CI
+  exact           0.020  [0.000, 0.052]   (baseline)
+  jaccard         0.020  [0.000, 0.062]
+  instability     0.031  [0.000, 0.082]  <- best
+  size_disp       0.000  [0.000, 0.000]
+  entropy         0.031  [0.000, 0.082]
+  => best=instability  beats_exact=True  excludes_chance=False
+
+candidateOnly=True  level3Evidence=False
+boundary: single run, recorded samples; AUCs are case-resampling estimates.

@@ -16,6 +16,7 @@ never break.* Each module is pure stdlib, seeded, and runs with no GPU or API ke
 | `instinct_fusion.py` | #6 instinct (fusion) | a **2nd independent detector** (real `okf` grounding-closure, catches confident structural errors self-consistency misses) **fused** with self-consistency: neither clears d′=1.0 alone (A 0.87, B 0.97) but the fusion does (d′ 1.86, AUC 0.86) at low correlation (ρ≈−0.22). Pins the law `d′_fused=(d_A+d_B)/√(2+2ρ)` (MC=closed form) — the gain **vanishes as detectors become redundant**. Independence is the whole game. Also exports the 3rd detector `_reflex_B2` (grounding-*completeness*, under-abstention) + `fuse()` (quality-weighted) used by the real-model runner. |
 | `instinct_injection.py` | #6 instinct (injection) | the *other* half of the thesis: **edit the chain in place** (backtrack-token / activation-steering) when the reflex fires, vs abandon-and-restart. In-place injection **dominates** re-route (correct 0.66 vs 0.50 at 5× lower cost) — but only at a good steering strength: a **brittleness roofline** (peak at s≈0.5, over-steering s=1.0 collapses to 0.38 as corruption overtakes flips). The inject→reroute **hybrid** wins (0.81). Planted flip/corrupt curves; real white-box steering is the gated next step. |
 | `instinct_validation.py` | #6 instinct (rigor) | cross-validates the fusion (LOO-CV weights, offline) + bootstrap CIs. DeepSeek `fused_equal` AUC **0.984 [0.949,1.0]**; LOO-CV qw d′ 5.19→4.84 (small optimism). **Sharp finding:** B/B2 are structural *verifiers* (fire iff answer≠truth ⇒ near-tautological AUC); the only label-free *predictive* reflex is A, and it's weak (AUC 0.63, CI includes chance). If you have the okf graph, verify directly; the frontier is a better label-free reflex. |
+| `instinct_labelfree.py` | #6 instinct (frontier) | attacks the frontier §3f named — a better *label-free* reflex than exact self-consistency. Per-element membership **instability** beats exact (AUC **0.668 vs 0.629**) and its CI **excludes chance** (exact's doesn't) — a modest real lift, offline/free from stored samples. Hard limit: **all** agreement signals are anti-predictive on a confident-wrong model (haiku AUC ~0.02) — agreement can't catch consistent errors; that needs model internals. |
 | `instinct_endtoend.py` | #6 instinct (outcome) | the payoff: a reflex with a **real measured operating point** (3-detector bus incl. B2) drives the re-route policy. **DeepSeek:** confident-wrong **0.58→0.00**, correct 0.42→0.79. **Claude-haiku (rescued):** still can't do the task (0.02→0.08) but confident-wrong **0.98→0.00**, converted to 0.92 honest **escalation** — fail-closed by reflex. Confident-wrong falls monotonically with detector recall. |
 
 Each module shares one CLI:
@@ -31,7 +32,8 @@ Saved verdicts live in [`results/`](results/). Tests are in
 `tests/test_memory_hierarchy.py`, `tests/test_belief_allreduce.py`,
 `tests/test_instinct_gate.py`, `tests/test_instinct_reflex_eval.py`,
 `tests/test_instinct_fusion.py`, `tests/test_instinct_endtoend.py`,
-`tests/test_instinct_validation.py`, `tests/test_instinct_injection.py`.
+`tests/test_instinct_validation.py`, `tests/test_instinct_injection.py`,
+`tests/test_instinct_labelfree.py`.
 
 **Honest scope.** These are *models* of the claims, not production wiring — synthetic streams
 and planted ground truth, chosen so the hypotheses are falsifiable rather than assumed. Each
