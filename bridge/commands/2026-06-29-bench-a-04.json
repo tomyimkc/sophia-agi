@@ -1,0 +1,8 @@
+{
+  "id": "2026-06-29-bench-a-04",
+  "args": "--bench-a --execute",
+  "createdBy": "claude",
+  "createdAt": "2026-06-29T05:45:30Z",
+  "approvedBy": "user: 'I want most automatically function all' (2026-06-29)",
+  "note": "Hands-free two-box judging: A0 auto-starts the Mac Llama-3.3-70B mlx judge over the Cat6 cable (ssh) + uses Spark ollama Qwen-7B; >=3 seeds, 2 families. Runs after v5 (sorted after by id). Aborts cleanly if the 70B judge cannot be brought up."
+}

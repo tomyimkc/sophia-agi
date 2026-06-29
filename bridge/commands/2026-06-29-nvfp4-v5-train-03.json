@@ -1,0 +1,8 @@
+{
+  "id": "2026-06-29-nvfp4-v5-train-03",
+  "args": "--bench-b --run-train --execute",
+  "createdBy": "claude",
+  "createdAt": "2026-06-29T05:45:00Z",
+  "approvedBy": "user: 'I want most automatically function all' (2026-06-29)",
+  "note": "Re-run of v5 after the interpreter fix: runbook now auto-detects the torch venv and pre-flights numpy/torch (fails fast with an actionable message if missing, no GPU spent). Epochs 3 @ lambda=0.001, full NVFP4 quant."
+}
