@@ -97,7 +97,10 @@ JUDGE_READY_TRIES="${JUDGE_READY_TRIES:-80}"    # x3s ~= 4 min max wait for the 
 
 # The combined --judges flag (provider:model@base_url). ollama->family 'qwen'; openai-transport to
 # the remote mlx server->family 'mlx' = 2 distinct families, both != subject. Override JUDGES to tune.
-JUDGES="${JUDGES:-ollama:${SPARK_JUDGE_MODEL}@http://${SPARK_HOST}:${SPARK_PORT},openai:${MAC_JUDGE_MODEL}@http://${MAC_HOST}:${MAC_PORT}/v1}"
+# NB both base_urls MUST end in /v1 — agent.model's per-spec @url OVERRIDES the provider preset's
+# base_url, so omitting /v1 makes the ollama judge hit :11434/chat/completions (404) -> every
+# verdict None -> all-TIE. (This was the 2026-06-29 bench-a-04 all-tie bug.)
+JUDGES="${JUDGES:-ollama:${SPARK_JUDGE_MODEL}@http://${SPARK_HOST}:${SPARK_PORT}/v1,openai:${MAC_JUDGE_MODEL}@http://${MAC_HOST}:${MAC_PORT}/v1}"
 
 # Two-box farm config (consumed by run_local_judge_eval.py --config).
 JUDGE_CONFIG="${JUDGE_CONFIG:-config/inference.local.mac-judge.json}"
@@ -105,7 +108,7 @@ JUDGE_CONFIG="${JUDGE_CONFIG:-config/inference.local.mac-judge.json}"
 # Benchmark A — per-seed answer files. judge_pilot_answers.py has NO --seed flag: each seed is a
 # SEPARATE answers JSON (base_answer + adapter_answer per case). Override SEED_ANSWERS with your
 # real per-seed paths (space-separated, ≥3 for the gate). Defaults follow the 2026-06-29 layout.
-SEEDS="${SEEDS:-1 2 3}"
+SEEDS="${SEEDS:-1 2 7}"   # committed M3-pilot answer seeds are 1,2,7,8,9,10 (NOT 3) — use 3 of them
 ANSWERS_DIR="${ANSWERS_DIR:-agi-proof/benchmark-results/wisdom-market}"
 ANSWERS_PREFIX="${ANSWERS_PREFIX:-M3-pilot-answers-seed}"
 JUDGE_OUT_DIR="${JUDGE_OUT_DIR:-agi-proof/benchmark-results/wisdom-market/m3-2family-judge}"
@@ -275,6 +278,7 @@ if [[ "${RUN_A}" -eq 1 ]]; then
     run "${PY}" tools/judge_pilot_answers.py \
       --answers "${ans}" \
       --judges "${JUDGES}" \
+      --forced-choice \
       --out "${out}"
   done
 
@@ -310,10 +314,14 @@ if [[ "${RUN_B}" -eq 1 ]]; then
     cost_guard_reminder
     # train_lora default --model is Qwen/Qwen2.5-3B-Instruct and default --qat-scheme is int8,
     # so OLMoE + nvfp4 + the output dir are ALL passed explicitly.
+    # --target-modules attn-mlp passes an explicit LIST (q/k/v/o/gate/up/down_proj, suffix-matches
+    # the OLMoE experts). The default "all-linear" is a bare string this PEFT build char-splits into
+    # {a,l,-,i,n,e,r} -> "Target modules not found" (the 2026-06-29 v5 train crash).
     run "${PY}" tools/train_lora.py \
       --model "${QAT_BASE}" \
       --train "${QAT_DATA}" \
       --output "${QAT_ADAPTER}" \
+      --target-modules "${QAT_TARGET_MODULES:-attn-mlp}" \
       --qat --qat-scheme nvfp4 \
       --qat-lambda "${QAT_LAMBDA}" \
       --epochs "${QAT_EPOCHS}"
