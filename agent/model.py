@@ -110,6 +110,7 @@ class ModelConfig:
     temperature: float = 0.2
     reasoning_effort: str | None = None  # low | medium | high (provider-dependent)
     timeout_sec: int = 120
+    seed: int | None = None  # sampling seed (passed through to OpenAI-compatible servers, e.g. Ollama)
 
     def resolved_key(self) -> str | None:
         if self.kind == "anthropic":
@@ -332,6 +333,8 @@ def _call_openai_compatible(
     }
     if cfg.reasoning_effort:
         payload["reasoning_effort"] = cfg.reasoning_effort
+    if cfg.seed is not None:
+        payload["seed"] = cfg.seed  # Ollama/vLLM honor this for reproducible sampling
     if tools:
         payload["tools"] = tools
     request = urllib.request.Request(

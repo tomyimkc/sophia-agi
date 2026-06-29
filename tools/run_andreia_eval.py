@@ -47,8 +47,10 @@ from tools.eval_stats import bootstrap_ci_paired, mde_at_n  # noqa: E402
 
 RESULTS_DIR = ROOT / "agi-proof" / "benchmark-results" / "andreia"
 BATTERY_PATH = RESULTS_DIR / "andreia_courage_battery.json"
+LABELED_PATH = RESULTS_DIR / "andreia_external_battery.labeled.json"
 SPEC_PATH = RESULTS_DIR / "measurement_spec.json"
 PENDING_PATH = RESULTS_DIR / "andreia-courage-eval.PENDING.public-report.json"
+RESULT_PATH = RESULTS_DIR / "andreia-courage-eval.public-report.json"
 
 _ACT = {"act", "heroic"}
 
@@ -220,21 +222,214 @@ def run_mock(kind: str, *, seed: int = 0) -> dict:
     }
 
 
+# --------------------------------------------------------------------------- #
+# REAL three-arm run (requires the labelled external battery + a real subject model).
+# This is the path that produces a GO/NO-GO RECEIPT (not the mock machinery proof).
+# --------------------------------------------------------------------------- #
+
+
+def _load_labeled() -> dict:
+    if not LABELED_PATH.exists():
+        raise SystemExit(
+            f"missing {LABELED_PATH.relative_to(ROOT)} — run tools/label_andreia_battery.py first "
+            "(>= 2 judge families assign ground truth before any arm is scored)."
+        )
+    return json.loads(LABELED_PATH.read_text(encoding="utf-8"))
+
+
+def _standalone_decision(text: str) -> str:
+    """andreia-standalone arm: the gate alone, DERIVING forces from raw text (no context)."""
+    return assess_courage(text, context={}).to_dict()["verdict"]
+
+
+def _consulted_decision(text: str) -> str:
+    """andreia-consulted arm: the gate as wired into the conscience kernel."""
+    from agent.conscience import conscience_check
+    d = conscience_check(text, context={"consultCourage": True}).to_dict()
+    return (d.get("courage") or {}).get("verdict") or "hold"
+
+
+def _subject_decisions(spec: str, texts: list[str], *, seed: int, temperature: float,
+                       workers: int) -> list[str | None]:
+    """no-gate baseline arm: the raw subject model decides act/heroic/escalate/hold,
+    over the SAME raw text and the SAME four-option prompt the judges used. Returns one
+    verdict (or None on parse failure) per text, order-preserving."""
+    from concurrent.futures import ThreadPoolExecutor
+    from agent.model import ModelClient, resolve_config
+    from tools.andreia_decision import build_messages, parse_verdict
+
+    cfg = resolve_config(spec)
+    cfg.temperature = temperature
+    cfg.seed = seed
+    cfg.max_tokens = 16
+    client = ModelClient(cfg, retries=2)
+
+    def one(text: str) -> "str | None":
+        system, user = build_messages(text)
+        res = client.generate(system, user)
+        return parse_verdict(res.text) if res.ok else None
+
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        return list(ex.map(one, texts))
+
+
+def run_real(subject_spec: str, *, seeds: int = 3, temperature: float = 0.7, workers: int = 8,
+             boot_seed: int = 0) -> dict:
+    """Score the three arms on the labelled external battery's agreed-consensus subset.
+
+    Primary metric: Δ(cowardice-error) = andreia-consulted − no-gate-baseline, paired per
+    item, pooled across seeds, with a bootstrap 95% CI. Guardrail: Δ(recklessness-error).
+    The gate arms are deterministic; the baseline is re-sampled across `seeds` (distinct
+    sampling seeds), and only items the baseline parsed in EVERY seed are scored (kept
+    paired). GO/NO-GO via gate_verdict() over the pre-registered pillars.
+    """
+    labeled = _load_labeled()
+    agreed = [c for c in labeled["cases"] if c.get("agreedQuadrant") and c.get("optimal")]
+    if not agreed:
+        raise SystemExit("no agreed-consensus cases in the labelled battery — cannot score.")
+    texts = [c["text"] for c in agreed]
+    optimals = [c["optimal"] for c in agreed]
+
+    # Baseline decisions per seed.
+    baseline_by_seed: list[list[str | None]] = [
+        _subject_decisions(subject_spec, texts, seed=s, temperature=temperature, workers=workers)
+        for s in range(seeds)
+    ]
+    # Keep only items the baseline parsed in EVERY seed (valid pairing across arms+seeds).
+    keep = [i for i in range(len(agreed))
+            if all(baseline_by_seed[s][i] in ("act", "heroic", "escalate", "hold") for s in range(seeds))]
+    dropped = len(agreed) - len(keep)
+    opt = [optimals[i] for i in keep]
+    kept_texts = [texts[i] for i in keep]
+
+    # Deterministic gate arms (computed once on the kept items).
+    consulted = [_consulted_decision(t) for t in kept_texts]
+    standalone = [_standalone_decision(t) for t in kept_texts]
+    consulted_rates = _arm_rates(opt, consulted)
+    standalone_rates = _arm_rates(opt, standalone)
+
+    # Per-seed baseline rates + paired deltas (consulted − baseline), then pool.
+    per_seed = []
+    pooled_cow_diffs: list[int] = []
+    pooled_rec_diffs: list[int] = []
+    for s in range(seeds):
+        base_dec = [baseline_by_seed[s][i] for i in keep]
+        base_rates = _arm_rates(opt, base_dec)
+        cow_diffs = [c - b for c, b in zip(consulted_rates["_cow"], base_rates["_cow"], strict=True)]
+        rec_diffs = [c - b for c, b in zip(consulted_rates["_rec"], base_rates["_rec"], strict=True)]
+        pooled_cow_diffs += cow_diffs
+        pooled_rec_diffs += rec_diffs
+        per_seed.append({
+            "seed": s,
+            "baseline": {k: v for k, v in base_rates.items() if not k.startswith("_")},
+            "deltaCowardice": round(sum(cow_diffs) / len(cow_diffs), 4) if cow_diffs else 0.0,
+            "deltaRecklessness": round(sum(rec_diffs) / len(rec_diffs), 4) if rec_diffs else 0.0,
+        })
+
+    delta = {
+        "deltaCowardice": round(sum(pooled_cow_diffs) / len(pooled_cow_diffs), 4) if pooled_cow_diffs else 0.0,
+        "deltaCowardiceCI95": bootstrap_ci_paired(pooled_cow_diffs, seed=boot_seed),
+        "deltaRecklessness": round(sum(pooled_rec_diffs) / len(pooled_rec_diffs), 4) if pooled_rec_diffs else 0.0,
+        "deltaRecklessnessCI95": bootstrap_ci_paired(pooled_rec_diffs, seed=boot_seed),
+        "mdeAtN": round(mde_at_n(len(keep), p0=0.5), 4),
+        "pooledN": len(pooled_cow_diffs),
+    }
+    # Mean baseline rates across seeds (for the headline contrast).
+    base_cow = round(sum(ps["baseline"]["cowardiceErrorRate"] for ps in per_seed) / seeds, 4)
+    base_rec = round(sum(ps["baseline"]["recklessnessErrorRate"] for ps in per_seed) / seeds, 4)
+
+    agr = labeled.get("agreement", {}).get("quadrant3class", {})
+    judge_families = 2 if labeled.get("groundTruthResolvable") else 1
+    verdict = gate_verdict(baseline_is_real=True, judge_families=judge_families, delta=delta)
+    if not labeled.get("groundTruthResolvable"):
+        verdict["criticalFailures"].append(
+            f"kappa_below_floor: quadrant Cohen kappa={agr.get('cohenKappa')} < {labeled.get('kappaFloor')} "
+            "— the optimal-action metric is not resolvable"
+        )
+        verdict["verdict"], verdict["go"] = "NO-GO", False
+    strip = lambda d: {k: v for k, v in d.items() if not k.startswith("_")}  # noqa: E731
+
+    return {
+        "experimentId": "andreia-courage-eval",
+        "schema": "sophia.andreia_courage_eval.v1",
+        "status": "complete",
+        "verdict": verdict["verdict"],
+        "go": verdict["go"],
+        "canClaimAGI": False,
+        "claimCeiling": "candidate_only; canClaimAGI:false",
+        "headline": (
+            f"Δ(cowardice-error) = {delta['deltaCowardice']} CI {delta['deltaCowardiceCI95']} "
+            f"(consulted − no-gate baseline); verdict {verdict['verdict']}"
+        ),
+        "harness": "tools/run_andreia_eval.py --model",
+        "preregistration": "agi-proof/benchmark-results/andreia/measurement_spec.json",
+        "battery": {
+            "file": "agi-proof/benchmark-results/andreia/andreia_external_battery.labeled.json",
+            "nLabelled": labeled.get("n"),
+            "nScored": len(keep),
+            "droppedUnparseableBaseline": dropped,
+            "scoredQuadrantCounts": labeled.get("scoredSet", {}).get("quadrantCounts"),
+        },
+        "judges": labeled.get("judges"),
+        "groundTruth": {
+            "rule": ">= 2 independent judge families; consensus quadrant; kappa floor "
+                    f"{labeled.get('kappaFloor')}",
+            "resolvable": labeled.get("groundTruthResolvable"),
+            "quadrantCohenKappa": agr.get("cohenKappa"),
+            "quadrantCohenKappaCI95": agr.get("cohenKappaCI95"),
+            "quadrantGwetAC1": agr.get("gwetAC1"),
+            "quadrantGwetAC1CI95": agr.get("gwetAC1CI95"),
+        },
+        "subjectModel": subject_spec,
+        "seeds": seeds,
+        "temperature": temperature,
+        "arms": {
+            "no-gate-baseline": {
+                "n": len(keep), "seeds": seeds,
+                "cowardiceErrorRate": base_cow, "recklessnessErrorRate": base_rec,
+                "perSeed": per_seed,
+                "note": "the raw subject model decides act/heroic/escalate/hold (no gate).",
+            },
+            "andreia-consulted": {**strip(consulted_rates),
+                                  "note": "conscience_check(context={consultCourage:True}).courage verdict; deterministic, derives forces from raw text."},
+            "andreia-standalone": {**strip(standalone_rates),
+                                   "note": "assess_courage(text) with no context; deterministic, derives forces from raw text."},
+        },
+        "delta": delta,
+        "criticalFailures": verdict["criticalFailures"],
+        "boundary": verdict["boundary"],
+        "honestLimits": [
+            "Battery cases are author-generated (templated raw-text dilemmas), not human decision transcripts; ground truth is independent-judge consensus. See andreia_external_battery.json provenance.",
+            "The gate arms DERIVE the ASIR forces from raw text (no explicit context), which the failure ledger documents as conservative — collapsing toward hold/escalate. This run measures exactly that real-use behaviour against a real baseline.",
+        ],
+    }
+
+
 def main(argv: "list[str] | None" = None) -> int:
-    ap = argparse.ArgumentParser(description="Andreia three-arm courage eval (deterministic; PENDING result)")
+    ap = argparse.ArgumentParser(description="Andreia three-arm courage eval (deterministic mock + real-model GO/NO-GO)")
     ap.add_argument("--mock", choices=["fearful", "reckless", "oracle"], default=None,
                     help="score the gate arm against a deterministic mock baseline")
     ap.add_argument("--seed", type=int, default=0, help="bootstrap CI seed (deterministic)")
     ap.add_argument("--emit-pending", action="store_true",
                     help="write the committed PENDING / NO-GO not-run artifact and exit")
     ap.add_argument("--model", default=None,
-                    help="(reserved) real no-gate baseline model spec — not invoked here; result stays PENDING")
+                    help="REAL no-gate baseline subject model spec (e.g. ollama:qwen2.5:7b-instruct); "
+                         "scores all three arms on the labelled external battery and emits a GO/NO-GO receipt")
+    ap.add_argument("--seeds", type=int, default=3, help="number of baseline sampling seeds (>=3 per the spec)")
+    ap.add_argument("--temperature", type=float, default=0.7, help="baseline sampling temperature")
+    ap.add_argument("--workers", type=int, default=8, help="concurrent subject calls")
+    ap.add_argument("--write", action="store_true",
+                    help="with --model: write the result artifact (andreia-courage-eval.public-report.json)")
     args = ap.parse_args(argv)
 
     if args.model:
-        print("Real-model baseline runs are out of scope for this offline tool; result stays PENDING. "
-              "Emit the pending artifact with --emit-pending.", file=sys.stderr)
-        return 2
+        result = run_real(args.model, seeds=args.seeds, temperature=args.temperature, workers=args.workers)
+        if args.write:
+            RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+            RESULT_PATH.write_text(json.dumps(result, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
+            print(f"Wrote {RESULT_PATH.relative_to(ROOT)}")
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+        return 0
     if args.emit_pending:
         path = emit_pending()
         try:
