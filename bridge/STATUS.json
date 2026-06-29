@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-29T05:30:15Z",
+  "updatedAt": "2026-06-29T05:31:50Z",
   "host": "spark-2f2d",
   "trainwatch": [
     {
@@ -365,6 +365,11 @@
       "mtime": "2026-06-29T04:51:17Z"
     },
     {
+      "path": "agi-proof/benchmark-results/independence/measurement_spec.json",
+      "bytes": 5770,
+      "mtime": "2026-06-29T05:31:30Z"
+    },
+    {
       "path": "agi-proof/benchmark-results/legal-citation-bench.json",
       "bytes": 321,
       "mtime": "2026-06-29T04:51:17Z"
@@ -378,6 +383,16 @@
       "path": "agi-proof/benchmark-results/local-agent-delta.public-report.json",
       "bytes": 2021,
       "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/long-horizon/long-horizon-execution.PENDING.public-report.json",
+      "bytes": 1897,
+      "mtime": "2026-06-29T05:31:30Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/long-horizon/measurement_spec.json",
+      "bytes": 4555,
+      "mtime": "2026-06-29T05:31:30Z"
     },
     {
       "path": "agi-proof/benchmark-results/minif2f-v2-passk.public-report.json",
