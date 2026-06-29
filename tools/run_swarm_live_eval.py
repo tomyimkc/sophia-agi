@@ -25,7 +25,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from provenance_bench import swarm_live_eval as sle  # noqa: E402
-from provenance_bench.search_recall import source_discipline_ok, disciplined_stance, cohens_kappa  # noqa: E402
+from provenance_bench.search_recall import source_discipline_ok  # noqa: E402
 from provenance_bench.swarm_benchmark import _paired_bootstrap_ci  # noqa: E402
 
 API = "https://openrouter.ai/api/v1/chat/completions"

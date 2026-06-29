@@ -172,7 +172,7 @@ def harvest(key: str, queries: list[str] | None = None, per_query_pages: int = 1
                     "rating_normalized": normalize_rating(cr.get("textualRating") or ""),
                     "source_url": cr.get("url"),
                     "language": cr.get("languageCode"),
-                    "reviewDate": (cr.get("reviewDate") or (cr.get("claimReview") or [{}])[0].get("reviewDate") if False else None),
+                    "reviewDate": None,
                     "query": q,
                 })
             token = d.get("nextPageToken")

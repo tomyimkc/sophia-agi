@@ -37,7 +37,7 @@ design doc calls for *before* spending GPU on the trained router.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Callable
 
 from agent.query_understanding import AnalyzedQuery, analyze
@@ -289,7 +289,7 @@ class SwarmRouter:
         self.solo_floor = solo_floor
         self.hard_task = hard_task
         self.child_budget_usd = child_budget_usd
-        self._analyze = analyze_fn or (lambda q: analyze(q))
+        self._analyze = analyze_fn or analyze
 
     # --- signal extraction (deterministic) ---------------------------------
     def signals(self, task: str) -> RouteSignals:

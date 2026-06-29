@@ -1081,6 +1081,17 @@ class Ablation:
     use_intake: bool = True  # Request Triage + Intake Contract front gate
 
 
+# Public API exported for sibling eval drivers (run_ablation_sophia, run_learning_shift,
+# run_long_context_sophia, …) that import these by name.
+__all__ = [
+    "Ablation",
+    "SOPHIA_FULL",
+    "ABLATION_MODES",
+    "RunConfig",
+    "run_case",
+    "backend_preflight",
+]
+
 SOPHIA_FULL = Ablation()
 
 ABLATION_MODES: dict[str, Ablation] = {
