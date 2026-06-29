@@ -129,6 +129,40 @@ def compare(cases: list, *, base_generate: Callable, adapter_generate: Callable,
     }
 
 
+def make_hf_compare_policies(model_name: str, adapter_path: str):
+    """Load a local HF model with a LoRA adapter ONCE and return
+    ``(base_generate, adapter_generate, label)`` — two rollout ``generate`` seams that
+    share the weights, toggling the adapter on/off (``disable_adapter()`` = the frozen
+    base = the comparison baseline). Greedy decoding for eval reproducibility. This is the
+    local-HF policy seam that lets the on-pod base-vs-adapter faithfulness eval run on the
+    TRAINED adapter (not an API model). Torch/transformers/peft, CUDA — gated, not CI."""
+    from contextlib import nullcontext
+
+    import torch
+    from peft import PeftModel
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+
+    from provenance_bench.faithfulness_grpo import _build_prompt
+
+    tok = AutoTokenizer.from_pretrained(model_name)
+    if tok.pad_token is None:
+        tok.pad_token = tok.eos_token
+    base = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16).cuda().eval()
+    model = PeftModel.from_pretrained(base, adapter_path).eval()
+
+    def _gen(query: str, context_chunks: list, *, use_base: bool) -> str:
+        ids = tok(_build_prompt(query, context_chunks), return_tensors="pt").to(model.device)
+        cm = model.disable_adapter() if use_base else nullcontext()
+        with torch.no_grad(), cm:
+            out = model.generate(**ids, max_new_tokens=160, do_sample=False,
+                                 pad_token_id=tok.pad_token_id)
+        return tok.decode(out[0][ids["input_ids"].shape[1]:], skip_special_tokens=True).strip()
+
+    base_generate = lambda q, c: _gen(q, c, use_base=True)       # noqa: E731
+    adapter_generate = lambda q, c: _gen(q, c, use_base=False)   # noqa: E731
+    return base_generate, adapter_generate, f"hf:{model_name}+adapter"
+
+
 def offline_invariants() -> tuple[bool, dict]:
     """Validate the instrument (no torch/GPU/network): on the mock world, a retrieval-
     using (faithful) policy must score a higher grounding rate than a weights-leaking
@@ -170,4 +204,4 @@ def offline_invariants() -> tuple[bool, dict]:
 
 
 __all__ = ["counterfactual_grounding_rate", "case_grounding", "evaluate", "compare",
-           "offline_invariants"]
+           "make_hf_compare_policies", "offline_invariants"]

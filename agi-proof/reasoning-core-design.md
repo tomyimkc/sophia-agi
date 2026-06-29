@@ -173,9 +173,14 @@ This is the payoff of post-training over from-scratch:
    (`faithfulness_grpo.train` / `run_live`, wired to `tools/run_rlvr.py --task
    faithfulness`). The objective math is unit-tested (`grpo_objective`: the gradient
    raises faithful answers' log-prob, lowers leaky ones', on an all-correct group where a
-   correctness-only reward collapses). **Open:** the actual CUDA run + a held-out,
-   pre-registered, powered eval producing a GO receipt. The torch plumbing is
-   structure-validated, not CI-executed.
+   correctness-only reward collapses). The **RunPod launch path** is wired (dry-run
+   validated, no pod): `rlvr-runpod.yml` + `runpod_rlvr.py --task faithfulness`, with the
+   entailment key forwarded into the pod env, and an **on-pod base-vs-adapter held-out
+   eval** on the trained adapter via the local-HF policy seam
+   (`faithfulness_eval.make_hf_compare_policies` → `eval_faithfulness.py --compare`).
+   **Open:** the actual CUDA dispatch + a powered, multi-family `claim_gate` GO receipt
+   (the on-pod compare is `candidate`, not a GO). The torch plumbing is structure-
+   validated, not CI-executed.
 2. Live seams — retrieve (`faithfulness_seams.make_ai_search_retrieve` on `agent.ai_search`)
    is conformance-checked against the real committed RAG index. Verify
    (`make_entailment_verify`) now runs a **real entailment LLM**

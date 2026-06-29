@@ -429,7 +429,16 @@ if [ -d /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 ]; then
   if [ "$SOPHIA_TASK" = "faithfulness" ]; then
     python tools/eval_faithfulness.py --mock \\
       || echo "[runpod] faithfulness instrument smoke failed (non-fatal)"
-    echo "[runpod] faithfulness adapter trained; base-vs-adapter held-out eval is a separate gated step."
+    # Base-vs-adapter held-out faithfulness contrast on the TRAINED adapter (local-HF
+    # policy seam). Entailment = the training verifier if set, else the lexical placeholder.
+    EVAL_ENT="${{SOPHIA_ENTAILMENT:-lexical}}"
+    EVAL_LIM=""; [ "$SOPHIA_LIMIT" != "0" ] && EVAL_LIM="--limit $SOPHIA_LIMIT"
+    python tools/eval_faithfulness.py --compare \\
+      --policy "hf:$SOPHIA_MODEL" \\
+      --adapter /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 \\
+      --entailment "$EVAL_ENT" $EVAL_LIM \\
+      --out /workspace/sophia-runpod/sophia-faithful-v1.compare-eval.json \\
+      || echo "[runpod] faithfulness compare-eval failed (non-fatal)"
   else
     python tools/eval_rlvr_adapter.py --mode real \\
       --task "$SOPHIA_TASK" \\
@@ -801,6 +810,13 @@ def main(argv: list[str] | None = None) -> int:
                 key_path,
                 "/workspace/sophia-runpod/sophia-rlvr-v1.invention-eval.json",
                 args.artifacts_dir / f"{pod_id}.rlvr.invention-eval.json",
+            )
+            # Base-vs-adapter faithfulness contrast (faithfulness task; best-effort).
+            _scp_from_pod(
+                conn,
+                key_path,
+                "/workspace/sophia-runpod/sophia-faithful-v1.compare-eval.json",
+                args.artifacts_dir / f"{pod_id}.faithful.compare-eval.json",
             )
             _scp_from_pod(
                 conn,

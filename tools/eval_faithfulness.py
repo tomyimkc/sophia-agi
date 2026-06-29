@@ -63,14 +63,81 @@ def _make_policy(spec: str):
     return generate, f"{provider}:{model}"
 
 
+def _build_entailment(provider: str, model: str | None):
+    """Entailment verifier fn. 'lexical' = the deterministic offline placeholder; a
+    provider name = the live LLM verifier (keys from private/secrets/ or pod env)."""
+    if provider == "lexical":
+        return faithfulness_seams.lexical_entailment
+    return faithfulness_seams.entailment_from_provider(provider, model=model)
+
+
+def _seams(args, entailment):
+    return dict(
+        retrieve=faithfulness_seams.make_ai_search_retrieve(top_k=args.top_k),
+        extract_claims=faithfulness_seams.heuristic_extract_claims,
+        verify_claim=faithfulness_seams.make_entailment_verify(entailment),
+        check_correct=lambda a, g: bool(g) and str(g).lower() in a.lower(),
+    )
+
+
+def _run_compare(args) -> int:
+    """Base-vs-adapter faithfulness contrast on a local HF policy with a trained LoRA."""
+    from provenance_bench.faithfulness_grpo import cases_from_rl_dataset
+
+    provider, _, model = args.policy.partition(":")
+    if provider != "hf" or not args.adapter:
+        raise SystemExit("--compare needs --policy hf:<model> and --adapter <path>")
+
+    base_gen, adapter_gen, label = faithfulness_eval.make_hf_compare_policies(model, args.adapter)
+    seams = _seams(args, _build_entailment(args.entailment, args.entailment_model))
+    cases = cases_from_rl_dataset(seed=args.seed, limit=args.limit)
+    print(f"compare policy={label}  entailment={args.entailment}  cases={len(cases)}")
+
+    c = faithfulness_eval.compare(cases, base_generate=base_gen,
+                                  adapter_generate=adapter_gen, **seams)
+    report = {
+        "benchmark": "reasoning-core-faithfulness-compare",
+        "policy": label,
+        "adapter": str(args.adapter),
+        "entailmentVerifier": args.entailment,
+        "nCases": len(cases),
+        "baseGroundingRate": c["baseRate"],
+        "adapterGroundingRate": c["adapterRate"],
+        "meanDiff": c["meanDiff"],
+        "pairedBootstrapCI95": c["pairedBootstrapCI95"],
+        "nPaired": c["nPaired"],
+        "caveats": [
+            "candidate — not a GO verdict; the GO/NO-GO is tools/claim_gate.py against the "
+            "pre-registered measurement_spec.json (powered N, >=2 judge families, decontam).",
+            f"N below pre-registered requiredN 377 unless nPaired is large; nPaired={c['nPaired']}.",
+            "single entailment family; the >=2-family judge panel is a separate construct.",
+        ],
+        "claimStatus": "candidate — base-vs-adapter faithfulness contrast on the trained "
+                       "adapter; promotion requires a claim_gate GO on the full spec. canClaimAGI:false.",
+        "claimCeiling": "candidate_only; canClaimAGI:false; narrow corpus-bound feasibility",
+    }
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(json.dumps({k: report[k] for k in (
+        "baseGroundingRate", "adapterGroundingRate", "meanDiff", "pairedBootstrapCI95",
+        "nPaired")}, indent=2))
+    print(f"wrote {args.out}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--mock", action="store_true", help="offline instrument invariants (CI)")
     ap.add_argument("--policy", default="llmhub:gemini-2.5-flash-lite",
-                    help="live policy '<provider>:<model>' (llmhub:/deepseek:)")
-    ap.add_argument("--entailment", default="deepseek", choices=["deepseek", "llmhub"],
-                    help="entailment verifier provider (must differ from the policy family)")
+                    help="policy '<provider>:<model>' (llmhub:/deepseek:) or 'hf:<model>' "
+                         "(local HF model; with --compare + --adapter does base-vs-adapter)")
+    ap.add_argument("--adapter", default=None,
+                    help="LoRA adapter path for an hf: policy (enables --compare)")
+    ap.add_argument("--compare", action="store_true",
+                    help="base-vs-adapter contrast (requires --policy hf:<model> --adapter <path>)")
+    ap.add_argument("--entailment", default="deepseek", choices=["deepseek", "llmhub", "lexical"],
+                    help="entailment verifier (provider, or 'lexical' offline placeholder)")
     ap.add_argument("--entailment-model", default=None)
     ap.add_argument("--limit", type=int, default=24, help="number of held-out cases")
     ap.add_argument("--top-k", type=int, default=6)
@@ -84,18 +151,14 @@ def main(argv: list[str] | None = None) -> int:
         print("FAITHFULNESS EVAL INSTRUMENT OK ✓" if ok else "INSTRUMENT INVARIANTS NOT MET ✗")
         return 0 if ok else 1
 
+    if args.compare:
+        return _run_compare(args)
+
     # --- live baseline ---
     from provenance_bench.faithfulness_grpo import cases_from_rl_dataset
 
     generate, policy_id = _make_policy(args.policy)
-    entailment = faithfulness_seams.entailment_from_provider(
-        args.entailment, model=args.entailment_model)
-    seams = dict(
-        retrieve=faithfulness_seams.make_ai_search_retrieve(top_k=args.top_k),
-        extract_claims=faithfulness_seams.heuristic_extract_claims,
-        verify_claim=faithfulness_seams.make_entailment_verify(entailment),
-        check_correct=lambda a, g: bool(g) and str(g).lower() in a.lower(),
-    )
+    seams = _seams(args, _build_entailment(args.entailment, args.entailment_model))
     cases = cases_from_rl_dataset(seed=args.seed, limit=args.limit)
     print(f"policy={policy_id}  entailment={args.entailment}  cases={len(cases)}  "
           f"(judge != subject: {args.entailment not in policy_id})")

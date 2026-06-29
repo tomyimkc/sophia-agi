@@ -78,8 +78,30 @@ def test_prereg_spec_is_valid_and_fail_closed() -> None:
     assert spec["requiredN"] > 0 and spec["mde"] > 0
 
 
+def test_runner_lexical_entailment_and_compare_guard() -> None:
+    """The runner's lexical entailment option resolves offline, and --compare without an
+    hf:/--adapter policy fails closed (no silent wrong-policy eval)."""
+    import types
+
+    from tools import eval_faithfulness as ef
+    from provenance_bench import faithfulness_seams as fs
+
+    assert ef._build_entailment("lexical", None) is fs.lexical_entailment
+
+    bad = types.SimpleNamespace(policy="llmhub:gemini", adapter=None, compare=True,
+                                entailment="lexical", entailment_model=None, top_k=6,
+                                seed=0, limit=4, out=ROOT / "x.json")
+    try:
+        ef._run_compare(bad)
+    except SystemExit:
+        pass
+    else:
+        raise AssertionError("_run_compare must reject a non-hf policy / missing adapter")
+
+
 def main() -> int:
     test_offline_invariants_pass()
+    test_runner_lexical_entailment_and_compare_guard()
     test_rate_is_one_for_faithful_zero_for_leaky()
     test_paired_contrast_favours_faithful()
     test_case_grounding_counts_knowledge_claims_only()
