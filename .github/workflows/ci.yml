@@ -108,7 +108,8 @@ jobs:
         run: |
           python tools/build_data_registry.py --check
           python tools/data_health_report.py --check
-          python -m pytest -q tests/test_data_health_report.py tests/test_build_data_registry.py tests/test_assert_entity_decontam.py tests/test_carve_entity_disjoint_split.py tests/test_data_analyst.py
+          python tools/assert_mix_balance.py
+          python -m pytest -q tests/test_data_health_report.py tests/test_build_data_registry.py tests/test_assert_entity_decontam.py tests/test_carve_entity_disjoint_split.py tests/test_assert_mix_balance.py tests/test_data_analyst.py
       - name: Validate OKF wiki (drift, links, provenance)
         run: |
           python tools/wiki_sync.py check

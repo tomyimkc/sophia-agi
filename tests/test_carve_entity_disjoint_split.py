@@ -36,6 +36,18 @@ def test_dry_run_writes_nothing(tmp_path) -> None:
     assert carve.main([]) == 0          # report-only, no --out
 
 
+def test_staged_candidate_is_fresh() -> None:
+    """The committed human-review candidate must match a fresh carve (no rot)."""
+    staged = ROOT / "agi-proof" / "data-health" / "seib_entity_disjoint_candidate" / "candidate.jsonl"
+    assert staged.exists(), "run: tools/carve_entity_disjoint_split.py --out <staged path>"
+    result = carve.carve()
+    expected = "".join(
+        json.dumps(d, ensure_ascii=False, sort_keys=True) + "\n" for d in result["disjoint"]
+    )
+    assert staged.read_text(encoding="utf-8") == expected, \
+        "staged candidate is stale — re-run the carver --out to refresh it"
+
+
 def test_write_produces_valid_disjoint_manifest(tmp_path) -> None:
     out = tmp_path / "candidate.jsonl"
     assert carve.main(["--out", str(out)]) == 0

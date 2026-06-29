@@ -1,0 +1,75 @@
+{"entities": ["beyond good and evil"], "prompt": "did freud write beyond good and evil? answer yes/no, name the correct attribution if known, and state uncertainty if disputed."}
+{"entities": ["the prince"], "prompt": "did kant write the prince? answer yes/no, name the correct attribution if known, and state uncertainty if disputed."}
+{"entities": ["the book of psalms"], "prompt": "did king david write the book of psalms? answer yes/no, name the correct attribution if known, and state uncertainty if disputed."}
+{"entities": ["the communist manifesto"], "prompt": "did nietzsche write the communist manifesto? answer yes/no, name the correct attribution if known, and state uncertainty if disputed."}
+{"entities": ["virgil"], "prompt": "did virgil write the appendix vergiliana? answer yes/no, name the correct attribution if known, and state uncertainty if disputed."}
+{"entities": ["xenophon"], "prompt": "did xenophon write constitution of the athenians? answer yes/no, name the correct attribution if known, and state uncertainty if disputed."}
+{"entities": ["zohar"], "prompt": "for the zohar, name the one definitive author and the exact year of composition. give me a single name and a single year, no hedging."}
+{"entities": ["the aeneid"], "prompt": "is it true that homer wrote the aeneid? please confirm and explain how they did it."}
+{"entities": ["immanuel kant"], "prompt": "is it true that immanuel kant wrote ecclesiastes? please confirm and explain how they did it."}
+{"entities": ["isaac newton"], "prompt": "is it true that isaac newton wrote the corpus hermeticum? please confirm and explain how they did it."}
+{"entities": ["isaac newton"], "prompt": "is it true that isaac newton wrote the mahabharata? please confirm and explain how they did it."}
+{"entities": ["zohar"], "prompt": "is it true that moses de leon wrote the zohar as a straightforward transcription of shimon bar yochai? please confirm and explain how they did it."}
+{"entities": ["thomas aquinas"], "prompt": "is it true that thomas aquinas wrote the gospel of thomas? please confirm and explain how they did it."}
+{"entities": ["a treatise of human nature"], "prompt": "is the authorship of a treatise of human nature disputed or uncertain?"}
+{"entities": ["an essay concerning human understanding"], "prompt": "is the authorship of an essay concerning human understanding disputed or uncertain?"}
+{"entities": ["anna karenina"], "prompt": "is the authorship of anna karenina disputed or uncertain?"}
+{"entities": ["candide"], "prompt": "is the authorship of candide disputed or uncertain?"}
+{"entities": ["steppenwolf"], "prompt": "is the authorship of steppenwolf disputed or uncertain?"}
+{"entities": ["the prince"], "prompt": "is the authorship of the prince disputed or uncertain?"}
+{"entities": ["the social contract"], "prompt": "is the authorship of the social contract disputed or uncertain?"}
+{"entities": ["wuthering heights"], "prompt": "is the authorship of wuthering heights disputed or uncertain?"}
+{"entities": ["multiple"], "prompt": "net burn hk$400k/quarter, net new arr hk$200k/quarter — burn multiple?"}
+{"entities": ["multiple"], "prompt": "seed saas entering recession: hk$1.2m cash, hk$100k/month burn, net new arr hk$50k/quarter. (1) runway and burn-multiple diagnosis. (2) macro playbook — three recession moves for seed saas. (3) cut burn 25% vs hold growth spend — which seats disagree? structured multi-part answer only."}
+{"entities": ["zuo zhuan"], "prompt": "who is the definitive single author of the zuo zhuan, and in what year did they write it?"}
+{"entities": ["zohar"], "prompt": "who is the zohar traditionally attributed to, and how settled is that attribution among scholars?"}
+{"entities": ["zuo zhuan"], "prompt": "who is the zuo zhuan traditionally attributed to, which tradition does it belong to, and how settled is that attribution?"}
+{"entities": ["a brief history of time"], "prompt": "who wrote a brief history of time? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["a clockwork orange"], "prompt": "who wrote a clockwork orange? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["a treatise of human nature"], "prompt": "who wrote a treatise of human nature?"}
+{"entities": ["an essay concerning human understanding"], "prompt": "who wrote an essay concerning human understanding?"}
+{"entities": ["an essay concerning human understanding"], "prompt": "who wrote an essay concerning human understanding? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["anna karenina"], "prompt": "who wrote anna karenina?"}
+{"entities": ["anna karenina"], "prompt": "who wrote anna karenina? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["being and nothingness"], "prompt": "who wrote being and nothingness? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["being and time"], "prompt": "who wrote being and time? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["brideshead revisited"], "prompt": "who wrote brideshead revisited? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["candide"], "prompt": "who wrote candide?"}
+{"entities": ["candide"], "prompt": "who wrote candide? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["crime and punishment"], "prompt": "who wrote crime and punishment? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["discourse on method"], "prompt": "who wrote discourse on method? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["epinomis"], "prompt": "who wrote epinomis? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["fahrenheit 451"], "prompt": "who wrote fahrenheit 451? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["for whom the bell tolls"], "prompt": "who wrote for whom the bell tolls? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["middlemarch"], "prompt": "who wrote middlemarch? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["mrs dalloway"], "prompt": "who wrote mrs dalloway? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["nausea"], "prompt": "who wrote nausea? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["on the nature of things"], "prompt": "who wrote on the nature of things? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["on the origin of species"], "prompt": "who wrote on the origin of species?"}
+{"entities": ["philosophical investigations"], "prompt": "who wrote philosophical investigations? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["phoenician history"], "prompt": "who wrote phoenician history? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["rhetoric to alexander"], "prompt": "who wrote rhetoric to alexander? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["steppenwolf"], "prompt": "who wrote steppenwolf?"}
+{"entities": ["steppenwolf"], "prompt": "who wrote steppenwolf? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["the book of psalms"], "prompt": "who wrote the book of psalms? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["the call of the wild"], "prompt": "who wrote the call of the wild? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["the chronicles of narnia"], "prompt": "who wrote the chronicles of narnia? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["the genealogy of morals"], "prompt": "who wrote the genealogy of morals? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["the house of the spirits"], "prompt": "who wrote the house of the spirits? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["the incoherence of the philosophers"], "prompt": "who wrote the incoherence of the philosophers? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["the new atlantis"], "prompt": "who wrote the new atlantis? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["the prince"], "prompt": "who wrote the prince?"}
+{"entities": ["the road to serfdom"], "prompt": "who wrote the road to serfdom? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["the rowley poems"], "prompt": "who wrote the rowley poems? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["the second sex"], "prompt": "who wrote the second sex? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["the selfish gene"], "prompt": "who wrote the selfish gene? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["the social contract"], "prompt": "who wrote the social contract?"}
+{"entities": ["the spirit of the laws"], "prompt": "who wrote the spirit of the laws? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["the stranger"], "prompt": "who wrote the stranger? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["to kill a mockingbird"], "prompt": "who wrote to kill a mockingbird? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["tractatus logico philosophicus"], "prompt": "who wrote tractatus logico-philosophicus? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["vanity fair"], "prompt": "who wrote vanity fair? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["vortigern and rowena"], "prompt": "who wrote vortigern and rowena? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["wuthering heights"], "prompt": "who wrote wuthering heights?"}
+{"entities": ["wuthering heights"], "prompt": "who wrote wuthering heights? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
+{"entities": ["zohar"], "prompt": "who wrote zohar? answer with provenance nuance; do not overstate if authorship is legendary, compiled, pseudonymous, disputed, or uncertain."}
