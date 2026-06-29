@@ -1,0 +1,12 @@
+{
+  "id": "2026-06-29-dryrun-all-01",
+  "args": "--dry-run --all",
+  "status": "ok",
+  "exitCode": 0,
+  "startedAt": "2026-06-29T05:11:33Z",
+  "endedAt": "2026-06-29T05:11:33Z",
+  "approvedBy": "",
+  "stdoutTail": "=== Sophia-AGI Local Benchmarks Trigger ===\nFlags: --dry-run --all\nTimestamp: 2026-06-29T13:11:33+08:00\nHost: spark-2f2d\nPWD: /home/tomyimkc/sophia-bridge\n-------------------------------------------\n[DRY-RUN] No actual GPU/training work will be performed.\n[DRY-RUN] Would run selected benchmarks with these flags.\n[bench-a] Running local judge eval smoke (dry if flagged)...\n{\n  \"provider\": \"vllm\",\n  \"base_url\": \"http://localhost:8000/v1\",\n  \"judge_models\": [\n    \"Qwen/Qwen2.5-7B-Instruct\",\n    \"meta-llama/Llama-3.3-8B-Instruct\"\n  ],\n  \"recommended_judge_flags\": \"--judge vllm:Qwen/Qwen2.5-7B-Instruct --judge vllm:meta-llama/Llama-3.3-8B-Instruct\",\n  \"note\": \"Two DISTINCT local models behind one endpoint count as 2 families for the no-overclaim gate; or pair one local + one metered cloud family.\",\n  \"dry_run\": true\n}\n[bench-b] Listing recent benchmark artifacts (read-only safe)...\nagi-proof/benchmark-results/truth-probe.public-report.json\nagi-proof/benchmark-results/unified-uplift-dolphin-v0.7.32-grounded.public-report.json\nagi-proof/benchmark-results/unified-uplift-dolphin-validated.public-report.json\nagi-proof/benchmark-results/unified-uplift.public-report.json\nagi-proof/benchmark-results/visual-rlvr.public-report.json\nTotal artifacts: 85\n[run-train] DRY: would invoke training smoke (e.g. via spark scripts or tools)\n[run-train] (Actual heavy training gated by --execute and local policy)\n=== run_local_benchmarks.sh complete (exit 0) ===\nSee spark-logs/benchmark-bridge.log for invocation log.\n",
+  "stderrTail": "",
+  "artifactsTouched": []
+}
