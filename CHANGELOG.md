@@ -4,6 +4,19 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+### Fixed — entity vocab admitted authorship-status sentinels as named entities
+
+A `DataAnalyst` content-review of the staged entity-disjoint split candidate found 2
+non-attribution finance prompts ("burn multiple") that had leaked into the carve because
+`attributedAuthor:"multiple"` (a collective-authorship sentinel for the I Ching / Book of
+Songs in `data/attributions.json`) was admitted to the entity vocab and matched the literal
+word "multiple". Fixed at source via a `_SENTINELS` stoplist in
+`tools/assert_entity_decontam.py::build_entity_vocab` (vocab 201→200). The recognizer is now
+more precise (removes false positives; no decontam gate is weakened). The re-staged candidate
+is 73 cases, all attribution traps, still entity-disjoint. Adds a regression test; updates the
+strategy doc, adoption runbook, and failure ledger. The split stays a candidate — human content
+sign-off and CI gating remain the adoption step. `canClaimAGI` unchanged (false).
+
 ### Added — always-available RunPod connection + stalled-pod checker
 
 Makes reaching RunPod reliable even when `RUNPOD_API_KEY` is absent from the current
