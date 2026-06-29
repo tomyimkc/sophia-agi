@@ -1,0 +1,111 @@
+{
+  "lane": "train",
+  "schema": "sophia.public_report.train_runpod_eval.v1",
+  "runId": 28399612388,
+  "workflow": ".github/workflows/train-runpod.yml",
+  "headSha": "6e86c46203e45a4c48e138d3dfb0f68cab2fd01b",
+  "headBranch": "main",
+  "ghaConclusion": "success",
+  "createdAt": "2026-06-29T20:11:06Z",
+  "podId": "hmwe3ahccd6vah",
+  "gpuPool": ["NVIDIA GeForce RTX 4090", "NVIDIA A40", "NVIDIA GeForce RTX 3090", "NVIDIA A100-SXM4-80GB", "NVIDIA RTX A6000", "NVIDIA L40S", "NVIDIA RTX 6000 Ada Generation", "NVIDIA L40"],
+  "laneType": "EVAL (SFT/LoRA base-vs-adapter eval-ladder, per-item rows present)",
+
+  "model": "Qwen/Qwen2.5-3B-Instruct",
+  "adapter": "local-sophia-cuda-v1 (PEFT LoRA)",
+  "adapterTrainConfig": {
+    "epochs": 1,
+    "loraR": 16,
+    "loraAlpha": 32,
+    "targetModules": "all-linear",
+    "rslora": true,
+    "dtype": "bfloat16",
+    "trainRows": 439,
+    "seed": 0,
+    "bestValLoss": 1.6719,
+    "note": "THIS run's evaluated adapter is the 1-epoch uniform r=16 LoRA per hmwe3ahccd6vah.sophia_lora_config.json. It is NOT the 3-epoch --lora-rank-alloc adapter described in the bundled qwen2.5-3b-lora-3ep-rankalloc public-report (that report is TRANSCRIBED from an EARLIER, different run: run #9 / runId 28285622770). Do not attribute that run's 29/32 to this artifact."
+  },
+
+  "evalSet": {
+    "domains": ["philosophy", "psychology", "history", "religion"],
+    "items": 32,
+    "note": "held-out provenance set; single-judge content+format scoring via tools/eval_local_model.py; deterministic FP16/greedy base"
+  },
+
+  "loadBearingMetric": "passAt1 (content channel) — paired per-item base vs adapter",
+  "basePassAt1": 0.7188,
+  "adapterPassAt1": 0.7812,
+  "basePassAt1Fraction": "23/32",
+  "adapterPassAt1Fraction": "25/32",
+  "upliftPct": 6.25,
+  "verifiedStepCoverage": null,
+  "verifiedStepCoverageNote": "N/A for this lane — provenance content-eval, not a process/step verifier. No VSC field exists in the artifact.",
+
+  "perDomainContent": {
+    "philosophy": {"base": "6/9", "adapter": "9/9"},
+    "psychology": {"base": "6/9", "adapter": "5/9"},
+    "history":    {"base": "6/8", "adapter": "6/8"},
+    "religion":   {"base": "5/6", "adapter": "5/6"}
+  },
+  "channelsBase":    {"format": "27/32 (84.4%)", "content": "23/32 (71.9%)", "combined": "19/32 (59.4%)"},
+  "channelsAdapter": {"format": "28/32 (87.5%)", "content": "25/32 (78.1%)", "combined": "22/32 (68.8%)"},
+
+  "evalStats": {
+    "meanDiff": 0.0625,
+    "n": 32,
+    "bootstrapCI95_meanDiff": [-0.125, 0.2188],
+    "ci95ExcludesZero": false,
+    "poweredVerdict": {
+      "verdict": "underpowered",
+      "powered": false,
+      "delta": 0.0625,
+      "n": 32,
+      "mde": 0.3502,
+      "tolerance": 0.05,
+      "note": "MDE 0.3502 > tolerance 0.05 at N=32: the probe CANNOT resolve this effect — grow N before claiming a direction"
+    },
+    "poweredVerdict_pairedRho0p5": {
+      "verdict": "underpowered",
+      "mde": 0.2476,
+      "note": "even crediting per-item base/adapter correlation rho=0.5, MDE 0.2476 still >> the +0.0625 observed"
+    },
+    "mcnemar": {"b": 3, "c": 5, "stat": 0.125, "p": 0.7237, "note": "discordant pairs 3 vs 5; p=0.72 — no significant directional shift"},
+    "interpretation": "The +6.25pt (2/32) adapter content uplift is NOT statistically resolvable at N=32 single-judge: the 95% paired bootstrap CI [-0.125, +0.219] straddles zero and the probe's MDE (0.35, or 0.25 with rho=0.5) dwarfs the effect. Directional/candidate-only, consistent with eval noise."
+  },
+
+  "harnessCheck": {
+    "skill": "rlvr-harness-traps",
+    "baseMuchGreaterThanZero": true,
+    "baseAdapterBothZero": false,
+    "verdict": "NOT a broken-verifier / 0-0 trap — base content passAt1 = 71.9% is well above zero and the verifier discriminates per item. This is a REAL (small, underpowered) eval, not a measurement artifact.",
+    "firstRealPositive": false,
+    "firstRealPositiveReason": "adapter > base (+6.25pt) BUT the 95% CI includes 0 and the result is underpowered (MDE >> delta). Does not meet the 'CI excludes 0' bar for a first real positive data point.",
+    "templateTrap": "Subject is a chat/instruct model (Qwen2.5-3B-Instruct), but it was scored via tools/eval_local_model.py and the FORMAT channel is high (base 84.4%, adapter 87.5%), indicating properly templated generation — NOT a raw-prompt template trap.",
+    "rewardSpread": "N/A — this is a deterministic single-generation pass/fail content eval, not a GRPO generation group, so there is no per-group reward spread to report.",
+    "loadBearingNote": "passAt1 (content) is load-bearing here, not meanReward; combined/format channels are format-driven and must not be read as content gains."
+  },
+
+  "z3PromotionContext": {
+    "promotionVerdict": "promote",
+    "solverChecked": true,
+    "backend": "z3",
+    "breachingInvariants": [],
+    "candidateId": "local-sophia-v2-mlx",
+    "caveat": "hmwe3ahccd6vah.promotion.public-report.json is the W2 oracle bundle for candidate 'local-sophia-v2-mlx', whose metricRows are computed against an OFFLINE baseline ladder (total before 0.5 -> after 0.688), NOT against this GPU run's FP16 Qwen base (23/32). The z3 promote attests the invariant suite ran (protected_floor_content, no_total_regression, contamination_zero overlap=0, provenance_complete, solver_attestation all accepted) — it is NOT independent statistical evidence of the +6.25pt GPU uplift. Do not conflate."
+  },
+
+  "registeredResult": false,
+  "registeredResultNote": "This is a real-GPU RunPod (x86) eval, but it is NOT a registered headline result — it is candidate/directional only and underpowered. Tagging registeredResult=false.",
+
+  "claimStatus": "candidate; canClaimAGI:false; corpus-bound",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+
+  "overallVerdict": "NO-GO (honest directional null). Real-GPU end-to-end path (GitHub Actions -> RunPod -> SFT/LoRA train -> eval-ladder -> z3 W2 oracle) is VERIFIED to run. The capability signal is NOT: base 71.9% content vs adapter 78.1% content = +6.25pt (2/32), 95% paired bootstrap CI [-0.125, +0.219] includes 0, underpowered (MDE 0.35 >> 0.05), McNemar p=0.72. Harness is healthy (base >> 0); this is a genuine small/underpowered eval, not a broken verifier. A validated claim needs the P6 protocol: >=3 seeds, 2 non-qwen judge families, kappa>=0.40, 95% CI excluding zero.",
+  "provenance": {
+    "source": "hmwe3ahccd6vah.eval_ladder_adapter.json (base/adapter rungs) + per-item content rows from hmwe3ahccd6vah.answers.tar.gz (benchmark/model_runs/local-qwen-qwen2.5-3b-instruct-*.report.json vs local-sophia-cuda-v1-*.report.json)",
+    "artifactName": "train-runpod-artifacts",
+    "evalStatsTool": "tools/eval_stats.py (bootstrap_ci_paired iters=10000 seed=0; verdict_or_underpowered; mcnemar)"
+  }
+}

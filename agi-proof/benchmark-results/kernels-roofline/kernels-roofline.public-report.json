@@ -1,0 +1,48 @@
+{
+  "lane": "kernels-roofline",
+  "runId": "28399605754",
+  "podId": "not-recorded-in-artifact",
+  "model": "N/A (kernel microbenchmark, not an LLM eval)",
+  "artifactType": "perf",
+  "artifactFiles": [
+    "kernels-runpod-reports/kernel_roofline.txt",
+    "kernels-runpod-reports/roofline_selftest.txt"
+  ],
+  "passAt1": null,
+  "harnessCheck": {
+    "passAt1Applicable": false,
+    "note": "PERF lane (kernel roofline / GEMM throughput). passAt1 / verifiedStepCoverage are N/A — there is no per-item base-vs-adapter eval, so the rlvr-harness-traps base>>0 check does not apply. eval_stats CI/MDE not run (no per-item correctness deltas)."
+  },
+  "kernel": {
+    "name": "Triton tiled GEMM 4096x4096x4096 bf16",
+    "device": "NVIDIA H100 80GB HBM3 (bf16)",
+    "problemFLOP": 137438953472,
+    "problemHBMBytes": 100663296,
+    "arithmeticIntensityFlopPerByte": 1365.33,
+    "regime": "compute-bound",
+    "ridgePointFlopPerByte": 295.37,
+    "timeMedianMs": 0.2525,
+    "timeMinMs": 0.2352,
+    "timeStdevMs": 0.0053,
+    "timedIters": 50,
+    "achievedTFLOPs": 544.25,
+    "achievedHBMGBs": 398.6,
+    "datasheetPeakComputeTFLOPs": 989.5,
+    "datasheetPeakHBMGBs": 3350,
+    "rooflineCeilingTFLOPs": 989.5,
+    "pctOfRoofline": 55.0,
+    "pctOfComputePeak": 55.0,
+    "pctOfHBMPeak": 11.9,
+    "correctnessVsTorchMaxRelErr": 0.0004,
+    "correctnessVerdict": "PASS"
+  },
+  "selfTest": {
+    "status": "OK",
+    "detail": "compute-bound=50.0%, memory-bound=80.0% HBM, over-100% guard fired"
+  },
+  "nvfp4Status": "ABSENT — the lane brief promised BF16 + fused NVFP4 dequant-GEMM, but this artifact contains ONLY the BF16 Triton GEMM roofline. No NVFP4 dequant-GEMM TFLOPS / %-peak numbers are present in the downloaded blob. Reporting BF16 only; NVFP4 is unverified/missing.",
+  "registeredResult": "registered x86 GPU result — NVIDIA H100 80GB HBM3, BF16 Triton GEMM. NOTE: lane label says 'x86 H100/A100' but only H100 measurements are present; no A100 roofline in this artifact.",
+  "claimStatus": "candidate; canClaimAGI:false; corpus-bound",
+  "verdict": "PARTIAL — BF16 GEMM roofline verified (544.25 TFLOP/s = 55.0% of the 989.5 TFLOP/s H100 BF16 datasheet roofline, correctness PASS @ max_rel_err 4e-4). Promised NVFP4 fused dequant-GEMM and A100 numbers are NOT in the artifact.",
+  "canClaimAGI": false
+}

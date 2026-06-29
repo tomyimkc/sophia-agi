@@ -1,0 +1,65 @@
+{
+  "lane": "ssil-compounding",
+  "runId": 28399709255,
+  "workflow": "ssil-compounding-runpod",
+  "ciConclusion": "success",
+  "createdAt": "2026-06-29T20:12:52Z",
+  "podId": null,
+  "podNote": "No RunPod pod was used. The only artifact is ssil-winset-compounding.mock-report.json with mode=mock — a synthetic dry-run, not a live GPU multi-generation run.",
+  "model": "sophia-code-rlvr-gen{1..5} (mock adapter ids; no real weights, no inference executed)",
+  "mode": "mock",
+  "artifactType": "empty",
+  "headline": {
+    "gatedCurve": [0.4, 0.6, 0.72],
+    "gatedConvergedAtGen": 4,
+    "gatedFinalCanonical": 0.72,
+    "negativeControlCurve": [0.4, 0.6, 0.72, 0.9],
+    "negativeControlFinalCanonical": 0.9,
+    "gateCaughtGenerations": [5],
+    "gateMadeADifference": true,
+    "note": "These curve values are HARD-CODED MOCK numbers, not measured passAt1. solverChecked=false on every generation -> no verifier ever ran. The per-gen heldoutDeltaWithCI fields (e.g. gen1 delta=0.4, ci [0.3942,0.4058]) are fabricated tight CIs that are physically impossible at the reported n=3."
+  },
+  "basePassAt1": null,
+  "gen0BasePassAt1": null,
+  "perGenerationPassAt1Curve": {
+    "gated": [0.4, 0.6, 0.72, 0.72, 0.9],
+    "negativeControl": [0.4, 0.6, 0.72, 0.72, 0.9],
+    "note": "passAt1 NOT measured. These are meanAfter mock values; gen-by-gen they are identical between gated and negative-control runs, differing only in the GATE VERDICT applied to gen5 (contaminated)."
+  },
+  "verifiedStepCoverage": null,
+  "evalStats": {
+    "perItemRowsAvailable": false,
+    "ranBootstrapCI": false,
+    "reason": "No per-item base-vs-adapter rows exist in the artifact (summary-only mock). bootstrap_ci_paired / verdict_or_underpowered cannot be applied to real data.",
+    "poweringOfReportedN": {
+      "perGenWinSetN": 3,
+      "mdeAtN3_rho0": 1.1437,
+      "mdeAtN3_rho0.5": 0.8087,
+      "interpretation": "Even taken at face value, n=3 per generation has an MDE of ~1.14 accuracy points (>1.0) — it cannot resolve ANY real effect. verdict_or_underpowered returns 'underpowered' for every generation (e.g. gen1 d=0.4 n=3 -> underpowered; gen3 d=0.12 n=3 -> underpowered). The mock CIs in the JSON are not derivable from n=3."
+    }
+  },
+  "harnessCheck": {
+    "gen0BaseMuchGreaterThanZero": "N/A — no real base measured (mock)",
+    "baseEqualsAdapterEqualsZero": false,
+    "firstRealPositive": false,
+    "templateTrap": "N/A — no real prompts/generations executed",
+    "rewardSpreadPositive": "N/A — solverChecked=false; no generation group, no verifier reward computed",
+    "verdict": "NOT a real positive. mode=mock, solverChecked=false across all 5 generations. The compounding curve and CI separation are synthetic. Same evidential class as a NO-GO: there is no live, verifier-gated capability signal here. Treat exactly like a math/step NO-GO — record and move on."
+  },
+  "poweredVerdict": "underpowered/no-evidence — mock curve, no per-item data, per-gen n=3 MDE ~1.14 >> any delta; no live GPU run.",
+  "ci95": "N/A (no per-item rows; reported per-gen CIs are fabricated mock values, not bootstrap-derived)",
+  "registeredResult": false,
+  "registeredResultNote": "Mock/dry-run only; nothing to register. The artifact's own liveClaimStatus declares: 'Open — mock/dry-run compounding only; the live GPU multi-generation run is not yet gated.'",
+  "claimStatus": "candidate; canClaimAGI:false; corpus-bound",
+  "canClaimAGI": false,
+  "boundary": "Bounded compounding within the verifier's reach; plateaus at the task/verifier ceiling. NOT open-ended RSI. canClaimAGI=false.",
+  "liveClaimStatus": "Open — mock/dry-run compounding only; the live GPU multi-generation run is not yet gated. canClaimAGI stays false until a real --mode live run clears the SSIL gate on every generation.",
+  "structuralInvariantsExercised": {
+    "gated_curve_monotone_rising": true,
+    "converges_at_ceiling": true,
+    "gate_rejects_contaminated_gen": true,
+    "negative_control_would_admit_it": true,
+    "gate_made_a_difference": true,
+    "note": "These confirm the GATE LOGIC / scaffold behaves correctly on synthetic inputs. They are software-correctness invariants, NOT capability evidence."
+  }
+}
