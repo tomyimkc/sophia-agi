@@ -96,8 +96,19 @@ def _mock_completion(case: Any, *, improved: bool) -> str:
     return f"I am not sure who wrote {case.work}."
 
 
-def _load_real_generators(model_name: str, adapter_path: Path, *, max_new_tokens: int):
-    """Return (base_generate, adapter_generate). Imported lazily for CPU/CI safety."""
+def _load_real_generators(
+    model_name: str, adapter_path: Path, *, max_new_tokens: int, chat_template: bool = False
+):
+    """Return (base_generate, adapter_generate). Imported lazily for CPU/CI safety.
+
+    ``chat_template``: when True (the code task), wrap each prompt in the model's
+    own chat template before tokenizing, so an *instruct/chat* base (e.g.
+    GLM-4-9B-chat) responds as an assistant and emits an extractable fenced code
+    block. Without it, a chat model fed a raw prompt emits prose, the code reward
+    finds no code, and base AND adapter both score 0 — an eval artifact, not a
+    capability reading (see failure-ledger rlvr-code-no-chat-template). Left False
+    for math/provenance, which already cleared on the raw-prompt path.
+    """
     import torch
     from peft import PeftModel
     from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -121,7 +132,8 @@ def _load_real_generators(model_name: str, adapter_path: Path, *, max_new_tokens
             tuned.enable_adapter_layers()
         else:
             tuned.disable_adapter_layers()
-        inputs = tokenizer(prompt, return_tensors="pt").to(tuned.device)
+        text = code_dataset.chat_wrap(tokenizer, prompt) if chat_template else prompt
+        inputs = tokenizer(text, return_tensors="pt").to(tuned.device)
         with torch.no_grad():
             out = tuned.generate(
                 **inputs,
@@ -412,7 +424,9 @@ def run_eval_code(args: argparse.Namespace) -> dict:
             raise SystemExit("--adapter is required under --mode real")
         if not code_reward.exec_enabled():
             raise SystemExit("code adapter eval needs SOPHIA_ALLOW_CODE_EXEC=1 (interpreter = reward)")
-        base_gen, adapter_gen = _load_real_generators(args.model, args.adapter, max_new_tokens=args.max_new_tokens)
+        base_gen, adapter_gen = _load_real_generators(
+            args.model, args.adapter, max_new_tokens=args.max_new_tokens, chat_template=True
+        )
         base, adapter = {}, {}
         for i, t in enumerate(tasks, 1):
             print(f"[eval-code] {i}/{len(tasks)} {t['id']}", flush=True)

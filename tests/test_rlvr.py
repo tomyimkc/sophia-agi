@@ -20,7 +20,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from agent.verifiers import provenance_faithful  # noqa: E402
-from provenance_bench import rl_dataset, rl_reward  # noqa: E402
+from provenance_bench import code_dataset, rl_dataset, rl_reward  # noqa: E402
 from provenance_bench.dataset import Case  # noqa: E402
 
 # Synthetic records/cases (mirror tests/test_provenance_bench.py so the gate fires
@@ -216,6 +216,36 @@ def test_ingest_refuses_committed_archive() -> None:
         raise AssertionError("ingest must refuse a file under the committed archive dir")
 
 
+class _ChatTok:
+    """Minimal stub of a chat tokenizer (no transformers/model download)."""
+
+    chat_template = "{{ stub }}"
+
+    def apply_chat_template(self, messages, *, tokenize, add_generation_prompt):
+        assert tokenize is False and add_generation_prompt is True
+        assert messages == [{"role": "user", "content": messages[0]["content"]}]
+        return f"<|user|>{messages[0]['content']}<|assistant|>"
+
+
+class _BaseTok:
+    """A base/completion tokenizer with no chat template."""
+
+    chat_template = None
+
+
+def test_code_chat_wrap_templates_for_chat_model() -> None:
+    # The code task must wrap raw prompts in the chat template so an instruct model
+    # emits an extractable fenced block (the rlvr-code-no-chat-template fix).
+    wrapped = code_dataset.chat_wrap(_ChatTok(), "Write a function f(x).")
+    assert wrapped == "<|user|>Write a function f(x).<|assistant|>"
+    assert "Write a function f(x)." in wrapped
+
+
+def test_code_chat_wrap_noop_without_template() -> None:
+    # A base/completion model has no chat template — chat_wrap must pass through.
+    assert code_dataset.chat_wrap(_BaseTok(), "Write a function f(x).") == "Write a function f(x)."
+
+
 def main() -> int:
     test_reward_is_deterministic()
     test_reward_false_monotone_and_forbidden_negative()
@@ -231,6 +261,8 @@ def main() -> int:
     test_sealed_hash_is_stable()
     test_run_rlvr_mock_passes_invariants()
     test_ingest_refuses_committed_archive()
+    test_code_chat_wrap_templates_for_chat_model()
+    test_code_chat_wrap_noop_without_template()
     print("test_rlvr: OK")
     return 0
 
