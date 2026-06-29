@@ -99,6 +99,20 @@ def _refused(reason: str) -> dict:
     return {"status": "refused", "schema": SCHEMA, "reason": reason}
 
 
+def _adopted_entity_split(root: Path) -> dict | None:
+    """The sealed, human-adopted entity-disjoint split, if one exists. Lets the plan stop
+    proposing already-done work (the carve) and surface the real residual (a third-party pack)."""
+    import json
+    man = root / "data" / "seib_entity_disjoint" / "manifest.json"
+    if not man.exists():
+        return None
+    try:
+        m = json.loads(man.read_text(encoding="utf-8"))
+    except (ValueError, OSError):
+        return None
+    return m if (m.get("sealed") and not m.get("candidateOnly", True)) else None
+
+
 class DataAnalyst:
     """Deterministic, propose-only data curator. See module docstring."""
 
@@ -158,17 +172,37 @@ class DataAnalyst:
         # entity contamination is a first-class action when present
         ec = a["entityContamination"]
         if ec["nEvalPromptsFullyCovered"] > 0:
-            actions.append(CurationAction(
-                "entityDisjointSplit",
-                0.0, 0.0,
-                # rank it alongside the strongest dimension action
-                priority=max([x.priority for x in actions], default=0.0) + 1e-6,
-                recommendation=(
-                    f"{ec['nEvalPromptsFullyCovered']} eval prompts are fully entity-covered by "
-                    "training — carve a genuinely entity-disjoint held-out split (human-approved)."
-                ),
-                tool="tools/carve_entity_disjoint_split.py --out <path>",
-            ))
+            adopted = _adopted_entity_split(self.root)
+            if adopted is not None:
+                # A clean split is already sealed + CI-gated; don't re-propose carving it.
+                # Keep the action visible (the BROAD eval is still contaminated by design),
+                # but rank it last and re-point at the real residual: a third-party pack.
+                ncases = adopted.get("nCases", "?")
+                actions.append(CurationAction(
+                    "entityDisjointSplit",
+                    0.0, 0.0,
+                    priority=min([x.priority for x in actions], default=0.0) - 1e-6,
+                    recommendation=(
+                        f"An entity-disjoint split ({ncases} cases) is ADOPTED + CI-gated at "
+                        "data/seib_entity_disjoint/. The broad eval set remains entity-contaminated "
+                        f"by design ({ec['nEvalPromptsFullyCovered']} fully-covered) — residual work "
+                        "is a THIRD-PARTY entity-disjoint pack for an external generalization claim, "
+                        "not another maintainer-authored carve."
+                    ),
+                    tool="commission third-party pack (failure-ledger: hidden-review-third-party-not-run)",
+                ))
+            else:
+                actions.append(CurationAction(
+                    "entityDisjointSplit",
+                    0.0, 0.0,
+                    # rank it alongside the strongest dimension action
+                    priority=max([x.priority for x in actions], default=0.0) + 1e-6,
+                    recommendation=(
+                        f"{ec['nEvalPromptsFullyCovered']} eval prompts are fully entity-covered by "
+                        "training — carve a genuinely entity-disjoint held-out split (human-approved)."
+                    ),
+                    tool="tools/carve_entity_disjoint_split.py --out <path>",
+                ))
 
         actions.sort(key=lambda x: x.priority, reverse=True)
         return {

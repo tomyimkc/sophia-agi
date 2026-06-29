@@ -44,6 +44,20 @@ def test_plan_surfaces_entity_contamination_action() -> None:
     assert "entityDisjointSplit" in dims
 
 
+def test_adopted_split_demotes_carve_action_and_points_to_third_party() -> None:
+    # Once the entity-disjoint split is sealed + adopted, the plan must stop proposing
+    # another carve and instead surface the real residual (a third-party pack). The action
+    # stays present (the broad eval is still contaminated) but is no longer top priority.
+    from agent.data_analyst import _adopted_entity_split
+    if _adopted_entity_split(ROOT) is None:
+        return  # split not adopted in this checkout — nothing to assert
+    plan = DataAnalyst().curation_plan()
+    eds = next(a for a in plan["actions"] if a["dimension"] == "entityDisjointSplit")
+    assert "third-party" in eds["recommendation"].lower()
+    assert "carve_entity_disjoint_split" not in eds["tool"]
+    assert plan["topPriority"] != "entityDisjointSplit", "a carved+adopted split is not top priority"
+
+
 def test_fail_closed_when_manifest_missing(monkeypatch) -> None:
     from tools import data_health_report as dhr
     monkeypatch.setattr(dhr, "MANIFEST", ROOT / "does-not-exist" / "manifest.json")
