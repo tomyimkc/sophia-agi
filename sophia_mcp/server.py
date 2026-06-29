@@ -29,6 +29,9 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     temperance_assess_tool,
     intemperance_check_tool,
     sophrosyne_benchmark_tool,
+    attention_assess_tool,
+    distraction_check_tool,
+    prosoche_benchmark_tool,
     justice_assess_tool,
     partiality_check_tool,
     dikaiosyne_benchmark_tool,
@@ -398,6 +401,48 @@ def sophia_intemperance_check(text: str, context_json: str = "{}") -> str:
 def sophia_sophrosyne_benchmark() -> str:
     """Deterministic candidate self-benchmark for the Sophrosyne temperance gate routing."""
     return dumps(sophrosyne_benchmark_tool())
+
+
+@mcp.tool()
+def sophia_attention_assess(text: str, anchor_json: str = "null", context_json: str = "{}") -> str:
+    """Prosoche attention gate — the allocation/focus regulator.
+
+    Given an attention anchor (goal + in-scope reward axes + entity/budget scope),
+    decides whether a step is focused|drifting|re-anchor|escalate by the Prosoche
+    Quotient (PQ = 1 - drift over semantic + entity divergence). SAFETY: a
+    safety/conscience-relevant step is NEVER classified as off-goal drift to prune
+    (attention is not blindness), and a weaponised-focus framing escalates.
+    Deterministic candidate infrastructure, not AGI proof. Read-only.
+    """
+    try:
+        anchor = json.loads(anchor_json or "null")
+        context = json.loads(context_json or "{}")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid json: {exc}"})
+    if not isinstance(context, dict):
+        return dumps({"error": "context_json must be a JSON object"})
+    return dumps(attention_assess_tool(text, anchor=anchor, context=context))
+
+
+@mcp.tool()
+def sophia_distraction_check(text: str, anchor_json: str = "null", context_json: str = "{}") -> str:
+    """Detect distraction (attention leaking onto out-of-scope targets) or fixation
+    (clinging to a stale goal, or ignoring a safety signal because it is 'off-goal').
+    Informational — it can only recommend re-focusing/re-anchoring, never suppress an
+    output. Read-only."""
+    try:
+        anchor = json.loads(anchor_json or "null")
+        context = json.loads(context_json or "{}")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid json: {exc}"})
+    return dumps(distraction_check_tool(text, anchor=anchor,
+                                        context=context if isinstance(context, dict) else {}))
+
+
+@mcp.tool()
+def sophia_prosoche_benchmark() -> str:
+    """Deterministic candidate self-benchmark for the Prosoche attention gate routing."""
+    return dumps(prosoche_benchmark_tool())
 
 
 @mcp.tool()
