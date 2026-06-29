@@ -184,5 +184,11 @@ This is the payoff of post-training over from-scratch:
    with the deterministic `lexical_entailment` as the offline/no-key fallback and a
    fail-closed-to-`irrelevant` guard on network errors. Selectable via
    `run_rlvr --task faithfulness --entailment-provider {deepseek,llmhub}`.
-3. `counterfactual_grounding_rate` power calc + private held-out split — not yet computed.
-4. ≥2-family judge validation of the faithfulness construct — not yet run.
+3. `counterfactual_grounding_rate` — the eval instrument is shipped and offline-validated
+   (`provenance_bench/faithfulness_eval.py`: `evaluate` / `compare`, fixed-n CI +
+   anytime-valid CS via `tools/eval_stats.py`), and the experiment is **pre-registered**
+   (`agi-proof/benchmark-results/faithfulness/measurement_spec.json`: mde 0.10, requiredN
+   377 @ p0 0.6). **Open:** the actual base-vs-adapter run (needs a trained adapter) and a
+   reserved private held-out split.
+4. ≥2-family judge validation of the faithfulness construct — DeepSeek + an LLMHub family
+   are wired and live; the panel run + inter-judge agreement (κ/AC1) is not yet executed.
