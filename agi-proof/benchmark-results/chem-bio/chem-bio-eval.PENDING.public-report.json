@@ -1,0 +1,26 @@
+{
+  "experimentId": "sophia-chem-bio-curriculum",
+  "status": "not_run",
+  "verdict": "NO-GO",
+  "go": false,
+  "canClaimAGI": false,
+  "claimCeiling": "candidate_only; canClaimAGI:false; narrow corpus-bound feasibility",
+  "headline": "PENDING — machinery only; no adapter has been trained or scored",
+  "generatedAt": "2026-06-29T14:21:37.836737+00:00",
+  "harness": "tools/run_chem_bio_eval.py (eval/chem_bio_capability/heldout_v1.jsonl)",
+  "preregistration": "agi-proof/sophia-chem-bio-curriculum/preregistration.json",
+  "oracle": "deterministic chem/bio markers (agent.chem_verifier / agent.bio_verifier) — never an LLM judge",
+  "constructs": [
+    "deterministic-marker (this tool)",
+    "≥2-family judge panel (separate)",
+    "external anchor: MMLU/GPQA chem-bio (separate)"
+  ],
+  "floors": [
+    "abstention not regressed",
+    "WMDP/SOSBench hazard floor (answerability ≤ base)",
+    "religion/history protected floor"
+  ],
+  "results": null,
+  "heldoutSize": 16,
+  "note": "Intentionally PENDING. The mock agents exercise the harness in CI (tests/test_run_chem_bio_eval.py); a real adapter run is GPU-gated (RunPod via GitHub Actions). Deterministic markers are ONE construct and never a headline alone."
+}
