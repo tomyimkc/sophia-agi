@@ -1,0 +1,132 @@
+{
+  "benchmark": "core-lean-passk.jsonl",
+  "isMiniF2F": false,
+  "n": 12,
+  "solved": 6,
+  "passAt1": 0.5,
+  "modelSpec": "ollama:qwen2.5:32b-instruct",
+  "verifier": "agent.lean_backend.verify_lean_source",
+  "estCostUsd": 0.0,
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "note": "Whole-proof pass@1, real Lean-kernel verified, trace-free. NOT miniF2F: a core-Lean-provable local set (bare `lean`, no Mathlib).",
+  "results": [
+    {
+      "id": "p01_one_plus_one",
+      "tier": "trivial",
+      "decl": "theorem p01 : 1 + 1 = 2",
+      "verdict": "accepted",
+      "proof": "theorem p01 : 1 + 1 = 2 := by rfl",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 4.5
+    },
+    {
+      "id": "p02_add_zero",
+      "tier": "trivial",
+      "decl": "theorem p02 (n : Nat) : n + 0 = n",
+      "verdict": "rejected",
+      "proof": "theorem p02 (n : Nat) : n + 0 = n := by rw [Nat.zero_add]",
+      "reason": "lean_rejected: /tmp/tmpckab8dwg.lean:1:44: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern",
+      "sec": 4.5
+    },
+    {
+      "id": "p03_zero_add",
+      "tier": "easy",
+      "decl": "theorem p03 (n : Nat) : 0 + n = n",
+      "verdict": "rejected",
+      "proof": "theorem p03 (n : Nat) : 0 + n = n := by rw [add_zero]",
+      "reason": "lean_rejected: /tmp/tmpn3s4m5we.lean:1:37: error: unsolved goals",
+      "sec": 4.5
+    },
+    {
+      "id": "p04_add_comm",
+      "tier": "easy",
+      "decl": "theorem p04 (a b : Nat) : a + b = b + a",
+      "verdict": "rejected",
+      "proof": "theorem p04 (a b : Nat) : a + b = b + a := by rw [add_comm a b]",
+      "reason": "lean_rejected: /tmp/tmpukvtxp2j.lean:1:43: error: unsolved goals",
+      "sec": 5.4
+    },
+    {
+      "id": "p05_imp_self",
+      "tier": "easy",
+      "decl": "theorem p05 (p : Prop) : p \u2192 p",
+      "verdict": "accepted",
+      "proof": "theorem p05 (p : Prop) : p \u2192 p := by intro h; exact h",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 4.7
+    },
+    {
+      "id": "p06_and_comm",
+      "tier": "easy",
+      "decl": "theorem p06 (p q : Prop) (h : p \u2227 q) : q \u2227 p",
+      "verdict": "accepted",
+      "proof": "theorem p06 (p q : Prop) (h : p \u2227 q) : q \u2227 p := by exact \u27e8h.right, h.left\u27e9",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 5.0
+    },
+    {
+      "id": "p07_le_refl",
+      "tier": "easy",
+      "decl": "theorem p07 (n : Nat) : n \u2264 n",
+      "verdict": "rejected",
+      "proof": "theorem p07 (n : Nat) : n \u2264 n := by refl",
+      "reason": "lean_rejected: /tmp/tmpqsp4bm9d.lean:1:33: error: unsolved goals",
+      "sec": 4.1
+    },
+    {
+      "id": "p08_succ_pos",
+      "tier": "easy",
+      "decl": "theorem p08 (n : Nat) : 0 < n + 1",
+      "verdict": "accepted",
+      "proof": "theorem p08 (n : Nat) : 0 < n + 1 := by exact Nat.zero_lt_succ n",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 4.7
+    },
+    {
+      "id": "p09_mul_two",
+      "tier": "medium",
+      "decl": "theorem p09 (n : Nat) : 2 * n = n + n",
+      "verdict": "rejected",
+      "proof": "theorem p09 (n : Nat) : 2 * n = n + n := by rw [Nat.mul_two]",
+      "reason": "lean_rejected: /tmp/tmp2xg7xy_j.lean:1:48: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern",
+      "sec": 4.7
+    },
+    {
+      "id": "p10_list_append_nil",
+      "tier": "medium",
+      "decl": "theorem p10 (l : List Nat) : l ++ [] = l",
+      "verdict": "accepted",
+      "proof": "theorem p10 (l : List Nat) : l ++ [] = l := by induction l <;> simp [*, List.append]",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 5.2
+    },
+    {
+      "id": "p11_left_distrib",
+      "tier": "medium",
+      "decl": "theorem p11 (a b c : Nat) : a * (b + c) = a * b + a * c",
+      "verdict": "accepted",
+      "proof": "theorem p11 (a b c : Nat) : a * (b + c) = a * b + a * c := by rw [Nat.mul_add]",
+      "reason": "lean_accepted: elaborated clean (no error, no sorry)",
+      "sec": 4.8
+    },
+    {
+      "id": "p12_or_comm",
+      "tier": "medium",
+      "decl": "theorem p12 (p q : Prop) (h : p \u2228 q) : q \u2228 p",
+      "verdict": "rejected",
+      "proof": "theorem p12 (p q : Prop) (h : p \u2228 q) : q \u2228 p := by cases h; left; assumption",
+      "reason": "lean_rejected: /tmp/tmpiicr4ov6.lean:1:66: error: Tactic `assumption` failed",
+      "sec": 5.1
+    }
+  ],
+  "sparkIteration": true,
+  "registeredResult": false,
+  "benchName": "lean-passk",
+  "utc": "20260629T053155Z",
+  "host": "dgx-spark-gb10",
+  "subject": "ollama:qwen2.5:32b-instruct",
+  "lane": "spark-continuous",
+  "mainHead": "7259ac25"
+}
