@@ -1,7 +1,7 @@
 # Measurement-contract convenience targets. `make claim-check` runs the full deterministic
 # enforcement suite locally — the same gates fast-ci runs on every PR. `make hooks` installs the
 # pre-commit hook (opt-in via core.hooksPath).
-.PHONY: claim-check claim-check-fast hooks bench-local
+.PHONY: claim-check claim-check-fast hooks bench-local aats-experiments
 
 # Full contract: no-overclaim copy, habit-not-fact training rows, independent decontam, power
 # self-test, and the GO/NO-GO claim receipts for the headline recipes.
@@ -29,3 +29,14 @@ bench-local:
 hooks:
 	git config core.hooksPath .githooks
 	@echo "pre-commit hook installed (core.hooksPath=.githooks). Run 'git config --unset core.hooksPath' to remove."
+
+# AATS auto-approval experiment harnesses (docs/research/ai-auto-approval-thesis.md §5).
+# Deterministic + offline (no model): verify/generate census, diverse-ensemble agreement +
+# error-correlation, conformal price-of-guarantee curve, canary circuit-breaker. All
+# candidate-only; the two-model-family judge arms + real labeled rows are model-gated.
+aats-experiments:
+	python tools/verify_generate_census.py --check
+	python tools/ensemble_agreement_study.py --demo
+	python tools/aats_conformal_calibration.py --synthetic 600 --target-false-approve 0.05
+	python tools/run_canary_breaker.py --approver sound --state agi-proof/aats/_test-tmp/breaker-ci.json
+	python tests/test_aats_experiments.py

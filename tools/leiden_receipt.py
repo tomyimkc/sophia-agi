@@ -113,11 +113,16 @@ VALUES = [
         # partial: local-first + Apache-2.0, but validation still leans on proprietary judges.
         "declared_status": "partial",
         "mechanisms": ["VISION.md", "LICENSE", "SECURITY.md",
-                       "agent/judge_registry.py", "agent/open_judge.py"],
+                       "agent/judge_registry.py", "agent/open_judge.py",
+                       "tools/run_open_judge_regrade.py",
+                       ".github/workflows/open-judge-regrade.yml",
+                       "tools/runpod_open_judge_regrade.py",
+                       ".github/workflows/open-judge-runpod.yml"],
         "sophia_form": ("Local-first, Apache-2.0, runs on owned hardware. A self-hostable "
-                        "open-weights judge backend (agent/open_judge.py) and a judge-openness "
-                        "registry (agent/judge_registry.py) now exist; the value is fully met "
-                        "once a headline result is corroborated on a non-proprietary path "
+                        "open-weights judge backend (agent/open_judge.py), a judge-openness "
+                        "registry (agent/judge_registry.py), and a re-grade harness + manual "
+                        "workflow now exist; the value is fully met once a headline result is "
+                        "corroborated on a non-proprietary path against a self-hosted endpoint "
                         "(see open_gaps: open_model_judge_family)."),
         "evidence": ["VISION.md"],
     },
@@ -131,9 +136,15 @@ OPEN_GAPS = [
                     "rule no longer depends on proprietary inference services."),
         "serves_value": "autonomous_direction",
         "status": "in_progress",
-        "note": ("Registry (agent/judge_registry.py) + self-hostable backend "
-                 "(agent/open_judge.py) landed; remaining: corroborate a headline result on "
-                 "a non-proprietary path and record judge openness in its receipt."),
+        "note": ("Landed: openness registry (agent/judge_registry.py), self-hostable backend "
+                 "(agent/open_judge.py), re-grade harness (tools/run_open_judge_regrade.py), "
+                 "two dispatch paths (.github/workflows/open-judge-regrade.yml for a BYO "
+                 "endpoint; .github/workflows/open-judge-runpod.yml + "
+                 "tools/runpod_open_judge_regrade.py for an all-in-one RunPod pod that serves "
+                 "vLLM + re-grades + self-deletes), and a failure-ledger entry "
+                 "(open-judge-non-proprietary-validation-2026-06-29). Remaining: a real GPU run "
+                 "(needs a working RUNPOD_API_KEY secret) to corroborate a headline result on a "
+                 "non-proprietary path, then close the ledger entry."),
         "design": "docs/11-Platform/Leiden-Open-Judge-Family.md",
     },
     {

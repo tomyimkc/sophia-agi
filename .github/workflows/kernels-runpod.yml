@@ -60,15 +60,22 @@ jobs:
     environment: runpod-paid
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    env:
+      IN_CONFIRM: ${{ github.event.inputs.confirm }}
+      IN_GPU_TYPE: ${{ github.event.inputs.gpu_type }}
+      IN_M: ${{ github.event.inputs.m }}
+      IN_N: ${{ github.event.inputs.n }}
+      IN_K: ${{ github.event.inputs.k }}
+      IN_ITERS: ${{ github.event.inputs.iters }}
+      IN_INTERRUPTIBLE: ${{ github.event.inputs.interruptible }}
     steps:
       - uses: actions/checkout@v7
 
       - name: Preflight — confirm + secret present
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
-          CONFIRM: ${{ github.event.inputs.confirm }}
         run: |
-          if [ "$CONFIRM" != "RUN" ]; then
+          if [ "$IN_CONFIRM" != "RUN" ]; then
             echo "::error::Dispatch input 'confirm' must be exactly RUN to acknowledge GPU cost. Aborting (no pod created)."
             exit 1
           fi
@@ -86,25 +93,25 @@ jobs:
         run: |
           python tools/runpod_kernels.py --dry-run \
             --branch "${{ github.ref_name }}" \
-            --gpu-type "${{ github.event.inputs.gpu_type }}" \
-            --m "${{ github.event.inputs.m }}" \
-            --n "${{ github.event.inputs.n }}" \
-            --k "${{ github.event.inputs.k }}" \
-            --iters "${{ github.event.inputs.iters }}"
+            --gpu-type "$IN_GPU_TYPE" \
+            --m "$IN_M" \
+            --n "$IN_N" \
+            --k "$IN_K" \
+            --iters "$IN_ITERS"
 
       - name: Launch RunPod kernel bench (rents GPU, runs over SSH, deletes pod)
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
         run: |
           INTERRUPTIBLE=""
-          if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
+          if [ "$IN_INTERRUPTIBLE" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
           python tools/runpod_kernels.py --yes \
             --branch "${{ github.ref_name }}" \
-            --gpu-type "${{ github.event.inputs.gpu_type }}" \
-            --m "${{ github.event.inputs.m }}" \
-            --n "${{ github.event.inputs.n }}" \
-            --k "${{ github.event.inputs.k }}" \
-            --iters "${{ github.event.inputs.iters }}" \
+            --gpu-type "$IN_GPU_TYPE" \
+            --m "$IN_M" \
+            --n "$IN_N" \
+            --k "$IN_K" \
+            --iters "$IN_ITERS" \
             $INTERRUPTIBLE
 
       - name: Show the roofline report in the run log
