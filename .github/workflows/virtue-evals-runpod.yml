@@ -90,13 +90,20 @@ jobs:
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
           GH_PILOT_PAT: ${{ github.token }}
+          RUNPOD_REGISTRY_AUTH_ID: ${{ github.event.inputs.registry_auth_id }}
           IN_SUBJECT: ${{ github.event.inputs.subject }}
           IN_JUDGE_A: ${{ github.event.inputs.judge_a }}
           IN_JUDGE_B: ${{ github.event.inputs.judge_b }}
           IN_SEEDS: ${{ github.event.inputs.seeds }}
+          IN_LABEL_LIMIT: ${{ github.event.inputs.label_limit }}
+          IN_IMAGE: ${{ github.event.inputs.image }}
         run: |
-          python tools/runpod_virtue_evals.py --dry-run --branch "$GITHUB_REF_NAME" \
-            --subject "$IN_SUBJECT" --judge-a "$IN_JUDGE_A" --judge-b "$IN_JUDGE_B" --seeds "$IN_SEEDS"
+          # Thread the SAME optional inputs as the real launch so the dry-run payload matches it.
+          args=(--dry-run --branch "$GITHUB_REF_NAME"
+                --subject "$IN_SUBJECT" --judge-a "$IN_JUDGE_A" --judge-b "$IN_JUDGE_B" --seeds "$IN_SEEDS")
+          [ -n "$IN_LABEL_LIMIT" ] && args+=(--label-limit "$IN_LABEL_LIMIT")
+          [ -n "$IN_IMAGE" ] && args+=(--image-name "$IN_IMAGE")
+          python tools/runpod_virtue_evals.py "${args[@]}"
 
       - name: Launch SSH-free virtue evals on RunPod (pod self-reports via git push; waits until done)
         env:

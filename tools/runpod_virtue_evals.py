@@ -109,7 +109,9 @@ finish() {{
   set +e
   echo "[pod] job exit code=$code"
   cd /workspace/sophia-agi 2>/dev/null || true
-  sed -i "s/${{GH_PILOT_PAT:-__none__}}/REDACTED/g" /workspace/pod.log 2>/dev/null || true
+  # Use an alternate sed delimiter so a '/' in the token can't break the substitution
+  # (GitHub tokens are slash-free alphanumerics, but '|' is robust regardless).
+  sed -i "s|${{GH_PILOT_PAT:-__none__}}|REDACTED|g" /workspace/pod.log 2>/dev/null || true
   if [ -d /workspace/sophia-agi/.git ]; then
     mkdir -p "$(dirname {LOG_PATH})"
     cp /workspace/pod.log {LOG_PATH} 2>/dev/null || true
@@ -127,9 +129,13 @@ finish() {{
       else echo "[pod] result push attempt $i failed:"; cat /tmp/fpush.err; sleep $((i*8)); fi
     done
   fi
-  if [ -n "${{RUNPOD_API_KEY:-}}" ] && [ -n "${{RUNPOD_POD_ID:-}}" ]; then
-    echo "[pod] self-deleting pod $RUNPOD_POD_ID"
-    curl -fsS --request DELETE --url "https://rest.runpod.io/v1/pods/${{RUNPOD_POD_ID}}" \
+  # RunPod sets the container hostname to the pod id, so fall back to $(hostname) if
+  # RUNPOD_POD_ID is somehow unset — never skip self-delete and leak a billable pod
+  # (mirrors tools/runpod_rlvr.py; the launcher's --wait delete-on-result is the backstop).
+  POD_ID="${{RUNPOD_POD_ID:-$(hostname)}}"
+  if [ -n "${{RUNPOD_API_KEY:-}}" ] && [ -n "$POD_ID" ]; then
+    echo "[pod] self-deleting pod $POD_ID"
+    curl -fsS --request DELETE --url "https://rest.runpod.io/v1/pods/${{POD_ID}}" \
       --header "Authorization: Bearer $RUNPOD_API_KEY" || true
   fi
   # CRITICAL anti-restart-loop guard: a RunPod pod RE-RUNS its dockerStartCmd whenever the
@@ -204,13 +210,13 @@ python3 tools/assert_dikaiosyne_decontam.py
 # ── 3. Label with 2 independent judge families (kappa >= 0.40 gate inside each tool) ──────
 echo "[pod] labeling Sophrosyne battery (judges: {judge_a_name} / {judge_b_name})"
 python3 tools/label_sophrosyne_battery.py \
-  --judge-a '{judge_a_spec}' --judge-a-name {judge_a_name} \
-  --judge-b '{judge_b_spec}' --judge-b-name {judge_b_name} \
+  --judge-a '{judge_a_spec}' --judge-a-name '{judge_a_name}' \
+  --judge-b '{judge_b_spec}' --judge-b-name '{judge_b_name}' \
   --workers {workers} {label_limit}
 echo "[pod] labeling Dikaiosyne battery"
 python3 tools/label_dikaiosyne_battery.py \
-  --judge-a '{judge_a_spec}' --judge-a-name {judge_a_name} \
-  --judge-b '{judge_b_spec}' --judge-b-name {judge_b_name} \
+  --judge-a '{judge_a_spec}' --judge-a-name '{judge_a_name}' \
+  --judge-b '{judge_b_spec}' --judge-b-name '{judge_b_name}' \
   --workers {workers} {label_limit}
 
 # ── 4. Score 3 arms vs a REAL no-gate baseline (Delta + bootstrap CI over >= {seeds} seeds) ──
@@ -223,7 +229,11 @@ echo "[pod] both public reports written; finish() will commit + push them"
 """
 
 
-def _build_payload(args, api_key, gh_pat):
+def _build_payload(args, env):
+    """Build the RunPod pod-create payload. Secrets are NOT handled here — the caller passes
+    the ``env`` dict (real values on the launch path, placeholders on dry-run). Keeping secrets
+    out of this shared helper means there is no env->this-function->stdout taint path for the
+    clear-text-logging scanner to flag when the dry-run prints the result."""
     gpu_types = [g.strip() for g in args.gpu_type.split(",") if g.strip()]
     payload = {
         "name": args.name,
@@ -239,10 +249,7 @@ def _build_payload(args, api_key, gh_pat):
         "supportPublicIp": False,
         "interruptible": False,
         "locked": False,
-        "env": {
-            "RUNPOD_API_KEY": api_key,   # for the pod's self-delete on exit
-            "GH_PILOT_PAT": gh_pat,
-        },
+        "env": env,
         "dockerEntrypoint": [],
         "dockerStartCmd": ["bash", "-lc", _job_script(args)],
     }
@@ -290,16 +297,15 @@ def main(argv=None) -> int:
     args = parse_args(argv)
 
     if args.dry_run:
-        # Dry-run shows the payload STRUCTURE only. It deliberately does NOT read the real
-        # secrets — the placeholders below are literals, not env-derived — so no secret value
-        # can ever reach stdout (and CodeQL has no env->print taint path to flag).
-        payload = _build_payload(args, "<RUNPOD_API_KEY>", "<GH_PILOT_PAT>")
+        # Dry-run shows the payload STRUCTURE only, with LITERAL placeholder creds — it never
+        # reads the real secrets, so no secret value can ever reach stdout.
+        payload = _build_payload(args, {"RUNPOD_API_KEY": "<redacted>", "GH_PILOT_PAT": "<redacted>"})
         print(json.dumps(payload, indent=2))
         return 0
 
     api_key = os.environ.get(args.api_key_env, "")
     gh_pat = os.environ.get(args.gh_token_env, "")
-    for name, val in (("RUNPOD_API_KEY", api_key), (args.gh_token_env, gh_pat)):
+    for name, val in ((args.api_key_env, api_key), (args.gh_token_env, gh_pat)):
         if not val:
             raise RunPodError(f"missing env {name}")
     if not args.yes:
@@ -313,7 +319,9 @@ def main(argv=None) -> int:
     # result from a stale prior one.
     baseline_blob = _git_blob(args.branch, SOPHROSYNE_REPORT)
 
-    payload = _build_payload(args, api_key, gh_pat)
+    # Real launch: inject the live secrets into env here (NOT printed — this payload goes to
+    # the RunPod API). RUNPOD_API_KEY lets the pod self-delete; GH_PILOT_PAT lets it push.
+    payload = _build_payload(args, {"RUNPOD_API_KEY": api_key, "GH_PILOT_PAT": gh_pat})
     pod = _api_request("POST", "/pods", api_key, payload)
     pod_id = pod.get("id") or pod.get("podId")
     print(json.dumps({"created": True, "podId": pod_id, "costPerHr": pod.get("costPerHr"),
