@@ -115,11 +115,16 @@ def _good_delegate(ev: dict) -> bool:
     )
 
 
+# Common function words that carry no routing signal — dropped so the intent slug keys on
+# the content words (e.g. "review the gacha odds" -> "review-gacha", not "review-the").
+_STOPWORDS = frozenset("the a an of to for our my your this that with and or on in at is are be".split())
+
+
 def _intent_of(prompt: str) -> str:
-    """A coarse, deterministic intent slug from the prompt's leading words. Cheap and
-    offline by design — it groups similar delegations without a model in the loop. Two
-    words keeps the grouping coarse enough that near-identical tasks share a candidate."""
-    words = re.findall(r"[a-z]+", prompt.lower())
+    """A coarse, deterministic intent slug from the prompt's leading content words. Cheap and
+    offline by design — it groups similar delegations without a model in the loop. Two content
+    words keep the grouping coarse enough that near-identical tasks share a candidate."""
+    words = [w for w in re.findall(r"[a-z]+", prompt.lower()) if w not in _STOPWORDS]
     return "-".join(words[:2]) if words else "task"
 
 
