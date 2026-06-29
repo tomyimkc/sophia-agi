@@ -1,0 +1,12 @@
+{
+  "benchmark": "abstention_integrity",
+  "n": 13,
+  "abstained": 13,
+  "rejected": 0,
+  "accepted": 0,
+  "abstentionIntegrity": 1.0,
+  "adversarialFabricatedProofBlocked": true,
+  "falsifications": [],
+  "note": "Open problems have no gold, so the gate is structurally unable to mark them solved; the only acceptable outcome is abstention. Any acceptance is a hard falsification.",
+  "canClaimAGI": false
+}
