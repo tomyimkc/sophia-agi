@@ -1,0 +1,327 @@
+{
+  "report": {
+    "schema": "sophia.reasoning.fusion.realmodel.v1",
+    "model": "deepseek-chat",
+    "base_url": "https://api.deepseek.com",
+    "n_cases": 50,
+    "n_samples": 5,
+    "temperature": 0.7,
+    "base_error": 0.54,
+    "d_prime_A": 0.6403,
+    "d_prime_B": 1.4412,
+    "d_prime_fused": 1.295,
+    "auc_A": 0.6731,
+    "auc_B": 0.7593,
+    "auc_fused": 0.7834,
+    "correlation": 0.3315,
+    "breakeven_snr": 1.0,
+    "A_clears": false,
+    "B_clears": true,
+    "fused_clears": true,
+    "candidateOnly": true,
+    "level3Evidence": false,
+    "boundary": "single model = 1 family @ 1 seed; not promotable. Real-model d\u2032 for the fusion thesis; no-overclaim gate needs >=2 families, >=3 seeds, CI."
+  },
+  "per_case": [
+    {
+      "id": "br_transitive_001",
+      "is_error": false,
+      "A": 0.4,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_002",
+      "is_error": false,
+      "A": 0.4,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_003",
+      "is_error": true,
+      "A": 0.6,
+      "B": 2.0
+    },
+    {
+      "id": "br_transitive_004",
+      "is_error": true,
+      "A": 0.4,
+      "B": 2.0
+    },
+    {
+      "id": "br_transitive_005",
+      "is_error": false,
+      "A": 0.6,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_006",
+      "is_error": true,
+      "A": 0.2,
+      "B": 2.0
+    },
+    {
+      "id": "br_transitive_007",
+      "is_error": false,
+      "A": 0.4,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_008",
+      "is_error": false,
+      "A": 0.4,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_009",
+      "is_error": false,
+      "A": 0.4,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_010",
+      "is_error": false,
+      "A": 0.4,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_011",
+      "is_error": true,
+      "A": 0.6,
+      "B": 2.0
+    },
+    {
+      "id": "br_transitive_012",
+      "is_error": false,
+      "A": 0.2,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_013",
+      "is_error": true,
+      "A": 0.6,
+      "B": 2.0
+    },
+    {
+      "id": "br_transitive_014",
+      "is_error": false,
+      "A": 0.4,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_015",
+      "is_error": false,
+      "A": 0.2,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_016",
+      "is_error": false,
+      "A": 0.6,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_017",
+      "is_error": false,
+      "A": 0.4,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_018",
+      "is_error": true,
+      "A": 0.6,
+      "B": 2.0
+    },
+    {
+      "id": "br_transitive_019",
+      "is_error": false,
+      "A": 0.4,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_020",
+      "is_error": false,
+      "A": 0.4,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_021",
+      "is_error": true,
+      "A": 0.6,
+      "B": 1.0
+    },
+    {
+      "id": "br_transitive_022",
+      "is_error": false,
+      "A": 0.2,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_023",
+      "is_error": false,
+      "A": 0.6,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_024",
+      "is_error": true,
+      "A": 0.6,
+      "B": 2.0
+    },
+    {
+      "id": "br_transitive_025",
+      "is_error": false,
+      "A": 0.6,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_026",
+      "is_error": false,
+      "A": 0.0,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_027",
+      "is_error": false,
+      "A": 0.2,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_028",
+      "is_error": true,
+      "A": 0.6,
+      "B": 2.0
+    },
+    {
+      "id": "br_transitive_029",
+      "is_error": false,
+      "A": 0.2,
+      "B": 0.0
+    },
+    {
+      "id": "br_transitive_030",
+      "is_error": true,
+      "A": 0.6,
+      "B": 2.0
+    },
+    {
+      "id": "br_multisource_survives_031",
+      "is_error": true,
+      "A": 0.2,
+      "B": 0.0
+    },
+    {
+      "id": "br_multisource_survives_032",
+      "is_error": true,
+      "A": 0.2,
+      "B": 0.0
+    },
+    {
+      "id": "br_multisource_survives_033",
+      "is_error": true,
+      "A": 0.2,
+      "B": 0.0
+    },
+    {
+      "id": "br_multisource_survives_034",
+      "is_error": false,
+      "A": 0.4,
+      "B": 0.0
+    },
+    {
+      "id": "br_multisource_survives_035",
+      "is_error": false,
+      "A": 0.6,
+      "B": 0.0
+    },
+    {
+      "id": "br_multisource_survives_036",
+      "is_error": true,
+      "A": 0.6,
+      "B": 0.0
+    },
+    {
+      "id": "br_multisource_survives_037",
+      "is_error": true,
+      "A": 0.6,
+      "B": 0.0
+    },
+    {
+      "id": "br_multisource_survives_038",
+      "is_error": true,
+      "A": 0.4,
+      "B": 0.0
+    },
+    {
+      "id": "br_multisource_survives_039",
+      "is_error": false,
+      "A": 0.6,
+      "B": 0.0
+    },
+    {
+      "id": "br_multisource_survives_040",
+      "is_error": true,
+      "A": 0.8,
+      "B": 2.0
+    },
+    {
+      "id": "br_multiretract_041",
+      "is_error": true,
+      "A": 0.6,
+      "B": 0.0
+    },
+    {
+      "id": "br_multiretract_042",
+      "is_error": true,
+      "A": 0.4,
+      "B": 0.0
+    },
+    {
+      "id": "br_multiretract_043",
+      "is_error": true,
+      "A": 0.6,
+      "B": 0.0
+    },
+    {
+      "id": "br_multiretract_044",
+      "is_error": true,
+      "A": 0.4,
+      "B": 0.0
+    },
+    {
+      "id": "br_multiretract_045",
+      "is_error": true,
+      "A": 0.4,
+      "B": 0.0
+    },
+    {
+      "id": "br_notfound_046",
+      "is_error": true,
+      "A": 0.6,
+      "B": 0.0
+    },
+    {
+      "id": "br_notfound_047",
+      "is_error": true,
+      "A": 0.6,
+      "B": 2.0
+    },
+    {
+      "id": "br_notfound_048",
+      "is_error": true,
+      "A": 0.6,
+      "B": 2.0
+    },
+    {
+      "id": "br_notfound_049",
+      "is_error": true,
+      "A": 0.2,
+      "B": 2.0
+    },
+    {
+      "id": "br_notfound_050",
+      "is_error": true,
+      "A": 0.6,
+      "B": 0.0
+    }
+  ]
+}

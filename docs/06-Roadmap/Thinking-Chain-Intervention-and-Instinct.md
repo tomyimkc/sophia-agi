@@ -248,6 +248,45 @@ of failure mode* (uncertainty-based + structure-based + provenance-based), not r
 A pile of correlated detectors buys almost nothing; two uncorrelated borderline ones clear the
 bar.
 
+### 3c. Real-model fusion run (executed) — and what it overturned
+
+The gated real-model run finally executed against two reachable, distinct-family providers
+([`tools/run_fusion_realmodel.py`](../../tools/run_fusion_realmodel.py); both OpenAI-compatible;
+keys from env). Each model produced 5 sampled abstain-sets per case over all 50 belief-revision
+cases; A and B are the **real** detectors (real self-consistency, real `okf` grounding). These
+are `candidateOnly` (1 family @ 1 seed each), but they are *real measurements*, and they
+**partly overturn the synthetic story** — which is exactly why running it mattered.
+
+| model (family) | base err | d′ A (self-consist.) | d′ B (okf grounding) | d′ fused | ρ(A,B) | clears 1.0? |
+|---|---|---|---|---|---|---|
+| `deepseek-chat` (DeepSeek) | 0.54 | 0.64 | **1.44** | 1.30 | +0.33 | fused ✓, B ✓, A ✗ |
+| `claude-haiku-4-5` (Anthropic) | **1.00** | 0.34 | 0.00 | ≈0.0 | — | all ✗ |
+
+Three honest lessons, two of them corrections:
+
+1. **The okf grounding detector is the workhorse on a real model, not self-consistency.**
+   For DeepSeek, B (structural) reached d′ 1.44 while A (uncertainty) was a weak 0.64 — the
+   *reverse* of the balanced synthetic case. Structure-based reflexes look more promising than
+   agreement-based ones here.
+2. **Naive equal-weight fusion can *underperform the best single detector*** (correction to
+   §3b's U4). DeepSeek's fused d′ (1.30) is *below* B alone (1.44): with unequal d′ and
+   *positive* correlation (ρ=+0.33), the law `(d_A+d_B)/√(2+2ρ)` predicts ≈1.28 — adding a weak,
+   correlated A *dilutes* a strong B. So the bus must do **quality-weighted** fusion (weight ∝
+   d′, Fisher-style), not an equal z-sum. The synthetic "fused beats each" result was an
+   artifact of equal, independent detectors and does **not** generalize.
+3. **Both detectors are blind to *confident under-abstention*, and a weak model lives there.**
+   `claude-haiku` answered `["primary"]` on *every* transitive case — echoing only the retracted
+   node and never propagating the cascade (a confident, self-consistent, structurally-non-
+   over-including error). A stays quiet (samples agree), B is blind (no over-inclusion), so the
+   whole bus misses 100% of its errors (fused d′≈0). This is the synthetic model's
+   `hard_both_miss` residual showing up as the *dominant* mode for a small model.
+
+**Direct consequence for the architecture:** the bus needs a **third, complementary detector —
+grounding *completeness*** (orphaned claims structurally present but *missing* from the answer),
+the under-abstention mirror of B, also computable from `okf`. It would catch exactly haiku's
+failure. That is the next measurement (re-run both models with A + B_over + B_under, and use
+quality-weighted fusion). Recorded as an open item, not a solved one.
+
 ## 4. From model to measured claim (pre-registration sketch)
 
 To graduate this from `candidateOnly` to a real eval under the Instrumented Evaluation Contract
@@ -303,10 +342,15 @@ To graduate this from `candidateOnly` to a real eval under the Instrumented Eval
   measurement harness for that go/no-go already exists (`reasoning/instinct_reflex_eval.py`).
 - First reflex measured (synthetic, harness-validation): **self-consistency disagreement is
   borderline** — d′ 0.96 at moderate competence, just under the bar.
-- **Fusion result:** a second *independent* detector (real `okf` grounding-closure) fused with
-  self-consistency clears the bar (d′ 1.86) though neither does alone — governed by
-  `d′_fused=(d_A+d_B)/√(2+2ρ)`, so the bus must pick detectors for **independence, not
-  redundancy**. Real-model fused d′ is the gated next step.
+- **Fusion result (synthetic):** a second *independent* detector (real `okf` grounding-closure)
+  fused with self-consistency clears the bar (d′ 1.86) though neither does alone — governed by
+  `d′_fused=(d_A+d_B)/√(2+2ρ)`; pick detectors for **independence, not redundancy**.
+- **Real-model run (executed, DeepSeek + Claude-haiku):** partly overturns the synthetic story.
+  okf grounding is the *workhorse* (DeepSeek d′ 1.44, self-consistency only 0.64); naive
+  equal-weight fusion can *underperform the best detector* (1.30 < 1.44 at ρ=+0.33 → use
+  quality-weighted fusion); and both detectors are **blind to confident under-abstention**, the
+  dominant error mode of the weak model (haiku, fused d′≈0). Next: add a grounding-*completeness*
+  detector + quality-weighted fusion. canClaimAGI stays false.
 - This repo already has the *policy* substrate (ko-escalate, graded decision, AGM belief
   revision, consequence gate). The missing pieces are the **reflex bus** and the **interrupt
   controller** — and a no-overclaim eval, datasets for which already exist.
