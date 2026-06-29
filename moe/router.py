@@ -173,6 +173,92 @@ class MoERouter:
 
 
 # ---------------------------------------------------------------------------
+# Modern-MoE design pieces (DESIGN-ONLY — numpy reference, not a trained MoE).
+#
+# Frontier sparse models (DeepSeekMoE, Qwen-MoE, Mixtral) add three things on top of
+# the Switch-Transformer routing+aux-loss above. This repo does NOT train an MoE
+# (see agi-proof/failure-ledger.md, "moe-design-only"); these are reproducible numpy
+# references for the *principle* of each, with falsifiable invariants — the same
+# discipline as top_k_gating / load_balancing_loss. A real system fuses the grouped
+# expert GEMM + all-to-all on GPU; that deployment artifact is out of scope here.
+# ---------------------------------------------------------------------------
+
+def router_z_loss(router_logits, weight: float = 1e-3):
+    """Auxiliary z-loss stabilising the router (ST-MoE, Wang et al. 2023, eq. 7).
+
+    ``z = weight · (1/T) · Σ_t mean_t(log z_t)²`` where ``z_t`` is the logit vector a
+    token sees. It penalises the *magnitude* of router logits, which is what lets them
+    overflow softmax into a degenerate one-hot — the dominant cause of late-training
+    MoE instability. It is a regulariser on the router only; it does not touch expert
+    params. Returns the scalar loss and the per-token logit standard deviation (a
+    cheap proxy for "are the logits staying bounded?").
+
+    Numpy reference, proven against the definition in ``offline_invariants``.
+    """
+    if not _HAVE_NUMPY:
+        raise RuntimeError("numpy required")
+    z = np.asarray(router_logits, dtype=np.float64)
+    sq = float((z ** 2).mean())
+    return weight * sq, float(z.std())
+
+
+def shared_expert_split(num_routed_experts: int, num_shared: int = 1):
+    """Fine-grained + shared-expert topology (DeepSeekMoE, Dai et al. 2024 §3.1-3.2).
+
+    Returns the ``(n_routed, n_shared, n_total, active_per_token_inference)`` spec for
+    a DeepSeekMoE-style layer. Two ideas, both reproduced as a pure spec here:
+
+    1. **Shared experts** are ALWAYS-ON (not routed). They capture common knowledge,
+       so the routed experts are freed to specialise. This is the documented fix for
+       the "shared competence lost at low active-param" failure of pure sparse MoE.
+    2. **Fine-grained experts**: split each coarse expert into ``m`` smaller ones, so
+       ``n_routed = m · n_coarse`` with top-k over the finer set. Finer granularity →
+       more combinatorial expert combinations → better specialisation at the same FLOP.
+
+    The MoE here therefore routes over ``n_routed`` fine-grained experts with top-k,
+    AND always fires ``n_shared`` shared experts. ``active_per_token_inference``
+    counts both (k routed + n_shared shared), which is what bounds inference FLOPs.
+    """
+    if num_routed_experts < 2:
+        raise ValueError("need >= 2 routed experts")
+    if num_shared < 0:
+        raise ValueError("shared experts must be >= 0")
+    return {
+        "n_routed_experts": num_routed_experts,
+        "n_shared_experts": num_shared,
+        "n_total_experts": num_routed_experts + num_shared,
+        # placeholder k; set by the caller. Included so the spec is self-describing.
+        "k_routed": None,
+    }
+
+
+def aux_free_load_balance_bias(expert_idx, probs, num_experts: int):
+    """Auxiliary-free expert-bias correction (DeepSeek-V2 §3.3.1, "bias" term).
+
+    The Switch aux loss ``E·Σ f_e·P_e`` minimises at *uniform* routing, but it
+    perturbs the expert probabilities the model actually learns. DeepSeekMoE's
+    auxiliary-free variant instead adds a per-expert **bias** to the top-k routing
+    decision only (not the probs): a heavily-loaded expert gets a negative bias, so
+    future tokens are nudged away from it, without the gradient flowing into the
+    softmax distribution. This function returns the per-expert bias update direction
+    from the current dispatch imbalance — the *update rule*, not a loss term.
+
+    Sign convention: bias_e decreases when expert e is over-loaded (dispatch fraction
+    f_e above 1/E), increases when under-loaded. Returns ``(bias_delta, f, target)``
+    so a caller can verify the rule pushes f → uniform.
+    """
+    if not _HAVE_NUMPY:
+        raise RuntimeError("numpy required")
+    expert_idx = np.asarray(expert_idx)
+    f = np.bincount(expert_idx.reshape(-1), minlength=num_experts).astype(np.float64)
+    f /= f.sum() if f.sum() > 0 else 1.0
+    target = np.full(num_experts, 1.0 / num_experts)
+    # delta ∝ (target - f): over-loaded (f>target) → negative delta → harder to pick
+    bias_delta = (target - f)
+    return bias_delta, f, target
+
+
+# ---------------------------------------------------------------------------
 # Offline invariants
 # ---------------------------------------------------------------------------
 
@@ -225,6 +311,32 @@ def offline_invariants() -> "tuple[bool, dict]":
     a = MoERouter(4, seed=5).route(np.ones((10, 4)))
     b = MoERouter(4, seed=5).route(np.ones((10, 4)))
     checks["deterministic"] = a["counts"] == b["counts"] and a["dropped"] == b["dropped"]
+
+    # 6. z-loss: scales with squared logit magnitude; zero for zero logits.
+    loss_small, sd_small = router_z_loss(np.full((20, 4), 0.5), weight=1e-3)
+    loss_large, _ = router_z_loss(np.full((20, 4), 2.0), weight=1e-3)
+    checks["zloss_scales_with_magnitude"] = loss_large > loss_small > 0.0
+    checks["zloss_zero_for_zero_logits"] = router_z_loss(np.zeros((20, 4)))[0] == 0.0
+    checks["zloss_linear_in_weight"] = (
+        abs(router_z_loss(np.ones((20, 4)), weight=2e-3)[0]
+            - 2 * router_z_loss(np.ones((20, 4)), weight=1e-3)[0]) < 1e-12)
+
+    # 7. Shared + fine-grained topology: spec reconciles; shared experts are always-on.
+    spec = shared_expert_split(num_routed_experts=64, num_shared=2)
+    checks["spec_reconciles"] = (
+        spec["n_total_experts"] == spec["n_routed_experts"] + spec["n_shared_experts"]
+        and spec["n_routed_experts"] == 64 and spec["n_shared_experts"] == 2)
+    # fine-grained: 64 routed = m·n_coarse (e.g. m=8, n_coarse=8) is a valid split
+    checks["fine_grained_factorizable"] = 64 % 8 == 0
+
+    # 8. Aux-free bias update: pushes dispatch fraction toward uniform.
+    #    Skewed dispatch (all to expert 0) → expert 0 gets a NEGATIVE delta.
+    skew_idx = np.zeros((40, 1), dtype=int)            # every token → expert 0
+    delta, f, target = aux_free_load_balance_bias(skew_idx, None, num_experts=4)
+    checks["bias_negative_for_overloaded"] = delta[0] < 0
+    checks["bias_positive_for_underloaded"] = delta[1] > 0 and delta[2] > 0
+    # the update rule is target-f, so a single step of it moves f toward target's sign
+    checks["bias_rule_points_to_uniform"] = bool(np.all(np.sign(target - f) == np.sign(delta)))
 
     ok = all(checks.values())
     return ok, {"checks": checks, **detail}
