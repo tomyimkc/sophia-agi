@@ -1494,13 +1494,13 @@ perception (the report labels every rung).
 **Status:** OPEN. The physical / 2.5D verifier family (depth ordering, occlusion,
 real-vs-apparent size, 3D separation — `multimodal_bench/verifiers.py`:
 `depth_order` / `occludes` / `bigger_than` / `distance_cmp`) and its 12-row trap
-extension (`data/visual_traps.json`: `depth_order`, `occlusion`, `size_illusion`,
+extension (`multimodal_bench/data/visual_traps.json`: `depth_order`, `occlusion`, `size_illusion`,
 `distance` + discrimination controls) are built and machine-checked offline: every
 gold label is re-derived by the judge-free verifier (`gold_matches_check`,
 `tests/test_multimodal_traps.py`), the reference mocks behave correctly
 (`mock:grounded` → 0 hallucination, `mock:credulous` → 1.0), and the rows flow
 family-disjoint into the visual RLVR split. The slice now also ships a `measure`
-answer-type (free-form numeric distance, tolerance-scored — `data/visual_traps.json`
+answer-type (free-form numeric distance, tolerance-scored — `multimodal_bench/data/visual_traps.json`
 `distance_measure` rows), a fail-closed **metric grounding gate**
 (`multimodal_bench/metric_gate.py`: a physical claim is accepted only if its cited
 region contains the subject AND the verifier confirms the relation/measure; else

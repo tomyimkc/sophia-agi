@@ -50,11 +50,12 @@ class AuthoredDepthSource:
 class DepthAnythingV2Source:
     """Pixel-derived metric depth from Depth Anything V2 (opt-in, weights-gated).
 
-    Renders the scene to a PNG, runs monocular metric depth, and fills each
-    object's ``z`` from the median predicted depth inside its box (and a
-    best-effort real ``size`` ~ apparent diagonal x depth, the standard
-    perspective relation). Built but NOT exercised in CI: instantiation records a
-    ``blocker`` string when torch/transformers/Pillow or the weights are missing.
+    Renders the scene to a PNG, runs monocular depth, and for each object inverts
+    the median predicted disparity (Depth Anything emits inverse depth: larger ==
+    nearer) into a positive distance (larger == farther) used as ``z``, with a
+    best-effort real ``size`` ~ apparent diagonal x distance (the perspective
+    relation). Built but NOT exercised in CI: instantiation records a ``blocker``
+    string when torch/transformers/Pillow or the weights are missing.
     """
 
     def __init__(self, model_id: str = "depth-anything/Depth-Anything-V2-Small-hf"):
@@ -98,12 +99,15 @@ class DepthAnythingV2Source:
             px0 = max(0, int(x / sw * iw)); px1 = min(iw, int((x + w) / sw * iw))
             py0 = max(0, int(y / sh * ih)); py1 = min(ih, int((y + h) / sh * ih))
             patch = arr[py0:max(py0 + 1, py1), px0:max(px0 + 1, px1)]
-            disparity = float(self._np.median(patch))  # larger == nearer
-            z = -disparity  # our convention: larger == farther
-            o["z"] = z
-            if "size" not in o:  # apparent diagonal x depth ~ real size (perspective)
+            disparity = float(self._np.median(patch))  # Depth Anything: larger == nearer
+            # invert disparity -> a positive distance (larger == farther), our z convention
+            distance = 1.0 / (abs(disparity) + 1e-6)
+            o["z"] = distance
+            if "size" not in o:
+                # real size ~ apparent diagonal x distance (perspective): a near small
+                # box and a far large box are disambiguated by the depth.
                 diag = (w * w + h * h) ** 0.5
-                o["size"] = diag * disparity  # nearer+small-box vs far+large-box disambiguated
+                o["size"] = diag * distance
         return out
 
 

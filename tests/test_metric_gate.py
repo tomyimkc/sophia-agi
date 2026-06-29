@@ -78,6 +78,16 @@ def test_gate_fails_closed_on_blocked_depth_source():
     assert not d.allowed and d.escalate and "depth_source_unavailable" in d.reason
 
 
+def test_gate_fails_closed_on_verifier_error():
+    # an unknown relation makes verifiers.depth_order raise; the gate must convert
+    # that to block+escalate (fail-closed "everywhere"), not crash.
+    scene = metric_gate.DEMO_SCENE
+    claim = {"kind": "depth_order", "a": "cup", "rel": "diagonal_to", "b": "laptop",
+             "region": [80, 300, 80, 60], "value": True}
+    d = metric_gate.verify_metric_claim(scene, claim)
+    assert not d.allowed and d.escalate and d.reason.startswith("verifier_error:")
+
+
 def test_gate_blocks_region_that_misses_subject():
     scene = metric_gate.DEMO_SCENE
     claim = {"kind": "depth_order", "a": "cup", "rel": "in_front_of", "b": "laptop",

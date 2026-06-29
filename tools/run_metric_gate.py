@@ -34,7 +34,11 @@ def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     spec = "authored"
     if "--depth" in argv:
-        spec = argv[argv.index("--depth") + 1]
+        i = argv.index("--depth")
+        if i + 1 >= len(argv):
+            print("usage: run_metric_gate.py [--depth authored|depth-anything[:<id>]] [--json]")
+            return 2
+        spec = argv[i + 1]
 
     src, label, blocker = depth_backend.make_depth_source(spec)
     if blocker:

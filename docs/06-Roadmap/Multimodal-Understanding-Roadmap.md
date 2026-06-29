@@ -284,13 +284,13 @@ training a VLM and **without** weakening any honesty machinery:
 
 | Piece | What landed | File |
 |---|---|---|
-| 2.5D scene schema | objects carry optional scalar `z` (camera-frame depth; larger = farther) and `size` (real-world size, decoupled from apparent box area) | `data/visual_traps.json` (`_meta.depthSemantics`) |
+| 2.5D scene schema | objects carry optional scalar `z` (camera-frame depth; larger = farther) and `size` (real-world size, decoupled from apparent box area) | `multimodal_bench/data/visual_traps.json` (`_meta.depthSemantics`) |
 | Physical verifiers (judge-free) | `depth_order` (in-front/behind), `occludes` (box overlap **and** nearer), `bigger_than` (real size, not pixels), `distance_between`/`distance_cmp` (3D Euclidean) — all **fail closed** (False/None) on a missing object/field | `multimodal_bench/verifiers.py` |
-| 12 physical traps + controls | `depth_order`, `occlusion`, `size_illusion`, `distance` + `*_control` rows with mixed yes/no gold, so neither blanket-deny nor abstain-all wins; every gold re-derived by the verifier | `data/visual_traps.json` |
+| 12 physical traps + controls | `depth_order`, `occlusion`, `size_illusion`, `distance` + `*_control` rows with mixed yes/no gold, so neither blanket-deny nor abstain-all wins; every gold re-derived by the verifier | `multimodal_bench/data/visual_traps.json` |
 | Depth-aware render | far→near paint order so the real-VLM PNG shows occlusion consistent with the `occludes` verifier (non-physical scenes render unchanged) | `multimodal_bench/render.py` |
 | Tests | depth/occlusion/size/distance verifier semantics + fail-closed + category/polarity coverage | `tests/test_multimodal_traps.py` |
 
-The suite is now **47 traps across 14 categories**. The physical rows inherit the
+The suite is now **50 traps across 15 categories**. The physical rows inherit the
 existing reward (`correct > abstain > wrong`), the contamination-free family split
 (they enter as new families — `depth_order`/`depth`/`distance_control` etc.), and
 the no-overclaim gate for free. Honesty bound: the depth/size fields are *authored*
@@ -311,7 +311,7 @@ claim is a hypothesis, re-checked before it is accepted.
 
 | Piece | What landed | File |
 |---|---|---|
-| `measure` answer-type | free-form numeric distance scored within a tolerance (gold = true 3D separation, distractor = the depth-blind 2D estimate) — the judge/verifier/mocks all handle it | `judge.py`, `verifiers.py`, `model.py`, `data/visual_traps.json` (`distance_measure`) |
+| `measure` answer-type | free-form numeric distance scored within a tolerance (gold = true 3D separation, distractor = the depth-blind 2D estimate) — the judge/verifier/mocks all handle it | `judge.py`, `verifiers.py`, `model.py`, `multimodal_bench/data/visual_traps.json` (`distance_measure`) |
 | Fail-closed metric gate | a claim is accepted only if its cited **region** contains the subject AND the judge-free verifier confirms the relation/measure; reversed depth order, the size illusion, and ungroundable regions are **blocked + escalated** (the metric twin of the GUI-action gate) | `multimodal_bench/metric_gate.py`, `tools/run_metric_gate.py` |
 | Depth-source seam | pluggable depth: `authored` z offline (default), or pixel-derived **Depth Anything V2** that renders the scene and samples per-object metric depth — recorded as a **blocker** when weights/deps are absent, never faked | `multimodal_bench/depth_backend.py` |
 

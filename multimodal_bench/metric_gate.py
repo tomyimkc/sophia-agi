@@ -76,26 +76,31 @@ def verify_metric_claim(scene: dict, claim: dict, *, depth_source=None, tol: flo
     if not _overlaps_subject(scene, region, a):
         return MetricDecision(False, "block", "region_misses_subject", claim, escalate=True)
 
-    grounded = src.augment(scene)  # fill z/size from the depth source
+    # Fail-closed everywhere: any verifier/parse/augment error blocks + escalates,
+    # never crashes the gate (e.g. an unknown `rel` raises in verifiers.depth_order).
+    try:
+        grounded = src.augment(scene)  # fill z/size from the depth source
 
-    if kind == "depth_order":
-        truth = verifiers.depth_order(grounded, a, claim.get("rel", "in_front_of"), b)
-        ok = bool(claim.get("value")) == truth
-        return _verdict(ok, claim, f"depth_order_truth={truth}")
-    if kind == "bigger":
-        truth = verifiers.bigger_than(grounded, a, b)
-        ok = bool(claim.get("value")) == truth
-        return _verdict(ok, claim, f"bigger_truth={truth}")
-    if kind == "distance":
-        truth = verifiers.distance_between(grounded, a, b)
-        if truth is None:
-            return MetricDecision(False, "block", "distance_unresolvable", claim, escalate=True)
-        claimed = claim.get("value")
-        if claimed is None:
-            return MetricDecision(False, "block", "no_claimed_value", claim, escalate=True)
-        ok = abs(float(claimed) - truth) <= float(claim.get("tol", tol))
-        return _verdict(ok, claim, f"distance_truth={round(truth, 2)}")
-    return MetricDecision(False, "block", f"unknown_claim_kind:{kind}", claim, escalate=True)
+        if kind == "depth_order":
+            truth = verifiers.depth_order(grounded, a, claim.get("rel", "in_front_of"), b)
+            ok = bool(claim.get("value")) == truth
+            return _verdict(ok, claim, f"depth_order_truth={truth}")
+        if kind == "bigger":
+            truth = verifiers.bigger_than(grounded, a, b)
+            ok = bool(claim.get("value")) == truth
+            return _verdict(ok, claim, f"bigger_truth={truth}")
+        if kind == "distance":
+            truth = verifiers.distance_between(grounded, a, b)
+            if truth is None:
+                return MetricDecision(False, "block", "distance_unresolvable", claim, escalate=True)
+            claimed = claim.get("value")
+            if claimed is None:
+                return MetricDecision(False, "block", "no_claimed_value", claim, escalate=True)
+            ok = abs(float(claimed) - truth) <= float(claim.get("tol", tol))
+            return _verdict(ok, claim, f"distance_truth={round(truth, 2)}")
+        return MetricDecision(False, "block", f"unknown_claim_kind:{kind}", claim, escalate=True)
+    except Exception as exc:  # fail-closed on any verifier/parse error
+        return MetricDecision(False, "block", f"verifier_error:{type(exc).__name__}", claim, escalate=True)
 
 
 def _verdict(ok: bool, claim: dict, detail: str) -> MetricDecision:
