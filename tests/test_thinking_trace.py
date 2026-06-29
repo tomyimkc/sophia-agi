@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import io
 import json
 import os
 import sys
@@ -140,6 +141,7 @@ def test_delegate_logs_a2a_messages() -> None:
     from agent import harness as h
     from agent import subagent as sa
 
+    saved_runs = h.RUNS_DIR  # restore the module global so later tests aren't affected
     with tempfile.TemporaryDirectory() as tmp:
         h.RUNS_DIR = Path(tmp)  # keep harness child traces out of the repo
         log_dir = Path(tmp) / "thinking"
@@ -155,6 +157,73 @@ def test_delegate_logs_a2a_messages() -> None:
             assert {"delegate", "result", "synthesis"} <= kinds
         finally:
             os.environ.pop("SOPHIA_THINKING_LOG", None)
+            h.RUNS_DIR = saved_runs
+
+
+def _run_openai_payload(payload: dict):
+    """Drive _call_openai_compatible against a faked HTTP response (real parse path)."""
+    import urllib.request
+
+    class _R(io.BytesIO):
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+
+    orig = urllib.request.urlopen
+    urllib.request.urlopen = lambda req, timeout=None: _R(json.dumps(payload).encode())
+    try:
+        cfg = m.ModelConfig(kind="openai", model="r1", base_url="http://x/v1", api_key_default="k")
+        return m._call_openai_compatible("s", "u", cfg, tools=None, on_token=None)
+    finally:
+        urllib.request.urlopen = orig
+
+
+def test_openai_capture_off_strips_think_and_drops_reasoning() -> None:
+    _reset_capture(None)  # capture OFF
+    payload = {"model": "r1", "choices": [{"finish_reason": "stop", "message": {
+        "content": "<think>secret cot</think>Final answer.", "reasoning_content": "rc"}}],
+        "usage": {"prompt_tokens": 5, "completion_tokens": 5}}
+    res = _run_openai_payload(payload)
+    # <think> is ALWAYS stripped from the answer (no CoT leak), but reasoning is NOT retained.
+    assert res.text == "Final answer." and "<think>" not in res.text and "secret cot" not in res.text
+    assert res.reasoning_text == "" and res.reasoning_tokens == 0
+
+
+def test_openai_capture_on_retains_reasoning() -> None:
+    _reset_capture("1")
+    try:
+        payload = {"model": "r1", "choices": [{"finish_reason": "stop", "message": {
+            "content": "<think>t</think>ans", "reasoning_content": "rc"}}],
+            "usage": {"prompt_tokens": 5, "completion_tokens": 5,
+                      "completion_tokens_details": {"reasoning_tokens": 12}}}
+        res = _run_openai_payload(payload)
+        assert res.text == "ans" and "rc" in res.reasoning_text and "t" in res.reasoning_text
+        assert res.reasoning_tokens == 12
+    finally:
+        _reset_capture(None)
+
+
+def test_thinking_param_budget_never_below_floor() -> None:
+    _reset_capture("1")
+    try:
+        # max_tokens just above 1024: budget must be clamped to >=1024 and stay < max_tokens.
+        p = m._anthropic_thinking_param(m.ModelConfig(kind="anthropic", model="claude-3-5-sonnet-20241022", max_tokens=1101))
+        assert p["type"] == "enabled" and p["budget_tokens"] == 1024 and p["budget_tokens"] < 1101
+        # max_tokens too small to hold a >=1024 budget under it -> omit thinking, don't send junk.
+        assert m._anthropic_thinking_param(m.ModelConfig(kind="anthropic", model="claude-3-5-sonnet-20241022", max_tokens=1024)) is None
+    finally:
+        _reset_capture(None)
+
+
+def test_trace_id_matches_filename_without_context() -> None:
+    # Regression for the per-call-UUID bug: with no context set, a record's traceId must
+    # equal the file it lands in (stable memoized default), not a fresh id per call.
+    _reset_capture(None)
+    with tempfile.TemporaryDirectory() as tmp:
+        tt._CTX.set(("", None))  # clear any context from earlier tests
+        r1 = tt.record_generation("s", "u", m.ModelResult(text="a", provider="mock", model="m"), runs_dir=Path(tmp))
+        r2 = tt.record_generation("s", "u2", m.ModelResult(text="b", provider="mock", model="m"), runs_dir=Path(tmp))
+        files = list(Path(tmp).glob("*.jsonl"))
+        assert len(files) == 1 and files[0].stem == r1["traceId"] == r2["traceId"]
 
 
 # --------------------------------------------------------------------------- #
@@ -214,6 +283,10 @@ def main() -> int:
     test_maybe_record_a2a_is_noop_when_disabled()
     test_record_a2a_message_writes_span()
     test_delegate_logs_a2a_messages()
+    test_openai_capture_off_strips_think_and_drops_reasoning()
+    test_openai_capture_on_retains_reasoning()
+    test_thinking_param_budget_never_below_floor()
+    test_trace_id_matches_filename_without_context()
     test_training_rows_are_fail_closed()
     test_skill_candidates_need_recurring_support()
     test_distill_report_counts_hash_only_skips()

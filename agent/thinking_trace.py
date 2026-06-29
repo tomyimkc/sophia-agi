@@ -25,8 +25,9 @@ Schema (camelCase; the OTel GenAI semantic-convention name is given in parenthes
 ``model`` (gen_ai.request.model) · ``promptTokens`` (gen_ai.usage.input_tokens)
 ``completionTokens`` (gen_ai.usage.output_tokens) · ``reasoningTokens`` · ``finishReason``
 (gen_ai.response.finish_reasons) · ``latencySec`` · ``costUsd`` · ``ok`` · ``error``.
-Hashes (``systemHash``/``userHash``/``answerHash``/``reasoningHash``) are ALWAYS written;
-the verbatim text fields (``system``/``user``/``answer``/``reasoning``) are written ONLY when
+Truncated-SHA-256 hashes (``systemHash``/``userHash``/``answerHash``/``reasoningHash`` — the
+first 16 hex chars / 64 bits, enough to dedup/correlate without storing text) are ALWAYS
+written; the verbatim text fields (``system``/``user``/``answer``/``reasoning``) are written ONLY when
 ``SOPHIA_CAPTURE_THINKING`` is set — so by default the trace is privacy-light (sizes + hashes)
 and turns into a full reasoning record only when a run explicitly opts in.
 
@@ -40,19 +41,21 @@ import hashlib
 import json
 import os
 import uuid
+from contextlib import contextmanager
 from contextvars import ContextVar
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Iterator
 
 from agent.config import ROOT
 
 THINKING_DIR = ROOT / "agent" / "memory" / "thinking"
 
 # Current (traceId, parentSpanId) for nesting LLM-call spans under an agent step / A2A task.
-# Default is empty; set_context() / trace_context() populate it for the duration of a run.
+# Default is empty; set_context() / trace_scope() populate it for the duration of a run.
 _CTX: "ContextVar[tuple[str, str | None]]" = ContextVar("sophia_thinking_ctx", default=("", None))
 _SPAN_SEQ = [0]  # process-global monotonic span counter (unique span ids within a process)
+_DEFAULT_TRACE_ID: "str | None" = None  # memoized so the no-context default is STABLE per process
 
 
 def _now() -> str:
@@ -65,6 +68,8 @@ def _capture_verbatim() -> bool:
 
 
 def _hash(text: str) -> str:
+    """Truncated SHA-256 (first 16 hex chars / 64 bits) — enough to dedup/correlate
+    without storing the text; NOT a full digest (see the module docstring)."""
     return hashlib.sha256((text or "").encode("utf-8")).hexdigest()[:16]
 
 
@@ -72,17 +77,39 @@ def current_trace_id() -> str:
     tid, _ = _CTX.get()
     if tid:
         return tid
-    # A stable per-process default; override per run via SOPHIA_TRACE_ID or set_context().
-    return (os.environ.get("SOPHIA_TRACE_ID") or "").strip() or "proc-" + uuid.uuid4().hex[:12]
+    env = (os.environ.get("SOPHIA_TRACE_ID") or "").strip()
+    if env:
+        return env
+    # Memoize the generated default so EVERY call returns the same id — otherwise a fresh
+    # uuid per call would scatter one run's spans across many files and break correlation.
+    global _DEFAULT_TRACE_ID
+    if _DEFAULT_TRACE_ID is None:
+        _DEFAULT_TRACE_ID = "proc-" + uuid.uuid4().hex[:12]
+    return _DEFAULT_TRACE_ID
 
 
 def set_context(trace_id: str | None = None, parent_span_id: str | None = None) -> None:
     """Set the active trace/span context so subsequent records nest correctly.
 
     Pass an explicit ``trace_id`` to tie a run's LLM calls and A2A messages together
-    (e.g. the harness task id, or a swarm parent id)."""
+    (e.g. the harness task id, or a swarm parent id). Prefer :func:`trace_scope` when the
+    context should be restored afterwards (it resets on exit)."""
     tid = (trace_id or current_trace_id())
     _CTX.set((tid, parent_span_id))
+
+
+@contextmanager
+def trace_scope(trace_id: str | None = None, parent_span_id: str | None = None) -> "Iterator[str]":
+    """Set the trace context for the duration of a block, then RESTORE the prior context.
+
+    Use around a delegation/swarm so its trace id does not leak into later, unrelated LLM
+    calls or A2A spans in the same process (the context var is process-global)."""
+    tid = trace_id or current_trace_id()
+    token = _CTX.set((tid, parent_span_id))
+    try:
+        yield tid
+    finally:
+        _CTX.reset(token)
 
 
 def _next_span_id() -> str:
@@ -90,13 +117,14 @@ def _next_span_id() -> str:
     return f"sp{_SPAN_SEQ[0]:06d}"
 
 
-def _trace_path(runs_dir: Path | None = None) -> Path:
+def _trace_path(runs_dir: Path | None = None, trace_id: str | None = None) -> Path:
     base = runs_dir or THINKING_DIR
-    return base / f"{current_trace_id()}.jsonl"
+    return base / f"{trace_id or current_trace_id()}.jsonl"
 
 
-def _write(record: dict[str, Any], runs_dir: Path | None = None) -> None:
-    path = _trace_path(runs_dir)
+def _write(record: dict[str, Any], runs_dir: Path | None = None, trace_id: str | None = None) -> None:
+    # Use the record's OWN traceId for the filename so the span and its file never disagree.
+    path = _trace_path(runs_dir, trace_id or record.get("traceId"))
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(record, ensure_ascii=False) + "\n")
