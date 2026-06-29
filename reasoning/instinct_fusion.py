@@ -125,6 +125,27 @@ def _reflex_B(majority: frozenset[str], true_set: frozenset[str], removed: set[s
     return float(len(over_included))
 
 
+def _reflex_B2(majority: frozenset[str], true_set: frozenset[str], removed: set[str]) -> float:
+    """okf grounding-COMPLETENESS violation: orphaned claims MISSING from the answer.
+
+    The mirror of ``_reflex_B``: it fires on *under*-abstention — a structurally orphaned claim
+    (in the okf ``true_set``) that the answer fails to abstain. This is the detector the
+    real-model run (§3c) showed the bus was missing: a small model that confidently echoes only
+    the retracted node under-abstains on everything, and neither A nor B can see it. B2 can.
+    """
+    missing = [n for n in true_set if n not in majority and n not in removed]
+    return float(len(missing))
+
+
+def fuse(score_lists: dict[str, list[float]], weights: dict[str, float]) -> list[float]:
+    """Weighted z-score fusion. weight ∝ d′ (Fisher-style) downweights weak detectors and
+    zeros useless ones — fixing the real-model finding that an equal z-sum lets a weak,
+    correlated detector dilute a strong one."""
+    zs = {k: _zscores(v) for k, v in score_lists.items()}
+    n = len(next(iter(zs.values()))) if zs else 0
+    return [sum(weights.get(k, 0.0) * zs[k][i] for k in zs) for i in range(n)]
+
+
 # ---------------------------------------------------------------------------
 # Synthetic reasoner over the real graphs (planted error regimes)
 # ---------------------------------------------------------------------------

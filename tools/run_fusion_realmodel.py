@@ -36,7 +36,7 @@ if str(ROOT) not in sys.path:
 
 from reasoning.instinct_reflex_eval import auc, d_prime, load_cases  # noqa: E402
 from reasoning.instinct_fusion import (  # noqa: E402
-    _majority, _pearson, _reflex_A, _reflex_B, _true_abstain, breakeven_snr,
+    _majority, _reflex_A, _reflex_B, _reflex_B2, _true_abstain, breakeven_snr, fuse,
 )
 from tools.run_reflex_openrouter import _build_prompt, _call_model  # noqa: E402
 
@@ -61,15 +61,6 @@ def _parse_set(text: str) -> frozenset[str]:
     return frozenset({f"UNPARSEABLE::{t[:30]}"})
 
 
-def _zscores(xs: list[float]) -> list[float]:
-    n = len(xs)
-    if n == 0:
-        return []
-    m = sum(xs) / n
-    sd = math.sqrt(sum((x - m) ** 2 for x in xs) / n) or 1.0
-    return [(x - m) / sd for x in xs]
-
-
 def run(model: str, base_url: str, key: str, n_samples: int, limit: int | None,
         temperature: float, timeout: float, out: Path | None) -> int:
     cases = load_cases()
@@ -79,6 +70,7 @@ def run(model: str, base_url: str, key: str, n_samples: int, limit: int | None,
 
     a_scores: list[float] = []
     b_scores: list[float] = []
+    b2_scores: list[float] = []
     labels: list[bool] = []
     per_case = []
     for i, case in enumerate(cases):
@@ -95,40 +87,53 @@ def run(model: str, base_url: str, key: str, n_samples: int, limit: int | None,
         majority_eff = frozenset(majority - removed)
         is_error = (majority_eff != true_eff)
         a = _reflex_A(samples)
-        b = _reflex_B(majority, true_set, removed)
-        a_scores.append(a); b_scores.append(b); labels.append(is_error)
+        b = _reflex_B(majority, true_set, removed)    # over-abstention
+        b2 = _reflex_B2(majority, true_set, removed)  # under-abstention (completeness)
+        a_scores.append(a); b_scores.append(b); b2_scores.append(b2); labels.append(is_error)
         per_case.append({"id": case.get("id"), "is_error": is_error,
-                         "A": round(a, 4), "B": round(b, 4)})
+                         "A": round(a, 4), "B": round(b, 4), "B2": round(b2, 4),
+                         "samples": [sorted(s) for s in samples]})  # raw sets ⇒ free re-scoring
         print(f"  [{i + 1}/{len(cases)}] {case.get('id')}: "
-              f"{'ERR ' if is_error else 'ok  '} A={a:.3f} B={b:.3f}", file=sys.stderr)
+              f"{'ERR ' if is_error else 'ok  '} A={a:.3f} B={b:.3f} B2={b2:.3f}", file=sys.stderr)
 
     def split(scores):
         return ([s for s, e in zip(scores, labels) if e],
                 [s for s, e in zip(scores, labels) if not e])
 
-    az, bz = _zscores(a_scores), _zscores(b_scores)
-    fused = [x + y for x, y in zip(az, bz)]
-    ae, ac = split(a_scores); be, bc = split(b_scores); fe, fc = split(fused)
-    dpa, dpb, dpf = d_prime(ae, ac), d_prime(be, bc), d_prime(fe, fc)
+    def dp(scores):
+        e, c = split(scores)
+        return d_prime(e, c), auc(e, c)
+
+    dpa, auca = dp(a_scores); dpb, aucb = dp(b_scores); dpb2, aucb2 = dp(b2_scores)
+    detectors = {"A": a_scores, "B": b_scores, "B2": b2_scores}
+    dprimes = {"A": dpa, "B": dpb, "B2": dpb2}
+    # Equal-weight 3-detector fusion vs quality-weighted (weight = max(0, d′), Fisher-style).
+    fused_eq = fuse(detectors, {k: 1.0 for k in detectors})
+    qw = {k: max(0.0, v) if math.isfinite(v) else 0.0 for k, v in dprimes.items()}
+    fused_qw = fuse(detectors, qw)
+    dpfe, aucfe = dp(fused_eq); dpfq, aucfq = dp(fused_qw)
     n = len(cases)
+
+    def r(x):
+        return round(x, 4) if isinstance(x, float) and math.isfinite(x) else x
+
     report = {
-        "schema": "sophia.reasoning.fusion.realmodel.v1",
+        "schema": "sophia.reasoning.fusion.realmodel.v2",
         "model": model, "base_url": base_url, "n_cases": n,
         "n_samples": n_samples, "temperature": temperature,
         "base_error": round(sum(labels) / n, 4) if n else 0.0,
-        "d_prime_A": round(dpa, 4) if math.isfinite(dpa) else dpa,
-        "d_prime_B": round(dpb, 4) if math.isfinite(dpb) else dpb,
-        "d_prime_fused": round(dpf, 4) if math.isfinite(dpf) else dpf,
-        "auc_A": round(auc(ae, ac), 4), "auc_B": round(auc(be, bc), 4),
-        "auc_fused": round(auc(fe, fc), 4),
-        "correlation": round(_pearson(a_scores, b_scores), 4),
+        "d_prime": {"A": r(dpa), "B": r(dpb), "B2": r(dpb2),
+                    "fused_equal": r(dpfe), "fused_qualityweighted": r(dpfq)},
+        "auc": {"A": r(auca), "B": r(aucb), "B2": r(aucb2),
+                "fused_equal": r(aucfe), "fused_qualityweighted": r(aucfq)},
+        "qw_weights": {k: r(v) for k, v in qw.items()},
         "breakeven_snr": bar,
-        "A_clears": bool(math.isfinite(dpa) and dpa >= bar),
-        "B_clears": bool(math.isfinite(dpb) and dpb >= bar),
-        "fused_clears": bool(math.isfinite(dpf) and dpf >= bar),
+        "clears": {k: bool(math.isfinite(v) and v >= bar)
+                   for k, v in {"A": dpa, "B": dpb, "B2": dpb2,
+                                "fused_equal": dpfe, "fused_qualityweighted": dpfq}.items()},
         "candidateOnly": True, "level3Evidence": False,
-        "boundary": "single model = 1 family @ 1 seed; not promotable. "
-                    "Real-model d′ for the fusion thesis; no-overclaim gate needs >=2 families, >=3 seeds, CI.",
+        "boundary": "single model = 1 family @ 1 seed; qw weights fit in-sample (cross-val is a "
+                    "follow-up). Not promotable; no-overclaim gate needs >=2 families, >=3 seeds, CI.",
     }
     print(json.dumps(report, indent=2))
     if out:

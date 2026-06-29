@@ -24,7 +24,9 @@ if str(ROOT) not in sys.path:
 from reasoning.instinct_fusion import (  # noqa: E402
     _majority,
     _reflex_B,
+    _reflex_B2,
     complementarity,
+    fuse,
     gaussian_fusion_law,
     main,
     max_tolerable_rho,
@@ -80,6 +82,25 @@ def test_reflex_B_uses_grounding_not_answer_key():
     removed = {"primary_1"}
     assert _reflex_B(frozenset(true_set | {"independent_1"}), true_set, removed) == 1.0  # over -> fires
     assert _reflex_B(frozenset({"primary_1", "mid_1"}), true_set, removed) == 0.0  # under -> blind
+
+
+def test_reflex_B2_catches_under_abstention():
+    # the mirror of B: fires on orphaned claims MISSING from the answer (haiku's failure mode)
+    true_set = frozenset({"primary_1", "mid_1", "leaf_1"})
+    removed = {"primary_1"}
+    assert _reflex_B2(frozenset({"primary_1"}), true_set, removed) == 2.0  # misses mid+leaf
+    assert _reflex_B2(true_set, true_set, removed) == 0.0                   # complete -> blind
+    assert _reflex_B(frozenset({"primary_1"}), true_set, removed) == 0.0    # B is blind here
+
+
+def test_fuse_quality_weight_zeros_useless_detector():
+    # a detector with weight 0 must not affect the fused score
+    scores = {"A": [0.0, 1.0, 2.0, 3.0], "B": [9.0, 9.0, 9.0, 9.0]}
+    fused = fuse(scores, {"A": 1.0, "B": 0.0})
+    # B is constant (z=0 anyway) and weight 0; fused should track A's z-scores
+    assert fused[0] < fused[-1]
+    # equal weight with a constant detector also tracks A (constant contributes 0 variance)
+    assert fuse(scores, {"A": 2.0, "B": 5.0})[0] < fuse(scores, {"A": 2.0, "B": 5.0})[-1]
 
 
 def test_majority_is_hash_seed_independent():

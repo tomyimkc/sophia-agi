@@ -58,8 +58,9 @@ from reasoning.instinct_gate import MAX_REROUTE, P_BREAK, P_FIX  # noqa: E402
 
 RESULTS = ROOT / "reasoning" / "results"
 #: Fire rule operating thresholds (interpretable, model-independent): disagreement ≥ 0.6
-#: (top answer below ~half the samples) OR any grounding over-inclusion.
-A_FIRE, B_FIRE = 0.6, 1.0
+#: (top answer below ~half the samples) OR any grounding over-inclusion (B) OR any grounding
+#: under-inclusion / incompleteness (B2 — the detector added to cover confident under-abstention).
+A_FIRE, B_FIRE, B2_FIRE = 0.6, 1.0, 1.0
 
 
 @dataclass(frozen=True)
@@ -82,7 +83,8 @@ def profile_from_artifact(path: Path) -> OperatingPoint:
     cln = [c for c in pc if not c["is_error"]]
 
     def fires(c: dict[str, Any]) -> bool:
-        return c["A"] >= A_FIRE or c["B"] >= B_FIRE
+        # B2 added to cover under-abstention; .get keeps old (v1, no-B2) artifacts loadable.
+        return c["A"] >= A_FIRE or c["B"] >= B_FIRE or c.get("B2", 0.0) >= B2_FIRE
 
     tpr = sum(fires(c) for c in err) / len(err) if err else 0.0
     fpr = sum(fires(c) for c in cln) / len(cln) if cln else 0.0
