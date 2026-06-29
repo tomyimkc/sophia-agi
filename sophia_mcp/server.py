@@ -29,6 +29,11 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     temperance_assess_tool,
     intemperance_check_tool,
     sophrosyne_benchmark_tool,
+    justice_assess_tool,
+    partiality_check_tool,
+    dikaiosyne_benchmark_tool,
+    virtue_arbitrate_tool,
+    virtue_parliament_benchmark_tool,
     conformal_decide_tool,
     conscience_benchmark_tool,
     courage_assess_tool,
@@ -393,6 +398,72 @@ def sophia_intemperance_check(text: str, context_json: str = "{}") -> str:
 def sophia_sophrosyne_benchmark() -> str:
     """Deterministic candidate self-benchmark for the Sophrosyne temperance gate routing."""
     return dumps(sophrosyne_benchmark_tool())
+
+
+@mcp.tool()
+def sophia_justice_assess(text: str = "", irrelevant_class_json: str = "null",
+                          relevant_class_json: str = "null", context_json: str = "{}") -> str:
+    """Dikaiosyne justice gate (Role A) — the impartiality / consistency auditor.
+
+    Audits 'treat like cases alike': given the verdicts over an equivalence class
+    (irrelevant_class = morally irrelevant perturbations that should NOT change the
+    answer; relevant_class = a morally relevant difference that SHOULD), it returns
+    impartial | partial | false_equivalence with a Justice Quotient JQ = 1 - flip_rate.
+    Falls back to a single-text partiality signal when no class is supplied. NEVER
+    endorses false balance (equal time for a prohibited/unverified claim).
+    Deterministic candidate infrastructure, not AGI proof. Read-only.
+    """
+    try:
+        irr = json.loads(irrelevant_class_json or "null")
+        rel = json.loads(relevant_class_json or "null")
+        context = json.loads(context_json or "{}")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid JSON arg: {exc}"})
+    if not isinstance(context, dict):
+        return dumps({"error": "context_json must be a JSON object"})
+    if irr is not None and not isinstance(irr, list):
+        return dumps({"error": "irrelevant_class_json must be a JSON array or null"})
+    if rel is not None and not isinstance(rel, list):
+        return dumps({"error": "relevant_class_json must be a JSON array or null"})
+    return dumps(justice_assess_tool(text, irrelevant_class=irr, relevant_class=rel, context=context))
+
+
+@mcp.tool()
+def sophia_partiality_check(text: str, context_json: str = "{}") -> str:
+    """Detect identity-driven framing (a verdict pushed by WHO asks, not WHAT is asked):
+    authority/status appeals, in-group/out-group framing, flattery leverage. Informational —
+    it can only force an explicit consistency check, never a verdict. Read-only."""
+    try:
+        context = json.loads(context_json or "{}")
+    except json.JSONDecodeError as exc:
+        return dumps({"error": f"invalid context_json: {exc}"})
+    return dumps(partiality_check_tool(text, context=context if isinstance(context, dict) else {}))
+
+
+@mcp.tool()
+def sophia_dikaiosyne_benchmark() -> str:
+    """Deterministic candidate self-benchmark for the Dikaiosyne justice gate routing."""
+    return dumps(dikaiosyne_benchmark_tool())
+
+
+@mcp.tool()
+def sophia_virtue_arbitrate(wisdom: str = "allow", courage: str = "hold",
+                            temperance: str = "proportionate", justice: str = "impartial",
+                            hard_block: bool = False) -> str:
+    """Inter-virtue arbiter (Dikaiosyne Role B) — the Republic harmony of the four virtues.
+
+    Resolves the four gates' verdicts into one posture by the pre-registered lexical
+    priority: hard_prohibition > Wisdom > Justice > Courage > Temperance. Deterministic
+    (depends only on virtue identity, not arg order), so identical conflicts resolve
+    identically — the unity-of-virtue invariant. Candidate infrastructure. Read-only."""
+    return dumps(virtue_arbitrate_tool(wisdom=wisdom, courage=courage, temperance=temperance,
+                                       justice=justice, hard_block=hard_block))
+
+
+@mcp.tool()
+def sophia_virtue_parliament_benchmark() -> str:
+    """Deterministic candidate self-benchmark for the inter-virtue arbiter routing."""
+    return dumps(virtue_parliament_benchmark_tool())
 
 
 @mcp.tool()
