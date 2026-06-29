@@ -4,3 +4,4 @@
 {"utc":"20260629T032708Z","bench":"gsm8k-exactmatch","file":"gsm8k-exactmatch-20260629T032708Z.json"}
 {"utc":"20260629T033412Z","bench":"lean-expiter","file":"lean-expiter-20260629T033412Z.json"}
 {"utc":"20260629T033525Z","bench":"lean-passk","file":"lean-passk-20260629T033525Z.json"}
+{"utc":"20260629T033549Z","bench":"roofline-fp4","file":"roofline-fp4-20260629T033549Z.json"}
