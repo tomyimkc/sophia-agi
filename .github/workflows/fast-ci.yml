@@ -49,6 +49,11 @@ jobs:
       - name: Web privacy guard (no training/architecture leaks on the public site)
         run: python tools/lint_web_privacy.py
 
+      - name: Leiden alignment — generated disclosure + compliance receipt are in sync
+        run: |
+          python tools/build_tool_disclosure.py --check
+          python tools/leiden_receipt.py --check
+
       - name: Core unit tests (fast, dependency-free)
         run: |
           python tests/test_skills.py
@@ -60,3 +65,5 @@ jobs:
           python tests/test_fact_check_gate.py
           python tests/test_proof_search.py
           python tests/test_novelty_dag.py
+          python tests/test_leiden_alignment.py
+          python tests/test_judge_registry.py

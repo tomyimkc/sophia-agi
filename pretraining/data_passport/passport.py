@@ -94,6 +94,40 @@ def quality_score(row: dict, text: str) -> float:
     return round(min(1.0, score), 4)
 
 
+def fair_assessment(stamped: "list[dict]") -> "dict[str, Any]":
+    """A FAIR self-assessment over already-stamped rows (Findable, Accessible,
+    Interoperable, Reusable). The Leiden Declaration asks researchers to adhere to FAIR
+    and UNESCO open-science principles as work becomes data-dependent; this turns that ask
+    into a per-pack, machine-checkable score rather than a claim.
+
+    Heuristic, deterministic, fail-closed (a missing source/license lowers the score, it is
+    not silently treated as present):
+      * findable     — every row carries a stable content_hash id (reproducibility anchor)
+      * accessible   — fraction of rows whose origin (source) is declared, not "unknown"
+      * interoperable— fraction of rows carrying a structured passport (machine-readable)
+      * reusable     — fraction of rows whose license is declared, not "unknown"
+    """
+    n = len(stamped)
+    if not n:
+        return {"findable": 0.0, "accessible": 0.0, "interoperable": 0.0, "reusable": 0.0,
+                "rows": 0, "note": "empty pack"}
+    has_id = sum(1 for r in stamped if r.get("_passport", {}).get("content_hash"))
+    known_source = sum(1 for r in stamped
+                       if r.get("_passport", {}).get("source", "unknown") != "unknown")
+    structured = sum(1 for r in stamped if isinstance(r.get("_passport"), dict))
+    known_license = sum(1 for r in stamped
+                        if r.get("_passport", {}).get("license", "unknown") != "unknown")
+    return {
+        "findable": round(has_id / n, 4),
+        "accessible": round(known_source / n, 4),
+        "interoperable": round(structured / n, 4),
+        "reusable": round(known_license / n, 4),
+        "rows": n,
+        "note": ("FAIR self-assessment (Leiden/UNESCO open-science ask); fail-closed — "
+                 "unknown source/license lowers accessible/reusable, not silently passed."),
+    }
+
+
 def stamp_pack(rows: "list[dict]", *, near_dup_threshold: float = 0.8,
                quality_floor: float = 0.35) -> "dict[str, Any]":
     """Attach ``_passport`` to each row and return {rows, datasheet}."""
@@ -166,11 +200,12 @@ def stamp_pack(rows: "list[dict]", *, near_dup_threshold: float = 0.8,
         "quality_floor": quality_floor,
         "fail_closed": ("rows flagged unlicensed/low_quality are surfaced for review; "
                         "a recipe should keep one row per dedup_cluster and drop flagged"),
+        "fair": fair_assessment(stamped),
     }
     return {"rows": stamped, "datasheet": datasheet}
 
 
 __all__ = [
     "normalize", "row_text", "content_hash", "minhash", "estimate_jaccard",
-    "quality_score", "stamp_pack",
+    "quality_score", "fair_assessment", "stamp_pack",
 ]
