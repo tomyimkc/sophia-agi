@@ -191,14 +191,17 @@ def _build_create_payload(args: argparse.Namespace, public_key: str, api_key: st
         "dockerEntrypoint": [],
         "dockerStartCmd": _startup_cmd(args.auto_exit_seconds),
     }
-    if args.network_volume_id:
+    # getattr: _build_create_payload is reused by other launchers (e.g. runpod_nccl_bench.py) whose
+    # arg parsers don't define --network-volume-id, so read it defensively.
+    netvol = getattr(args, "network_volume_id", "")
+    if netvol:
         # Persistent network volume mounted at /workspace (where HF_HOME lives): the model weight
         # cache then SURVIVES pod deletion, so subsequent runs skip the cold ~8GB+ download (billed
         # GPU minutes) — the saving the ephemeral volumeInGb above CANNOT give (it dies with the pod).
         # NB: a network volume is data-center-scoped, so the pod is pinned to that volume's DC (can
         # reduce GPU availability there). Only worth it past the break-even runs/mo — see
         # tools/runpod_volume_breakeven.py.
-        payload["networkVolumeId"] = args.network_volume_id
+        payload["networkVolumeId"] = netvol
     if args.allowed_cuda_versions:
         payload["allowedCudaVersions"] = [
             v.strip() for v in args.allowed_cuda_versions.split(",") if v.strip()
