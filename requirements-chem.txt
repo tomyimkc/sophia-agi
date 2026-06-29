@@ -1,6 +1,0 @@
-# Optional chemistry oracle extras (fail-closed).
-# agent/chem_verifier.py core (formula, molar mass, equation balancing) is pure-Python
-# and needs NONE of these. Installing them enables the RDKit SMILES-validity path
-# (verify_smiles_valid), which otherwise abstains. pint is for unit/dimensional checks.
-rdkit-pypi>=2022.9.5
-pint>=0.23

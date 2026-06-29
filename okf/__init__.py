@@ -17,14 +17,6 @@ Public API:
 from __future__ import annotations
 
 from okf.bulk_graph import BulkGraph
-from okf.extract import (
-    EventUnit,
-    RecallHit,
-    build_entity_index,
-    extract_events,
-    is_capped,
-    multi_hop_recall,
-)
 from okf.projection import ProjectionResult, project_to_boundary
 from okf.counterfactual import (
     Retraction,
@@ -75,10 +67,4 @@ __all__ = [
     "BulkGraph",
     "ProjectionResult",
     "project_to_boundary",
-    "EventUnit",
-    "RecallHit",
-    "extract_events",
-    "build_entity_index",
-    "multi_hop_recall",
-    "is_capped",
 ]
