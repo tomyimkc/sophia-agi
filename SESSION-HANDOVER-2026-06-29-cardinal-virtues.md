@@ -6,6 +6,38 @@
 > **false**; nothing here promotes a result. All powered runs are model-gated (Spark+Mac farm).
 
 ## 0. Branch / PR / where things are
+
+> **UPDATE — end of 2026-06-29 (arc CLOSED; building phase saturated).** The cardinal-virtue
+> arc is complete, merged, and hardened. The remaining value is **validation, not more code** —
+> it is gated on the operator's farm / external content (see §4). Do NOT generate more candidate
+> virtue machinery: the failure ledger is at OPEN≈85 and the bottleneck is running what exists.
+>
+> **Merged to `main`:**
+> - **#277** — Temperance (Sophrosyne) + Justice (Dikaiosyne) gates + PR-275-style benchmark
+>   scaffolds + the `--bench-virtues` dispatcher lane. (CodeQL fixes en route: ReDoS in
+>   `intemperance_signals` `_TRUNCATION_RE`, unused local in `partiality_signals`, unused global
+>   `LOW_MARGINAL_VALUE` wired into the restrain boundary.)
+> - **#281** — the inter-virtue arbiter wired into `conscience_check` as the opt-in **11th path**
+>   (`consultVirtues`, annotate-only: computes courage/temperance/justice + arbitrates, attaches
+>   `decision.virtueArbitration`, never changes the verdict). Role B is now live.
+>
+> **Open PR:**
+> - **#285** — `tests/test_virtue_safety_invariants.py`: cross-gate safety invariants frozen as
+>   regression guards after an adversarial hardening review (all held, incl. exhaustive arbiter
+>   coverage). Merge when green to fully close the arc.
+>
+> **Bridge enabled:** the `spark-bridge` poller allowlist now includes `--bench-virtues`
+> (commit `7e6590c9`). REMAINING operator steps before a powered run: (1) merge `main`→`spark-bridge`
+> (worktree needs the lane + virtue tools), (2) **restart the poller** (it caches `ALLOWLIST` at
+> startup — a `--bench-virtues` command is rejected until restart), (3) queue `--bench-virtues
+> --dry-run` then `--bench-virtues --execute` with a human `approvedBy`. Full runbook:
+> `docs/11-Platform/Cardinal-Virtue-Benchmarks.md` §5.
+>
+> **Deferred (correctly):** `v4-seib-truecontrol-scorer-defect` — its ledger entry requires
+> *human/third-party review* (alters a benchmark) and the corrective module is already built;
+> not an autonomous action.
+
+### Original status at first handover (historical)
 - **Feature branch `claude/virtue-ai-temperance-justice-ngpquf`** (tip `ff461bd1`): all work below,
   pushed, all offline gates green. Working tree clean.
 - **PR #277** → `main` is OPEN (`Cardinal virtues: Temperance & Justice gates + PR-275-style
