@@ -379,7 +379,7 @@
     ]
   },
   "rag": {
-    "indexChunks": 650
+    "indexChunks": 649
   },
   "localModel": {
     "benchmark": {
