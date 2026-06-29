@@ -23,17 +23,25 @@ def test_offline_remote_script_runs_harness_not_a_fake_eval():
 def test_live_remote_script_is_honest_about_model_gating():
     args = L.parse_args(["--remote-mode", "live"])
     script = L._remote_focus_script(args)
-    assert "LIVE mode" in script
+    assert "LIVE:" in script
     assert "model-gated" in script
-    assert "no number is fabricated" in script.lower() or "no number is\nfabricated" in script.lower()
-    # still runs the honest harness
+    assert "no number is fabricated" in script.lower()
+    # still runs the honest harnesses + the 3-arm eval
     assert "run_focus_efficiency_frontier.py --write" in script
+    assert "run_focus_frontier_eval.py --write" in script
 
 
-def test_live_eval_entrypoint_is_wired_when_supplied():
-    args = L.parse_args(["--remote-mode", "live", "--eval-entrypoint", "tools/future_eval.py"])
+def test_default_eval_entrypoint_is_the_three_arm_eval():
+    args = L.parse_args([])
+    assert args.eval_entrypoint == "tools/run_focus_frontier_eval.py"
+    script = L._remote_focus_script(L.parse_args(["--remote-mode", "offline"]))
+    assert "tools/run_focus_frontier_eval.py --write" in script
+
+
+def test_live_passes_model_when_supplied():
+    args = L.parse_args(["--remote-mode", "live", "--model", "Qwen/Qwen2.5-7B-Instruct"])
     script = L._remote_focus_script(args)
-    assert "tools/future_eval.py --write" in script
+    assert '--model "Qwen/Qwen2.5-7B-Instruct"' in script
 
 
 def test_dry_run_builds_payload_without_secret(capsys):

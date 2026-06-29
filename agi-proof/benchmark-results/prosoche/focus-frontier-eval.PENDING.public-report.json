@@ -1,0 +1,51 @@
+{
+  "arms": {
+    "priority-packed": {
+      "note": "packing MECHANISM is real; solved via survival proxy — NOT a model, NOT >=2 judges",
+      "solvedRate": 0.1111,
+      "tokensPerSolved": 369.0
+    },
+    "prosoche-anchored": {
+      "note": "packing MECHANISM is real; solved via survival proxy — NOT a model, NOT >=2 judges",
+      "solvedRate": 0.7778,
+      "tokensPerSolved": 42.0
+    },
+    "recency-chop": {
+      "note": "packing MECHANISM is real; solved via survival proxy — NOT a model, NOT >=2 judges",
+      "solvedRate": 0.1111,
+      "tokensPerSolved": 386.0
+    }
+  },
+  "canClaimAGI": false,
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "criticalFailures": [
+    "no_real_arms: tokens-per-solved needs a live model/agent (the survival proxy is not a model)",
+    "ground_truth_not_2family: solved/on-goal labels are proxy/author-only, not >= 2 independent judge families (kappa >= 0.40)"
+  ],
+  "delta": null,
+  "experimentId": "focus-efficiency-frontier",
+  "go": false,
+  "groundTruth": "survival proxy (1 deterministic labeler) — does not satisfy the >=2-judge-family spec",
+  "guardrailsProxy": {
+    "antiFixationHeld": true,
+    "safetyPruned": 0,
+    "successNonInferior": true
+  },
+  "harness": "tools/run_focus_frontier_eval.py",
+  "headline": "PENDING — 3-arm packing mechanism is real; solved-labels are a proxy and no live model has run",
+  "note": "Intentionally PENDING. The survival-proxy mock exercises the tokens-per-solved + bootstrap-CI + guardrail math in CI (tests/test_focus_frontier_eval.py), but a proxy is not a model and not >= 2 judge families. Promotion needs real model/agent arms, >= 2 independent judge families (kappa >= 0.40) for solved/on-goal labels, a delta tokens-per-solved CI excluding 0 (fewer tokens), task-success non-inferiority, the anti-fixation goal-shift guardrail, and zero safety prunes — see the measurement_spec and the prosoche-efficiency-token-saving row in agi-proof/failure-ledger.md.",
+  "preregistration": "agi-proof/benchmark-results/prosoche/measurement_spec.json",
+  "primaryDeltaProxy": {
+    "anchoredTokensPerSolved": 42.0,
+    "baselineTokensPerSolved": 369.0,
+    "deltaEfficiencyCost": -75.0,
+    "deltaTokensCI95": [
+      -112.3333,
+      -37.1111
+    ],
+    "mdeAtN": 0.6603,
+    "pairedTasks": 9
+  },
+  "status": "not_run",
+  "verdict": "NO-GO"
+}

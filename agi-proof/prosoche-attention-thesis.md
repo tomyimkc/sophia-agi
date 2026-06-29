@@ -37,9 +37,23 @@
 > Temperance/Attention cell does not bleed). The **explicit-vs-derived robustness
 > probe** (`tools/run_prosoche_robustness.py` → `prosoche-robustness.json`, honest
 > explicit 0.75 vs derived 0.50 gap, reported not tuned).
+> **Now also shipped (third pass).** The measured **3-arm Focus-Efficiency-Frontier
+> eval** (`tools/run_focus_frontier_eval.py` + `focus-frontier-eval.PENDING.public-report.json`):
+> three real packing arms, the anchor counted as the amortized cache-stable prefix, a
+> paired efficiency-cost Δ with a 95% bootstrap CI, and the three guardrails
+> (task-success non-inferiority, anti-fixation, safety floor). A deterministic
+> survival-proxy confirms the harness detects the effect direction (anchored cheaper,
+> Δ CI excludes 0, all guardrails held) while staying **NO-GO** (proxy ≠ model, 1
+> labeler ≠ 2 judges) — and `tests/test_focus_frontier_eval.py` proves GO is reachable
+> only when real arms + ≥2 judges + the guardrails all hold. It is the `--eval-entrypoint`
+> the RunPod launcher (`tools/runpod_focus_frontier.py`) + the `focus-frontier-runpod`
+> workflow run on the farm.
+>
 > **Still model-gated** (needs live compute, not buildable offline): the real
-> Focus-Efficiency-Frontier run (live model + ≥2 judge families) and the learned
-> goal-extraction seam that would close the derived-goal gap.
+> Focus-Efficiency-Frontier *numbers* (live model + ≥2 judge families over a
+> decontaminated task set) and the learned goal-extraction seam that would close the
+> derived-goal gap. The instrument and the GPU lane are ready; only the measured run
+> remains.
 >
 > **Why this doc exists.** The operator's ask: *"I have many gates to limit the AI's
 > action; I want the AI to know what its attention is — its goal / the rewards it

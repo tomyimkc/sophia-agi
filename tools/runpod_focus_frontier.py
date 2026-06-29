@@ -56,31 +56,36 @@ from tools.runpod_rlvr import (  # noqa: E402
 
 REPORT_REL = "agi-proof/benchmark-results/prosoche/focus-efficiency.PENDING.public-report.json"
 ROBUST_REL = "agi-proof/benchmark-results/prosoche/prosoche-robustness.json"
+EVAL_REL = "agi-proof/benchmark-results/prosoche/focus-frontier-eval.PENDING.public-report.json"
 REMOTE_REPO = "/workspace/sophia-runpod/sophia-agi"
 
 
 def _remote_focus_script(args: argparse.Namespace) -> str:
     """The bash run over SSH on the pod. Deterministic + honest: it runs the harness
     and copies the report back; it never invents a measured effect."""
-    live_note = ""
+    # The 3-arm eval entrypoint: deterministic survival-proxy by default (NO-GO,
+    # exercises the math). On the farm, pass --model <spec> to it for the real run.
+    entry = args.eval_entrypoint or "tools/run_focus_frontier_eval.py"
+    live_cmd = f"python {entry} --write"
     if args.remote_mode == "live":
-        live_note = (
-            'echo "[focus-frontier] LIVE mode: the measured 3-arm token-per-solved-task eval '
-            '(live model + >=2 judge families over a decontaminated task set) is the model-gated '
-            'OPEN item (agi-proof/failure-ledger.md: prosoche-efficiency-token-saving). This run '
-            'validates the pod path and returns the honest NO-GO mechanism report — no number is '
-            'fabricated."'
+        live_cmd = (
+            'echo "[focus-frontier] LIVE: the MEASURED 3-arm eval (real model + >=2 judge '
+            'families) is the model-gated OPEN item (agi-proof/failure-ledger.md: '
+            'prosoche-efficiency-token-saving). This validates the pod path + the eval '
+            'machinery and returns the honest NO-GO report — no number is fabricated."\n'
+            f"python {entry} --write"
         )
-        if args.eval_entrypoint:
-            live_note += f'\npython {args.eval_entrypoint} --write || echo "[focus-frontier] eval entrypoint failed; honest report stands"'
+        if args.model:
+            live_cmd += f' --model "{args.model}" || echo "[focus-frontier] real-model arm refused/failed; honest NO-GO report stands"'
     return f"""
 set -Eeuo pipefail
 cd {REMOTE_REPO}
 echo "[focus-frontier] python: $(python --version 2>&1)"
-{live_note}
 python tools/run_focus_efficiency_frontier.py --write
 python tools/run_focus_efficiency_frontier.py --check
 python tools/run_prosoche_robustness.py --write
+{live_cmd}
+python {entry} --check
 echo "[focus-frontier] done; reports written."
 """
 
@@ -109,8 +114,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--yes", action="store_true", help="actually create a RunPod pod (required unless --dry-run/--local)")
     ap.add_argument("--remote-mode", choices=["offline", "live"], default="offline",
                     help="offline = deterministic mechanism/routing harness (NO-GO by design); live = same + state the model-gated measured eval is open")
-    ap.add_argument("--eval-entrypoint", default="",
-                    help="(live) path to the measured 3-arm eval tool once it exists; run on the pod if set")
+    ap.add_argument("--eval-entrypoint", default="tools/run_focus_frontier_eval.py",
+                    help="the 3-arm eval tool run on the pod (--write emits the gated artifact)")
+    ap.add_argument("--model", default="",
+                    help="(live) real subject model spec passed to the eval entrypoint for the measured run")
     ap.add_argument("--api-key-env", default="RUNPOD_API_KEY")
     ap.add_argument("--name", default=f"sophia-focus-frontier-{ts}")
     ap.add_argument("--branch", default="", help="git branch/tag to run (the pod clones the repo)")
@@ -179,7 +186,7 @@ def main(argv: list[str] | None = None) -> int:
             log_path = tmpdir / "focus-frontier.log"
             cmd = _ssh_base(conn, key_path) + ["bash", "-s"]
             exit_code = _stream(cmd, log_path, input_text=_remote_focus_script(args))
-            for rel in (REPORT_REL, ROBUST_REL):
+            for rel in (REPORT_REL, ROBUST_REL, EVAL_REL):
                 _scp_from_pod(conn, key_path, f"{REMOTE_REPO}/{rel}", ROOT / rel)
             print(f"[focus-frontier] remote exit={exit_code}; reports copied back.")
             return exit_code

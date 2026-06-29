@@ -72,7 +72,9 @@ jobs:
           python tools/run_focus_efficiency_frontier.py --check
           python tools/run_prosoche_robustness.py --write
           python tools/run_prosoche_robustness.py --check
-          echo "Offline frontier smoke OK (NO-GO by design; the measured eval is the model-gated open item)."
+          python tools/run_focus_frontier_eval.py --write
+          python tools/run_focus_frontier_eval.py --check
+          echo "Offline frontier smoke OK (3-arm eval machinery runs; NO-GO by design — the measured run is the model-gated open item)."
 
       # --- LIVE: paid pod, gated ------------------------------------------------- #
       - name: Preflight — confirm + secret present (live only)
@@ -122,4 +124,5 @@ jobs:
           path: |
             agi-proof/benchmark-results/prosoche/focus-efficiency.PENDING.public-report.json
             agi-proof/benchmark-results/prosoche/prosoche-robustness.json
+            agi-proof/benchmark-results/prosoche/focus-frontier-eval.PENDING.public-report.json
           if-no-files-found: warn
