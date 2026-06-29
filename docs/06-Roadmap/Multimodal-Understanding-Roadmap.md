@@ -331,3 +331,19 @@ source the depth is declared, not seen; pixel-derived depth needs the Depth
 Anything V2 weights, tracked OPEN in the failure ledger
 (`physical-spatial-verifier-real-vlm-not-run-2026-06-29`). The gate is the
 machinery; no physical-understanding capability is claimed here.
+
+### Real-run pre-registration (the gated, human-triggered next step)
+
+The path from this offline harness to a *measured* physical-understanding number
+is **pre-registered** (thresholds + judge families fixed before any number exists)
+in `agi-proof/benchmark-results/physical-understanding/measurement_spec.json` +
+`RUNBOOK.md`. The harness is now scoped to the physical axes via
+`tools/run_multimodal_traps.py --physical` (a category allowlist; `--categories a,b`
+for a custom subset), so a real VLM can be judged on exactly the physical split by
+≥2 distinct families through the sanctioned judge farm
+(`.github/workflows/open-judge-runpod.yml`), and the metric gate re-checked with
+`--depth depth-anything` once the Depth Anything V2 weights are on a GPU runner.
+The run itself stays a **cost-gated, human-triggered** step (RunPod approval +
+the `wisdom-gpu-prebaked` runbook), and the headline caveat is stated up front:
+the physical split is only **15 rows** — a coarse GO/NO-GO until expanded, never a
+powered claim.
