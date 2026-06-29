@@ -1,10 +1,8 @@
 {
-  "updatedAt": "2026-06-29T11:33:46Z",
+  "updatedAt": "2026-06-29T11:34:23Z",
   "host": "spark-2f2d",
-  "running": "2026-06-29-nvfp4-v5-train-08",
-  "pendingCommands": [
-    "2026-06-29-nvfp4-v5-train-08"
-  ],
+  "running": null,
+  "pendingCommands": [],
   "trainwatch": [
     {
       "id": "a92be4e1",
@@ -127,6 +125,11 @@
       "path": "agi-proof/benchmark-results/certify-lowram-olmoe-nvfp4-v4.json",
       "bytes": 906,
       "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/certify-lowram-olmoe-nvfp4-v5.json",
+      "bytes": 1184,
+      "mtime": "2026-06-29T11:34:02Z"
     },
     {
       "path": "agi-proof/benchmark-results/cls-consolidation-manifest.json",
