@@ -233,6 +233,40 @@ def discrimination(*, depth: int = 2, eval_frac: float = 0.3, seed: int = 0) -> 
     return out
 
 
+def build_invention_eval_suite(
+    *, target_n: int = 175, seed: int = 0, depths: tuple[int, ...] = (2, 3, 4),
+    eval_frac: float = 0.3,
+) -> dict:
+    """Aggregate held-out compositions across depths into ONE powered eval suite.
+
+    Each depth contributes its eval split (compositions absent from that depth's
+    train split, primitives all seen) — so the whole suite is decontaminated by
+    construction. Depths are added in order until ``>= target_n`` tasks, then the
+    list is truncated to ``target_n`` for a tidy N. Deterministic.
+
+    Why ``target_n=175``: ``eval_stats.required_n_for_mde(0.15) == 175`` — at 175
+    binary items the primary resolves a 15-point pass@1 effect at 80% power, the
+    threshold the code-integrity measurement spec pre-registers (the 48-task legacy
+    split only resolved ~0.29).
+    """
+    tasks: list[dict] = []
+    per_depth: dict[int, int] = {}
+    for d in depths:
+        if d < 2:
+            continue  # depth 1 is pure recall — no held-out invention split
+        ev = build_invention_dataset(depth=d, eval_frac=eval_frac, seed=seed)["eval_tasks"]
+        per_depth[d] = len(ev)
+        tasks.extend(ev)
+        if len(tasks) >= target_n:
+            break
+    suite = tasks[:target_n] if len(tasks) >= target_n else tasks
+    return {
+        "tasks": suite, "n": len(suite), "target_n": target_n,
+        "reached": len(suite) >= target_n, "depths_used": sorted(per_depth),
+        "per_depth_available": per_depth,
+    }
+
+
 def offline_invariants(*, depth: int = 2, eval_frac: float = 0.3, seed: int = 0) -> "tuple[bool, dict]":
     """Assert the open-invention instrument is sound (no torch, no GPU, no exec):
     compositions are train/eval disjoint, every eval primitive is seen in train,

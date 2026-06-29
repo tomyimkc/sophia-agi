@@ -88,6 +88,24 @@ def test_tool_check_returns_go():
     assert g.main(["--check", "--depth", "2"]) == 0
 
 
+def test_powered_eval_suite_reaches_target_and_is_powered():
+    from tools import eval_stats as es
+
+    s = inv.build_invention_eval_suite(target_n=175, seed=0)
+    assert s["n"] == 175 and s["reached"]
+    ids = [t["id"] for t in s["tasks"]]
+    assert len(set(ids)) == len(ids)                       # decontaminated, unique
+    assert all(t["test"].strip() and t["private_test"].strip() for t in s["tasks"])
+    # N=175 resolves the pre-registered 0.15 MDE at 80% power.
+    assert es.mde_at_n(s["n"]) <= 0.151
+
+
+def test_powered_eval_suite_is_deterministic():
+    a = inv.build_invention_eval_suite(target_n=120, seed=0)
+    b = inv.build_invention_eval_suite(target_n=120, seed=0)
+    assert [t["id"] for t in a["tasks"]] == [t["id"] for t in b["tasks"]]
+
+
 # --- composition with the hardened anti-cheat grader (CIC + novelty) --------
 
 @exec_only

@@ -23,15 +23,15 @@ Does GRPO with the **integrity-gated** code reward (now the default in
 
 ## Power (pre-registered, honest)
 
-The current held-out split is **48 tasks → MDE ≈ 0.286 at 80% power**: it can only
-resolve a ~29-point pass@1 swing. For a 15-point threshold you need **N ≈ 175**
-(N ≈ 99 for 20 points). So either:
-- grow the eval split to ≥144–175 tasks (`tools/gen_code_pack.py`) for a powered
-  primary, **or**
-- treat the 48-task pass@1 as a **coarse GO/NO-GO guardrail only** (like the
-  wisdom-market retention probe), never a ranked headline.
+The **primary** lane is now the **powered open-invention suite**: `build_invention_-
+eval_suite(target_n=175)` aggregates depth-2/3/4 held-out compositions into 175
+decontaminated-by-construction tasks → **MDE = 0.150 at 80% power**, exactly the
+pre-registered 15-point threshold. Run the primary on this suite (≥3 seeds, paired
+bootstrap 95% CI).
 
-Do not report a 48-task uplift as a validated number.
+The legacy **48-task family-disjoint split** (MDE ≈ 0.286) is demoted to a
+**secondary, coarse GO/NO-GO lane** — report it separately, never as the ranked
+headline. Do not report a 48-task uplift as a validated number.
 
 ## Base model
 

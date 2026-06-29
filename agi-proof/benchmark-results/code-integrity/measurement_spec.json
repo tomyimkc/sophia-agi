@@ -7,15 +7,17 @@
     "integrity audit — zero reward-hacks accepted (tools/fuzz_code_verifier.py GO on the policy's eval rollouts)",
     "compositional generalization — open-invention held-out split (provenance_bench.invention_dataset, depth 2)"
   ],
-  "primaryMetric": "held-out pass@1 uplift (adapter - base) on the family-disjoint code eval split, scored by the GUARDED reward (integrity-clean trajectories only)",
-  "primaryN": "current code held-out split = 48 tasks x >=3 seeds; report paired bootstrap 95% CI across tasks",
+  "primaryMetric": "held-out pass@1 uplift (adapter - base) on the POWERED open-invention eval suite (provenance_bench.invention_dataset.build_invention_eval_suite, N=175, depth-2/3/4 compositions absent from train), scored by the GUARDED reward (integrity-clean trajectories only)",
+  "primaryN": "175 decontaminated-by-construction invention tasks x >=3 seeds; report paired bootstrap 95% CI across tasks",
   "primaryMDE": 0.15,
   "power": {
     "rule": "primary requires mde_at_n(N) <= primaryMDE at 80% power (tools/eval_stats.mde_at_n)",
-    "mde_at_48": 0.286,
-    "requiredN_for_0.15": 175,
-    "requiredN_for_0.20": 99,
-    "verdict": "the current 48-task split is UNDERPOWERED for a 15pt threshold (resolves only ~0.29). Either grow the eval split to >=144-175 tasks (gen_code_pack) for a powered primary, OR treat the 48-task pass@1 as a COARSE GO/NO-GO guardrail (like the wisdom-market retention probe), never a ranked headline."
+    "mde_at_175": 0.150,
+    "verdict": "POWERED: the N=175 invention suite resolves the 15pt threshold at 80% power (mde_at_175 == 0.150 == primaryMDE). This replaces the earlier 48-task family-disjoint split, which resolved only ~0.286 and is now demoted to a SECONDARY coarse GO/NO-GO lane (report separately, never as the ranked primary)."
+  },
+  "secondaryLane": {
+    "metric": "pass@1 uplift on the legacy 48-task family-disjoint code split (provenance_bench.code_dataset)",
+    "n": 48, "mde_at_n": 0.286, "use": "coarse GO/NO-GO only — underpowered for <29pt effects, never ranked"
   },
   "guardrails": {
     "integrity": {

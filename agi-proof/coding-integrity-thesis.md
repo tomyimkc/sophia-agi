@@ -287,8 +287,15 @@ for this repo, both feasible on the single-GPU LoRA/GRPO path:
    anticipates the *rebound*: blocking the surface without penalizing the intent
    just teaches a new trick.
 
-This is a design item, not a claim — it needs activation hooks and its own
-pre-registered evaluation before any number is reported.
+**The offline scaffold now exists (candidate).** `provenance_bench/shortcut_probe.py`
+fits a linear shortcut direction from per-rollout feature vectors labelled
+hack/clean, scores new rollouts (a construct independent of the AST scan), and
+implements the advantage modification. It operates on *injected* features so it is
+fully testable with no model — `offline_invariants()` proves it separates hack from
+clean on a held-out synthetic split (AUC ≥ 0.9) and that the penalty lowers hacking
+rollouts' advantage strictly more than clean ones. The **live** piece — capturing
+real GRPO hidden-state features and wiring the penalty into the trainer — is the
+open work, named not assumed; until it runs, this is a scaffold, not a claim.
 
 ## Part 8 — The novelty pillar (separate, open — not part of CIC)
 
