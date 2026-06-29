@@ -115,7 +115,9 @@ VALUES = [
         "mechanisms": ["VISION.md", "LICENSE", "SECURITY.md",
                        "agent/judge_registry.py", "agent/open_judge.py",
                        "tools/run_open_judge_regrade.py",
-                       ".github/workflows/open-judge-regrade.yml"],
+                       ".github/workflows/open-judge-regrade.yml",
+                       "tools/runpod_open_judge_regrade.py",
+                       ".github/workflows/open-judge-runpod.yml"],
         "sophia_form": ("Local-first, Apache-2.0, runs on owned hardware. A self-hostable "
                         "open-weights judge backend (agent/open_judge.py), a judge-openness "
                         "registry (agent/judge_registry.py), and a re-grade harness + manual "
@@ -136,10 +138,13 @@ OPEN_GAPS = [
         "status": "in_progress",
         "note": ("Landed: openness registry (agent/judge_registry.py), self-hostable backend "
                  "(agent/open_judge.py), re-grade harness (tools/run_open_judge_regrade.py), "
-                 "manual workflow (.github/workflows/open-judge-regrade.yml), and a "
-                 "failure-ledger entry (open-judge-non-proprietary-validation-2026-06-29). "
-                 "Remaining: run the harness against a self-hosted open endpoint to corroborate "
-                 "a headline result on a non-proprietary path, then close the ledger entry."),
+                 "two dispatch paths (.github/workflows/open-judge-regrade.yml for a BYO "
+                 "endpoint; .github/workflows/open-judge-runpod.yml + "
+                 "tools/runpod_open_judge_regrade.py for an all-in-one RunPod pod that serves "
+                 "vLLM + re-grades + self-deletes), and a failure-ledger entry "
+                 "(open-judge-non-proprietary-validation-2026-06-29). Remaining: a real GPU run "
+                 "(needs a working RUNPOD_API_KEY secret) to corroborate a headline result on a "
+                 "non-proprietary path, then close the ledger entry."),
         "design": "docs/11-Platform/Leiden-Open-Judge-Family.md",
     },
     {
