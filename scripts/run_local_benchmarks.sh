@@ -94,12 +94,17 @@ UPLIFT_OUT="${UPLIFT_OUT:-${JUDGE_OUT_DIR}/uplift-validation.json}"
 # NB: tools/train_lora.py default --model is Qwen/Qwen2.5-3B-Instruct, so OLMoE MUST be passed
 # explicitly; and --qat-scheme defaults to int8, so NVFP4 MUST be passed explicitly.
 QAT_BASE="${QAT_BASE:-allenai/OLMoE-1B-7B-0924-Instruct}"
-QAT_ADAPTER="${QAT_ADAPTER:-training/lora/checkpoints/olmoe-qat-spark}"
+# v5 recipe (default): keep v3's stable lambda=0.001 (v4's 0.01 over-fit and broke mean_kl +
+# the protected slice), nudge epochs 2->3 to push top-1, write a v5 adapter + v5 cert artifact.
+QAT_ADAPTER="${QAT_ADAPTER:-training/lora/checkpoints/olmoe-qat-spark-v5}"
 QAT_DATA="${QAT_DATA:-training/lora/train.jsonl}"
-QAT_EPOCHS="${QAT_EPOCHS:-2}"
+QAT_EPOCHS="${QAT_EPOCHS:-3}"
 QAT_LAMBDA="${QAT_LAMBDA:-0.001}"
 CERT_CALIB="${CERT_CALIB:-training/lora/train.jsonl}"
-CERT_OUT="${CERT_OUT:-${QAT_ADAPTER}/lowram_report.json}"
+# KEEP_SUFFIXES: comma-list of served-linear suffixes to hold in bf16 (mixed precision). Empty =
+# full NVFP4 set (v3/v4 behaviour). Try 'down_proj' if top-1 stays < 0.97 at full quantization.
+KEEP_SUFFIXES="${KEEP_SUFFIXES:-}"
+CERT_OUT="${CERT_OUT:-agi-proof/benchmark-results/certify-lowram-olmoe-nvfp4-v5.json}"
 CERT_NEVAL="${CERT_NEVAL:-256}"
 
 # ── Mode flags ────────────────────────────────────────────────────────────────────────────────
@@ -132,6 +137,7 @@ while [[ $# -gt 0 ]]; do
     --bench-b)   RUN_B=1 ;;
     --all)       RUN_A=1; RUN_B=1 ;;
     --execute)   DRY_RUN=0 ;;
+    --dry-run)   DRY_RUN=1 ;;   # explicit no-op (dry-run is the default); keeps bridge cmds robust
     --run-train) RUN_TRAIN=1 ;;
     -h|--help)   usage; exit 0 ;;
     *) echo "ERROR: unknown argument: $1" >&2; usage; exit 2 ;;
@@ -254,6 +260,7 @@ if [[ "${RUN_B}" -eq 1 ]]; then
     --adapter "${QAT_ADAPTER}" \
     --calib "${CERT_CALIB}" \
     --scheme nvfp4 \
+    --keep-suffixes "${KEEP_SUFFIXES}" \
     --n-eval "${CERT_NEVAL}" \
     --out "${CERT_OUT}"
 
