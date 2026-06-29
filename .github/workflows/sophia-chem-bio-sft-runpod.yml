@@ -1,0 +1,190 @@
+name: sophia-chem-bio-sft-runpod
+
+# Manual RunPod launcher for sophia-chem-bio-curriculum Stage 3 (3-seed QLoRA SFT).
+#
+# POLICY: RunPod GPU jobs MUST run via GitHub Actions (this workflow) — NOT from a local
+# Mac or agent shell (outbound SSH to RunPod mapped high-ports times out from local egress;
+# see agi-proof/sophia-math-code-curriculum/stage3-runpod-blocker.public-report.json).
+#
+# PREREQUISITES (maintainer only):
+#   1. Repo secret RUNPOD_API_KEY (Settings -> Secrets and variables -> Actions).
+#   2. RunPod account GPU credit. Each seed rents a paid pod until training completes.
+#
+# Training-oracle passes are NOT benchmark proof. After training, score adapter-vs-base
+# on eval/chem_bio_capability/heldout_v1.jsonl (tools/run_chem_bio_eval.py) + a >=2-family
+# judge panel + an external anchor, and hold the abstention + WMDP hazard + protected floors.
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type RUN to confirm you accept renting paid GPU pod(s)'
+        required: true
+        default: ''
+      seed:
+        description: 'Single seed (0, 1, or 2). Leave empty to run all three seeds.'
+        required: false
+        default: ''
+      on_pod_seeds:
+        description: 'On-pod multi-seed: comma seeds trained on ONE pod, e.g. 0,1,2. Empty = off.'
+        required: false
+        default: ''
+      on_pod_mode:
+        description: 'On-pod multi-seed mode: parallel (one seed per GPU) or sequential (one GPU)'
+        required: false
+        default: 'parallel'
+        type: choice
+        options: ['parallel', 'sequential']
+      branch:
+        description: 'Git branch cloned on the pod'
+        required: false
+        default: 'claude/llm-chemistry-biology-training-4dnakz'
+      epochs:
+        description: 'Training epochs (empty = 2)'
+        required: false
+        default: ''
+      interruptible:
+        description: 'Use cheaper spot pod (on-demand default for reliability)'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['true', 'false']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sophia-chem-bio-sft-runpod-${{ github.event.inputs.seed }}
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Curriculum + contamination guard (generate --check)
+        run: python tools/generate_chem_bio_curriculum.py --check
+      - name: Claims linter (no-overclaim copy gate)
+        run: python tools/lint_claims.py
+
+  runpod:
+    environment: runpod-paid
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 480
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Preflight — confirm + secret present
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "RUN" ]; then
+            echo "::error::Dispatch input 'confirm' must be exactly RUN to acknowledge GPU cost. Aborting (no pod created)."
+            exit 1
+          fi
+          if [ -z "$RUNPOD_API_KEY" ]; then
+            echo "::error::Repo secret RUNPOD_API_KEY is not set. Aborting (no pod created)."
+            exit 1
+          fi
+          echo "Preflight OK: confirmed, secret present. GPU runs on the rented pod, not this runner."
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Dry-run remote script (no pod, no cost)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          BRANCH: ${{ github.event.inputs.branch }}
+          EPOCHS_INPUT: ${{ github.event.inputs.epochs }}
+        run: |
+          set -euo pipefail
+          if [ -n "$EPOCHS_INPUT" ]; then export EPOCHS="$EPOCHS_INPUT"; else export EPOCHS="2"; fi
+          python3 tools/runpod_train.py --dry-run --branch "$BRANCH" \
+            --model "Qwen/Qwen2.5-7B-Instruct" --epochs "$EPOCHS" --seed 0 \
+            --train-data training/sophia-chem-bio-curriculum/sft_all.jsonl \
+            --adapter-dir "/workspace/sophia-runpod/sophia-agi/training/sophia-chem-bio-curriculum/checkpoints/sophia-cuda-v1-seed0" \
+            --train-only
+
+      - name: Estimate ETA → job summary
+        env:
+          SEED_INPUT: ${{ github.event.inputs.seed }}
+          ON_POD_SEEDS: ${{ github.event.inputs.on_pod_seeds }}
+          ON_POD_MODE: ${{ github.event.inputs.on_pod_mode }}
+          EPOCHS_INPUT: ${{ github.event.inputs.epochs }}
+        run: |
+          set -euo pipefail
+          if [ -n "$EPOCHS_INPUT" ]; then EP="$EPOCHS_INPUT"; else EP=2; fi
+          if [ -n "$ON_POD_SEEDS" ]; then SEEDS="$ON_POD_SEEDS"; MODE="on-pod-$ON_POD_MODE";
+          elif [ -n "$SEED_INPUT" ]; then SEEDS="$SEED_INPUT"; MODE="separate-pods";
+          else SEEDS="0,1,2"; MODE="all-seeds-sequential"; fi
+          python3 tools/estimate_runpod_eta.py --model-params 7 --epochs "$EP" \
+            --train-data training/sophia-chem-bio-curriculum/sft_all.jsonl \
+            --seeds "$SEEDS" --mode "$MODE" --no-eval --markdown >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Launch RunPod chem-bio SFT (3 seeds or single seed)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          BRANCH: ${{ github.event.inputs.branch }}
+          SEED_INPUT: ${{ github.event.inputs.seed }}
+          ON_POD_SEEDS: ${{ github.event.inputs.on_pod_seeds }}
+          ON_POD_MODE: ${{ github.event.inputs.on_pod_mode }}
+          EPOCHS_INPUT: ${{ github.event.inputs.epochs }}
+          INTERRUPTIBLE_INPUT: ${{ github.event.inputs.interruptible }}
+        run: |
+          set -euo pipefail
+          export BRANCH
+          if [ -n "$EPOCHS_INPUT" ]; then export EPOCHS="$EPOCHS_INPUT"; else export EPOCHS="2"; fi
+          mkdir -p agi-proof/benchmark-results/runpod-train
+
+          run_one_seed() {
+            local seed="$1"
+            echo "===== chem-bio SFT seed $seed ====="
+            python3 tools/runpod_train.py --yes --branch "$BRANCH" \
+              --model "Qwen/Qwen2.5-7B-Instruct" --epochs "$EPOCHS" --seed "$seed" \
+              --train-data training/sophia-chem-bio-curriculum/sft_all.jsonl \
+              --adapter-dir "/workspace/sophia-runpod/sophia-agi/training/sophia-chem-bio-curriculum/checkpoints/sophia-cuda-v1-seed${seed}" \
+              --train-only --name "sophia-chem-bio-sft-seed${seed}" \
+              $([ "$INTERRUPTIBLE_INPUT" = "true" ] && echo --interruptible)
+          }
+
+          if [ -n "$ON_POD_SEEDS" ]; then
+            echo "===== on-pod multi-seed chem-bio SFT ($ON_POD_MODE): seeds $ON_POD_SEEDS on ONE pod ====="
+            python3 tools/runpod_train.py --yes --branch "$BRANCH" \
+              --model "Qwen/Qwen2.5-7B-Instruct" --epochs "$EPOCHS" \
+              --train-data training/sophia-chem-bio-curriculum/sft_all.jsonl \
+              --adapter-dir "/workspace/sophia-runpod/sophia-agi/training/sophia-chem-bio-curriculum/checkpoints/sophia-cuda-v1" \
+              --train-only --seeds "$ON_POD_SEEDS" --on-pod-mode "$ON_POD_MODE" \
+              --name "sophia-chem-bio-sft-multiseed" \
+              $([ "$INTERRUPTIBLE_INPUT" = "true" ] && echo --interruptible)
+          elif [ -n "$SEED_INPUT" ]; then
+            run_one_seed "$SEED_INPUT"
+          else
+            bash agi-proof/sophia-chem-bio-curriculum/runpod-sft-3seed.sh
+          fi
+
+      - name: Show repo-head + train logs in the run log
+        if: always()
+        run: |
+          shopt -s nullglob
+          for f in agi-proof/benchmark-results/runpod-train/*.repo-head.txt \
+                   agi-proof/benchmark-results/runpod-train/*.train.log; do
+            echo "===== $f ====="
+            tail -n 80 "$f" || cat "$f"
+          done
+
+      - name: Upload training artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: sophia-chem-bio-sft-artifacts
+          path: |
+            agi-proof/benchmark-results/runpod-train/**
+          retention-days: 14
+          if-no-files-found: warn
