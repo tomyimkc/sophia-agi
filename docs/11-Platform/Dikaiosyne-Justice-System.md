@@ -97,6 +97,17 @@ virtue verdicts (by identity), never on call order, so identical conflicts resol
 identically — itself a Justice (consistency) property, so the arbiter is just by
 construction (`tests/test_virtue_parliament.py`).
 
+### Wired into the live kernel (opt-in 11th conscience path)
+
+`conscience_check(..., context={"consultVirtues": True})` makes the tetrad **compose at
+runtime**: it computes the courage / temperance / justice verdicts (reusing the 9th/10th
+path reports when present) and runs `arbitrate()` over them with `wisdom=<conscience
+verdict>`, attaching the harmonized posture under `decision.virtueArbitration`. It is
+**informational-only** — off by default (byte-identical), and it never changes the
+conscience verdict; the arbitration is an audit annotation. Promoting the arbiter to be
+*authoritative* over the verdict is a separate, pre-registered measurement decision, not a
+silent behaviour change. Tests: `tests/test_conscience_virtue_arbitration.py`.
+
 ## Surfaces
 
 - Core: `agent/dikaiosyne.py` (Role A), `agent/virtue_parliament.py` (Role B)
