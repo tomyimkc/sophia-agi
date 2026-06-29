@@ -40,7 +40,7 @@ Usage on the DGX Spark (inside .venv, NVFP4 is Blackwell-native there)::
     TRITON_INTERPRET=1 python tools/certify_lowram.py \
         --base-model allenai/OLMoE-1B-7B-0924-Instruct \
         --adapter training/lora/checkpoints/olmoe-qat-spark \
-        --calib training/lora/holdout.jsonl \
+        --calib training/lora/train.jsonl \
         --scheme nvfp4 --dtype bf16 --attn sdpa \
         --n-eval 256 --out training/lora/checkpoints/olmoe-qat-spark/lowram_report.json
 """
@@ -102,6 +102,40 @@ def _load_calib_rows(path: Path) -> list[dict]:
             continue
         rows.append(json.loads(line))
     return rows
+
+
+def _row_text(row: dict) -> str:
+    """Reconstruct a chat row (or use the flat 'text' field) into one string."""
+    if isinstance(row.get("messages"), list):
+        parts = []
+        for m in row["messages"]:
+            content = str(m.get("content", "")).strip()
+            if content:
+                parts.append(f"<|{m.get('role', 'user')}|>\n{content}")
+        return "\n".join(parts)
+    return str(row.get("text", "")).strip()
+
+
+def load_eval_texts(path: Path, *, max_rows: int, min_chars: int = 16) -> "list[str]":
+    """Load up to ``max_rows`` non-trivial probe texts from a JSONL file (skips short/blank/bad
+    rows). Streams line-by-line and short-circuits at ``max_rows`` so a large probe file is never
+    fully read into memory. Mirrors the loader the merged ``tests/test_certify_lowram.py`` expects."""
+    texts: list[str] = []
+    with Path(path).open(encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            text = _row_text(row)
+            if len(text) >= min_chars:
+                texts.append(text)
+            if len(texts) >= max_rows:
+                break
+    return texts
 
 
 # --------------------------------------------------------------------------- #
@@ -524,8 +558,9 @@ def main(argv: "list[str] | None" = None) -> int:
     ap.add_argument("--base-model", default="allenai/OLMoE-1B-7B-0924-Instruct")
     ap.add_argument("--adapter", default="training/lora/checkpoints/olmoe-qat-spark",
                     help="PEFT adapter dir (adapter_model.safetensors + adapter_config.json)")
-    ap.add_argument("--calib", default="training/lora/holdout.jsonl",
-                    help="held-out calibration rows (jsonl with chat 'messages')")
+    ap.add_argument("--calib", default="training/lora/train.jsonl",
+                    help="calibration rows (jsonl with chat 'messages'); deployment-distribution "
+                         "TRAINING data by default — NOT the eval-sealed holdout (holdout_seal)")
     ap.add_argument("--scheme", choices=("int8", "nvfp4"), default="nvfp4")
     ap.add_argument("--dtype", choices=("bf16", "fp16", "fp32"), default="bf16")
     ap.add_argument("--attn", choices=("auto", "sdpa", "eager", "flash_attention_2"), default="sdpa")
