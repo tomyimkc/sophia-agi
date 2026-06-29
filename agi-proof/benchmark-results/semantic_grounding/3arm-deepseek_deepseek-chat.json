@@ -1,0 +1,240 @@
+{
+  "experimentId": "semantic-grounding-3arm",
+  "mock": false,
+  "model": "deepseek:deepseek-chat",
+  "seeds": 3,
+  "fold": "all",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "note": "real model-farm run",
+  "nCases": 75,
+  "arms": {
+    "A0": {
+      "n": 225,
+      "nD1": 102,
+      "nD2": 123,
+      "D1_sense_accuracy": {
+        "rate": 0.8431,
+        "ci95": [
+          0.7647,
+          0.9118
+        ],
+        "n": 102
+      },
+      "D1_faithfulness": {
+        "rate": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "n": 24
+      },
+      "D1_grounded_composite": {
+        "rate": 0.8431,
+        "ci95": [
+          0.7647,
+          0.9118
+        ],
+        "n": 102
+      },
+      "D2_accuracy": {
+        "rate": 0.8049,
+        "ci95": [
+          0.7317,
+          0.8699
+        ],
+        "n": 123
+      },
+      "D2_accuracy_by_gold": {
+        "entailed": {
+          "rate": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ],
+          "n": 57
+        },
+        "violation": {
+          "rate": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ],
+          "n": 33
+        },
+        "abstain": {
+          "rate": 0.2727,
+          "ci95": [
+            0.1212,
+            0.4242
+          ],
+          "n": 33
+        }
+      },
+      "D2_dataset_valid": true
+    },
+    "A1": {
+      "n": 225,
+      "nD1": 102,
+      "nD2": 123,
+      "D1_sense_accuracy": {
+        "rate": 0.7451,
+        "ci95": [
+          0.6569,
+          0.8235
+        ],
+        "n": 102
+      },
+      "D1_faithfulness": {
+        "rate": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "n": 24
+      },
+      "D1_grounded_composite": {
+        "rate": 0.7451,
+        "ci95": [
+          0.6569,
+          0.8235
+        ],
+        "n": 102
+      },
+      "D2_accuracy": {
+        "rate": 0.7561,
+        "ci95": [
+          0.6748,
+          0.8293
+        ],
+        "n": 123
+      },
+      "D2_accuracy_by_gold": {
+        "entailed": {
+          "rate": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ],
+          "n": 57
+        },
+        "violation": {
+          "rate": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ],
+          "n": 33
+        },
+        "abstain": {
+          "rate": 0.0909,
+          "ci95": [
+            0.0,
+            0.2121
+          ],
+          "n": 33
+        }
+      },
+      "D2_dataset_valid": true
+    },
+    "A2": {
+      "n": 225,
+      "nD1": 102,
+      "nD2": 123,
+      "D1_sense_accuracy": {
+        "rate": 0.7941,
+        "ci95": [
+          0.7157,
+          0.8725
+        ],
+        "n": 102
+      },
+      "D1_faithfulness": {
+        "rate": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "n": 24
+      },
+      "D1_grounded_composite": {
+        "rate": 0.7941,
+        "ci95": [
+          0.7157,
+          0.8725
+        ],
+        "n": 102
+      },
+      "D2_accuracy": {
+        "rate": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "n": 123
+      },
+      "D2_accuracy_by_gold": {
+        "entailed": {
+          "rate": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ],
+          "n": 57
+        },
+        "violation": {
+          "rate": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ],
+          "n": 33
+        },
+        "abstain": {
+          "rate": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ],
+          "n": 33
+        }
+      },
+      "D2_dataset_valid": true
+    }
+  },
+  "deltas": {
+    "A1_minus_A0": {
+      "n": 225,
+      "delta": -0.0711,
+      "ci95": [
+        -0.12,
+        -0.0222
+      ],
+      "ci_excludes_zero": true,
+      "mde_at_n": 0.1321,
+      "powered": false
+    },
+    "A2_minus_A0": {
+      "n": 225,
+      "delta": 0.0844,
+      "ci95": [
+        0.0311,
+        0.1378
+      ],
+      "ci_excludes_zero": true,
+      "mde_at_n": 0.1321,
+      "powered": false
+    },
+    "A2_minus_A1": {
+      "n": 225,
+      "delta": 0.1556,
+      "ci95": [
+        0.1022,
+        0.2089
+      ],
+      "ci_excludes_zero": true,
+      "mde_at_n": 0.1321,
+      "powered": false
+    }
+  }
+}
