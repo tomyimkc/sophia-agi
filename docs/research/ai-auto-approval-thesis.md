@@ -248,6 +248,19 @@ Tests: `tests/test_aats_experiments.py` (deterministic, dependency-free). These 
 promotion past candidate requires the model-gated arms under the standard measurement contract
 (≥2 judge families, κ≥0.40, ≥3 seeds, CIs, decontam).
 
+**Breaker wired into promotion.** The canary breaker is now a fail-closed precondition on the live
+promotion gate: `tools/promote_adapter.py --breaker-state <path>` rejects any promotion while the
+breaker is tripped (opt-in — absent state file = no canary regime = no-op; see
+`agent/auto_approval_breaker.py:promotion_block_reason`). So a canary miss doesn't just escalate one
+artifact, it halts the autonomy switch itself.
+
+**Model-gated arms scaffolded (not run).** The two arms that need a model farm are pre-registered in
+`agi-proof/aats/measurement_spec.json` (git-ancestry pre-registration via `claim_gate --assert-prereg`)
+with byte-stable `*.PENDING.public-report.json` artifacts (status `not_run`, verdict `NO-GO`, explicit
+`criticalFailures`) and a default-off model-judge seam (`ensemble_agreement_study.py --judge-model`).
+Running them is Actions-gated on the Spark+Mac judge farm; a NO-GO (no safe envelope) is a valid,
+publishable outcome.
+
 ---
 
 ## 6. Bottom line

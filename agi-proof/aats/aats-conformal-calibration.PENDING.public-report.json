@@ -1,0 +1,27 @@
+{
+  "experimentId": "aats-auto-approval",
+  "arm": "conformalCalibration",
+  "schema": "sophia.aats_pending_report.v1",
+  "status": "not_run",
+  "verdict": "NO-GO",
+  "go": false,
+  "canClaimAGI": false,
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "preregistration": "agi-proof/aats/measurement_spec.json",
+  "tool": "tools/aats_conformal_calibration.py",
+  "headline": "PENDING — conformal price-of-guarantee MACHINERY only; no real labeled outcome rows have been calibrated.",
+  "standalone": {
+    "note": "Offline synthetic demo (tools/aats_conformal_calibration.py --synthetic) exercises the fit -> price-of-guarantee curve -> held-out validity math in CI; a deterministic synthetic predictor is NOT a real outcome distribution.",
+    "syntheticData": true
+  },
+  "criticalFailures": [
+    "no_real_rows: requires tools/emit_outcome_records.py --model output {nonconformity, correct, risk}; synthetic rows are machinery, not evidence",
+    "no_multiseed_ci: the chosen operating point's false-approval rate needs a 95% CI over >= 3 seeds that lies <= the target",
+    "no_2family_labels: the 'correct' labels must come from >= 2 independent judge families (or an audited deterministic marker), not the subject",
+    "breaker_not_asserted: the canary circuit-breaker must be ARMED and passing for a powered run (guardrail)"
+  ],
+  "requiredResponse": "Run tools/emit_outcome_records.py --model on the Spark+Mac farm (Actions-gated), feed the labeled rows to tools/aats_conformal_calibration.py --data over >= 3 seeds, and promote an auto-approval envelope only if an operating point holds false-approval <= target with a CI excluding the target. A NO-GO (escalate everything) is a valid outcome.",
+  "honestBound": "Intentionally PENDING. canClaimAGI false."
+}

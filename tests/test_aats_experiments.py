@@ -182,6 +182,24 @@ def test_reset_requires_operator():
     assert br.tripped is True
 
 
+def test_promotion_block_reason_is_opt_in_and_fail_closed():
+    from agent.auto_approval_breaker import promotion_block_reason
+    missing = _tmp("promo-missing.json")
+    if missing.exists():
+        missing.unlink()
+    assert promotion_block_reason(missing) is None            # no regime configured -> no block
+    armed = _tmp("promo-armed.json")
+    CircuitBreaker().save(armed)
+    assert promotion_block_reason(armed) is None              # armed -> permit
+    tripped = _tmp("promo-tripped.json")
+    br = CircuitBreaker(); br.trip("planted bad approved"); br.save(tripped)
+    r = promotion_block_reason(tripped)
+    assert r is not None and "tripped" in r                   # tripped -> block
+    corrupt = _tmp("promo-corrupt.json")
+    corrupt.write_text("{bad", encoding="utf-8")
+    assert promotion_block_reason(corrupt) is not None        # corrupt -> fail-closed block
+
+
 def test_load_missing_is_armed_corrupt_is_failclosed_tripped():
     missing = _tmp("no-such-breaker.json")
     if missing.exists():

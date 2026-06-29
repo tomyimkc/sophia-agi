@@ -163,4 +163,24 @@ class CircuitBreaker:
                        tripped_reason="unreadable breaker state — fail-closed to tripped")
 
 
-__all__ = ["CanaryItem", "CircuitBreaker", "load_canary_set", "Approver"]
+def promotion_block_reason(state_path: "str | Path") -> "str | None":
+    """Fail-closed promotion precondition for the live gate (e.g. tools/promote_adapter.py).
+
+    Returns a human-readable reason when a configured auto-approval circuit breaker
+    forbids promotion, else ``None``. OPT-IN: if no breaker state file exists at
+    ``state_path`` there is no canary regime configured, so this returns ``None`` and
+    does not block (preserving prior behaviour). If the file exists and the breaker is
+    TRIPPED — or is unreadable, which :meth:`CircuitBreaker.load` fails closed to
+    tripped — promotion is blocked. An armed breaker permits.
+    """
+    p = Path(state_path)
+    if not p.exists():
+        return None
+    br = CircuitBreaker.load(p)
+    if br.tripped:
+        return ("auto-approval circuit breaker tripped — autonomy disabled: "
+                + (br.tripped_reason or "no reason recorded"))
+    return None
+
+
+__all__ = ["CanaryItem", "CircuitBreaker", "load_canary_set", "Approver", "promotion_block_reason"]
