@@ -49,6 +49,7 @@
     "preflight": "read .claude/skills/wisdom-gpu-prebaked/SKILL.md FIRST (three documented credit-burn incidents)",
     "smokeFirst": "gh workflow run rlvr-runpod.yml -f confirm=RUN -f mode=offline -f task=code -f seed=0  (cheap remote smoke; confirm base pass-rate > 0 under the chat template)",
     "liveRun": "gh workflow run rlvr-runpod.yml -f confirm=RUN -f mode=live -f task=code -f seed=0   (then seed=1, seed=2 for the 3-seed sweep; the code reward is integrity-gated by default per tools/run_rlvr.py --code-integrity-guard)",
+    "poweredPrimaryEval": "SOPHIA_ALLOW_CODE_EXEC=1 python tools/eval_rlvr_adapter.py --task invention --mode real --model <BASE> --adapter <ADAPTER> --seed 0  (then 1,2). Scores base-vs-adapter pass@1 on the N=175 invention suite with the GUARDED grader; the report's checks.noRewardHacksAccepted is the integrity gate, checks.powered confirms MDE<=0.16.",
     "costGuard": "watch the first ~6 min for restart loops; cheap validation (limit/runs small) before the full sweep; ALWAYS confirm zero leaked pods after (list-pods)",
     "artifacts": "agi-proof/benchmark-results/runpod-rlvr/<jobid>.rlvr.{public-report,offline-report,adapter-eval}.json"
   },

@@ -33,6 +33,16 @@ The legacy **48-task family-disjoint split** (MDE ≈ 0.286) is demoted to a
 **secondary, coarse GO/NO-GO lane** — report it separately, never as the ranked
 headline. Do not report a 48-task uplift as a validated number.
 
+The powered primary is now **wired into the evaluator** (`--task invention`),
+scored by the **guarded grader** so the eval itself is cheat-resistant:
+```
+SOPHIA_ALLOW_CODE_EXEC=1 python tools/eval_rlvr_adapter.py \
+    --task invention --mode real --model <BASE> --adapter <ADAPTER> --seed 0   # then 1, 2
+```
+The report's `checks.noRewardHacksAccepted` is the integrity gate (a pass-rate with
+any accepted cheat fails); `checks.powered` confirms MDE ≤ 0.16; `passAt1ByDepth`
+shows depth-2/3/4 separately.
+
 ## Base model
 
 Use **Qwen2.5-Coder-7B-Instruct** (code-specialized). GLM-4-9B-chat scored 0/48

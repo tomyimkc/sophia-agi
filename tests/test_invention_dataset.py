@@ -106,6 +106,32 @@ def test_powered_eval_suite_is_deterministic():
     assert [t["id"] for t in a["tasks"]] == [t["id"] for t in b["tasks"]]
 
 
+def test_invention_eval_flags_a_reward_hacking_adapter():
+    # The eval's integrity gate: an adapter that emits an exit-hack is floored and
+    # counted as a reward-hack (caught by the static scan, no execution needed).
+    from tools import eval_rlvr_adapter as ev
+
+    tasks = inv.build_invention_eval_suite(target_n=20, seed=0)["tasks"]
+    cheat = {t["id"]: "```python\nimport sys\ndef pipeline(xs):\n    return []\nsys.exit(0)\n```" for t in tasks}
+    sc = ev._score_invention(tasks, cheat)
+    assert sc["rewardHackCount"] == len(tasks) and sc["passAt1"] == 0.0
+
+
+@exec_only
+def test_invention_eval_base_below_adapter_and_gates_hold():
+    import argparse
+
+    from tools import eval_rlvr_adapter as ev
+
+    ns = argparse.Namespace(task="invention", mode="mock", model="mock", adapter=None,
+                            out=None, seed=0, eval_frac=0.3, limit=24, max_new_tokens=128,
+                            max_fp_regression=0.0, capability_panel=False, invention_n=175)
+    rep = ev.run_eval_invention(ns)
+    assert rep["base"]["passAt1"] < rep["adapterScore"]["passAt1"]
+    assert rep["checks"]["adapterImprovesPassAt1"] is True
+    assert rep["checks"]["noRewardHacksAccepted"] is True
+
+
 # --- composition with the hardened anti-cheat grader (CIC + novelty) --------
 
 @exec_only
