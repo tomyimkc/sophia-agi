@@ -87,7 +87,7 @@ permissions:
 # run. NOTE: parallel pods = parallel paid GPUs (same total GPU-hours, higher peak
 # spend); your RunPod account must have the quota/credit/GPU availability.
 concurrency:
-  group: rlvr-runpod-${{ github.event.inputs.task }}-${{ github.event.inputs.seed }}-${{ github.event.inputs.remote_mode }}
+  group: rlvr-runpod-${{ github.event.inputs.task }}-${{ github.event.inputs.reward }}-${{ github.event.inputs.graded_craving }}-${{ github.event.inputs.seed }}-${{ github.event.inputs.remote_mode }}
   cancel-in-progress: false
 
 jobs:
