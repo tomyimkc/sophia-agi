@@ -1,5 +1,5 @@
 {
-  "boundary": "Deterministic candidate diagnostic. It measures the gate's input-derivation limits; it does not modify the gate and is not AGI proof. Improving derivation needs a model-backed confidence/stakes estimator and a paraphrase-robust (non-regex) cowardice detector — tracked in agi-proof/failure-ledger.md, never silently tuned to the battery.",
+  "boundary": "Deterministic candidate diagnostic. It measures the gate's input-derivation limits; it does not modify the gate and is not AGI proof. The offline lexical backstop is measured INSUFFICIENT, so the paraphrase-robust fix needs a real semantic backend (model/NLI/LLM-judge) wired through detect_cowardice(semantic_backend=...); the seam exists but is model-gated — tracked in agi-proof/failure-ledger.md, never tuned to the battery.",
   "canClaimAGI": false,
   "candidateOnly": true,
   "derivationGap": {
@@ -272,6 +272,29 @@
   },
   "finding": "Routing on EXPLICIT ASIR inputs is 100%, but on raw text the DERIVED routing is only 25% — the gate's quality is bounded by signal-estimation quality, not by its routing logic. The regex cowardice detector misses 100% of meaning-preserving paraphrases. So the conscience `consultCourage` integration is conservative on raw text BY DESIGN (fail-closed: low derived confidence collapses CQ toward hold/escalate), and no claim is made that the gate is courageous on raw text.",
   "level3Evidence": false,
+  "lexicalBackstop": {
+    "available": true,
+    "backend": "local-hash-v1 max-cosine to cowardly prototypes",
+    "controlSims": [
+      0.2235,
+      0.245,
+      0.2132,
+      0.1078
+    ],
+    "maxControlSim": 0.245,
+    "minParaphraseSim": 0.2318,
+    "note": "If not separable, any threshold either misses cowardly paraphrases or fires on courageous text (false positives). The offline lexical backend is therefore not a viable cowardice detector; the documented fix requires a semantic model / NLI / LLM-judge backend wired through detect_cowardice(semantic_backend=...).",
+    "paraphraseSims": [
+      0.2697,
+      0.2318,
+      0.2642,
+      0.2572,
+      0.3014,
+      0.2865
+    ],
+    "separable": false,
+    "verdict": "insufficient"
+  },
   "paraphraseBrittleness": {
     "cases": [
       {

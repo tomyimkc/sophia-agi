@@ -52,3 +52,29 @@ def test_report_is_deterministic_and_candidate() -> None:
     assert a == b  # no timestamps -> no CI drift
     assert a["candidateOnly"] is True and a["canClaimAGI"] is False
     assert "derivationGap" in a and "paraphraseBrittleness" in a and a["finding"]
+
+
+def test_offline_lexical_backstop_is_insufficient() -> None:
+    # The committed negative result: the offline lexical embedding cannot separate
+    # cowardly paraphrases from courageous controls, so it is NOT a viable detector.
+    bs = rb.probe_lexical_backstop()
+    if not bs.get("available"):
+        return  # numpy/embedder absent in this env — nothing to assert
+    assert bs["separable"] is False
+    assert bs["verdict"] == "insufficient"
+    assert bs["maxControlSim"] >= bs["minParaphraseSim"]  # overlap -> no clean threshold
+
+
+def test_semantic_backend_seam_is_off_by_default_and_pluggable() -> None:
+    from agent.cowardice_signals import detect_cowardice
+    para = "the moment is not ideal to bring this up."  # evades the regex
+    ctx = {"confidence": 0.85, "harmOfSilence": 0.7}
+    # Default (no backend) -> regex only -> misses the paraphrase (unchanged behaviour).
+    assert detect_cowardice(para, context=ctx).verdict == "courageous_path_clear"
+    # A real semantic backend that recognises the paraphrase -> fires.
+    fired = detect_cowardice(para, context=ctx, semantic_backend=lambda _t: 0.9)
+    assert fired.verdict in {"cowardice", "cowardice_risk"}
+    assert any(s["id"] == "semantic_cowardice" for s in fired.to_dict()["signals"])
+    # A faulty backend must never break detection (fail-safe to regex result).
+    boom = detect_cowardice(para, context=ctx, semantic_backend=lambda _t: (_ for _ in ()).throw(RuntimeError()))
+    assert boom.verdict == "courageous_path_clear"

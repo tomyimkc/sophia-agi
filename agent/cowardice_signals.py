@@ -22,7 +22,10 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Callable
+
+# A semantic backend's cowardice-likelihood at/above this fires the seam signal.
+SEMANTIC_THRESHOLD = 0.6
 
 # "Cowardice can look respectable" (Holiday): excuses that disguise fear as
 # realism. Matched only when paired with high confidence / high harm-of-silence,
@@ -77,7 +80,12 @@ def _f(context: dict[str, Any], key: str, default: float = 0.0) -> float:
         return default
 
 
-def detect_cowardice(text: str, *, context: dict[str, Any] | None = None) -> CowardiceDecision:
+def detect_cowardice(
+    text: str,
+    *,
+    context: dict[str, Any] | None = None,
+    semantic_backend: "Callable[[str], float] | None" = None,
+) -> CowardiceDecision:
     """Flag a retreat that looks driven by fear/social cost rather than by risk.
 
     Context keys (all optional, all ``[0,1]`` unless noted):
@@ -89,6 +97,16 @@ def detect_cowardice(text: str, *, context: dict[str, Any] | None = None) -> Cow
       (Deliberately NOT the metacognition fact-gate route: epistemic caution about
       *whether a fact is verified* is prudence, not cowardice — only an intent to
       withhold a well-supported, high-stakes point counts here.)
+
+    ``semantic_backend`` is the seam for the documented fix to the regex's paraphrase
+    brittleness (failure-ledger: andreia-derived-signal-routing-weak-on-raw-text). It is
+    a callable ``text -> cowardice_likelihood in [0,1]``; when supplied and it scores
+    ``>= SEMANTIC_THRESHOLD`` on an otherwise-actionable case, a ``semantic_cowardice``
+    signal fires (catching paraphrases the regex never enumerated). Default ``None`` =
+    deterministic regex only (zero behaviour change). NOTE: an OFFLINE lexical-hashing
+    backend is measured INSUFFICIENT (it cannot separate cowardly paraphrases from
+    courageous text — see tools/run_andreia_robustness.py), so a real semantic model /
+    NLI / LLM-judge backend is required to actually close the gap.
     """
     context = context or {}
     t = text or ""
@@ -104,6 +122,16 @@ def detect_cowardice(text: str, *, context: dict[str, Any] | None = None) -> Cow
             "respectable_excuse", "high",
             "fear is dressed as realism ('not the right time', 'let someone else') while the case for acting is clear",
         ))
+    if semantic_backend is not None and (confidence >= 0.6 or harm_of_silence >= 0.5):
+        try:
+            score = float(semantic_backend(t))
+        except Exception:  # noqa: BLE001 — a faulty backend must never break detection
+            score = 0.0
+        if score >= SEMANTIC_THRESHOLD:
+            signals.append(CowardiceSignal(
+                "semantic_cowardice", "high",
+                f"semantic backend flags a fear-driven retreat the regex did not enumerate (score {round(score, 3)})",
+            ))
     if proposed_hold and confidence >= 0.75 and harm_of_silence >= 0.5:
         signals.append(CowardiceSignal(
             "confidence_silence_mismatch", "high",
