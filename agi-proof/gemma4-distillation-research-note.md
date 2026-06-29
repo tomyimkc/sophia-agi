@@ -208,4 +208,37 @@ gated uplift (judge families, seeds, decontam, private split) — the mirror ima
   reasoning on 8 GB."
 - Model names/counts from the source thesis stay **illustrative** until first-party measured.
 
-*End of note. Proposals only; no measured result is asserted.*
+## 5. Implementation status (2026-06-29)
+
+All 11 takeaways are now **built as MECHANISM** (offline-tested, gated), not measured. No
+capability uplift is asserted — each is tracked OPEN in the failure ledger until a gated run.
+
+| Takeaway | Shipped in | Offline test |
+|---|---|---|
+| T1 patch tier + DPO mining | `tools/distill_export.py` (`--patch-provider`) | `tests/test_distill_patch_tier.py` |
+| T2 single outcome oracle | `agent/outcome_oracle.py` | `tests/test_outcome_oracle.py` |
+| T3 RLVR rollout harvest | `tools/run_rlvr.py` (`--harvest-sft`) | `tests/test_rlvr_harvest.py` |
+| T4 distill decontam | `tools/assert_decontam.py`, `tools/distill_export.py` | `tests/test_distill_decontam_provenance.py` |
+| T5 efficiency frontier | `tools/build_efficiency_frontier.py` | `tests/test_efficiency_frontier.py` |
+| T6 QAT-consistency KL | `training/qat.py`, `tools/train_lora.py` (`--qat-consistency`) | `tests/test_track_b.py` |
+| T7 self-consistency | `tools/distill_export.py` (`--self-consistency-n`) | `tests/test_distill_patch_tier.py` |
+| T8 provenance tag + oversample | `tools/lint_training_rows.py`, `tools/build_local_sophia_dataset.py` | `tests/test_distill_decontam_provenance.py` |
+| T9 cost / teacher split | `tools/distill_export.py` summary | (same) |
+| T10 nano PLE probe | `pretraining/architecture/ple.py` | `tests/test_ple_architecture.py` |
+| T11 worked example | `agi-proof/measurement-thesis.md` | `lint_claims` |
+
+**Pre-registered GPU/teacher experiments** (the two follow-ups), gated and runnable:
+
+- **Patch-tier yield** — `agi-proof/benchmark-results/distill-patch-tier/measurement_spec.json`.
+  Run: `OPENROUTER_API_KEY=… tools/distill_export.py prompts.json --provider deepseek --patch-provider glm:glm-5.2`
+  → decontam (`assert_decontam` + `lint_training_rows`) → train → `eval_rlvr_adapter`
+  → `claim_gate --prefix distill-patch --assert-prereg`.
+- **QAT-consistency low-RAM bound** — `agi-proof/benchmark-results/qat-consistency/measurement_spec.json`.
+  Run via `.github/workflows/train-runpod.yml` with `extra_train_args = "--qat --qat-consistency --qat-scheme nvfp4"`,
+  then `tools/certify_lowram.py --scheme nvfp4`; compare mean_kl/top1 vs v3.
+
+**Ledger (OPEN until gated):** `distill-recovery-levers-built-2026-06-29`,
+`qat-consistency-kl-lever-built-2026-06-29`, `ple-nano-probe-negative-efficiency-frontier-built-2026-06-29`.
+
+*End of note. Mechanisms shipped + pre-registered; no measured capability result is asserted
+(`candidate_only; canClaimAGI:false`).*
