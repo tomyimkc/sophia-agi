@@ -45,7 +45,7 @@ def test_trap_ids_unique_and_fields_present():
     for t in traps:
         for f in ("scene", "question", "answer_type", "gold_answer", "trap_answer", "check", "reason"):
             assert f in t, f"{t['id']} missing {f}"
-        assert t["answer_type"] in ("yesno", "count", "text")
+        assert t["answer_type"] in ("yesno", "count", "text", "measure")
         assert str(t["gold_answer"]).lower() != str(t["trap_answer"]).lower()
 
 
@@ -78,6 +78,73 @@ def test_relation_semantics():
     assert verifiers.relation(scene2, "bird", "below", "cloud") is False
     # missing object -> False, never an exception
     assert verifiers.relation(scene2, "bird", "above", "missing") is False
+
+
+def test_depth_order_and_occlusion():
+    scene = {"objects": [{"label": "cup", "box": [80, 300, 80, 60], "z": 2.0},
+                         {"label": "laptop", "box": [300, 260, 150, 120], "z": 6.0}], "texts": []}
+    assert verifiers.depth_order(scene, "cup", "in_front_of", "laptop") is True
+    assert verifiers.depth_order(scene, "cup", "behind", "laptop") is False
+    assert verifiers.depth_order(scene, "laptop", "behind", "cup") is True
+    # missing object / missing z -> False, never an exception
+    assert verifiers.depth_order(scene, "cup", "in_front_of", "missing") is False
+    flat = {"objects": [{"label": "a", "box": [0, 0, 10, 10]}], "texts": []}
+    assert verifiers.depth_order(flat, "a", "in_front_of", "a") is False  # no z
+    # occlusion needs overlap AND nearer
+    occ = {"objects": [{"label": "box", "box": [180, 180, 120, 120], "z": 2.0},
+                       {"label": "ball", "box": [220, 220, 60, 60], "z": 6.0}], "texts": []}
+    assert verifiers.occludes(occ, "box", "ball") is True
+    assert verifiers.occludes(occ, "ball", "box") is False  # wrong depth order
+    apart = {"objects": [{"label": "box", "box": [0, 0, 40, 40], "z": 2.0},
+                         {"label": "ball", "box": [300, 300, 40, 40], "z": 6.0}], "texts": []}
+    assert verifiers.occludes(apart, "box", "ball") is False  # no overlap
+
+
+def test_bigger_than_and_distance():
+    # real-world size, not apparent box area: a near small cup fills more pixels
+    scene = {"objects": [{"label": "car", "box": [360, 200, 60, 40], "z": 12.0, "size": 4.5},
+                         {"label": "cup", "box": [60, 300, 160, 180], "z": 1.0, "size": 0.12}], "texts": []}
+    assert verifiers.bigger_than(scene, "car", "cup") is True   # despite smaller box
+    assert verifiers.bigger_than(scene, "cup", "car") is False  # the size illusion
+    assert verifiers.bigger_than(scene, "car", "missing") is False
+    nosize = {"objects": [{"label": "a", "box": [0, 0, 10, 10]}], "texts": []}
+    assert verifiers.bigger_than(nosize, "a", "a") is False     # no size field
+    # 3D distance over (center_x, center_y, z)
+    d = verifiers.distance_between(scene, "car", "cup")
+    assert d is not None and 300 < d < 360
+    assert verifiers.distance_cmp(scene, "car", "cup", ">", 250) is True
+    assert verifiers.distance_cmp(scene, "car", "cup", "<", 250) is False
+    assert verifiers.distance_between(scene, "car", "missing") is None
+    assert verifiers.distance_cmp(scene, "car", "missing", ">", 1) is False  # fail-closed
+
+
+def test_measure_answer_type_judge_and_label():
+    # gold/verifier agreement already covered for all rows; here check the judge.
+    trap = {"answer_type": "measure", "gold_answer": 476, "trap_answer": 453,
+            "check": {"type": "distance", "tol": 10.0}}
+    assert J.lexical_judge("They are about 476 units apart.", trap).affirmed_gold is True
+    assert J.lexical_judge("About 453 units apart.", trap).hallucinated is True   # depth-blind 2D
+    assert J.lexical_judge("Roughly 800 units.", trap).hallucinated is True       # confident & wrong
+    assert J.lexical_judge("I can't tell the distance.", trap).abstained is True
+    # at least one measure trap exists and its gold matches the verifier within tol
+    measure = [t for t in runner.load_traps() if t["answer_type"] == "measure"]
+    assert measure and all(verifiers.gold_matches_check(t) for t in measure)
+
+
+def test_physical_categories_present_and_balanced():
+    traps = runner.load_traps()
+    cats = {t["category"] for t in traps}
+    for required in ("depth_order", "occlusion", "size_illusion", "distance"):
+        assert required in cats, f"missing physical category {required}"
+    # discrimination controls exist so neither blanket-yes nor blanket-no wins
+    for ctrl in ("depth_control", "occlusion_control", "size_control", "distance_control"):
+        assert ctrl in cats, f"missing physical control {ctrl}"
+    phys_cats = {"depth_order", "depth_control", "occlusion", "occlusion_control",
+                 "size_illusion", "size_control", "distance", "distance_control"}
+    phys = [t for t in traps if t["category"] in phys_cats]
+    assert len(phys) >= 10
+    golds = [str(t["gold_answer"]).lower() for t in phys]
+    assert "yes" in golds and "no" in golds  # mixed polarity
 
 
 def test_ocr_contains_and_blank_sentinel():
