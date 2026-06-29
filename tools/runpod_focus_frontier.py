@@ -165,7 +165,6 @@ def main(argv: list[str] | None = None) -> int:
     if args.dry_run:
         # Build the payload with a placeholder key/pubkey — no network, no pod.
         payload = _build_create_payload(args, public_key="ssh-ed25519 AAAA...DRYRUN", api_key="")
-        from tools.runpod_rlvr import _redact
         print("[dry-run] RunPod create payload (sanitized):")
         # never print env secrets
         payload.get("env", {}).pop("RUNPOD_API_KEY", None)
@@ -173,7 +172,9 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(payload, indent=2)[:2000])
         print("\n[dry-run] remote command:")
         print(_remote_focus_script(args))
-        print(f"[dry-run] api key present: {bool(api_key)} ({_redact(api_key)})")
+        # Never log the secret (even partially): report only its presence and length
+        # (an int — taint-breaking, mirrors the PR #309 clear-text-logging fixes).
+        print(f"[dry-run] api key present: {bool(api_key)} (len={len(api_key)})")
         return 0
 
     if not args.yes:

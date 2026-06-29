@@ -29,7 +29,6 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent.context_manager import Segment, estimate_tokens  # noqa: E402
 from tools.eval_stats import bootstrap_ci_paired, cohen_kappa, confidence_sequence_mean, mde_at_n  # noqa: E402
 from tools.run_focus_frontier_eval import (  # noqa: E402 — reuse the packers + gate + retry
     UNSOLVED_PENALTY,

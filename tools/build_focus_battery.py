@@ -35,7 +35,6 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent.context_manager import estimate_tokens  # noqa: E402
 from tools.assert_decontam import _jaccard, _shingles  # noqa: E402 — reuse the repo decontam math
 from tools.eval_stats import mde_at_n  # noqa: E402
 

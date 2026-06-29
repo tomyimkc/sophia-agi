@@ -383,6 +383,9 @@ def _retry(fn, *args, attempts: int = 5, base: float = 1.5, **kw):
                 time.sleep(base * (2 ** i))
                 continue
             raise
+    # Unreachable: the final attempt always returns or re-raises above. Explicit
+    # terminal keeps every path explicit (no implicit ``return None``).
+    raise RuntimeError("_retry exhausted all attempts without returning or raising")
 
 
 def _judge_label(judge_complete, question: str, key: str, answer: str) -> str:
