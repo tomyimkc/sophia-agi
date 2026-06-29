@@ -206,7 +206,7 @@ def assess_temperance(
         # Akrasia: strong pull to keep spending against a genuinely scarce budget.
         verdict = "escalate"
         reason = "appetite is high while the budget is genuinely scarce (akrasia) — force an explicit measure decision"
-    elif mq > MEAN_TOLERANCE and mu < HIGH_MARGINAL_VALUE:
+    elif mq > MEAN_TOLERANCE and mu < LOW_MARGINAL_VALUE:
         verdict = "restrain"
         reason = "expenditure exceeds demand and the next unit's marginal value is low — cut back / stop"
     elif mq < -MEAN_TOLERANCE and mu >= HIGH_MARGINAL_VALUE:
