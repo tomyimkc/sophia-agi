@@ -18,5 +18,11 @@ AGENTS.md filter=git-crypt diff=git-crypt
 CONTRACT.md filter=git-crypt diff=git-crypt
 # Local agent/tooling skill definitions:
 .claude/skills/** filter=git-crypt diff=git-crypt
+# Exception: process/operational skills carry NO IP and must stay readable even when the repo
+# is locked (no git-crypt key) so a fresh Claude-Code-on-the-web session can use them without
+# unlocking. The encrypted IP skills above (sophia-agi, runpod-mcp) are unaffected (last match wins).
+.claude/skills/git-discipline/** !filter !diff
+.claude/skills/ci-artifact-drift/** !filter !diff
+.claude/skills/session-handover/** !filter !diff
 .grok/** filter=git-crypt diff=git-crypt
 agi-proof/benchmark-results/**/*.tar.gz filter=lfs diff=lfs merge=lfs -text
