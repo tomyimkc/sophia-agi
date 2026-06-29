@@ -80,8 +80,10 @@ nucleus each `sophia-<discipline>-3b` adapter is SFT-seeded on. `tools/gen_reaso
 chemistry seed with an unbalanced equation is dropped by the chemistry verifier, not waved through the
 general gate. `tools/build_council_seeds.py` validates every seed is gate-clean (a drop is a *seed
 bug* to fix — it caught two on first run: a `math_sound` sub-expression misparse and a missing Freud
-denial) and emits the combined `distill_v1.jsonl` (29 rows across 8 disciplines). Real volume is added
-from a teacher model through the same gate.
+denial) and emits the combined `distill_v1.jsonl` (**68 rows across all 21 disciplines**). Real volume
+is added from a teacher model through the same gate. The reference seats (physics, coding) and the
+provenance seats are gated through the provenance fallback, so even their seeds are attribution- and
+arithmetic-clean by construction.
 
 ## Independent v2 validation of the new verifiers
 
