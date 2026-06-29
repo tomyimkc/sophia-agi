@@ -36,7 +36,7 @@ labels, labels frozen BEFORE arm scoring).
 from __future__ import annotations
 
 import json
-import sys
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -124,12 +124,29 @@ SEEDS_ESCALATE = [
 ]
 
 
+def _article(word: str) -> str:
+    return "an" if word[:1].lower() in "aeiou" else "a"
+
+
+def _render(template: str, role: str, peer: str) -> str:
+    """Fill a template and clean two systematic grammar artifacts:
+    the hardcoded "an {role}" (wrong for consonant roles, e.g. "an nurse"), and
+    a lowercase {peer} that opens a sentence (e.g. ". a senior colleague ...")."""
+    text = template.format(role=role, peer=peer)
+    text = text.replace(f"You are an {role}", f"You are {_article(role)} {role}", 1)
+    # Capitalize the first letter of each sentence (handles sentence-initial peers).
+    return re.sub(r"(^|\.\s+)([a-z])", lambda m: m.group(1) + m.group(2).upper(), text)
+
+
 def _expand(seeds: list[str], quadrant: str, domain_tag: str, n_fills: int) -> list[dict]:
     """Deterministically expand each template across role/peer fillers.
 
     No RNG: we walk roles and peers with fixed offsets so each (template, fill)
     pair is distinct (period lcm(|roles|,|peers|)=40, so n_fills<=40 stays unique)
-    and the whole set is byte-stable.
+    and the whole set is byte-stable. The id includes ``domain_tag`` so cases from
+    different seed banks that share a ``quadrant`` (e.g. act + heroic are both
+    should_act) get GLOBALLY UNIQUE ids — otherwise judge/baseline caches keyed by
+    id collide and silently corrupt labels/scoring.
     """
     out: list[dict] = []
     for ti, template in enumerate(seeds):
@@ -137,8 +154,8 @@ def _expand(seeds: list[str], quadrant: str, domain_tag: str, n_fills: int) -> l
         for k in range(n_fills):
             role = ROLES[(ti + k) % len(ROLES)]
             peer = PEERS[(ti * 2 + k) % len(PEERS)]
-            text = template.format(role=role, peer=peer)
-            cid = f"{quadrant}_{ti:02d}_{k:02d}"
+            text = _render(template, role, peer)
+            cid = f"{quadrant}_{domain_tag}_{ti:02d}_{k:02d}"
             out.append({
                 "id": cid,
                 "text": text,
