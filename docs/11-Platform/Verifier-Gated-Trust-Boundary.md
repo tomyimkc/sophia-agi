@@ -60,6 +60,22 @@ reduce step.
 5. an agent never reads its own contribution back as "shared" context;
 6. audit totals reconcile (`total == accepted + held`).
 
+## Measurement (on vs off)
+
+`tools/measure_trust_boundary.py` runs a fixed, labelled scenario of sub-agent messages (clean
++ poison) through the boundary ON vs OFF and reports the **contamination-blocking rate** — the
+share of *verifier-detectable* bad content kept out of sibling context. Deterministic, offline,
+CI-tested (`tests/test_measure_trust_boundary.py`); artifact at
+`agi-proof/benchmark-results/trust-boundary-contamination.json`.
+
+- OFF (default blackboard): every flagged message is readable → contamination rate **1.0**.
+- ON (this boundary): every flagged message is held → contamination rate **0.0**.
+- `admittedPoisonResidual` reports poison that carried *no* detectable violation and was
+  therefore admitted — surfaced, not hidden, because the gate is a filter, not a truth oracle.
+
+The honest, OPEN follow-up (not yet run): the same on-vs-off delta on **verified-success / cost**
+over a third-party agentic task, with the repo's ≥2-judge-family + CI discipline.
+
 ## How it composes
 
 - **With the RLVR reward** (`provenance_bench/swarm_rl.py`): that reward already penalises

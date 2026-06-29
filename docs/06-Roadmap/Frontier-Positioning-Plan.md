@@ -64,8 +64,8 @@ a no-op (root cause: commit `77a1076d`).
 |---|---|---|---|
 | 1–2 | **Preference Engine v0** (shipped): score candidates via the gate, mint verifier-labelled DPO pairs. | `tools/gen_verifier_dpo.py`, `tests/test_gen_verifier_dpo.py` | `lint_training_rows`, `assert_decontam` on output. |
 | 3–4 | Scale `tool_use/dpo_pairs.jsonl` via the engine; ingest ToolACE / xLAM **as raw fuel re-scored by our verifiers** (do not trust foreign labels). | `training/tool_use/` | Decontamination logged; mixture provenance published. |
-| 5–6 | **Multi-turn** RLVR: extend the single-plan reward to trajectory rollouts; add KL control + length-normalised reward. | `training/swarm_router/train_grpo.py`, `provenance_bench/swarm_rl.py` | 3-seed sweep, `eval_stats` CIs, via the RunPod GH Action. |
-| 7–8 | **Trust boundary** (shipped core): route sibling reads through `GatedSharedState`; measure verified-success / cost with gating on vs off. | `agent/swarm_trust_boundary.py`, `agent/swarm_router.py` | CI excludes zero on the on-vs-off delta. |
+| 5–6 | **Multi-turn** RLVR reward half (shipped): `TrajectoryOutcome` + `trajectory_reward` with KL control + length-normalised cost, 7 invariants. Remaining: the GPU GRPO loop that consumes it (3-seed sweep). | `provenance_bench/swarm_rl.py`, `training/swarm_router/train_grpo.py` | invariants green; 3-seed sweep + `eval_stats` CIs via the RunPod GH Action remain OPEN. |
+| 7–8 | **Trust boundary** (shipped core + measurement): route sibling reads through `GatedSharedState`; on-vs-off contamination measured. Remaining: the same on-vs-off delta on verified-success / cost over a third-party agentic task. | `agent/swarm_trust_boundary.py`, `tools/measure_trust_boundary.py` | contamination-blocked rate = 1.0 (detectable) measured; third-party verified-success delta OPEN. |
 | 9–10 | Train + certify an **abstention-native tool-use adapter** on the verifier-labelled pack. | `training/qat`, `training/swarm_router/adapter` | κ ≥ 0.40 **or** CI excludes zero, ≥2 judge families; candidate until met. |
 | 11–12 | **MoE = design only**: add z-loss + shared + fine-grained experts to `moe/router.py` as numpy reference; mark design-only in the ledger. Write up the trust-boundary result. | `moe/router.py`, `agi-proof/failure-ledger.md` | No trained-MoE claim. |
 
@@ -85,4 +85,6 @@ The strongest interview artifacts are not capability badges; they are the QAT-by
 |---|---|
 | `tools/gen_verifier_dpo.py` + test | shipped, offline self-test green |
 | `agent/swarm_trust_boundary.py` + test + design doc | shipped, invariants green |
-| multi-turn RLVR, adapter cert, MoE design | OPEN — see the table above and the failure ledger |
+| `provenance_bench/swarm_rl.py` multi-turn `trajectory_reward` (KL + length-norm) + tests | shipped, 7 invariants green |
+| `tools/measure_trust_boundary.py` + test + artifact | shipped, contamination-blocked rate = 1.0 (detectable) |
+| GPU GRPO sweep, adapter cert, third-party agentic delta, MoE design | OPEN — see the table above and the failure ledger |
