@@ -1,0 +1,22 @@
+Reflex fusion — self-consistency (A) + okf grounding-closure (B)
+========================================================================
+N=50  base_error=0.44  break-even d′ bar=1.0
+
+DETECTABILITY (d′ / AUC)
+  A self-consistency : d′ 0.8743  AUC 0.6737  clears=False
+  B okf-grounding    : d′ 0.9661  AUC 0.6591  clears=False
+  A+B fused (z-sum)  : d′  1.862  AUC 0.8604  clears=True
+  correlation ρ(A,B) : -0.2191   (low ⇒ independent ⇒ additive)
+
+COMPLEMENTARITY: among 12 errors A misses, B's AUC = 0.7917
+MAX TOLERABLE ρ for fusion to still clear (d′=0.96 each): 0.8432
+
+DETECTION-THEORY LAW  d′_fused = (d_A+d_B)/√(2+2ρ)   [MC vs closed form]
+  ρ=0.0: MC 1.358  closed 1.358
+  ρ=0.3: MC 1.189  closed 1.191
+  ρ=0.6: MC 1.069  closed 1.073
+  ρ=0.9: MC 0.979  closed 0.985
+  ρ=1.0: MC 0.953  closed 0.960
+
+candidateOnly=True  level3Evidence=False
+boundary: synthetic reasoner over real okf graphs; fusion law, not a model claim.

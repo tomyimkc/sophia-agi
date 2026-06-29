@@ -216,6 +216,38 @@ number: run the tool from a non-blocked network (your own machine) with a rotate
 
 ---
 
+### 3b. Two detectors beat one — and *independence* is the whole game
+
+§3a said self-consistency is borderline and the bus needs a second, independent detector.
+[`reasoning/instinct_fusion.py`](../../reasoning/instinct_fusion.py) builds and measures that.
+Detector **A** is self-consistency (keys on *uncertainty*); detector **B** is a real `okf`
+grounding-closure check (`okf.revise`/`claims_to_abstain`) that fires when a proposed abstain
+set wrongly includes a claim that still has live grounding — it is deliberately *partial*
+(blind to under-abstention), so it catches the **confident structural errors A misses**, not
+the oracle.
+
+```
+A self-consistency : d′ 0.87   AUC 0.67   clears d′=1.0? NO
+B okf-grounding     : d′ 0.97   AUC 0.66   clears d′=1.0? NO
+A+B fused (z-sum)   : d′ 1.86   AUC 0.86   clears d′=1.0? YES     ρ(A,B) ≈ −0.22
+```
+
+**Finding:** *neither detector clears the bar alone, but their fusion does* — two weak
+reflexes make one good one. And it is governed by a clean law (verified MC vs closed form):
+for two detectors of detectability `d_A,d_B` with correlation `ρ`,
+**`d′_fused = (d_A + d_B) / √(2 + 2ρ)`** — which is `√(d_A²+d_B²)` (quadrature) at `ρ=0` and
+collapses to the mean (no gain) at `ρ=1`. So a second detector helps **only to the extent it
+is independent**: at d′≈0.96 each, fusion clears the bar for any correlation below
+**ρ* ≈ 0.84**. The complementarity is explicit — among the errors A lets through, B still
+separates at AUC 0.79. (Honest scope: B is real `okf` and A is real self-consistency, but the
+*answer distribution* is a seeded synthetic reasoner over the real graphs; the d′s validate
+the fusion law and bus design, not a real model — the real-model fusion d′ is still gated.)
+
+**Architectural payoff:** the reflex bus in §2 should fuse detectors chosen for *independence
+of failure mode* (uncertainty-based + structure-based + provenance-based), not redundancy.
+A pile of correlated detectors buys almost nothing; two uncorrelated borderline ones clear the
+bar.
+
 ## 4. From model to measured claim (pre-registration sketch)
 
 To graduate this from `candidateOnly` to a real eval under the Instrumented Evaluation Contract
@@ -231,8 +263,9 @@ To graduate this from `candidateOnly` to a real eval under the Instrumented Eval
   already exists — [`reasoning/instinct_reflex_eval.py`](../../reasoning/instinct_reflex_eval.py)
   (§3a) — and reports d′/AUC against the break-even bar. The gated step is to swap its synthetic
   `sampler` for a real multi-sample model run and read off the *real* d′ before trusting the
-  reflex. §3a already shows self-consistency is borderline at moderate competence, so plan a
-  **second independent detector** for the bus.
+  reflex. §3a/§3b show self-consistency is borderline alone but a **second independent detector**
+  (real `okf` grounding-closure) fuses with it to clear the bar — so the gated real-model run
+  should sample *both* detectors and report fused d′.
 - **Primary metric:** final-answer correctness uplift of `instinct` over both `commit` and
   `late`, with token-cost as a co-primary (the re-route tax must be reported, not hidden).
 - **Pass bar (no-overclaim):** ≥2 independent judge families, judge ≠ subject, ≥3 seeds, 95% CI
@@ -269,8 +302,11 @@ To graduate this from `candidateOnly` to a real eval under the Instrumented Eval
   an instinct *hurts*. Ship the reflex only after its ROC is measured against that bar — and the
   measurement harness for that go/no-go already exists (`reasoning/instinct_reflex_eval.py`).
 - First reflex measured (synthetic, harness-validation): **self-consistency disagreement is
-  borderline** — d′ 0.96 at moderate competence, just under the bar; it likely needs a second
-  independent detector to clear d′=1.0 reliably. Real-model d′ is the gated next step.
+  borderline** — d′ 0.96 at moderate competence, just under the bar.
+- **Fusion result:** a second *independent* detector (real `okf` grounding-closure) fused with
+  self-consistency clears the bar (d′ 1.86) though neither does alone — governed by
+  `d′_fused=(d_A+d_B)/√(2+2ρ)`, so the bus must pick detectors for **independence, not
+  redundancy**. Real-model fused d′ is the gated next step.
 - This repo already has the *policy* substrate (ko-escalate, graded decision, AGM belief
   revision, consequence gate). The missing pieces are the **reflex bus** and the **interrupt
   controller** — and a no-overclaim eval, datasets for which already exist.
