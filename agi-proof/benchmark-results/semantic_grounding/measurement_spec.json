@@ -7,9 +7,9 @@
     "D2 symbolic reference reasoner (agent.datalog_engine least-fixed-point)"
   ],
   "arms": {
-    "A0": "base model only (pure distributional)",
-    "A1": "base + OKF definition retrieval (provenance-carrying)",
-    "A2": "base + retrieval + symbolic compose/abstain (datalog tool)"
+    "A0": "base model only, CLOSED-BOOK (D1: define from parametric knowledge, no glosses shown; D2: answer directly)",
+    "A1": "base + retrieved OKF definition (genuine grounding; D2: no-op, nothing to retrieve)",
+    "A2": "base + grounding + reasoning scaffold (D1: provenance constraint; D2: chain-of-thought derivation — the engine verdict is NEVER injected)"
   },
   "primaryMetric": "paired delta per metric vs A0 (A1-A0 and A2-A0), counting CI-clean improvements",
   "primaryN": "D1=34 cases (24 train / 10 eval), D2=41 cases over 10 worlds (23 train / 18 eval), x >=3 seeds (Phase 1 must scale N before any claim)",
@@ -32,9 +32,9 @@
   "claimCeiling": "candidate_only; canClaimAGI:false; narrow seed-bound feasibility; a faithfulness/composition result, NOT understanding",
   "honestLimits": [
     "small N (D1=34, D2=41; eval fold smaller still) — underpowered for a 10pt effect; report mde_at_n and treat single-run deltas as coarse",
-    "D1 distractors are lexically-near siblings, an easy floor (not adversarial paraphrase)",
+    "D1 closed-book SENSE scoring is LOW-VALIDITY: it lexically matches the model's free-form definition to the OKF glosses, which are provenance-focused (not genus-differentia), so a valid definition can be mis-scored for not using OKF's framing. The robust D1 axis is FAITHFULNESS (does the model assert a forbidden author?), which is a clean closed-book test. An LLM-judge sense grader is a future upgrade.",
     "D2 is a closed-world grounding verdict over hand-written axioms, not a truth oracle",
-    "A2 on D2 is near-ceiling by construction (it calls the same engine the scorer derives gold with) so it measures TOOL-USE COMPLIANCE, not unaided reasoning; the load-bearing comparison is A0 vs A1 (does grounding context help) and A1 vs A2 (does the symbolic tool help)"
+    "A2-D2 is now a real chain-of-thought arm (the model derives the verdict); the engine verdict is NO LONGER injected, so the earlier tautology is removed. The load-bearing comparisons are A0 vs A1 (does retrieved grounding help) and A0 vs A2 (does the reasoning/provenance scaffold help)"
   ],
   "peekedMetrics": [],
   "enforcement": {

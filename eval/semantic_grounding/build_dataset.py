@@ -101,11 +101,13 @@ def build_d1() -> list[dict]:
         cand_ids = [p.id, *distractor_ids[:N_DISTRACTORS]]
         cand_ids.sort(key=lambda cid: _stable_key(p.id, cid))
         candidates = [{"conceptId": cid, "gloss": glosses[cid]} for cid in cand_ids]
+        # CLOSED-BOOK prompt: the candidate definitions are NOT shown to the model — they
+        # are a scoring-only inventory (the scorer lexically matches the free-form answer to
+        # them). This makes A0 a true distributional baseline; A1 adds the retrieved OKF
+        # gloss, A2 adds the provenance constraint. (See the runner's build_prompt.)
         prompt = (
-            f"Define the term \"{term}\". Choose the single correct definition from the "
-            f"candidates and state any author it must NOT be attributed to.\n\n"
-            + "Candidates:\n"
-            + "\n".join(f"  ({j+1}) {c['gloss']}" for j, c in enumerate(candidates))
+            f"Define the term \"{term}\" in one sentence (its established meaning), then "
+            "state any author it must NOT be attributed to (write 'none' if there is none)."
         )
         cases.append({
             "id": f"d1-{p.id}",

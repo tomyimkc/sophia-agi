@@ -98,7 +98,7 @@ def mock_completion(arm: str, case: dict) -> dict:
         forbidden = case.get("doNotAttributeTo") or []
         merge = f"{case['term']} was coined by {forbidden[0]}." if forbidden else ""
         if arm == "A0":
-            # Ungrounded: blind guess + confidently merges a forbidden lineage.
+            # Closed-book parametric guess + confidently merges a forbidden lineage.
             prose = merge or f"{case['term']} is a concept."
             return {"id": cid, "selected": _blind_pick(case), "completion": prose}
         if arm == "A1":
@@ -112,36 +112,45 @@ def mock_completion(arm: str, case: dict) -> dict:
 
     # D2 composition
     if arm in ("A0", "A1"):
-        # No symbolic reasoning: guess the modal verdict.
+        # No reasoning scaffold: guess the modal verdict.
         return {"id": cid, "verdict": "entailed", "completion": "entailed (guessed)."}
-    # A2: call the symbolic engine (tool-use; near-ceiling by construction).
+    # A2: CoT derivation. The mock simulates SUCCESSFUL reasoning (the verdict is the
+    # model's derived answer, NOT an injected oracle — the real arm prompts step-by-step).
     v = reference_verdict(case["axioms"], case["claim"])
-    return {"id": cid, "verdict": v, "completion": f"{v} by closed-world derivation."}
+    return {"id": cid, "verdict": v, "completion": f"{v} after step-by-step derivation."}
 
 
 # ----------------------------------------------------------------- real model
 def build_prompt(arm: str, case: dict) -> str:
-    """Prompt for a real model run. A1 adds retrieved definition context; A2 adds the
-    symbolic tool's result (for D2) / provenance constraint (for D1)."""
+    """Arm-specific prompt for a real model run.
+
+    D1: A0 is CLOSED-BOOK (define from parametric knowledge); A1 adds the retrieved OKF
+    definition (genuine grounding — perfect-lookup upper bound); A2 adds the provenance
+    constraint. D2: A0/A1 answer directly; A2 is a real chain-of-thought DERIVATION arm
+    (the model reasons — the engine's verdict is NEVER injected; that tautology is gone)."""
     base = case["prompt"]
-    if arm == "A0":
-        return base
     if case["task"] == "definition":
-        ctx = ""
-        if arm == "A2" and case.get("doNotAttributeTo"):
-            ctx = f"\n\n[Provenance constraint] Do NOT attribute to: {', '.join(case['doNotAttributeTo'])}."
-        return base + "\n\n[Retrieved OKF definitions are the candidates above.]" + ctx
-    # D2
-    if arm == "A2":
-        v = reference_verdict(case["axioms"], case["claim"])
-        return base + f"\n\n[Symbolic checker] A sound closed-world derivation returns: {v}. Use it."
-    return base + "\n\n[Reason step by step over only the listed facts.]"
+        if arm == "A0":
+            return base
+        gloss = _okf_gloss_for_term(case["term"]) or ""
+        ctx = f"\n\n[Retrieved OKF definition] {gloss}" if gloss else ""
+        if arm == "A1":
+            return base + ctx
+        forb = case.get("doNotAttributeTo") or []
+        disc = f"\n[Provenance constraint] Do not attribute it to: {', '.join(forb)}." if forb else ""
+        return base + ctx + disc
+    # D2 composition
+    if arm in ("A0", "A1"):
+        return base
+    return base + ("\n\nReason step by step: list each subsumption hop you rely on, check for "
+                   "any disjointness conflict, then end with the one-word verdict.")
 
 
 SUBJECT_SYSTEM = (
     "You are answering a benchmark item. Be concise and follow the instructions exactly. "
-    "For a definition item, name the single correct definition and any author it must not be "
-    "attributed to. For a closed-world claim, answer exactly one of: entailed, violation, abstain."
+    "For a definition item, give the term's established meaning in one sentence and any author "
+    "it must not be attributed to. For a closed-world claim, answer exactly one of: entailed, "
+    "violation, abstain."
 )
 
 
