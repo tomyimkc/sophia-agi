@@ -1,0 +1,57 @@
+{
+  "experimentId": "long-horizon-execution",
+  "question": "Can the agent execute a multi-step task whose dependent sub-goals are each verified by a deterministic checkpoint, completing the WHOLE chain (one slip fails the task) at a rate, step-level success, and horizon length that clear the pre-registered thresholds?",
+  "constructs": [
+    "deterministic-step-checkpoints (pure-function verifiers over agent output + threaded state; NOT an LLM judge)",
+    "horizon-length (longest fully-correct prefix; one slip ends the horizon)",
+    "completion-rate (fraction of tasks with every checkpoint passed)",
+    "step-level-success (fraction of all checkpoints passed)"
+  ],
+  "primaryMetric": "full-task completion rate (every dependent checkpoint passes, in order)",
+  "secondaryMetrics": [
+    "mean horizon length (and as a fraction of task length)",
+    "step-level success rate"
+  ],
+  "primaryN": "PENDING — example synthetic suite is 3 tasks / 12 steps (machinery only); a real run requires >= 100 tasks across >= 4 task families per agi-proof/preregistered-thresholds.md",
+  "primaryMDE": 0.105,
+  "guardrails": {
+    "verifierPurity": {
+      "rule": "every checkpoint is a deterministic pure function over (agent output, task state); zero LLM-judge calls, zero network, zero self-judging",
+      "use": "GO/NO-GO — a single non-deterministic or self-judged checkpoint voids the run"
+    },
+    "failClosed": {
+      "rule": "a dependent step whose prerequisite state was not recorded must fail (never pass on an unmet prerequisite)",
+      "use": "GO/NO-GO — guards against a step scoring correct without its dependency"
+    },
+    "horizonHonesty": {
+      "rule": "horizon length counts only the leading fully-correct prefix; steps after the first failure never count toward horizon",
+      "use": "ranking + GO/NO-GO"
+    },
+    "decontam": {
+      "rule": "task definitions and checkpoints are disjoint from any agent training data; synthetic examples are clearly labelled and excluded from training rows",
+      "use": "GO/NO-GO"
+    }
+  },
+  "stoppingRule": "anytime-valid confidence sequence (tools/eval_stats.confidence_sequence_mean / confidence_sequence_from_summary) REQUIRED for any peeked metric; fixed-n bootstrap CI (tools/eval_stats.bootstrap_ci_paired) only at the pre-specified N",
+  "decontam": "task prompts + gold checkpoints held disjoint from training (tools/assert_decontam.py); synthetic example suite is committed but excluded from training rows",
+  "ranking": "guardrails first (verifier purity, fail-closed), then primary completion rate, then horizon length; step-level success is context, not the headline (a high step rate with low completion means the chain is not being completed)",
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "honestLimits": [
+    "deterministic checkpoints reward VERIFIABLE structure, not open-ended quality; they certify a chain was executed correctly, not that the task was solved wisely",
+    "the committed example suite is synthetic and tiny (3 tasks / 12 steps) — machinery proof only, NOT evidence; a cited number needs >= 100 tasks across >= 4 families and >= 3 seeds",
+    "horizon length on synthetic chains over-states real autonomy: real long-horizon tasks have ambiguous sub-goals a pure verifier cannot capture",
+    "this measures execution of a PRE-DEFINED chain; it does not measure the agent's ability to PLAN the chain (that is a separate, harder construct)"
+  ],
+  "peekedMetrics": [],
+  "status": "preregistration_only",
+  "go": false,
+  "canClaimAGI": false,
+  "enforcement": {
+    "harness": "eval/long_horizon/ (tasks.py deterministic checkpoints + harness.py scoring) driven by tools/run_long_horizon_eval.py",
+    "stats": "tools/eval_stats.py — bootstrap CI (fixed-n) + anytime-valid confidence sequence (peeked) + mde_at_n power check",
+    "tests": "tests/test_long_horizon_eval.py — checkpoint logic, horizon-length, completion-rate + CI math, and the not-run/NO-GO pending artifact (deterministic mock agent)",
+    "lint_claims": "tools/lint_claims.py — no-overclaim copy must hold for any prose that cites this result",
+    "decontam": "tools/assert_decontam.py — task/checkpoint disjointness from training before any real run",
+    "note": "PRE-REGISTRATION ONLY. No real model run has been performed; the committed report (long-horizon-execution.PENDING.public-report.json) is status not_run / verdict NO-GO. Long-horizon execution is a Level-3+ gate (agi-proof/preregistered-thresholds.md) and is never auto-promoted."
+  }
+}

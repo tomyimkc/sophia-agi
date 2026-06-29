@@ -73,6 +73,20 @@ DEFAULT_CONTRACT = dict(max_mean_kl=0.05, min_top1_agreement=0.97,
                         protected_max_kl=0.10, protected_min_agreement=0.95)
 
 
+def resolve_served_suffixes(keep_csv: str = "") -> "tuple[str, ...]":
+    """The served-linear suffix set MINUS any ``--keep-suffixes`` (mixed precision).
+
+    Holding the most KL-sensitive projection(s) — commonly ``down_proj`` — in bf16 trades a
+    little memory for next-token fidelity. This is the NVFP4 **v5** lever for the top-1 gap
+    (v3 reached top1 0.906 at full quantization; v4's higher lambda over-fit and broke mean_kl
+    + the protected slice). Empty keep set = the full default served set (unchanged v3/v4
+    behaviour). Unknown suffixes are ignored (a harmless no-op keep). Keeping a suffix bf16 at
+    serve time while the adapter was QAT-co-adapted to NVFP4 is conservative: serving strictly
+    higher-precision than trained can only reduce error, never add it."""
+    keep = {s.strip() for s in keep_csv.split(",") if s.strip()}
+    return tuple(s for s in SERVED_LINEAR_SUFFIXES if s not in keep)
+
+
 # --------------------------------------------------------------------------- #
 # Prompt formatting — reuse the EXACT chat format train_lora.py trained on, so the
 # certify distributions are over the same surface the adapter saw.
@@ -462,7 +476,8 @@ def run_certify(args: argparse.Namespace) -> dict:
     print(f"[full] collected {full_probs.shape[0]} next-token positions", flush=True)
 
     # 2) quantize the served weights (incl. fused experts) in place → low-RAM distributions.
-    qinfo = quantize_served_params(model, scheme=args.scheme)
+    served_suffixes = resolve_served_suffixes(getattr(args, "keep_suffixes", ""))
+    qinfo = quantize_served_params(model, scheme=args.scheme, suffixes=served_suffixes)
     per_tensor_ratio, eff_ratio = effective_mem_ratio(
         qinfo["quantized_params"], qinfo["kept_params"], scheme=args.scheme)
     q_frac = qinfo["quantized_params"] / max(qinfo["total_params"], 1)
@@ -508,6 +523,8 @@ def run_certify(args: argparse.Namespace) -> dict:
     out["quantized_fraction"] = round(q_frac, 4)
     out["coverage_warning"] = coverage_warn
     out["n_calib_rows"] = len(rows)
+    out["keep_suffixes"] = sorted({s.strip() for s in getattr(args, "keep_suffixes", "").split(",") if s.strip()})
+    out["served_suffixes"] = list(served_suffixes)
     return out
 
 
@@ -562,6 +579,10 @@ def main(argv: "list[str] | None" = None) -> int:
                     help="calibration rows (jsonl with chat 'messages'); deployment-distribution "
                          "TRAINING data by default — NOT the eval-sealed holdout (holdout_seal)")
     ap.add_argument("--scheme", choices=("int8", "nvfp4"), default="nvfp4")
+    ap.add_argument("--keep-suffixes", default="",
+                    help="comma-separated served-linear suffixes to KEEP in bf16 (mixed precision, "
+                         "e.g. 'down_proj') — the NVFP4 v5 top-1 lever; default quantizes the full "
+                         "served set (v3/v4 behaviour)")
     ap.add_argument("--dtype", choices=("bf16", "fp16", "fp32"), default="bf16")
     ap.add_argument("--attn", choices=("auto", "sdpa", "eager", "flash_attention_2"), default="sdpa")
     ap.add_argument("--device", default="cuda", help="cuda / cpu")

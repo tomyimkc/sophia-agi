@@ -1,0 +1,37 @@
+{
+  "experimentId": "long-horizon-execution",
+  "status": "not_run",
+  "verdict": "NO-GO",
+  "go": false,
+  "canClaimAGI": false,
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "headline": "PENDING — machinery only; no real model run has been performed",
+  "generatedAt": "2026-06-29T04:26:56.549189+00:00",
+  "harness": "tools/run_long_horizon_eval.py (eval/long_horizon/)",
+  "preregistration": "agi-proof/benchmark-results/long-horizon/measurement_spec.json",
+  "oracle": "deterministic per-step checkpoints (pure functions over agent output + threaded task state) — never an LLM judge, never self-judged",
+  "constructs": [
+    "completionRate",
+    "stepLevelSuccess",
+    "horizonLength"
+  ],
+  "results": null,
+  "taskSuite": [
+    {
+      "taskId": "synth-retrieve-synthesize-cite",
+      "length": 4,
+      "description": "SYNTHETIC: retrieve two facts from a fixed mini-corpus, synthesize their sum, then cite the source. Dependent: synthesis needs both retrievals."
+    },
+    {
+      "taskId": "synth-stateful-tool-sequence",
+      "length": 5,
+      "description": "SYNTHETIC: a 5-step stateful tool chain (seed -> +3 -> *2 -> -4 -> +10). Each step depends on the previous recorded value; one slip ends the horizon."
+    },
+    {
+      "taskId": "synth-plan-enumerate-conclude",
+      "length": 3,
+      "description": "SYNTHETIC: state a plan with the required keywords, enumerate exactly 3 items, then conclude with their count. Conclusion depends on enumeration."
+    }
+  ],
+  "note": "This artifact is intentionally PENDING. The synthetic example suite and the deterministic mock agent exercise the harness in CI (tests/test_long_horizon_eval.py), but a real-model long-horizon result is OUT OF SCOPE and NOT claimed. Long-horizon execution is a Level-3+ gate in agi-proof/preregistered-thresholds.md; no GO until a real run clears the pre-registered thresholds."
+}
