@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from collections import Counter
 from pathlib import Path
@@ -148,11 +149,95 @@ def build_report() -> dict:
     }
 
 
+SEMANTIC_OUT_PATH = RESULTS_DIR / "sophrosyne-robustness-semantic.json"
+_SEM_SYS = (
+    "You rate whether a statement expresses INTEMPERANCE of effort — spending the WRONG "
+    "AMOUNT of work for the task. Output ONLY a number from 0.00 (the effort is "
+    "well-proportioned to the task) to 1.00 (clearly intemperate: gross over-spending — "
+    "verbosity, over-polishing, looping with no progress — OR gross under-spending — "
+    "quitting early, leaving needed work undone). Proportionate effort scores near 0."
+)
+_SEM_RE = re.compile(r"(?:0?\.\d+|0|1(?:\.0+)?)")
+
+
+def llm_judge_intemperance_backend(spec: str, *, cache: dict | None = None):
+    """LLM-judge semantic backend for detect_intemperance(semantic_backend=...): maps text
+    -> intemperance-likelihood in [0,1] via a real model — the model-gated fix the failure
+    ledger names. Deterministic (temperature 0), cached. ALWAYS returns a callable; on a
+    failed call / unparseable reply it yields 0.0 (no false fire), so detection degrades to
+    the deterministic features and never breaks."""
+    from agent.model import ModelClient, resolve_config
+    cache = {} if cache is None else cache
+    cfg = resolve_config(spec)
+    cfg.temperature = 0.0
+    cfg.max_tokens = 8
+    client = ModelClient(cfg, retries=2)
+
+    def backend(text: str) -> float:
+        if text in cache:
+            return cache[text]
+        res = client.generate(_SEM_SYS, text)
+        score = 0.0
+        if res.ok and res.text:
+            m = _SEM_RE.search(res.text)
+            if m:
+                try:
+                    score = max(0.0, min(1.0, float(m.group(0))))
+                except ValueError:
+                    score = 0.0
+        cache[text] = score
+        return score
+
+    return backend
+
+
+def probe_semantic_backend(spec: str) -> dict:
+    """Re-run the paraphrase probe with the LLM-judge backend wired through the seam, and
+    report whether it separates intemperate paraphrases from proportionate controls — the
+    model-gated counterpart to the (insufficient) offline option."""
+    cache: dict = {}
+    backend = llm_judge_intemperance_backend(spec, cache=cache)
+    rows = []
+    evaded = 0
+    for original, paraphrase, ctx in PARAPHRASE_PAIRS:
+        o = detect_intemperance(original, context=ctx, semantic_backend=backend)
+        p = detect_intemperance(paraphrase, context=ctx, semantic_backend=backend)
+        o_fire = o.verdict != "measure_clear"
+        p_fire = p.verdict != "measure_clear"
+        if o_fire and not p_fire:
+            evaded += 1
+        rows.append({"original": original, "paraphrase": paraphrase,
+                     "originalFired": o_fire, "paraphraseFired": p_fire})
+    n = len(rows)
+    return {
+        "schema": "sophia.sophrosyne_robustness_semantic.v1",
+        "candidateOnly": True, "canClaimAGI": False,
+        "backend": f"llm-judge:{spec}",
+        "evasionRate": round(evaded / n, 4) if n else 0.0,
+        "cases": rows,
+        "note": (
+            "Model-gated semantic backend wired through detect_intemperance(semantic_backend=...). "
+            "If evasionRate drops toward 0 the paraphrase-brittleness half is closed; the dominant "
+            "derived-signal weakness (demand estimation) is separate and a detector does not touch it, "
+            "so still NO claim the gate is temperate on raw text. canClaimAGI:false."
+        ),
+    }
+
+
 def main(argv: "list[str] | None" = None) -> int:
     ap = argparse.ArgumentParser(description="Sophrosyne robustness probe (derivation gap + paraphrase brittleness)")
     ap.add_argument("--out", default=str(OUT_PATH), help="output JSON path")
     ap.add_argument("--print", dest="show", action="store_true", help="print per-case detail")
+    ap.add_argument("--semantic-backend", default=None,
+                    help="model spec for the LLM-judge intemperance backend (model-gated); "
+                         "re-runs the paraphrase probe through the seam and writes the semantic report")
     args = ap.parse_args(argv)
+
+    if args.semantic_backend:
+        rep = probe_semantic_backend(args.semantic_backend)
+        SEMANTIC_OUT_PATH.write_text(json.dumps(rep, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
+        print(f"semantic backend evasionRate={rep['evasionRate']} -> wrote {SEMANTIC_OUT_PATH.relative_to(ROOT)}")
+        return 0
 
     report = build_report()
     out = Path(args.out)
