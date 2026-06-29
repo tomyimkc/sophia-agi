@@ -93,7 +93,7 @@
       "id": "H4",
       "name": "Habit-strength streak via forgetting curve (Make it satisfying / Never miss twice)",
       "metric": "per-skill stability (agent/forgetting_curve.py) as habit strength; a single miss decrements stability one step rather than resetting to zero",
-      "status": "not-yet-powered; generalizes forgetting_curve from facts to behaviors",
+      "status": "MECHANISM BUILT (offline): agent/habit_strength.py + tests/test_habit_strength.py (never-miss-twice tripwire at NEVER_MISS_TWICE=2; reuses forgetting_curve.retention). The POWERED behavioral run remains not-yet-powered.",
       "falsifiable": "behaviors with higher reinforcement-driven stability are exercised correctly at a higher rate after a disuse interval than low-stability behaviors"
     },
     {
