@@ -250,6 +250,8 @@ def _paired_token_delta(anchored: dict, baseline: dict, *, seed: int = 0) -> dic
     Pairing over all tasks (not only both-solved) is what makes the metric honest: an
     arm cannot look cheap by simply solving fewer tasks — an unsolved task is penalised.
     """
+    from tools.eval_stats import confidence_sequence_mean
+
     a = {r["id"]: r for r in anchored["_rows"]}
     b = {r["id"]: r for r in baseline["_rows"]}
     ids = [tid for tid in a if tid in b]
@@ -259,6 +261,9 @@ def _paired_token_delta(anchored: dict, baseline: dict, *, seed: int = 0) -> dic
         "pairedTasks": n,
         "deltaEfficiencyCost": round(sum(diffs) / n, 2) if n else 0.0,
         "deltaTokensCI95": bootstrap_ci_paired(diffs, seed=seed) if n else [None, None],
+        # Robbins anytime-valid confidence sequence (the workflow peeks/iterates) — the
+        # more conservative interval a GO must ALSO clear (spec inference guardrail).
+        "deltaTokensCS95": confidence_sequence_mean(diffs) if n else [None, None],
         "anchoredTokensPerSolved": anchored["tokensPerSolved"],
         "baselineTokensPerSolved": baseline["tokensPerSolved"],
         "mdeAtN": round(mde_at_n(n, p0=0.5), 4) if n else None,
@@ -279,7 +284,11 @@ def gate_verdict(*, baseline_is_real: bool, judge_families: int, delta: dict | N
     ci = (delta or {}).get("deltaTokensCI95") or [None, None]
     ci_excludes_zero_negative = ci[0] is not None and ci[1] is not None and ci[1] < 0
     if not ci_excludes_zero_negative:
-        failures.append("no_effect_ci: delta tokens-per-solved CI does not exclude 0 on the negative (fewer-tokens) side")
+        failures.append("no_effect_ci: delta tokens-per-solved bootstrap CI does not exclude 0 on the negative (fewer-tokens) side")
+    cs = (delta or {}).get("deltaTokensCS95") or [None, None]
+    cs_excludes_zero_negative = cs[0] is not None and cs[1] is not None and cs[1] < 0
+    if not cs_excludes_zero_negative:
+        failures.append("no_effect_anytime_cs: the Robbins anytime-valid confidence sequence does not exclude 0 (the peek-robust interval)")
     if not success_guardrail_held:
         failures.append("task_success_regressed: the anchored arm's solved-rate dropped vs baseline (cannot win by giving up)")
     if not antifixation_held:

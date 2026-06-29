@@ -20,7 +20,8 @@
   "claimCeiling": "candidate_only; canClaimAGI:false",
   "criticalFailures": [
     "no_real_arms: tokens-per-solved needs a live model/agent (the survival proxy is not a model)",
-    "ground_truth_not_2family: solved/on-goal labels are proxy/author-only, not >= 2 independent judge families (kappa >= 0.40)"
+    "ground_truth_not_2family: solved/on-goal labels are proxy/author-only, not >= 2 independent judge families (kappa >= 0.40)",
+    "no_effect_anytime_cs: the Robbins anytime-valid confidence sequence does not exclude 0 (the peek-robust interval)"
   ],
   "delta": null,
   "experimentId": "focus-efficiency-frontier",
@@ -42,6 +43,10 @@
     "deltaTokensCI95": [
       -112.3333,
       -37.1111
+    ],
+    "deltaTokensCS95": [
+      -195.1931,
+      45.1931
     ],
     "mdeAtN": 0.6603,
     "pairedTasks": 9

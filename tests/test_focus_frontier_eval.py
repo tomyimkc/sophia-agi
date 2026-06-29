@@ -51,14 +51,14 @@ def test_mock_is_nogo_only_for_model_gating():
 
 def test_gate_go_reachable_when_all_conditions_met():
     go = gate_verdict(baseline_is_real=True, judge_families=2,
-                      delta={"deltaTokensCI95": [-112.0, -37.0]},
+                      delta={"deltaTokensCI95": [-112.0, -37.0], "deltaTokensCS95": [-100.0, -20.0]},
                       success_guardrail_held=True, antifixation_held=True, safety_pruned=0)
     assert go["verdict"] == "GO" and go["go"] is True
 
 
 def test_gate_safety_prune_forces_nogo():
     v = gate_verdict(baseline_is_real=True, judge_families=2,
-                     delta={"deltaTokensCI95": [-112.0, -37.0]},
+                     delta={"deltaTokensCI95": [-112.0, -37.0], "deltaTokensCS95": [-100.0, -20.0]},
                      success_guardrail_held=True, antifixation_held=True, safety_pruned=1)
     assert v["verdict"] == "NO-GO"
     assert any("safety_pruned" in f for f in v["criticalFailures"])
@@ -70,6 +70,15 @@ def test_gate_positive_ci_is_nogo():
                      delta={"deltaTokensCI95": [-10.0, 5.0]},
                      success_guardrail_held=True, antifixation_held=True, safety_pruned=0)
     assert v["verdict"] == "NO-GO"
+
+
+def test_gate_requires_anytime_cs_too():
+    # Bootstrap CI excludes 0 but the (more conservative) anytime-valid CS does not -> NO-GO.
+    v = gate_verdict(baseline_is_real=True, judge_families=2,
+                     delta={"deltaTokensCI95": [-50.0, -10.0], "deltaTokensCS95": [-40.0, 5.0]},
+                     success_guardrail_held=True, antifixation_held=True, safety_pruned=0)
+    assert v["verdict"] == "NO-GO"
+    assert any("anytime_cs" in f for f in v["criticalFailures"])
 
 
 def test_pending_artifact_is_nogo_and_deterministic():
