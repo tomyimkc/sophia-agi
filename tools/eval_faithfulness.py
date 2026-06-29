@@ -90,7 +90,7 @@ def _run_compare(args) -> int:
 
     base_gen, adapter_gen, label = faithfulness_eval.make_hf_compare_policies(model, args.adapter)
     seams = _seams(args, _build_entailment(args.entailment, args.entailment_model))
-    cases = cases_from_rl_dataset(seed=args.seed, limit=args.limit)
+    cases = cases_from_rl_dataset(seed=args.seed, limit=args.limit, split="eval")
     print(f"compare policy={label}  entailment={args.entailment}  cases={len(cases)}")
 
     c = faithfulness_eval.compare(cases, base_generate=base_gen,
@@ -108,7 +108,7 @@ def _run_compare(args) -> int:
         "nPaired": c["nPaired"],
         "caveats": [
             "candidate — not a GO verdict; the GO/NO-GO is tools/claim_gate.py against the "
-            "pre-registered measurement_spec.json (powered N, >=2 judge families, decontam).",
+            + "pre-registered measurement_spec.json (powered N, >=2 judge families, decontam).",
             f"N below pre-registered requiredN 377 unless nPaired is large; nPaired={c['nPaired']}.",
             "single entailment family; the >=2-family judge panel is a separate construct.",
         ],
@@ -159,7 +159,7 @@ def main(argv: list[str] | None = None) -> int:
 
     generate, policy_id = _make_policy(args.policy)
     seams = _seams(args, _build_entailment(args.entailment, args.entailment_model))
-    cases = cases_from_rl_dataset(seed=args.seed, limit=args.limit)
+    cases = cases_from_rl_dataset(seed=args.seed, limit=args.limit, split="eval")
     print(f"policy={policy_id}  entailment={args.entailment}  cases={len(cases)}  "
           f"(judge != subject: {args.entailment not in policy_id})")
 
@@ -190,7 +190,7 @@ def main(argv: list[str] | None = None) -> int:
             f"heuristic-extractor coverage {coverage}: only attribution-shaped claims are "
             "measured, which biases WHICH claims enter the rate.",
             "single policy model + single entailment family; the >=2-family judge panel "
-            "(measurement_spec.json) is separate and unrun.",
+            + "(measurement_spec.json) is separate and unrun.",
         ],
         "claimStatus": "candidate/illustrative — single model, single entailment family, "
                        "N below pre-registered requiredN (see measurement_spec.json). This is "

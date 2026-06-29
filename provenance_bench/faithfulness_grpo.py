@@ -266,14 +266,20 @@ class _nullctx:
         return False
 
 
-def cases_from_rl_dataset(*, eval_frac: float = 0.2, seed: int = 0, limit: int | None = None) -> list:
+def cases_from_rl_dataset(*, eval_frac: float = 0.2, seed: int = 0, limit: int | None = None,
+                          split: str = "train") -> list:
     """Map the provenance RL dataset into faithfulness cases (prompt + gold author +
-    answerability). Contested attributions are answerable-from-wiki and worth retrieving."""
+    answerability). Contested attributions are answerable-from-wiki and worth retrieving.
+
+    ``split`` selects the entity-disjoint partition: "train" feeds the GRPO loop, "eval"
+    the held-out base-vs-adapter contrast. Never evaluate on the training partition — the
+    measurement claim depends on entity-disjoint held-out cases."""
     from provenance_bench import rl_dataset
 
     data = rl_dataset.build_rl_dataset(eval_frac=eval_frac, seed=seed)
+    rows_key = "eval_rows" if split == "eval" else "train_rows"
     cases = []
-    for row in data["train_rows"]:
+    for row in data[rows_key]:
         cases.append({
             "prompt": row["prompt"],
             "should_retrieve": True,

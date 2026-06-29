@@ -110,6 +110,7 @@ jobs:
     # ${{ ... }} expression interpolation directly into shell scripts (the
     # GitHub Actions expression-injection / code-injection sink).
     env:
+      IN_REF: ${{ github.ref_name }}
       IN_CONFIRM: ${{ github.event.inputs.confirm }}
       IN_REMOTE_MODE: ${{ github.event.inputs.remote_mode }}
       IN_TASK: ${{ github.event.inputs.task }}
@@ -150,7 +151,7 @@ jobs:
         run: |
           LIMIT="$IN_LIMIT"; [ -z "$LIMIT" ] && LIMIT=0
           python tools/runpod_rlvr.py --dry-run \
-            --source git --branch "${{ github.ref_name }}" \
+            --source git --branch "$IN_REF" \
             --remote-mode "$IN_REMOTE_MODE" \
             --task "$IN_TASK" \
             --step-domain "$IN_STEP_DOMAIN" \
@@ -174,7 +175,7 @@ jobs:
           # faithfulness uses a custom loop (no vLLM); other tasks keep the colocate vLLM stack.
           VLLM="colocate"; [ "$IN_TASK" = "faithfulness" ] && VLLM="none"
           LIMIT="$IN_LIMIT"; [ -z "$LIMIT" ] && LIMIT=0
-          args=(--yes --source git --branch "${{ github.ref_name }}" --remote-mode "$IN_REMOTE_MODE" --task "$IN_TASK" --step-domain "$IN_STEP_DOMAIN" --reward "$IN_REWARD" --entailment-provider "$IN_ENTAILMENT_PROVIDER" --limit "$LIMIT" --model "$IN_MODEL" --epochs "$IN_EPOCHS" --seed "$IN_SEED" --quant bf16 --vllm "$VLLM" --gpu-type "$IN_GPU_TYPE")
+          args=(--yes --source git --branch "$IN_REF" --remote-mode "$IN_REMOTE_MODE" --task "$IN_TASK" --step-domain "$IN_STEP_DOMAIN" --reward "$IN_REWARD" --entailment-provider "$IN_ENTAILMENT_PROVIDER" --limit "$LIMIT" --model "$IN_MODEL" --epochs "$IN_EPOCHS" --seed "$IN_SEED" --quant bf16 --vllm "$VLLM" --gpu-type "$IN_GPU_TYPE")
           [ "$IN_INTERRUPTIBLE" = "true" ] && args+=(--interruptible)
           [ -n "$IN_NETWORK_VOLUME_ID" ] && args+=(--network-volume-id "$IN_NETWORK_VOLUME_ID")
           python tools/runpod_rlvr.py "${args[@]}"

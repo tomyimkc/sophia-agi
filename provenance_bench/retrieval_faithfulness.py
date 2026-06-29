@@ -40,7 +40,6 @@ from okf.schema import confidence_rank
 from provenance_bench.rl_reward import (
     REWARD_MAX,
     REWARD_MIN,
-    _HEDGE_MARKERS,
     _MAX_HEDGES,
     _hedge_count,
 )

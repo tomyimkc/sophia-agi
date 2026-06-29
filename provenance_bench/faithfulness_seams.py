@@ -123,11 +123,19 @@ def heuristic_extract_claims(answer: str, context: list) -> list:
 
 def lexical_entailment(claim_text: str, source_text: str) -> str:
     """Deterministic placeholder for the entailment LLM: an attribution-aware lexical
-    heuristic ((author in source) -> entails). Lets the rollout reward be computed
-    on-box without a second model, so the GRPO loop can run; a real entailment LLM is
-    the live upgrade (Open in the ledger). Returns "entails"|"contradicts"|"irrelevant"."""
+    heuristic ((author in source) -> entails). Handles BOTH the active ("<Author> wrote
+    ...") and passive ("written by <Author>") attribution forms that
+    heuristic_extract_claims emits, so the offline path is honest for either. Lets the
+    rollout reward be computed on-box without a second model, so the GRPO loop can run; a
+    real entailment LLM is the live upgrade (Open in the ledger). Returns
+    "entails"|"contradicts"|"irrelevant"."""
     ct, st = claim_text.lower(), source_text.lower()
-    author = ct.split(" wrote")[0].split(" authored")[0].split(" composed")[0].strip()
+    passive = re.search(r"(?:written|authored|composed|penned|created)\s+by\s+(.+)$", ct)
+    if passive:                       # "written by <author>" -> author follows "by"
+        author = passive.group(1)
+    else:                             # "<author> wrote/authored/..." -> author precedes verb
+        author = re.split(r"\s+(?:wrote|authored|composed|penned|created)\b", ct, maxsplit=1)[0]
+    author = author.strip().rstrip(".,;:'\"")
     if author and author in st:
         return "entails"
     return "irrelevant"
