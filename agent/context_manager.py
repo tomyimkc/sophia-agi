@@ -214,6 +214,7 @@ class ContextManager:
         summarizer: Summarizer | None = None,
         joiner: str = "\n\n",
         compress_floor_tokens: int = 24,
+        relevance_fn: Callable[[Segment], float] | None = None,
     ) -> None:
         if budget_tokens <= 0:
             raise ValueError("budget_tokens must be positive")
@@ -223,6 +224,13 @@ class ContextManager:
         self.summarizer = summarizer
         self.joiner = joiner
         self.compress_floor = max(1, int(compress_floor_tokens))
+        # Optional goal-relevance scorer (Prosoche, thesis §5): boosts the admission
+        # rank of UNPINNED segments by their relevance to the active goal, so
+        # off-goal context is compressed/dropped FIRST under budget pressure. It NEVER
+        # touches the stable prefix or pinned segments (the anchor is pinned+stable,
+        # so it is never the thing dropped) — relevance reorders, it cannot evict a
+        # fail-closed segment. Default ``None`` -> behaviour byte-identical to before.
+        self.relevance_fn = relevance_fn
 
     # -- internal helpers -------------------------------------------------- #
 
@@ -293,7 +301,18 @@ class ContextManager:
             chosen.append((idx, seg))
             used += self.counter(text)
 
-        # 3) Unpinned — admit by priority; compress to fit, else drop.
+        # 3) Unpinned — admit by priority (+ optional goal-relevance), compress to
+        #    fit, else drop. The relevance term only REORDERS admission among
+        #    unpinned segments; it can never evict a pinned/stable segment.
+        if self.relevance_fn is not None:
+            def _rank(pair: tuple[int, Segment]) -> tuple[float, int]:
+                i, s = pair
+                try:
+                    rel = float(self.relevance_fn(s))
+                except Exception:  # noqa: BLE001 — a bad scorer must not break packing
+                    rel = 0.0
+                return (-(s.priority + rel), i)
+            unpinned.sort(key=_rank)
         for idx, seg in unpinned:
             remaining = available - used
             if remaining <= 0:

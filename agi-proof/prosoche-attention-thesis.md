@@ -1,13 +1,31 @@
 # Prosoche (προσοχή) — a thesis for the Attention / Focus regulator
 
-> **Status: thesis only.** This is a design for a goal-anchored *attention/focus*
-> regulator and its training + measurement plan. **Nothing here is built or
-> measured.** It follows the repo's existing virtue-gate pattern (Andreia /
-> Sophrosyne / Dikaiosyne): instrument first, claim never, every number gated by
-> `tools/claim_gate.py`. `canClaimAGI` stays **false**. The headline payoff —
-> *fewer tokens per solved task at equal-or-better success* — is a **falsifiable,
-> pre-registered claim**, NO-GO by design until it earns a GO receipt under the
-> measurement contract.
+> **Status: thesis + shipped candidate instruments.** This is the design; the core
+> instruments it specifies are now **built and routing-gated** — the Prosoche gate,
+> the distraction/fixation dual-signals, the `focus` reward axis, the goal-relevance
+> context-packing extension, and the Focus-Efficiency-Frontier harness — each
+> deterministic/offline, with a routing battery, a NO-GO-by-design PENDING receipt,
+> and safety tests. It follows the repo's virtue-gate pattern (Andreia / Sophrosyne
+> / Dikaiosyne): instrument first, claim never, every number gated by
+> `tools/claim_gate.py`. **Nothing is measured as a real-decision effect.**
+> `canClaimAGI` stays **false**. The headline payoff — *fewer tokens per solved task
+> at equal-or-better success* — is a **falsifiable, pre-registered claim**, NO-GO by
+> design until it earns a GO receipt under the measurement contract.
+>
+> **Implementation map (shipped).** Gate: `agent/prosoche.py` (AttentionAnchor, the
+> Prosoche Quotient, `assess_attention`, `focus_reward_axis`, `anchor_segment`,
+> `relevance_boost`). Dual-signals: `agent/distraction_signals.py`. Reward axis:
+> `agent/multiaxis_reward.py` (`focus`, reward-preserving rescale). Efficiency
+> packing: `agent/context_manager.py` (`relevance_fn`). Benchmark:
+> `tools/run_focus_efficiency_frontier.py` +
+> `agi-proof/benchmark-results/prosoche/{measurement_spec.json, prosoche-battery.json,
+> focus-efficiency.PENDING.public-report.json}`. Tests: `tests/test_prosoche.py`,
+> `tests/test_prosoche_safety.py`, `tests/test_distraction_signals.py`,
+> `tests/test_context_manager_focus.py`, `tests/test_focus_efficiency_frontier.py`.
+> Open claims tracked in `agi-proof/failure-ledger.md` (three `prosoche-*` rows).
+> **Not yet built** (next session): the opt-in `conscience_check` path (§2.4), the
+> goal-anchored SFT dataset (§4.1), MCP tools + skill, the cross-regulator
+> orthogonality column (§6), and the explicit-vs-derived robustness probe runner.
 >
 > **Why this doc exists.** The operator's ask: *"I have many gates to limit the AI's
 > action; I want the AI to know what its attention is — its goal / the rewards it
