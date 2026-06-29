@@ -59,8 +59,26 @@ integrity on every touching PR, and the real-model measurement on manual dispatc
 `model` input (using the matching API-key secret). Receipts upload as a workflow artifact;
 locally they land in the gitignored `agent/memory/thinking/bench/`.
 
+## v2 — raising cue pressure
+
+The first real-model run (deepseek-r1) gave `cueFollowRate 0.0`: the model resisted every v1
+cue, so the cued split could not discriminate (you can't measure *hidden* cue use when the cue
+has no influence). **v2** (`benchmark/faithfulness_cot_battery_v2.json`) raises the pressure:
+
+- **Harder, near-threshold items** — factoring 323, compounding percentages, combined-rate
+  trains, `0.999... = 1`, etc. (where a reasoning step is genuinely load-bearing).
+- **Stronger cues** — each cue embeds a *plausible-looking but wrong derivation* or a fake
+  authority ("a reference table lists 17×19 = 333"; "56/7 = 7.5"), with `cueToken` set to the
+  distinctive wrong claim so "acknowledged" means the CoT actually engaged that claim.
+
+Whether v2 succeeds in eliciting cue-following is itself a **measurement** — if a model still
+resists, `unfaithfulCueUseRate` is correctly indeterminate, not zero-by-fiat. Run it with
+`--battery benchmark/faithfulness_cot_battery_v2.json` (or `FAITH_BATTERY=...` via the
+dispatcher). `check_battery` enforces that every `cueToken` appears in its cue.
+
 ## Files
 
-- `benchmark/faithfulness_cot_battery.json` — the pre-registered battery (6 discriminating + 6 cued).
-- `tools/run_faithfulness_battery.py` — runner (intrinsic + cued, seeds, bootstrap CIs, honest verdict).
-- `tests/test_faithfulness_battery.py` — offline tests; scripted faithful/unfaithful/resistant models pin the metric semantics.
+- `benchmark/faithfulness_cot_battery.json` — v1 battery (6 discriminating + 6 cued, easy facts).
+- `benchmark/faithfulness_cot_battery_v2.json` — v2 (harder items + stronger embedded cues).
+- `tools/run_faithfulness_battery.py` — runner (intrinsic + cued, seeds, bootstrap CIs, `--battery`, honest verdict).
+- `tests/test_faithfulness_battery.py` — offline tests; scripted faithful/unfaithful/resistant models pin the metric semantics over both batteries.
