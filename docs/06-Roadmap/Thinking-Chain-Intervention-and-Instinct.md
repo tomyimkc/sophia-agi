@@ -122,6 +122,18 @@ fast reflex bus (a portfolio of cheap detectors with a calibrated aggregator), a
 *interrupt controller* that turns a reflex spike into one of the five operators early in the
 chain.
 
+**Both new pieces are now implemented** as an opt-in, deterministic, tested component:
+[`agent/reflex_bus.py`](../../agent/reflex_bus.py). It composes the three detectors
+(`self_consistency_disagreement` over `agent.calibration`, plus `grounding_overinclusion` /
+`grounding_incompleteness` fed the OKF grounded/orphaned sets at runtime), fuses them with
+weights, and maps the fused wrongness to a **conscience-native verdict** — `allow` (continue) /
+`revise` (re-route — `revise` *is* the conscience word for "change its mind") / `escalate`
+(ko: re-route budget spent) / `abstain` (fail-closed). It is intentionally **not** rewired into
+the guarded loop yet (zero behaviour change); a caller adopts it explicitly, and because it
+speaks the same vocabulary as `agent.consequence_gate` / `agent.graded_decision` it drops in
+cleanly. The empirical lane (`reasoning/instinct_*`) is what justifies each choice (fuse for
+independence; ko-bound the re-route; the gain is detector-coverage-bounded).
+
 ---
 
 ## 3. The core question: *when is the reflex worth trusting?*
