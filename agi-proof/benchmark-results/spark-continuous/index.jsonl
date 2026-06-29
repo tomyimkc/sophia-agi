@@ -25,3 +25,4 @@
 {"utc":"20260629T040956Z","bench":"seib100","file":"seib100-20260629T040956Z.json"}
 {"utc":"20260629T041604Z","bench":"lean-expiter","file":"lean-expiter-20260629T041604Z.json"}
 {"utc":"20260629T041716Z","bench":"lean-passk","file":"lean-passk-20260629T041716Z.json"}
+{"utc":"20260629T041730Z","bench":"roofline-fp4","file":"roofline-fp4-20260629T041730Z.json"}
