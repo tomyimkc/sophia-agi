@@ -368,6 +368,13 @@ class A2AServer:
         # Gate OUR OWN answer before we hand it to a peer — abstain honestly if it fails.
         verdict = self.gate(answer)
         task.gate = verdict
+        # Inbound A2A task -> our answer, recorded as a peer message (gate verdict attached).
+        from agent.thinking_trace import maybe_record_a2a
+
+        maybe_record_a2a(
+            sender=f"peer:{task.context_id}", receiver=self.card.name, prompt=task.input_text,
+            response=answer, ok=verdict.accept, gate=verdict.label, cost_usd=task.cost_usd, kind="peer",
+        )
         task.artifacts = [
             {"kind": "text", "text": answer if verdict.accept else
              f"[abstain:{verdict.label}] {verdict.reason}"},
@@ -493,9 +500,17 @@ class A2AClient:
                                task.error)
         # If the peer's OWN gate already rejected, propagate that verdict — never upgrade a
         # peer's abstain/block to trust. Otherwise re-gate locally (untrusted external data).
+        from agent.thinking_trace import maybe_record_a2a
+
         if task.gate is not None and not task.gate.accept:
-            return GateVerdict(False, task.gate.label, f"peer gate: {task.gate.reason}", task.answer())
-        return self.gate(task.answer())
+            propagated = GateVerdict(False, task.gate.label, f"peer gate: {task.gate.reason}", task.answer())
+            maybe_record_a2a(sender="self", receiver="peer", prompt=text, response=task.answer(),
+                             ok=False, gate=propagated.label, cost_usd=task.cost_usd, kind="peer")
+            return propagated
+        local = self.gate(task.answer())
+        maybe_record_a2a(sender="self", receiver="peer", prompt=text, response=task.answer(),
+                         ok=local.accept, gate=local.label, cost_usd=task.cost_usd, kind="peer")
+        return local
 
 
 def _task_from_dict(d: dict) -> A2ATask:
