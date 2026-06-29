@@ -1,0 +1,32 @@
+Fusion validation — cross-validated weights + bootstrap CIs
+======================================================================
+
+MODEL deepseek-chat  (N=50, clean=21, bar d′=1.0)
+  detector                  d′     AUC          AUC 95% CI
+  A                     0.4472   0.629  [0.473, 0.778]
+  B                     1.1146   0.707  [0.617, 0.800]
+  B2                    1.6008   0.793  [0.700, 0.883]
+  fused_equal           2.7099   0.984  [0.949, 1.000]
+  fused_qw_insample     5.1866   1.000  [1.000, 1.000]
+  fused_qw_loocv        4.8419   1.000  [1.000, 1.000]
+
+MODEL claude-haiku-4-5-20251001  (N=50, clean=1, bar d′=1.0)  [LOW-CLEAN: lean on AUC]
+  detector                  d′     AUC          AUC 95% CI
+  A                    -5.3379   0.020  [0.000, 0.052]
+  B                        0.0   0.500  [0.500, 0.500]
+  B2                   14.5865   1.000  [1.000, 1.000]
+  fused_equal           2.9418   1.000  [1.000, 1.000]
+  fused_qw_insample    14.5865   1.000  [1.000, 1.000]
+  fused_qw_loocv       16.8532   1.000  [1.000, 1.000]
+
+SHARP READING (the honest artifact this validation exposes):
+  B and B2 are STRUCTURAL VERIFIERS: B fires iff the answer over-includes, B2 iff it
+  under-includes — so (B>0 OR B2>0) ⟺ (answer ≠ structural truth) = the label itself.
+  Their high AUC and the near-1.0 fused AUC are therefore largely TAUTOLOGICAL: fusing
+  them reconstructs the okf verifier (the label generator), not a new predictive signal.
+  The only genuinely label-free / PREDICTIVE reflex is A (self-consistency) — and it is
+  weak (AUC ~0.6, CI often includes chance). Takeaway: if you HAVE the okf graph, verify
+  directly; the open research frontier is a stronger label-free reflex for when you don't.
+
+candidateOnly=True  level3Evidence=False
+boundary: case-resampling CIs + LOO-CV on a single run; gate still needs >=3 seeds, >=2 families.

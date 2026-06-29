@@ -351,6 +351,40 @@ hence escalation, not correctness, is the win), and `late` uses generic self-cor
 It answers "what outcome would this detector profile yield under the policy," not a live
 closed-loop model claim. `canClaimAGI` stays false.
 
+### 3f. Validation — cross-validated weights, CIs, and a sharper honest reading
+
+[`reasoning/instinct_validation.py`](../../reasoning/instinct_validation.py) removes two caveats
+from §3e **offline** (the v2 runner stored per-case scores), and in doing so exposes the most
+important honesty point in the whole study.
+
+- **Cross-validation.** Leave-one-out CV (weights fit on the other N−1 cases) confirms the
+  quality-weighted fusion is not just in-sample luck: DeepSeek qw d′ 5.19 (in-sample) → 4.84
+  (LOO-CV); AUC stays 1.00 out-of-sample. Optimism is present but small.
+- **Bootstrap CIs** (case-resampling, 95%): DeepSeek `fused_equal` AUC **0.984 [0.949, 1.000]**;
+  B2 0.793 [0.700, 0.883]; **A (self-consistency) 0.629 [0.473, 0.778] — CI includes chance.**
+- **Low-clean flag.** Claude-haiku has base_error 0.98 ⇒ only **1 clean case**, so its per-detector
+  d′/AUC are not estimable (degenerate CIs); the module flags this and leans on AUC. *You cannot
+  validate a detector on a model that fails the task ~entirely — you need a balanced class split.*
+
+**The sharp reading (a measurement artifact worth stating loudly).** `is_error` is defined as
+"answer ≠ structural truth," and B (over-inclusion) + B2 (under-inclusion) together fire **iff**
+the answer differs from truth. So B+B2 *are* the okf verifier, decomposed — and the near-perfect
+fused AUC is largely **tautological**: fusing them reconstructs the label generator, not a new
+predictive signal. The only genuinely **label-free / predictive** reflex is A (self-consistency),
+and it is **weak** (AUC ~0.63, CI overlapping chance). Two honest consequences:
+
+1. **If you have the okf graph, just run the verifier** — B+B2 is a roundabout path to it. The
+   structural detectors are a real, useful reflex *because the graph is available at runtime*, but
+   they are verification, not prediction.
+2. **The open research frontier is a stronger label-free reflex** (for the common case with no
+   verifier). Self-consistency alone isn't it. This redirects the "instinct" program away from
+   stacking verifiers and toward better predictive signals (better agreement measures, activation
+   probes, calibrated confidence) — measured against this same harness.
+
+This is the Instrumented-Evaluation-Contract thesis applied to our own result: the instrument
+(how `is_error` and the detectors are defined) was quietly generating the headline number, and
+naming that is the deliverable.
+
 ## 4. From model to measured claim (pre-registration sketch)
 
 To graduate this from `candidateOnly` to a real eval under the Instrumented Evaluation Contract
