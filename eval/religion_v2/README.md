@@ -49,10 +49,22 @@ is never scored against its own corpus (mirrors `eval/moral_public_standard/`).
 ## Run
 
 ```bash
-python tools/run_religion_v2_eval.py            # offline structural self-check (no model, no claim)
-python tools/run_religion_v2_eval.py --selftest # CI-friendly schema + rubric assertions
+# structural validation (offline, no model, no claim)
+python tools/run_religion_v2_eval.py
+python tools/run_religion_v2_eval.py --selftest          # CI-friendly assertions
+
+# judge-farm mode: subject -> >=N seeds -> >=2 independent judges score each axis
+python tools/run_religion_v2_eval.py --subject mock --judges mock,mock --seeds 3   # offline smoke
+python tools/run_religion_v2_eval.py \
+  --subject vllm:allenai/OLMoE-1B-7B-0924-Instruct@http://SPARK:8000/v1 \
+  --judges vllm:Qwen/Qwen2.5-7B-Instruct@http://SPARK:8000/v1,mlx:mlx-community/Meta-Llama-3.1-8B-Instruct-4bit@http://MAC:8080/v1 \
+  --seeds 3 --out eval/religion_v2/farm-run.candidate.json
 ```
 
-The runner deliberately stops at `candidate`. Promotion to VALIDATED requires the two-box
-judge farm (`config/inference.local.mac-judge.json`) and the gate aggregator, exactly as for
-the Wisdom-4B result — see `measurement_spec.json` and the master handover §4.
+The bank is **32 items** across all five axes (illustrative; expand toward ~40 + an
+independent second annotator before any VALIDATED attempt). The farm mode emits a
+`gateInputs` block (distinct families, seeds, κ/AC1, full-mark-rate CI vs baseline,
+zero is/ought leaks) and `couldSupportValidatedClaim`, **but the verdict stays
+`CANDIDATE`** — promotion to VALIDATED is a human decision per the no-overclaim gate
+and the PROTECTED-domain policy. See `measurement_spec.json` and master handover §4
+(the two-box farm `config/inference.local.mac-judge.json`).

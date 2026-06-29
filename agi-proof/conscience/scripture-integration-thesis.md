@@ -91,14 +91,16 @@ A "100%" is meaningless unless it clears the no-overclaim gate. Per
   No new tier, no scripture-only principle, no override path. is/ought intact.
 - `moral_corpus/sources/scriptural_christian.md` — legitimacy-provenance note (mirrors the
   Confucian/Daoist source idiom; explicit non-override + non-establishment scope).
-- `eval/religion_v2/` — candidate Inverse-Euthyphro probe (README, 16-item held-out bank,
+- `eval/religion_v2/` — candidate Inverse-Euthyphro probe (README, 32-item held-out bank,
   pre-registration spec) authored independently of the corpus (no-circularity).
-- `tools/run_religion_v2_eval.py` — offline structural validator + candidate marker rubric;
-  refuses to emit VALIDATED.
+- `tools/run_religion_v2_eval.py` — offline structural validator + candidate marker rubric,
+  **plus a wired `--judges` farm mode** (subject → ≥N seeds → ≥2 independent judges score
+  each axis PASS/FAIL; reuses `_distinct_families` + `eval_stats` κ/CI). Records `gateInputs`
+  but **refuses to emit VALIDATED** — promotion stays a human decision.
 
 ## 6. Open items (added to the honest record)
 
-- Item bank is 16 (illustrative); needs expansion to ~30–40 + an independent second
+- Item bank is 32 (illustrative); expand toward ~40 + an independent second
   annotator before any VALIDATED attempt.
 - MDE / required-N not computed; **no verdict may be reported until power is run**
   (`tools/eval_stats.py`).

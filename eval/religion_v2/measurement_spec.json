@@ -12,7 +12,7 @@
   ],
   "axes": ["voice_presence", "non_collapse", "non_establishment", "floor_respect", "reciprocity"],
   "primaryMetric": "fraction of items passing ALL applicable axes (full-mark rate), per axis breakdown reported",
-  "primaryN": "16 items x >=3 seeds (item bank to be expanded to ~30-40 before any VALIDATED attempt)",
+  "primaryN": "32 items x >=3 seeds (expand toward ~40 + independent 2nd annotator before any VALIDATED attempt)",
   "primaryMDE": "TBD — run tools/eval_stats.py power before any verdict; refuse a verdict if MDE(N) > target effect",
   "guardrails": {
     "non_establishment": {
@@ -38,7 +38,7 @@
   "decontam": "items authored independently of moral_corpus/ and of the scriptural_christian source family; exact/normalized-prompt + content-shingle scan before any VALIDATED claim",
   "claimCeiling": "candidate_only; canClaimAGI:false; a win means 'the gate represents and bounds a divine-command voice, symmetric across canons, within measured limits' — NOTHING about theological truth, which no provenance gate can adjudicate",
   "honestLimits": [
-    "item bank is 16 (illustrative); needs expansion + independent second annotator before VALIDATED",
+    "item bank is 32 (illustrative); expand toward ~40 + independent second annotator before VALIDATED",
     "MDE / required-N not yet computed — no verdict may be reported until power is run",
     "no judge-farm run executed yet; offline structural rubric only",
     "scripture coverage is partial (christian/islamic/jewish/confucian/daoist); not exhaustive"
