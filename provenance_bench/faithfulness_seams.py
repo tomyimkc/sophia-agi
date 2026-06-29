@@ -85,30 +85,34 @@ def make_entailment_verify(
     return verify_claim
 
 
-_ATTRIB = re.compile(
-    r"\b([A-Z][\w.'-]+(?:\s+[A-Z][\w.'-]+){0,3})\s+"
-    r"(?:wrote|authored|composed|penned|created)\b",
-)
+# Active voice: "<Author> wrote/authored ...". Passive: "written/authored by <Author>".
+_NAME = r"[A-Z][\w.'-]+(?:\s+[A-Z][\w.'-]+){0,3}"
+_ATTRIB_ACTIVE = re.compile(rf"\b({_NAME})\s+(?:wrote|authored|composed|penned|created)\b")
+_ATTRIB_PASSIVE = re.compile(rf"\b(?:written|authored|composed|penned|created)\s+by\s+({_NAME})")
 
 
 def heuristic_extract_claims(answer: str, context: list) -> list:
-    """Deterministic default ``extract_claims`` — surfaces attribution claims
-    ("<Author> wrote ...") and grounds each in the context chunks that mention that
-    author (so the citation is anchored in retrieval, not invented). The richer LLM
-    decomposition (multi-claim, non-attribution) is the live upgrade; this keeps the
-    offline path honest and dependency-free."""
-    claims = []
-    for m in _ATTRIB.finditer(answer or ""):
-        author = m.group(1).strip()
-        low = author.lower()
-        support = [c["chunk_id"] for c in context if low in (c.get("text") or "").lower()]
-        claims.append({
-            "text": m.group(0).strip(),
-            "key": f"author={low}",
-            "kind": "knowledge",
-            "support_chunk_ids": support,
-            "asserted_confidence": None,  # unknown -> weakest rank; no laundering
-        })
+    """Deterministic default ``extract_claims`` — surfaces attribution claims (both
+    "<Author> wrote ..." and "... written by <Author>") and grounds each in the context
+    chunks that mention that author (so the citation is anchored in retrieval, not
+    invented). The richer LLM decomposition (multi-claim, non-attribution) is the live
+    upgrade; this keeps the offline path honest and dependency-free. Dedupes by author."""
+    claims, seen = [], set()
+    for rx in (_ATTRIB_ACTIVE, _ATTRIB_PASSIVE):
+        for m in rx.finditer(answer or ""):
+            author = m.group(1).strip().rstrip(".,;:'\"")
+            low = author.lower()
+            if low in seen:
+                continue
+            seen.add(low)
+            support = [c["chunk_id"] for c in context if low in (c.get("text") or "").lower()]
+            claims.append({
+                "text": m.group(0).strip(),
+                "key": f"author={low}",
+                "kind": "knowledge",
+                "support_chunk_ids": support,
+                "asserted_confidence": None,  # unknown -> weakest rank; no laundering
+            })
     return claims
 
 
