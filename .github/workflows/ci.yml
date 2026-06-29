@@ -109,6 +109,16 @@ jobs:
           python tools/wiki_sync.py check
           python tools/wiki_validate.py
           python tools/lint_wiki_provenance.py
+      - name: Skill subsystem (router, forge bridge, projection, index, sandbox)
+        run: |
+          python tests/test_skill_triggering.py
+          python tests/test_skill_from_failure.py
+          python tests/test_project_forge_to_registry.py
+          python tests/test_proposed_predicate_runtime_sandbox.py
+          python tests/test_skill_meta_tools.py
+          python tools/lint_skill_descriptions.py
+          python tools/build_skill_index.py --check
+          python tools/project_forge_to_registry.py --check
       - name: OKF + provenance verifier tests
         run: |
           python tests/test_okf.py

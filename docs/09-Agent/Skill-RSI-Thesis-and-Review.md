@@ -110,9 +110,9 @@ This is deterministic, carries no IP, and is exempt from encryption (see the `.g
 so a fresh web session can read it without the git-crypt key — same rationale as the other three
 process skills.
 
-### 3b. At the Forge layer (proposed, ready to build on approval)
+### 3b. At the Forge layer (shipped — `tools/skill_from_failure.py`)
 
-A small `tools/skill_from_failure.py` that:
+`tools/skill_from_failure.py`:
 
 1. Reads structured failure rows (extend the ledger with an optional sidecar
    `agi-proof/failures.jsonl`: `{id, text, expected_label, observed}`), or accepts them on stdin.
@@ -240,19 +240,51 @@ This is the single change that makes "write a skill once, trigger it everywhere"
 
 ---
 
-## 7. Suggested build order
+## 7. Build order — STATUS (all shipped)
 
-1. **(shipped here)** `skill-author` Agent Skill + `.gitattributes` exception — capability (a) at the
-   Claude Code layer, zero risk.
-2. `tools/lint_skill_descriptions.py` + tighten every `description` — capability (b), biggest lever,
-   no architecture change.
-3. Hybrid `select()` (§4b) + projection of forged skills to Layer B (§3c) — makes forged skills
-   routable and paraphrase-robust.
-4. `tools/skill_from_failure.py` (§3b) + structured `failures.jsonl` — the issue→forge bridge,
-   reusing the existing gate.
-5. Unified registry (§5) + trigger telemetry/learning (§4d) — the closed self-improving loop.
+| # | Item | Status | Where |
+|---|---|---|---|
+| 1 | `skill-author` Agent Skill + `.gitattributes` exemption | ✅ shipped | `.claude/skills/skill-author/SKILL.md` |
+| 2 | `lint_skill_descriptions.py` (trigger-richness gate, by skill kind) | ✅ shipped | `tools/lint_skill_descriptions.py` |
+| 3 | Hybrid `select()` (stem+synonym+IDF+fuzzy+ranked+telemetry) | ✅ shipped | `agent/skills.py` |
+| 4 | Projection of promoted forged skills → routable Layer-B specs | ✅ shipped | `tools/project_forge_to_registry.py` |
+| 5 | `skill_from_failure.py` issue→forge bridge (dry-run default) + `failures.jsonl` | ✅ shipped | `tools/skill_from_failure.py`, `agi-proof/failures.jsonl` |
+| 6 | Unified registry index across layers A/B/C | ✅ shipped | `tools/build_skill_index.py` → `skills/registry/index.json` |
+| 7 | Failure-aware PostToolUse hook (deterministic capture nudge) | ✅ shipped | `.claude/hooks/skill_capture_nudge.sh` + `settings.json` |
+| 8 | Trigger learner (verifier-gated, precision-floored proposer) | ✅ shipped | `tools/learn_triggers.py` |
+| 9 | Tests + CI wiring + drift `--check` gates | ✅ shipped | `tests/test_skill_*.py`, `.github/workflows/ci.yml` |
 
-Each step is independently useful and independently gateable. Nothing above asks you to trust an LLM
-over a verifier — that is the whole point.
+Each is independently useful and independently gateable. Nothing here asks you to trust an LLM over a
+verifier — the forge bridge routes rejections to the ledger, and the trigger learner promotes a token
+only above a precision floor over real support. That is the whole point.
+
+### How the closed loop now runs
+
+```
+issue hit ──► PostToolUse nudge (#7) ──► skill-author skill (#1)
+   │                                          │
+   │ (checkable?)                             │ (process lesson) → new/updated Agent Skill (A)
+   ▼                                          ▼
+agi-proof/failures.jsonl (#5) ──► skill_from_failure --apply
+   ──► forge_skill → synthesize_gate (verifier-gated; rejection = logged, never tuned)
+   ──► forge_index.json ──► project_forge_to_registry (#4) ──► routable registry spec (B/C)
+   ──► build_skill_index (#6) ──► unified index.json
+                                          │
+goal ──► select_ranked (#3, stem+synonym+IDF+fuzzy) ──► fires the right skill
+   ──► (log_path) skill-trigger-log.jsonl ──► learn_triggers (#8) ──► sharper triggers next time
+```
+
+### Operator quickstart
+
+```bash
+# capture an issue as labelled rows, then see what WOULD forge (writes nothing):
+python tools/skill_from_failure.py
+# actually forge + project the promoted skills, then refresh the unified index:
+python tools/skill_from_failure.py --apply && python tools/build_skill_index.py
+# keep the trigger surface honest in CI:
+python tools/lint_skill_descriptions.py
+# after collecting routing telemetry, propose sharper triggers (apply is opt-in):
+python tools/learn_triggers.py --log agi-proof/skill-trigger-log.jsonl
+```
 </content>
 </invoke>
