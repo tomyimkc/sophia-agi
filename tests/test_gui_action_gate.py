@@ -17,7 +17,12 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent.gui_action_gate import ProposedAction, SCHEMA, gate_action  # noqa: E402
+from agent.gui_action_gate import (  # noqa: E402
+    ProposedAction,
+    SCHEMA,
+    gate_action,
+    tool_action_admitter,
+)
 
 _PASS = lambda a: True   # noqa: E731
 _FAIL = lambda a: False  # noqa: E731
@@ -105,6 +110,32 @@ def test_readonly_low_confidence_still_needs_no_side_effect_path() -> None:
     d = gate_action(a)
     _envelope(d)
     assert d["verdict"] == "execute", d
+
+
+class _Task:
+    task_id = "t-admit"
+
+
+def test_admitter_escalates_high_risk_tool() -> None:
+    admit = tool_action_admitter({"delete_repo"})
+    d = admit("delete_repo", _Task(), {"id": "s1"})
+    _envelope(d)
+    assert d["verdict"] == "escalate", d  # high-risk tool -> human-in-the-loop
+
+
+def test_admitter_executes_ordinary_tool_by_default() -> None:
+    # no precondition verifier supplied -> tool-scope handled by harness, risk-class rule only
+    admit = tool_action_admitter({"delete_repo"})
+    d = admit("read_file", _Task(), {"id": "s1"})
+    _envelope(d)
+    assert d["verdict"] == "execute", d
+
+
+def test_admitter_respects_precondition_verifier() -> None:
+    admit = tool_action_admitter(set(), precondition_verifier=lambda a: False)
+    d = admit("read_file", _Task(), {"id": "s1"})
+    _envelope(d)
+    assert d["verdict"] == "block", d  # precondition fails -> withheld
 
 
 if __name__ == "__main__":

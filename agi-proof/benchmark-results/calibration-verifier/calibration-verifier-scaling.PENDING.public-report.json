@@ -1,0 +1,34 @@
+{
+  "arms": {
+    "provenance-confidence-baseline": {
+      "reason": "needs the live grounded path on the same corpus",
+      "status": "not_run"
+    },
+    "raw-model-logprob-baseline": {
+      "reason": "needs base-model logprobs on the same corpus",
+      "status": "not_run"
+    },
+    "trace-feature-verifier": {
+      "reason": "needs a real labelled trace corpus + a fit on a disjoint split",
+      "status": "not_run"
+    }
+  },
+  "canClaimAGI": false,
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "criticalFailures": [
+    "no_real_corpus: requires a decontaminated, gold-labelled trace corpus (synthetic traces are not evidence)",
+    "labels_not_2family: correctness labels are not >= 2 independent judge families (kappa >= 0.40)",
+    "no_leakage_audit: the no-answer-leakage feature audit has not been run",
+    "no_effect: delta AUROC must be >= 0.05 with a 95% CI excluding 0",
+    "scaling_not_3sizes: the scaling-monotonicity headline needs >= 3 base sizes on identical traces"
+  ],
+  "delta": null,
+  "experimentId": "calibration-verifier-scaling",
+  "go": false,
+  "harness": "tools/run_calibration_verifier_eval.py",
+  "headline": "PENDING — machinery only; no real labelled-trace run has been performed",
+  "note": "Intentionally PENDING. The --mock mode exercises the AUROC/ECE/delta+CI math over synthetic traces (tests/test_calibration_verifier_eval.py), but synthetic traces are not evidence: no claim about real answer correctness is made. Promotion needs a decontaminated gold-labelled trace corpus, >= 2 independent judge families, a no-answer-leakage feature audit, and (for the scaling headline) >= 3 base sizes — see the measurement_spec and the calibration-verifier-scaling row in agi-proof/failure-ledger.md.",
+  "preregistration": "agi-proof/benchmark-results/calibration-verifier/measurement_spec.json",
+  "status": "not_run",
+  "verdict": "NO-GO"
+}

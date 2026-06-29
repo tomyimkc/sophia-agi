@@ -49,6 +49,11 @@ FAILURE_CLASSES = (
 # A verifier takes (text, task, step) and returns {"passed", "reasons", "detail"}.
 Verifier = Callable[[str, "AgentTask", dict], dict]
 
+# An action admitter (Harness-Roadmap Build 3) takes (tool_name, task, step) and returns a
+# gui_action_gate decision dict; only an "execute" verdict lets the tool run. Opt-in: when
+# None (the default) the harness behaves exactly as before. See agent/gui_action_gate.py.
+ActionAdmitter = Callable[[str, "AgentTask", dict], dict]
+
 
 @dataclass
 class AgentTask:
@@ -329,6 +334,7 @@ def _execute_step(
     max_retries: int,
     approve_tools: bool,
     allowed_tools: "set[str] | None" = None,
+    admit_action: "ActionAdmitter | None" = None,
 ) -> StepResult:
     result = StepResult(step_id=step["id"], description=step["description"], action=step["action"])
     reflection: str | None = None
@@ -354,6 +360,22 @@ def _execute_step(
                 if blocked:
                     store.log("tool_scope_block", step=step["id"], blocked=blocked)
                     tool_results.extend({"tool": t, "ok": False, "error": "out of subagent tool scope"} for t in blocked)
+            # Action admission (Harness-Roadmap Build 3, opt-in): a high-risk/irreversible
+            # tool is withheld fail-closed (recorded as a failed result so the step does not
+            # pass) and routed to a human, even if tools were globally approved. No-op when
+            # admit_action is None. The admitter's decision is logged for the audit trail.
+            if admit_action is not None and allowed_requests:
+                admitted: list[str] = []
+                for t in allowed_requests:
+                    decision = admit_action(t, task, step)
+                    if decision.get("verdict") == "execute":
+                        admitted.append(t)
+                    else:
+                        store.log("action_admission_block", step=step["id"], tool=t,
+                                  verdict=decision.get("verdict"), reasons=decision.get("reasons", []))
+                        tool_results.append({"tool": t, "ok": False,
+                                             "error": f"action admission: {decision.get('verdict')}"})
+                allowed_requests = admitted
             if allowed_requests:
                 tool_results.extend(run_tools(allowed_requests, approved=approve_tools))
             if tool_results:
@@ -419,6 +441,7 @@ def run_agent(
     consolidate: bool = False,
     allowed_tools: "set[str] | None" = None,
     conscience_gate: bool | None = None,
+    admit_action: "ActionAdmitter | None" = None,
 ) -> AgentResult:
     """Run the full plan -> execute -> critic -> reflect/retry loop.
 
@@ -456,7 +479,7 @@ def run_agent(
         outcome = _execute_step(
             task, step, client=client, store=store, verifier=verifier,
             prior=prior_text, max_retries=max_retries, approve_tools=approve_tools,
-            allowed_tools=allowed_tools,
+            allowed_tools=allowed_tools, admit_action=admit_action,
         )
         step_results.append(outcome)
         total_cost += outcome.cost_usd

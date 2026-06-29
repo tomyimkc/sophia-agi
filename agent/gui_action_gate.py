@@ -153,6 +153,39 @@ def gate_action(
                      reasons=("cleared risk class, confidence floor, and precondition verifier",))
 
 
+def tool_action_admitter(
+    high_risk_tools: "set[str] | frozenset[str]",
+    *,
+    precondition_verifier: Callable[[ProposedAction], bool] | None = None,
+) -> Callable[[str, Any, dict], dict]:
+    """Bridge ``gate_action`` to the agent harness's tool path (Harness-Roadmap Build 3).
+
+    Returns an admitter ``(tool_name, task, step) -> decision`` the harness calls before
+    executing each requested tool. A tool call carries no chapter-9 1-5 self-rating, so
+    confidence defaults to ``CONFIDENCE_MAX`` and the meaningful checks become: (1) is this a
+    high-risk tool -> escalate to a human even if tools were globally approved; (2) does the
+    precondition verifier hold. With no verifier supplied, tool-scope/approval is assumed to be
+    handled by the harness itself and the admitter enforces only the risk-class rule (so it
+    never blocks every tool by default — it upgrades high-risk tools to human-in-the-loop).
+    """
+    verifier = precondition_verifier or (lambda a: True)
+    high_risk = frozenset(high_risk_tools)
+
+    def _admit(tool_name: str, task: Any, step: dict) -> dict:
+        action = ProposedAction(
+            action="TOOL",
+            confidence=CONFIDENCE_MAX,
+            target=tool_name,
+            side_effecting=True,
+            high_risk=tool_name in high_risk,
+            intent=f"call tool {tool_name}",
+            meta={"taskId": getattr(task, "task_id", None), "stepId": step.get("id")},
+        )
+        return gate_action(action, precondition_verifier=verifier)
+
+    return _admit
+
+
 if __name__ == "__main__":
     import json
 
