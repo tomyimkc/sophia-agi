@@ -23,17 +23,17 @@ doesn't fit on one Spark is model-parallel → you get **capacity, not speed**.
 ## Scaling table (measured + extrapolated)
 | Cluster | Unified memory | Interconnect | Serve ceiling (4-bit) | 1-node fine-tune ceiling | **Data-parallel adapter-train speedup** |
 |---|---|---|---|---|---|
-| **1 Spark** | 128 GB | — | ~200 B | ~70 B | **1×** (baseline) |
-| **2 Sparks** | 256 GB | direct cable | ~405 B | ~120 B | **~1.8×** |
-| **4 Sparks** | 512 GB | NCCL ring (3) / 200 Gb switch (4) | ~800 B | ~200 B | **3.44× (measured)** |
-| **8 Sparks** | **1 TB** | **200 Gb managed switch (required)** | **~1.6 T** | ~400 B | **~6× (extrapolated, ~75% eff.)** |
+| **1 Spark** | 128 GB | — | ~200B | ~70B | **1×** (baseline) |
+| **2 Sparks** | 256 GB | direct cable | ~405B | ~120B | **~1.8×** |
+| **4 Sparks** | 512 GB | NCCL ring (3) / 200 Gb switch (4) | ~800B | ~200B | **3.44× (measured)** |
+| **8 Sparks** | **1 TB** | **200 Gb managed switch (required)** | **~1.6T** | ~400B | **~6× (extrapolated, ~75% eff.)** |
 
 (4-node 3.44× is a measured NVIDIA/partner figure — ~86% efficiency; efficiency declines with node count
 as all-reduce hops + the switch add the repo's "node tax" — see `tools/run_cluster_sim.py`. 8-node ≈ ~6×.)
 
 ## So: can 8 Sparks train an adapter faster? Yes — with two big caveats.
 1. **Yes, ~6× faster** than one Spark for a data-parallel LoRA/QAT run **whose base fits on each node**
-   (≤~70 B at 4-bit). A run that's ~2.5–3 h on 1 Spark (e.g. this repo's OLMoE-1B-7B QAT, 439 rows /
+   (≤~70B at 4-bit). A run that's ~2.5–3 h on 1 Spark (e.g. this repo's OLMoE-1B-7B QAT, 439 rows /
    220 steps) becomes **~30 min on 8**.
 2. **Caveat A — the small-corpus floor.** This repo's adaptation corpora are *tiny* (LIMA-scale, ~400–2000
    rows). At 8-way data-parallel the per-node batch starves: each node sees ~50–250 rows/epoch, and the
@@ -50,9 +50,9 @@ measurement discipline**:
 - **Run the whole no-overclaim matrix in one wall-clock pass.** The gate needs ≥3 seeds × ≥2 judge
   families. With 8 Sparks you run **8 independent fine-tune/eval/judge jobs at once** instead of serially —
   the ≥3-seed + ≥2-family validation (which took this session *hours* serially) finishes in *one* pass.
-- **Serve giant sparse models locally** (1 TB → ~405 B–1.6 T quantized MoE) for the `serving/` low-RAM
+- **Serve giant sparse models locally** (1 TB → ~405B–1.6T quantized MoE) for the `serving/` low-RAM
   frontier (expert-offload, KV-quant, adaptive per-tensor quant) — exactly Boundary 3 work.
-- **~6× throughput for LARGE-base (70 B+) data-parallel fine-tunes** — where the corpus is big enough to
+- **~6× throughput for LARGE-base (70B+) data-parallel fine-tunes** — where the corpus is big enough to
   keep 8 nodes fed.
 
 8 Sparks is a **huge-memory / modest-compute / low-bandwidth** cluster (~1 TB RAM but only ~1000 TFLOP/s
@@ -64,23 +64,23 @@ Training FLOPs ≈ `6 × active_params × tokens`. Even at a generous 25% utiliz
 
 | Model | Train FLOPs | 1 Spark | 8 Sparks (ideal) | What it really took |
 |---|---|---|---|---|
-| DeepSeek-V3 (37 B act, 14.8 T tok) | 3.3×10²⁴ | ~3,300 yr | ~410 yr | 2.79 M H800-h (~2 mo on ~2,048 H800) |
-| GLM-5.2 (40 B act, 28.5 T tok) | 6.8×10²⁴ | ~7,000 yr | ~875 yr | "thousands of H100-days," 28.5 T tok |
+| DeepSeek-V3 (37B act, 14.8T tok) | 3.3×10²⁴ | ~3,300 yr | ~410 yr | 2.79 M H800-h (~2 mo on ~2,048 H800) |
+| GLM-5.2 (40B act, 28.5T tok) | 6.8×10²⁴ | ~7,000 yr | ~875 yr | "thousands of H100-days," 28.5T tok |
 
 8 Sparks turn "thousands of years" into "hundreds of years." **From-scratch frontier pretraining is a
 rented-datacenter task (thousands of GPUs, $millions), not a desk cluster — at any Spark count.** And note
-DeepSeek-V3/GLM-5.2 are 671–744 B: even 4-bit (~335–372 GB) they need ~3–4 Sparks just to *fit*, so you
+DeepSeek-V3/GLM-5.2 are 671–744B: even 4-bit (~335–372 GB) they need ~3–4 Sparks just to *fit*, so you
 can't even LoRA-fine-tune *those specific models* until ~4 nodes.
 
 ## Recommendation
-- **1 → 2 Sparks:** best marginal value — doubles memory to 256 GB (serve ~405 B), ~1.8× on fitting
+- **1 → 2 Sparks:** best marginal value — doubles memory to 256 GB (serve ~405B), ~1.8× on fitting
   fine-tunes, direct-cable (no switch). On-charter and cheap.
-- **2 → 4 Sparks:** 512 GB + measured 3.44×; needs a ring/switch. Justified if you fine-tune 70 B+ bases
+- **2 → 4 Sparks:** 512 GB + measured 3.44×; needs a ring/switch. Justified if you fine-tune 70B+ bases
   or want the seed×family matrix in parallel.
-- **8 Sparks:** justified by **local serving of ~405 B–1.6 T sparse models** and **8-wide parallel
+- **8 Sparks:** justified by **local serving of ~405B–1.6T sparse models** and **8-wide parallel
   experiments**, *not* by speeding up small-corpus adapters (over-provisioned there) and *not* by enabling
   frontier pretraining (still infeasible). Needs a 200 Gb managed switch + the power/space for 8 units.
-- **To actually *pretrain* a large model:** rent cloud GPUs (the `tools/runpod_*` path); no Spark count
+- **To actually *pretrain* a large model:** rent cloud GPUs (the `tools/runpod_wisdom_pilot_selfreport.py` launcher + sibling `tools/runpod_*.py` scripts); no Spark count
   makes it feasible locally.
 
 The Mac Studio (M3 Ultra, 819 GB/s — 3× a Spark's bandwidth, up to 512 GB) does **not** join the Spark CUDA
