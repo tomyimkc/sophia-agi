@@ -1,0 +1,56 @@
+{
+  "schema": "sophia.operator.manifest.v1",
+  "description": "Portable operator surfaces for Sophia AGI: skills, the verifier gate, and the MCP server, plus the per-harness install target directories. Inspired by affaan-m/ECC, which ships a single manifest + adapters portable across Claude Code, Codex, Cursor, Gemini, OpenCode, Zed and Copilot. Every `source` is a real repo-relative path; see tools/install_sophia_layer.py for the DRY-RUN validator/installer.",
+  "surfaces": [
+    {
+      "id": "sophia-source-discipline",
+      "kind": "skill",
+      "source": "skills/portable/sophia-source-discipline/SKILL.md",
+      "description": "Source-discipline skill: correct authorship, tradition boundaries, myth labeling, provenance uncertainty."
+    },
+    {
+      "id": "sophia-karpathy-engineering",
+      "kind": "skill",
+      "source": "skills/portable/sophia-karpathy-engineering/SKILL.md",
+      "description": "Engineering discipline: think before coding, simplicity first, surgical changes, goal-driven verification."
+    },
+    {
+      "id": "sophia-personality-faithful",
+      "kind": "skill",
+      "source": "skills/portable/sophia-personality-faithful/SKILL.md",
+      "description": "Personality-faithful skill: keep Sophia's voice and stances consistent across harnesses."
+    },
+    {
+      "id": "sophia-runpod-connect",
+      "kind": "skill",
+      "source": "skills/portable/sophia-runpod-connect/SKILL.md",
+      "description": "RunPod connectivity skill for remote GPU operations."
+    },
+    {
+      "id": "prompt-author",
+      "kind": "skill",
+      "source": ".claude/skills/prompt-author/SKILL.md",
+      "description": "Prompt-author skill: write precise, machine-checkable prompts for other agents with abstention paths."
+    },
+    {
+      "id": "sophia-mcp",
+      "kind": "mcp",
+      "source": ".mcp.json",
+      "description": "MCP server config exposing the Sophia AGI server (sophia_mcp/server.py) over the Model Context Protocol."
+    },
+    {
+      "id": "verifier-gate",
+      "kind": "gate",
+      "source": "agent/gate.py",
+      "description": "Epistemic self-check / verifier gate that screens agent responses for source-discipline and attribution failures."
+    }
+  ],
+  "harnesses": {
+    "claude": {"skillsDir": ".claude/skills", "mcpFile": ".mcp.json"},
+    "cursor": {"skillsDir": ".cursor/skills", "mcpFile": ".cursor/mcp.json"},
+    "codex": {"skillsDir": ".codex/skills", "mcpFile": ".codex/mcp.json"},
+    "opencode": {"skillsDir": ".opencode/skills", "mcpFile": ".opencode/mcp.json"},
+    "grok": {"skillsDir": ".grok/skills", "mcpFile": ".grok/mcp.json"},
+    "agents": {"skillsDir": ".agents/skills", "mcpFile": ".agents/mcp.json"}
+  }
+}
