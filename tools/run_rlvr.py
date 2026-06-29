@@ -55,6 +55,7 @@ from provenance_bench import (  # noqa: E402
     physics_reward,
     rl_dataset,
     rl_reward,
+    step_reward,
 )
 from provenance_bench.dataset import Case  # noqa: E402
 
@@ -337,6 +338,16 @@ def _run_gpu(args: argparse.Namespace) -> int:
         # gold column -> dimensional+numeric verifier (agent.units). Judge-free and
         # pure-Python; right-number/wrong-unit cannot game it.
         reward_fn = physics_reward.make_grpo_reward()
+    elif args.task == "step":
+        # PROCESS reward: the model's full STEP: derivation is parsed and EVERY step
+        # is machine-verified (agent.step_verifier). Reuses the math/physics RL split
+        # (--step-domain); a right answer reached via a wrong step is penalised, which
+        # final-answer reward (task math/physics) would miss. Judge-free.
+        if args.step_domain == "physics":
+            data = physics_dataset.build_physics_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+        else:
+            data = math_dataset.build_math_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+        reward_fn = step_reward.make_grpo_reward(domain=args.step_domain)
     else:
         data = rl_dataset.build_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
         if args.reward == "gate":
@@ -374,9 +385,20 @@ def _run_gpu(args: argparse.Namespace) -> int:
         # cleared on the raw-prompt path). See failure-ledger rlvr-code-no-chat-template.
         _tok = AutoTokenizer.from_pretrained(args.model)
         train_rows = [{**r, "prompt": code_dataset.chat_wrap(_tok, r["prompt"])} for r in train_rows]
+    if args.task == "step":
+        # Prepend the STEP: instruction so rollouts emit a parseable derivation;
+        # the eval side (eval_rlvr_adapter --task step) wraps identically.
+        train_rows = [{**r, "prompt": step_reward.STEP_INSTRUCTION + r["prompt"]} for r in train_rows]
     ds = Dataset.from_list(train_rows)  # columns kept: remove_unused_columns=False
 
     model_init_kwargs: dict = {"trust_remote_code": False}
+    # device_map="cuda" is required on the single-GPU NON-vLLM path (DGX Spark aarch64:
+    # avoids the "parameters on the meta device" load + device-side asserts during
+    # generation). Set it ONLY there — under --vllm colocate/server, TRL/accelerate own
+    # device placement and an explicit device_map conflicts with it. See
+    # docs/11-Platform/Math-Physics-Spark-Setup.md.
+    if not use_vllm:
+        model_init_kwargs["device_map"] = "cuda"
     if four_bit:
         model_init_kwargs["quantization_config"] = BitsAndBytesConfig(
             load_in_4bit=True, bnb_4bit_quant_type="nf4",
@@ -391,7 +413,7 @@ def _run_gpu(args: argparse.Namespace) -> int:
         per_device_train_batch_size=args.batch_size,
         gradient_accumulation_steps=args.grad_accum,
         num_generations=args.num_generations,
-        max_prompt_length=args.max_prompt_len,
+        max_prompt_length=args.max_prompt_len,  # auto-dropped below on trl versions lacking the field
         max_completion_length=args.max_completion_len,
         num_train_epochs=args.epochs,
         max_steps=args.max_steps,  # >0 bounds a smoke run (overrides epochs)
@@ -403,6 +425,12 @@ def _run_gpu(args: argparse.Namespace) -> int:
         model_init_kwargs=model_init_kwargs,
         use_vllm=use_vllm,
     )
+    # Drop any kwargs this trl/GRPOConfig version does not declare (e.g. max_prompt_length
+    # on the aarch64 build), so the same script runs across trl versions. GRPOConfig is a
+    # dataclass, so __dataclass_fields__ is the authoritative supported set.
+    cfg_fields = set(getattr(GRPOConfig, "__dataclass_fields__", {}))
+    if cfg_fields:
+        grpo_kwargs = {k: v for k, v in grpo_kwargs.items() if k in cfg_fields}
     if use_vllm:
         # vllm_mode (colocate/server selector) only exists in trl >= 0.17; older
         # pinned trl (0.16.x) does in-process colocate via use_vllm alone and
@@ -478,7 +506,9 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     ap.add_argument("--model", default="mock", help=f'subject model (default "mock"; GPU: "{DEFAULT_MODEL}")')
-    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "physics"], default="provenance",
+    ap.add_argument("--step-domain", choices=["math", "physics"], default="math",
+                    help="for --task step: which RL split + per-step oracle to use")
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "physics", "step"], default="provenance",
                     help="reward task: provenance (provenance_faithful), math (sympy math_equivalent), "
                          "code (hidden-tests-pass via provenance_bench.code_exec), or concept "
                          "(concept-TBox gate: don't merge cross-tradition concepts)")
@@ -530,6 +560,8 @@ def main(argv: list[str] | None = None) -> int:
             ok, detail = math_reward.offline_invariants()
         elif args.task == "physics":
             ok, detail = physics_reward.offline_invariants()
+        elif args.task == "step":
+            ok, detail = step_reward.offline_invariants(domain=args.step_domain)
         elif args.task == "code":
             ok, detail = code_reward.offline_invariants()
             # The integrity gate is part of the code reward's contract when guarded
