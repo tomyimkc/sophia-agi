@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sophia.aihk/schema/agent-card-1.0.0.json",
+  "title": "Sophia A2A Agent Card",
+  "description": "Discovery document emitted by agent.a2a.AgentCard and served for A2A (Agent2Agent) peers. A2A-v1-compatible (Linux Foundation): JSON-RPC 2.0 over HTTP, Agent Card discovery, standard task lifecycle. The x-sophia extension advertises the fail-closed / abstaining provenance discipline so peers know responses are verifier-gated. Version 1.0.0 (semver): field names are the contract.",
+  "x-contract-version": "1.0.0",
+  "type": "object",
+  "required": ["schema", "schemaVersion", "protocolVersion", "name", "description", "url", "version", "capabilities", "skills"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "const": "sophia.agent_card.v1" },
+    "schemaVersion": { "const": "1.0.0" },
+    "protocolVersion": { "type": "string", "description": "A2A protocol version this card targets." },
+    "name": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "url": { "type": "string", "pattern": "^https?://" },
+    "version": { "type": "string" },
+    "provider": {
+      "type": "object",
+      "required": ["organization"],
+      "properties": { "organization": { "type": "string" } }
+    },
+    "capabilities": {
+      "type": "object",
+      "required": ["streaming", "pushNotifications"],
+      "properties": {
+        "streaming": { "type": "boolean" },
+        "pushNotifications": { "type": "boolean" }
+      }
+    },
+    "defaultInputModes": { "type": "array", "items": { "type": "string" } },
+    "defaultOutputModes": { "type": "array", "items": { "type": "string" } },
+    "securitySchemes": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["apiKey", "oauth2", "mtls", "none"] }
+    },
+    "skills": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Only scoped, advertised capabilities (least privilege). A peer cannot invoke an unadvertised skill.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "description"],
+        "additionalProperties": true,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "inputModes": { "type": "array", "items": { "type": "string" } },
+          "outputModes": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "x-sophia": {
+      "type": "object",
+      "description": "Sophia-specific extension: the fail-closed / abstaining contract a peer can rely on.",
+      "properties": {
+        "provenanceDiscipline": { "type": "boolean" },
+        "reduce": { "type": "string" }
+      }
+    }
+  }
+}
