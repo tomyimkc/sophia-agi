@@ -1,0 +1,45 @@
+{
+  "experimentId": "habit-formation-hst-v1",
+  "artifact": "hst-identity-consistency-existing-pack",
+  "candidateOnly": true,
+  "validated": false,
+  "canClaimAGI": false,
+  "claimCeiling": "candidate_only; canClaimAGI:false; harness validation + illustrative delta",
+  "comparison": "BASE vs ADAPTER on the existing M3-transfer pack (NOT flat-vs-graded reward arms)",
+  "pack": "agi-proof/benchmark-results/wisdom-market/M3-transfer-answers.json",
+  "n": 160,
+  "metric": "identity-consistency (H5) = fraction of cases with no forbidden assertion committed",
+  "baseRate": 0.9125,
+  "adapterRate": 0.9938,
+  "baseRouteAppropriateRate": 0.9125,
+  "adapterRouteAppropriateRate": 0.9938,
+  "delta": 0.0813,
+  "bootstrapCI95": [
+    0.0375,
+    0.1313
+  ],
+  "anytimeValidCS95": [
+    0.0082,
+    0.1543
+  ],
+  "mcnemar": {
+    "b": 1,
+    "c": 14,
+    "stat": 9.6,
+    "p": 0.0019
+  },
+  "power": {
+    "mde_at_n": 0.1566,
+    "requiredNForObservedEffect": 594,
+    "paired_rho": 0.0,
+    "note": "conservative paired_rho=0; same-items pairing means true rho>0, so requiredN is overstated"
+  },
+  "ciExcludesZero": true,
+  "underpowered": true,
+  "honestLimits": [
+    "single existing answer pack (one set of answers per case); not >=3 seeds",
+    "deterministic forbidden-assertion markers only; no LLM-judge family here (the spec requires >=2 for any VALIDATED claim)",
+    "base-vs-adapter, NOT the pre-registered flat-vs-graded reward arms — that needs GPU training"
+  ],
+  "nextStep": "train flat-reward vs graded-craving (H2) adapters, >=3 seeds, judge identity-consistency with >=2 families, then claim_gate --prefix HST --assert-prereg"
+}

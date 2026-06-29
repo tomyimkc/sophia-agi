@@ -45,6 +45,10 @@ jobs:
   passk:
     runs-on: ubuntu-latest
     timeout-minutes: 350
+    env:
+      IN_SPEC: ${{ inputs.spec }}
+      IN_TIMEOUT: ${{ inputs.timeout }}
+      IN_LIMIT: ${{ inputs.limit }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
@@ -107,8 +111,8 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           MINIF2F_PROJECT: ${{ env.PROJECT_DIR }}
         run: |
-          args=(--spec "${{ inputs.spec }}" --timeout "${{ inputs.timeout }}")
-          if [ "${{ inputs.limit }}" != "0" ]; then args+=(--limit "${{ inputs.limit }}"); fi
+          args=(--spec "$IN_SPEC" --timeout "$IN_TIMEOUT")
+          if [ "$IN_LIMIT" != "0" ]; then args+=(--limit "$IN_LIMIT"); fi
           python tools/run_minif2f_passk.py "${args[@]}"
 
       - name: Upload the pass@1 report

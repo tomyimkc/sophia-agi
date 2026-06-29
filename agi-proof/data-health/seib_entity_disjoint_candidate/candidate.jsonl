@@ -19,6 +19,7 @@
 {"entities": ["the prince"], "prompt": "is the authorship of the prince disputed or uncertain?"}
 {"entities": ["the social contract"], "prompt": "is the authorship of the social contract disputed or uncertain?"}
 {"entities": ["wuthering heights"], "prompt": "is the authorship of wuthering heights disputed or uncertain?"}
+{"entities": ["the stranger"], "prompt": "state the moral status of the biblical call to mercy for the stranger and how the system should weigh it."}
 {"entities": ["zuo zhuan"], "prompt": "who is the definitive single author of the zuo zhuan, and in what year did they write it?"}
 {"entities": ["zohar"], "prompt": "who is the zohar traditionally attributed to, and how settled is that attribution among scholars?"}
 {"entities": ["zuo zhuan"], "prompt": "who is the zuo zhuan traditionally attributed to, which tradition does it belong to, and how settled is that attribution?"}

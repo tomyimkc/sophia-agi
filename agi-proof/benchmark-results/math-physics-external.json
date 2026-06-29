@@ -1,0 +1,30 @@
+{
+  "benchmark": "math_physics_external_style",
+  "proposer": "answer-only",
+  "illustrative": true,
+  "sets": [
+    {
+      "set": "gsm8k-style",
+      "domain": "math",
+      "n": 10,
+      "accuracy": 1.0,
+      "abstained": 0
+    },
+    {
+      "set": "math-style",
+      "domain": "math",
+      "n": 12,
+      "accuracy": 1.0,
+      "abstained": 0
+    },
+    {
+      "set": "physics-style",
+      "domain": "physics",
+      "n": 10,
+      "accuracy": 1.0,
+      "abstained": 0
+    }
+  ],
+  "note": "answer-only is a deterministic harness-validation baseline (must score ~100%); illustrative, NOT a capability claim. Style samples, NOT the licensed MATH/GSM8K sets.",
+  "canClaimAGI": false
+}
