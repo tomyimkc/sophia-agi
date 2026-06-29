@@ -86,6 +86,30 @@
 training-rows) + artifact-drift gates (wiki, RESULTS, version, dataset) green. No regressions in
 conscience/andreia/MCP tests.
 
+## 1b. RunPod path added (2026-06-29, addendum) — a 2nd way to run the powered evals
+When the Spark+Mac farm is unavailable, the powered evals can run on **one rented 80GB GPU pod**
+that serves the whole stack locally via ollama (subject + 2 independent judge families on one
+port, by model name). Built this session, **committed on the feature branch, NOT run, NOT on main**:
+- **`tools/runpod_virtue_evals.py`** — SSH-free launcher; reuses the wisdom-pilot lifecycle
+  helpers *verbatim* (`_sweep_leaked_pods` / `_git_blob` / `_wait_for_pod_gone`; `finish()`
+  `sleep 3600` + delete-on-result-blob restart-loop guards). Dry-run default; `--yes` to create.
+  In-pod job: clone → heartbeat → install ollama → pull models → build batteries → decontam →
+  label (2-family) → `run_{sophrosyne,dikaiosyne}_eval.py --model --write` → push reports → self-delete.
+- **`.github/workflows/virtue-evals-runpod.yml`** — manual `workflow_dispatch`, `confirm:'Type RUN'`,
+  `runpod-paid` env, inputs via `env:` (no expression injection, per #290).
+- **Runbook:** `docs/11-Platform/Cardinal-Virtue-Benchmarks.md` **§5b** — anti-wastage contract
+  adapted from the (now-unlocked) `wisdom-gpu-prebaked` skill: no-pip⇒no restart-loop, **cheap
+  pipeline-smoke first** (small distinct models + `label_limit=24`, ~$0.30) before the full run,
+  heartbeat-loop watch, confirm-zero-leaked-pods, artifact-landed≠Actions-success.
+
+**Two hard blockers before any RunPod run (both operator-side, verified this session):**
+  1. **Not on `main`.** `workflow_dispatch` only registers from the default branch → the workflow
+     must land on `main` (a PR) before it can be dispatched.
+  2. **No `RUNPOD_API_KEY`.** The runpod MCP here returns **401** (no key in this env), and the
+     guardrail forbids local pod creation — a run must go through Actions with the repo secret
+     `RUNPOD_API_KEY` set on the `runpod-paid` environment.
+The **free Spark+Mac farm path (§2 below) stays preferred** — identical pipeline at $0.
+
 ## 2. ▶ NEXT — run the powered evals (the only thing left; model-gated)
 The benchmark machinery is built and farm-ready but **not yet run** — exactly like PR #275's machinery
 before its run. The powered arms need the two-box judge farm (Spark Qwen-32B + Mac Llama-70B) + a
