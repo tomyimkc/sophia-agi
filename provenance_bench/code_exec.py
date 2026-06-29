@@ -119,12 +119,37 @@ def check_answer(answer: str, test_code: str, *, timeout_sec: int = 15) -> dict:
 # SystemExit``, however it is triggered (directly, via ``exec``, or via a decoded
 # payload) — prevents the token and reads as FAIL. This converts the dominant
 # reward-hack class from "detected" to "structurally impossible".
-_RUNNER_SRC = (
+# Optional return-hardening: after the solution is defined, every function it
+# exposed is wrapped so its return value is forced through ``_canonical`` — exact
+# plain scalars pass, containers are REBUILT as plain (stripping any subclass), and
+# anything else (a custom object, e.g. one whose ``__eq__`` always returns True)
+# raises, which fails the test. This makes the equality-override hack a STRUCTURAL
+# failure at the grader, not merely a syntactic one the static scan must recognize.
+_HARDEN_SRC = (
+    "import types as _types\n"
+    "def _canonical(v, _d=0):\n"
+    "    if _d > 64: raise ValueError('return nested too deep')\n"
+    "    if v is None or type(v) in (int, float, bool, str, bytes): return v\n"
+    "    if isinstance(v, (list, tuple)):\n"
+    "        _s = [_canonical(x, _d + 1) for x in v]\n"
+    "        return tuple(_s) if isinstance(v, tuple) else _s\n"
+    "    if isinstance(v, (set, frozenset)): return {_canonical(x, _d + 1) for x in v}\n"
+    "    if isinstance(v, dict): return {_canonical(k, _d + 1): _canonical(w, _d + 1) for k, w in v.items()}\n"
+    "    raise TypeError('non-plain return type: ' + type(v).__name__)\n"
+    "def _wrap(_f):\n"
+    "    def _w(*a, **k): return _canonical(_f(*a, **k))\n"
+    "    return _w\n"
+    "for _n, _v in list(_g.items()):\n"
+    "    if isinstance(_v, _types.FunctionType): _g[_n] = _wrap(_v)\n"
+)
+_RUNNER_HEAD = (
     "import sys\n"
     "_tok = sys.stdin.readline().strip()\n"   # consume the secret first
     "_g = {'__name__': '__sol__'}\n"
     "try:\n"
     "    exec(compile(_SOLUTION, 'solution', 'exec'), _g)\n"
+)
+_RUNNER_TAIL = (
     "    exec(compile(_TEST, 'test', 'exec'), _g)\n"
     "except BaseException:\n"
     "    sys.exit(1)\n"                         # any error/exit -> no token -> FAIL
@@ -133,15 +158,22 @@ _RUNNER_SRC = (
 )
 
 
-def run_solution_isolated(solution_code: str, test_code: str, *, timeout_sec: int = 15) -> dict:
+def run_solution_isolated(solution_code: str, test_code: str, *, timeout_sec: int = 15,
+                          harden_returns: bool = True) -> dict:
     """Grade ``solution_code`` against ``test_code`` with an exit-code-proof harness.
 
     Unlike :func:`run_solution` (whose pass/fail is the process exit status, and is
     therefore hackable by a solution that exits 0 before the test fails), the verdict
     here is whether a per-call secret token reaches stdout, which only happens after
-    every assertion passes. Structurally defeats the whole process-death family;
-    equality-override is NOT defeated here (it is a static-scan concern) — the
-    integrity gate runs the AST scan first for that class.
+    every assertion passes. Structurally defeats the whole process-death family.
+
+    With ``harden_returns`` (default), every function the solution exposes is wrapped
+    so its return is canonicalized to plain data before the test compares it — so an
+    ``__eq__``-always-True object (or a list subclass with a rigged ``__eq__``) raises
+    and fails, making equality-override a STRUCTURAL grader failure rather than only a
+    syntactic one the static scan must catch. (Limit: a solution that passes custom
+    objects *between its own helpers* and returns plain data is unaffected; one that
+    returns a non-plain object fails — correct for a code task, whose answer is data.)
 
     Same ``SOPHIA_ALLOW_CODE_EXEC`` opt-in and syntax-only fallback contract as
     :func:`run_solution`. Still NOT a real sandbox — run untrusted models in a VM.
@@ -160,10 +192,11 @@ def run_solution_isolated(solution_code: str, test_code: str, *, timeout_sec: in
     import signal
 
     token = "OK_" + os.urandom(16).hex()
+    harden = "".join("    " + ln + "\n" for ln in _HARDEN_SRC.splitlines()) if harden_returns else ""
     runner = (
         "_SOLUTION = " + repr(solution_code) + "\n"
         "_TEST = " + repr(test_code) + "\n"
-        + _RUNNER_SRC
+        + _RUNNER_HEAD + harden + _RUNNER_TAIL
     )
     with tempfile.TemporaryDirectory() as tmp:
         path = Path(tmp) / "runner.py"

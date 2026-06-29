@@ -187,12 +187,14 @@ the three runtime-construction bypasses, plus a harness-tamper attempt) score
 An external AI review correctly broke the v0 static-only gate: `exec(compile(...))`,
 a `type()`-built always-equal object, and a `base64`→`exec` payload each scored
 +1, because a static scan never sees runtime-constructed code. Both fixes above
-landed in response. Two limits remain explicit: (a) the isolated grader is
-*hardening, not a sandbox* — a determined adversary with filesystem reads is out of
-its threat model; (b) detection of the equality-override class is still
-syntactic, so it inherits the one-query weakness — its real backstop is grader-side
-type/value checking, which task authors should write (`type(r) is int and r==12`).
-These are logged in the failure ledger
+landed in response. The equality-override class was then taken from *syntactic* to
+*structural*: the isolated grader (`harden_returns`, default on) canonicalizes every
+value the solution returns to the test — plain scalars pass, containers are rebuilt
+as plain, and any custom object (including a `list` subclass with a rigged `__eq__`)
+raises and fails. So a returned `__eq__`-always-True object is now a grader failure
+independent of the AST scan. One limit remains explicit: the isolated grader is
+*hardening, not a sandbox* — a determined adversary with filesystem/fd reads is out
+of its threat model (run untrusted models in a VM). Logged in the failure ledger
 (`code-reward-hackable-not-ungameable-2026-06-29`).
 
 ---

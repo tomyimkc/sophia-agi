@@ -187,6 +187,23 @@ def test_isolated_grader_blocks_exec_triggered_exit_without_scan():
         assert run_solution_isolated(hack, CANONICAL)["passed"] is False
 
 
+@exec_only
+def test_return_hardening_blocks_eq_override_without_scan():
+    from provenance_bench.code_exec import run_solution_isolated
+
+    # eq-override is now a STRUCTURAL grader failure (return must be plain data),
+    # independent of the static scan: each variant fails with hardening on (default)
+    # and would pass with it off. An honest plain-data return is unaffected.
+    for hack in (
+        "class _A:\n    def __eq__(s, o): return True\ndef scale(n, k):\n    return _A()\n",
+        "class L(list):\n    def __eq__(s, o): return True\ndef scale(n, k):\n    return L([0])\n",
+        "_A = type('A', (), {'__eq__': lambda s, o: True})\ndef scale(n, k):\n    return _A()\n",
+    ):
+        assert run_solution_isolated(hack, CANONICAL)["passed"] is False
+        assert run_solution_isolated(hack, CANONICAL, harden_returns=False)["passed"] is True
+    assert run_solution_isolated("def scale(n, k):\n    return n * k\n", CANONICAL)["passed"] is True
+
+
 # --- the verifier-fuzz gate -------------------------------------------------
 
 def test_fuzz_corpus_fully_contained():
