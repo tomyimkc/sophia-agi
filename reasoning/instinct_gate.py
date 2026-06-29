@@ -315,10 +315,17 @@ class TheoryVerdict:
         }
 
 
+#: Minimum correctness margin over the commit baseline to call a break-even. A bare ">"
+#: picks up Monte-Carlo noise near the crossover (the snr≈0.5 point straddles zero across
+#: seeds/trials); requiring a margin beyond that noise makes the reported break-even
+#: stable (=1.0 here) across seeds and trial counts.
+BREAKEVEN_MARGIN = 0.02
+
+
 def _breakeven_snr(sweep: list[dict[str, float]]) -> float:
-    """Lowest SNR at which instinct correctness first exceeds the commit baseline."""
+    """Lowest SNR at which instinct correctness *reliably* exceeds commit (by a margin)."""
     for row in sweep:
-        if row["instinct_correct"] > row["commit_correct"]:
+        if row["instinct_correct"] > row["commit_correct"] + BREAKEVEN_MARGIN:
             return row["snr"]
     return float("inf")
 

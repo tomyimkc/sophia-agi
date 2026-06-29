@@ -1,0 +1,22 @@
+Reflex ROC/SNR harness — self-consistency disagreement vs belief-revision oracle
+================================================================================
+dataset: eval/belief_revision/belief_revision_50_v1.jsonl  (N=50)   break-even SNR bar = 1.0
+
+SELF-CONSISTENCY REFLEX (synthetic sampler, competence=0.62)
+  base error rate      : 0.36
+  mean reflex | error  : 0.6111   | clean: 0.4955
+  d′ (detectability)   : 0.9643   AUC: 0.7326
+  clears break-even bar: False  (d′ ≥ 1.0)
+
+NOISE CONTROL (no-signal sampler — harness must NOT manufacture separation)
+  d′ : 0.0633   AUC: 0.5266   clears: False
+
+COMPETENCE SWEEP
+  comp=0.30: base_err 0.760  d′ 0.036  AUC 0.515  clears=False
+  comp=0.45: base_err 0.600  d′ 0.735  AUC 0.677  clears=False
+  comp=0.62: base_err 0.360  d′ 0.964  AUC 0.733  clears=False
+  comp=0.80: base_err 0.160  d′ 1.540  AUC 0.851  clears=True
+  comp=0.95: base_err 0.060  d′ 1.742  AUC 0.869  clears=True
+
+candidateOnly=True  level3Evidence=False
+boundary: synthetic-sampler d′; real-model self-consistency d′ is a gated next step.

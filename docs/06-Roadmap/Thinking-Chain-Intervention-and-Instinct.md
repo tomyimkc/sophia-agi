@@ -143,7 +143,7 @@ trajectory distribution —
 ```
 good reflex (snr=3): commit 0.533   late 0.552   instinct 0.726   (escalate 0.13)
 poor reflex (snr=0): commit 0.533                instinct 0.526   (false-interrupt 0.04)
-break-even reflex SNR ≈ 0.5
+break-even reflex SNR (d′) = 1.0   [stable across seeds/trials with a noise-margin estimator]
 ```
 
 Four falsifiable hypotheses, all confirmed in `--self-test` / `tests/test_instinct_gate.py`:
@@ -155,17 +155,49 @@ Four falsifiable hypotheses, all confirmed in `--self-test` / `tests/test_instin
 - **H2 — Early ≫ Late.** With a usable reflex, `instinct` (0.73) beats `late` self-correction
   (0.55) decisively — and `late` is barely better than doing nothing (commit 0.53), matching §1b.
 - **H3 — The ceiling is the reflex, not the policy.** There is a **finite, positive
-  break-even SNR (≈0.5)**. Below it, false interrupts re-route healthy chains and `instinct`
-  *under-performs `commit`* (0.526 < 0.533). The whole gain is bounded by the reflex's ROC —
-  the direct analogue of `deliberation_roofline`'s result that the ceiling is the *verifier's*
-  SNR, not compute. **This is the honest boundary: an instinct is only as good as the reflex
-  behind it, and a bad reflex is worse than none.**
+  break-even SNR = 1.0** (a detectability d′ of 1.0 between "wrong" and "fine"). Below ~0.5
+  the reflex *under-performs `commit`* (snr=0: 0.526 < 0.533); the 0.5–1.0 band is within
+  Monte-Carlo noise (no reliable gain — which is *why* the break-even estimator requires a
+  margin beyond noise, otherwise it reports an unstable 0.5). The whole gain is bounded by
+  the reflex's ROC — the direct analogue of `deliberation_roofline`'s result that the ceiling
+  is the *verifier's* SNR, not compute. **This is the honest boundary: an instinct is only as
+  good as the reflex behind it, and a bad reflex is worse than none.**
 - **H4 — Bounded.** The ko guard makes re-route terminate in a clean `escalate` (bounded
   re-routes), never an endless patch-forward loop.
 
 The negative result (H3) is the most valuable part — it tells you *not* to ship a reflex whose
 detector SNR you haven't measured, and it gives a concrete bar (SNR > break-even) for when the
 "change its mind" instinct is a net win.
+
+### 3a. Measuring the first real reflex against that bar
+
+H3 raises exactly one question for any candidate reflex: *does its separation between
+"chain is wrong" and "chain is fine" clear the break-even bar?*
+[`reasoning/instinct_reflex_eval.py`](../../reasoning/instinct_reflex_eval.py) is the go/no-go
+**harness** that answers it. It wires the first concrete reflex — **self-consistency
+disagreement** (`agent/calibration.py`, `1 − agreement`) — to the planted belief-revision
+oracle (`eval/belief_revision/belief_revision_50_v1.jsonl`) and reports a **d′** (the same
+unit as `instinct_gate`'s SNR) and **AUC**:
+
+```
+self-consistency reflex (synthetic sampler, N=50):  d′ 0.96   AUC 0.73   clears d′=1.0? NO
+competence sweep:  comp 0.45 → d′ 0.74   0.62 → d′ 0.96   0.80 → d′ 1.54   0.95 → d′ 1.74
+no-signal control:  d′ 0.06   AUC 0.53   (the harness manufactures no separation)
+```
+
+**Honest finding (candidate):** self-consistency disagreement is a *directionally real* reflex
+(errored items score higher, AUC 0.73, control collapses to chance) but at a *moderately
+competent* reasoner it sits **just under** the break-even bar (d′ 0.96 < 1.0) — it only clears
+once the underlying reasoner is fairly competent (d′ 1.54 at competence 0.80). So self-
+consistency alone is a *borderline* first reflex; the reflex bus (§2) will likely need a
+second, independent detector (verifier mismatch / grounding loss) to clear the bar reliably at
+realistic competence.
+
+**Critical caveat:** the d′ above is the *synthetic sampler's*, present to validate the harness
+end-to-end and demonstrate the go/no-go — it is **not** a measured claim about a real model. The
+sampler is one pluggable function; a real model drops in via
+`run_reflex_eval(..., sampler=my_model_sampler)`, and that real number is the gated next step
+below, not asserted here. The *harness* is the deliverable; `canClaimAGI` stays `false`.
 
 ---
 
@@ -180,9 +212,12 @@ To graduate this from `candidateOnly` to a real eval under the Instrumented Eval
   [`eval/consequence_cascade/consequence_cascade_40_v1.jsonl`](../../eval/consequence_cascade/consequence_cascade_40_v1.jsonl)
   (when a re-route should `escalate`). These give planted oracles for re-route *correctness*.
 - **The real reflex to wire first:** self-consistency disagreement
-  (`agent/calibration.py`) — label-free, cheap, already built. Measure its ROC against the
-  planted error step; estimate its empirical SNR; check it clears the break-even bar this model
-  predicts *before* trusting it.
+  (`agent/calibration.py`) — label-free, cheap, already built. The measurement harness for it
+  already exists — [`reasoning/instinct_reflex_eval.py`](../../reasoning/instinct_reflex_eval.py)
+  (§3a) — and reports d′/AUC against the break-even bar. The gated step is to swap its synthetic
+  `sampler` for a real multi-sample model run and read off the *real* d′ before trusting the
+  reflex. §3a already shows self-consistency is borderline at moderate competence, so plan a
+  **second independent detector** for the bus.
 - **Primary metric:** final-answer correctness uplift of `instinct` over both `commit` and
   `late`, with token-cost as a co-primary (the re-route tax must be reported, not hidden).
 - **Pass bar (no-overclaim):** ≥2 independent judge families, judge ≠ subject, ≥3 seeds, 95% CI
@@ -215,8 +250,12 @@ To graduate this from `candidateOnly` to a real eval under the Instrumented Eval
 - "Change its mind early instead of patching forward" is the **right** instinct: the model
   confirms early re-route (0.73) ≫ late self-correction (0.55 ≈ commit 0.53, i.e. doing
   nothing), matching the published weakness of intrinsic self-correction.
-- The hard part is the **reflex**: there is a measurable break-even SNR below which an instinct
-  *hurts*. Ship the reflex only after its ROC is measured against that bar.
+- The hard part is the **reflex**: there is a measurable break-even SNR (d′ = 1.0) below which
+  an instinct *hurts*. Ship the reflex only after its ROC is measured against that bar — and the
+  measurement harness for that go/no-go already exists (`reasoning/instinct_reflex_eval.py`).
+- First reflex measured (synthetic, harness-validation): **self-consistency disagreement is
+  borderline** — d′ 0.96 at moderate competence, just under the bar; it likely needs a second
+  independent detector to clear d′=1.0 reliably. Real-model d′ is the gated next step.
 - This repo already has the *policy* substrate (ko-escalate, graded decision, AGM belief
   revision, consequence gate). The missing pieces are the **reflex bus** and the **interrupt
   controller** — and a no-overclaim eval, datasets for which already exist.

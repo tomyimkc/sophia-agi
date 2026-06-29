@@ -19,7 +19,7 @@ SNR SWEEP (instinct vs commit vs late)
 THEORY VERDICT
   H1 compounding (don't plough ahead) : True
   H2 early reroute beats late correct : True
-  H3 break-even SNR (reflex = ceiling): 0.5
+  H3 break-even SNR (reflex = ceiling): 1.0
   H4 ko-bounded escalate              : True
   candidateOnly=True  level3Evidence=False
   boundary: synthetic planted-truth model of a reflex policy; not AGI proof.
