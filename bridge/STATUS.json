@@ -1,8 +1,10 @@
 {
-  "updatedAt": "2026-06-29T08:59:34Z",
+  "updatedAt": "2026-06-29T09:00:12Z",
   "host": "spark-2f2d",
-  "running": null,
-  "pendingCommands": [],
+  "running": "2026-06-29-nvfp4-v5-train-07",
+  "pendingCommands": [
+    "2026-06-29-nvfp4-v5-train-07"
+  ],
   "trainwatch": [
     {
       "id": "a92be4e1",
