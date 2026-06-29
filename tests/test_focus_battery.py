@@ -25,6 +25,14 @@ def test_battery_is_powered():
     assert b["powered"] is True
 
 
+def test_private_split_is_powered_and_sealed():
+    # The held-out private split must itself be powered so a sealed-split run can be valid.
+    b = build_battery()
+    assert b["privateN"] >= 100
+    assert b["mdeAtPrivateN"] <= MDE_TARGET
+    assert b["privatePowered"] is True
+
+
 def test_tasks_are_unique_and_have_a_key():
     tasks = build_tasks()
     assert len({t["goal"] for t in tasks}) == len(tasks)  # all distinct

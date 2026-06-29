@@ -637,8 +637,9 @@ def _run_real_from_env(args) -> int:
               file=sys.stderr)
         return 2
     subject_model = os.environ.get("FOCUS_SUBJECT_MODEL", "deepseek-chat")
+    subject_temp = float(os.environ.get("FOCUS_SUBJECT_TEMP", "0.0"))  # > 0 for genuine seed variance
     subject_id = f"deepseek:{subject_model}"
-    subject = ds_complete(model=subject_model, max_tokens=160)
+    subject = ds_complete(model=subject_model, temperature=subject_temp, max_tokens=160)
     battery = load_powered_battery(args.split) if args.split else None
     if args.limit and battery:
         battery = battery[: args.limit]
