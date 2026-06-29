@@ -33,7 +33,7 @@ import time
 import urllib.request
 from pathlib import Path
 
-ALLOWLIST = {"--dry-run", "--bench-a", "--bench-b", "--all", "--execute", "--run-train"}
+ALLOWLIST = {"--dry-run", "--bench-a", "--bench-b", "--bench-virtues", "--all", "--execute", "--run-train"}
 GATED = {"--execute", "--run-train"}  # require approvedBy
 RUNNER = "scripts/run_local_benchmarks.sh"
 MAX_TAIL = 64 * 1024  # cap stdout stored in the result
