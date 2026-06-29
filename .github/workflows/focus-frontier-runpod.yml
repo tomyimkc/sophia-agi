@@ -1,0 +1,125 @@
+name: focus-frontier-runpod
+
+# Manual-only launcher for the Prosoche Focus-Efficiency-Frontier (thesis §5).
+#
+# Dispatch-only: never runs on push/PR/schedule. Two modes:
+#   * offline (default) — runs the deterministic mechanism + routing harness on THIS
+#     runner (NO GPU, NO pod, NO secret, NO cost). Validates the whole path and uploads
+#     the honest NO-GO report. This is what ships today.
+#   * live — rents a paid RunPod GPU pod via tools/runpod_focus_frontier.py, runs the
+#     harness on it, copies the report back, and ALWAYS deletes the pod. The *measured*
+#     3-arm token-per-solved-task eval (live model + >=2 judge families over a
+#     decontaminated task set) is the model-gated OPEN item — this lane validates the
+#     pod round-trip and returns the honest NO-GO report; it does NOT fabricate a number.
+#
+# PREREQUISITES for live (only you can do these):
+#   1. Add a VALID RunPod API key as repo secret RUNPOD_API_KEY (Settings -> Secrets).
+#   2. Your RunPod account must have GPU credit. A pod costs real money while it runs.
+# The secret is never printed (redacted) and the pod self-deletes (finally + watchdog).
+
+on:
+  workflow_dispatch:
+    inputs:
+      remote_mode:
+        description: 'offline = free local mechanism/routing smoke; live = rent a paid GPU pod'
+        required: true
+        default: 'offline'
+        type: choice
+        options: [offline, live]
+      confirm:
+        description: 'Type RUN to confirm a PAID pod (live mode only; ignored for offline)'
+        required: false
+        default: ''
+      eval_entrypoint:
+        description: '(live) path to the measured 3-arm eval tool once it exists; runs on the pod if set'
+        required: false
+        default: ''
+      gpu_type:
+        description: 'RunPod GPU type preference (comma-separated; availability picks one)'
+        required: false
+        default: 'NVIDIA A100 80GB PCIe,NVIDIA A100-SXM4-80GB,NVIDIA H100 80GB HBM3,NVIDIA H100 PCIe'
+      interruptible:
+        description: 'Use cheaper spot/interruptible pod'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['true', 'false']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: focus-frontier-runpod-${{ github.event.inputs.remote_mode }}
+  cancel-in-progress: false
+
+jobs:
+  focus-frontier:
+    environment: runpod-paid
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      # --- OFFLINE: free, no pod, no secret -------------------------------------- #
+      - name: Offline mechanism/routing smoke (no pod, no cost)
+        if: ${{ github.event.inputs.remote_mode == 'offline' }}
+        run: |
+          python tools/runpod_focus_frontier.py --local --remote-mode offline
+          python tools/run_focus_efficiency_frontier.py --check
+          python tools/run_prosoche_robustness.py --write
+          python tools/run_prosoche_robustness.py --check
+          echo "Offline frontier smoke OK (NO-GO by design; the measured eval is the model-gated open item)."
+
+      # --- LIVE: paid pod, gated ------------------------------------------------- #
+      - name: Preflight — confirm + secret present (live only)
+        if: ${{ github.event.inputs.remote_mode == 'live' }}
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "RUN" ]; then
+            echo "::error::live mode requires input 'confirm' = RUN to acknowledge GPU cost. Aborting (no pod)."
+            exit 1
+          fi
+          if [ -z "$RUNPOD_API_KEY" ]; then
+            echo "::error::Repo secret RUNPOD_API_KEY is not set. Add a VALID key in Settings -> Secrets. Aborting (no pod)."
+            exit 1
+          fi
+          echo "Preflight OK: confirmed, secret present."
+
+      - name: Dry-run payload (no pod, no cost)
+        if: ${{ github.event.inputs.remote_mode == 'live' }}
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          python tools/runpod_focus_frontier.py --dry-run --remote-mode live \
+            --branch "${{ github.ref_name }}" \
+            --eval-entrypoint "${{ github.event.inputs.eval_entrypoint }}" \
+            --gpu-type "${{ github.event.inputs.gpu_type }}"
+
+      - name: Launch RunPod focus-frontier (rents GPU, runs, deletes pod)
+        if: ${{ github.event.inputs.remote_mode == 'live' }}
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          INTERRUPTIBLE=""
+          if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
+          python tools/runpod_focus_frontier.py --yes --remote-mode live \
+            --branch "${{ github.ref_name }}" \
+            --eval-entrypoint "${{ github.event.inputs.eval_entrypoint }}" \
+            --gpu-type "${{ github.event.inputs.gpu_type }}" \
+            $INTERRUPTIBLE
+
+      - name: Upload focus-frontier artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: focus-frontier-reports
+          path: |
+            agi-proof/benchmark-results/prosoche/focus-efficiency.PENDING.public-report.json
+            agi-proof/benchmark-results/prosoche/prosoche-robustness.json
+          if-no-files-found: warn
