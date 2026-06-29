@@ -50,10 +50,11 @@
 > workflow run on the farm.
 >
 > **Now also run (fourth pass) — a REAL-model pilot.** `--real` ran the 3-arm eval
-> with a live subject (DeepSeek) and **two independent judge families** (an
-> Anthropic-class frontier model + a Qwen model, via llmhub): on the 9-task battery the
-> anchored arm solved 0.44 vs **0.00** for both baselines (they drop the on-goal key),
-> efficiency Δ −52.8 (95% CI [−87.2, −18.1] excludes 0), inter-judge **κ = 1.0**, all
+> with a live subject (DeepSeek) and **three independent judge families** spanning three
+> jurisdictions (an Anthropic-class frontier model + a Qwen model via llmhub; a Mistral
+> model via OpenRouter): on the 9-task battery the anchored arm solved 0.44 vs **0.00**
+> for both baselines (they drop the on-goal key), efficiency Δ −52.8 (95% CI [−87.2, −18.1]
+> excludes 0), **min pairwise inter-judge κ = 0.57** (all three pairs clear ≥0.40), all
 > guardrails held. Every *effect* criterion passed — and the gate still returns **NO-GO**
 > on the pre-registered power/decontam floor (N=9 ≪ 100, single seed, not decontaminated).
 > A real candidate signal, not a validated result (`focus-frontier-eval.pilot.public-report.json`;

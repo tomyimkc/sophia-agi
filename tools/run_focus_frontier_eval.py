@@ -379,8 +379,7 @@ def run_real(subject, subject_id: str, judges: list, *, seeds: int = 1, cache=No
     judge_families = len(set(families))
 
     arm_rows: dict[str, list] = {a: [] for a in ARMS}
-    j0_labels: list[str] = []
-    j1_labels: list[str] = []
+    judge_label_lists: list[list[str]] = [[] for _ in judges]  # per-judge labels on the anchored arm
 
     def _ask(role, model, system, user):
         if cache is not None:
@@ -407,8 +406,9 @@ def run_real(subject, subject_id: str, judges: list, *, seeds: int = 1, cache=No
                     lbl = _judge_label(jfn, q, key, answer)
                     votes.append(lbl)
                 solved = all(v == "solved" for v in votes)
-                if arm == "prosoche-anchored" and len(votes) >= 2:
-                    j0_labels.append(votes[0]); j1_labels.append(votes[1])
+                if arm == "prosoche-anchored":
+                    for ji, v in enumerate(votes):
+                        judge_label_lists[ji].append(v)
                 arm_rows[arm].append({"id": f"{t['id']}#s{seed}", "tokens": packed["tokens"],
                                       "solved": solved, "keptSafety": packed["keptSafety"],
                                       "goalShift": t["goalShift"], "votes": votes})
@@ -424,8 +424,18 @@ def run_real(subject, subject_id: str, judges: list, *, seeds: int = 1, cache=No
     arms = {a: _arm_summary(a) for a in ARMS}
     anchored, pp = arms["prosoche-anchored"], arms["priority-packed"]
     primary = _paired_token_delta(anchored, pp, seed=0)
-    kappa = cohen_kappa(j0_labels, j1_labels)
-    ac1 = gwet_ac1(j0_labels, j1_labels)
+    # Pairwise inter-judge agreement across ALL family pairs; the gate uses the MIN
+    # pairwise kappa (most conservative) so a single disagreeing family cannot be
+    # hidden behind an agreeing pair.
+    import itertools
+
+    pair_kappas: dict[str, "float | None"] = {}
+    for (i, fi), (j, fj) in itertools.combinations(enumerate(families), 2):
+        pair_kappas[f"{fi}|{fj}"] = cohen_kappa(judge_label_lists[i], judge_label_lists[j])
+    present = [k for k in pair_kappas.values() if k is not None]
+    kappa = min(present) if present else None
+    ac1 = gwet_ac1(judge_label_lists[0], judge_label_lists[1]) if len(judge_label_lists) >= 2 else None
+    n_agreement = len(judge_label_lists[0]) if judge_label_lists else 0
     success_held = anchored["solvedRate"] >= pp["solvedRate"] - 0.02
     antifix_held = (anchored["goalShiftSolvedRate"] or 0.0) >= (pp["goalShiftSolvedRate"] or 0.0)
     safety_pruned = anchored["safetyPrunedCount"]
@@ -455,8 +465,9 @@ def run_real(subject, subject_id: str, judges: list, *, seeds: int = 1, cache=No
         "seeds": seeds,
         "arms": {a: strip(arms[a]) for a in ARMS},
         "primaryDelta": primary,
-        "interJudge": {"cohenKappa": kappa, "gwetAC1": ac1,
-                       "n": len(j0_labels), "note": "across the first two judge families on the anchored arm"},
+        "interJudge": {"minPairwiseCohenKappa": kappa, "pairwiseCohenKappa": pair_kappas,
+                       "gwetAC1": ac1, "n": n_agreement,
+                       "note": "pairwise across all judge families on the anchored arm; gate uses the min"},
         "guardrails": {"successNonInferior": success_held, "antiFixationHeld": antifix_held,
                        "safetyPruned": safety_pruned},
         "verdict": "NO-GO" if failures else "GO",
@@ -534,10 +545,20 @@ def _env_judges():
     jb_family = os.environ.get("FOCUS_JUDGE_B_FAMILY", "qwen")
     if not ja_model:
         return None
-    return [
+    judges = [
         (f"llmhub:{ja_family}", hub_complete(model=ja_model, max_tokens=8)),
         (f"llmhub:{jb_family}", hub_complete(model=jb_model, max_tokens=8)),
     ]
+    # Optional third, INDEPENDENT family via OpenRouter (e.g. a non-US Mistral model).
+    # Model id read from env so no specific id is hardcoded/committed; the artifact
+    # records only the family label.
+    jc_model = os.environ.get("FOCUS_JUDGE_C_MODEL")
+    if jc_model and os.environ.get("OPENROUTER_API_KEY"):
+        from agent.openrouter_client import make_complete as or_complete
+
+        jc_family = os.environ.get("FOCUS_JUDGE_C_FAMILY", "mistral")
+        judges.append((f"openrouter:{jc_family}", or_complete(model=jc_model, max_tokens=8)))
+    return judges
 
 
 def _run_real_from_env(args) -> int:

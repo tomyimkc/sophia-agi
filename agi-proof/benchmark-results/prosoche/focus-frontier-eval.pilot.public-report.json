@@ -42,15 +42,21 @@
     "successNonInferior": true
   },
   "interJudge": {
-    "cohenKappa": 1.0,
     "gwetAC1": 1.0,
+    "minPairwiseCohenKappa": 0.5714285714285714,
     "n": 9,
-    "note": "across the first two judge families on the anchored arm"
+    "note": "pairwise across all judge families on the anchored arm; gate uses the min",
+    "pairwiseCohenKappa": {
+      "llmhub:anthropic|llmhub:qwen": 1.0,
+      "llmhub:anthropic|openrouter:mistral": 0.5714285714285714,
+      "llmhub:qwen|openrouter:mistral": 0.5714285714285714
+    }
   },
-  "judgeFamilies": 2,
+  "judgeFamilies": 3,
   "judges": [
     "llmhub:anthropic",
-    "llmhub:qwen"
+    "llmhub:qwen",
+    "openrouter:mistral"
   ],
   "mode": "real",
   "primaryDelta": {
