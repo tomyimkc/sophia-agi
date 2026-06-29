@@ -383,7 +383,7 @@ def _run_gpu(args: argparse.Namespace) -> int:
         train_rows = [{**r, "prompt": step_reward.STEP_INSTRUCTION + r["prompt"]} for r in train_rows]
     ds = Dataset.from_list(train_rows)  # columns kept: remove_unused_columns=False
 
-    model_init_kwargs: dict = {"trust_remote_code": False}
+    model_init_kwargs: dict = {"trust_remote_code": False, "device_map": "cuda"}
     if four_bit:
         model_init_kwargs["quantization_config"] = BitsAndBytesConfig(
             load_in_4bit=True, bnb_4bit_quant_type="nf4",
@@ -398,7 +398,7 @@ def _run_gpu(args: argparse.Namespace) -> int:
         per_device_train_batch_size=args.batch_size,
         gradient_accumulation_steps=args.grad_accum,
         num_generations=args.num_generations,
-        max_prompt_length=args.max_prompt_len,
+        # max_prompt_length omitted for this trl version (handled by tokenizer / data prep for --vllm none)
         max_completion_length=args.max_completion_len,
         num_train_epochs=args.epochs,
         max_steps=args.max_steps,  # >0 bounds a smoke run (overrides epochs)
@@ -410,6 +410,9 @@ def _run_gpu(args: argparse.Namespace) -> int:
         model_init_kwargs=model_init_kwargs,
         use_vllm=use_vllm,
     )
+    # filter to only supported fields in this trl/GRPOConfig version
+    cfg_fields = set(getattr(GRPOConfig, "__dataclass_fields__", {}))
+    grpo_kwargs = {k: v for k, v in grpo_kwargs.items() if k in cfg_fields or k in ["output_dir", "learning_rate", "per_device_train_batch_size", "gradient_accumulation_steps", "num_train_epochs", "max_steps", "beta", "logging_steps", "save_strategy", "report_to", "remove_unused_columns", "model_init_kwargs", "use_vllm"]}
     if use_vllm:
         # vllm_mode (colocate/server selector) only exists in trl >= 0.17; older
         # pinned trl (0.16.x) does in-process colocate via use_vllm alone and
