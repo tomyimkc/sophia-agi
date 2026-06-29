@@ -47,3 +47,4 @@
 {"utc":"20260629T051348Z","bench":"nvfp4-quant-invariants","file":"nvfp4-quant-invariants-20260629T051348Z.json"}
 {"utc":"20260629T052207Z","bench":"gsm8k-exactmatch","file":"gsm8k-exactmatch-20260629T052207Z.json"}
 {"utc":"20260629T052435Z","bench":"seib100","file":"seib100-20260629T052435Z.json"}
+{"utc":"20260629T053044Z","bench":"lean-expiter","file":"lean-expiter-20260629T053044Z.json"}
