@@ -1,0 +1,9 @@
+# Runtime/generated outputs — regenerate with the AATS harnesses (Makefile: aats-experiments).
+# Tracked: canary-set.jsonl (source), measurement_spec.json (pre-registration), and the
+# byte-stable *.PENDING.public-report.json artifacts. Everything below is reproducible output.
+breaker-state.json
+verify-generate-census.public-report.json
+ensemble-agreement.public-report.json
+conformal-calibration.public-report.json
+canary-breaker.public-report.json
+_test-tmp/
