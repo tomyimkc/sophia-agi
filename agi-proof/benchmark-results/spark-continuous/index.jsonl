@@ -52,3 +52,4 @@
 {"utc":"20260629T053209Z","bench":"roofline-fp4","file":"roofline-fp4-20260629T053209Z.json"}
 {"utc":"20260629T053224Z","bench":"nvfp4-quant-invariants","file":"nvfp4-quant-invariants-20260629T053223Z.json"}
 {"utc":"20260629T054059Z","bench":"gsm8k-exactmatch","file":"gsm8k-exactmatch-20260629T054059Z.json"}
+{"utc":"20260629T054319Z","bench":"seib100","file":"seib100-20260629T054319Z.json"}
