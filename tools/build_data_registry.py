@@ -70,6 +70,7 @@ def _kind_of(rel_parent: str, doc: dict) -> str:
 # Upstream-declaring manifest fields -> edge relation. Edges are derived ONLY from what a
 # manifest explicitly declares; an absent edge means "no declared upstream", not "no upstream".
 _LINEAGE_FIELDS: tuple[tuple[str, str], ...] = (
+    ("derivedFrom", "derivedFrom"),
     ("baseModel", "fineTunedFrom"),
     ("teacher", "teacher"),
     ("teacherRun", "teacher"),

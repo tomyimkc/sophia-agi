@@ -1,4 +1,6 @@
 {
+  "derivedFrom": "training/examples",
+  "decontaminated_against": "tests/benchmark-*.json",
   "totalExamples": 528,
   "trainCount": 439,
   "holdoutCount": 89,

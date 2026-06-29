@@ -39,5 +39,6 @@
   "targetSize": "500-1000 (plan)",
   "sizeBound": "v1 is bounded by the current seed corpus (~30 attribution records, 8 religion records, 21 myth records). The rows are non-redundant; padding to 500 would mean near-duplicates. The set reaches the 500-1000 band as the M2 corpus enrichment adds source records. This is an honest bound, not a silent truncation.",
   "note": "High-headroom held-out market benchmark for Sophia-Wisdom-4B vs same-size open models. Constructed traps; headroom PROVEN only by running tools/run_same_size_market_baselines.py. NEVER use for training/RL.",
-  "decontamination": "Wired into tools/build_local_sophia_dataset.py --check; disjoint from data/reference_holdout_traps.json (asserted by --check)."
+  "decontamination": "Wired into tools/build_local_sophia_dataset.py --check; disjoint from data/reference_holdout_traps.json (asserted by --check).",
+  "decontaminated_against": "data/reference_holdout_traps.json"
 }
