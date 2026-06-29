@@ -80,23 +80,50 @@ something we have — just not productized as an extracted event/entity index.
    auto-merged. → entity index shipped (`build_entity_index`); promotion path = TODO.
 4. **Surface the retrieval trace with per-hop provenance.** Emit each unit + why it
    matched + its effective rank + the hop that contributed it. SAG's search-trace, but
-   provenance-colored. → TODO (the `path` / `provenance_floor` fields on `RecallHit`
-   already carry the data).
-5. **Decontaminated multi-hop QA benchmark (HotpotQA / 2Wiki / MuSiQue).** Report
-   Recall@K like SAG, run it through `assert_decontam`, pair it with the
-   provenance-faithfulness metric. Converts "trust me" into a gated, falsifiable claim.
-   → TODO.
+   provenance-colored. → **shipped:** `okf/trace.py` (`trace_records` / `format_trace`),
+   CLI `python tools/eval_okf_recall.py --trace "<query>"`.
+5. **Decontaminated multi-hop QA benchmark.** → **shipped (first-party):**
+   `tools/eval_okf_recall.py` over 10 self-authored, decontaminated probes on `wiki/`.
+   The standard HotpotQA / 2Wiki / MuSiQue datasets remain a **gated TODO**. See §5 for
+   the honest result.
 6. **(Optional, off critical path) Provenance-colored graph viz.** Color nodes by
    `effectiveConfidenceRank`; draw contradiction-ledger edges. SAG literally cannot
    render this — it has no provenance.
+
+## 4a. Benchmark result (first-party, honest)
+
+`python tools/eval_okf_recall.py` (10 decontaminated probes over `wiki/`, fully offline):
+
+| metric | value | reading |
+|---|---|---|
+| decontam | CLEAN | every probe query is shingle-disjoint from its gold page body |
+| Recall@3 / @5 | 1.0 / 1.0 | gold answer page is retrieved |
+| MRR | 0.75 | gold is usually near the top |
+| **provenance-faithfulness** | **1.0** | the `capped` verdict matches the corpus's ground-truth provenance on every retrieved gold |
+| ablation R@5 | direct 1.0 → 2-hop 1.0 | multi-hop is **neutral** here |
+| multi-hop reach | 0.0 | every gold was found by direct lexical match |
+
+**What this proves and what it does not.** The validated contribution is the
+provenance **flooring** (faithfulness 1.0) — extraction carries the effective rank
+through, and a path is correctly capped by its weakest hop. The multi-hop **recall
+lift** is *not* demonstrated: on this small, templated corpus direct lexical recall
+already saturates, so graph expansion is not load-bearing for recall. An earlier naive
+expansion actually *degraded* recall (2-hop 0.8 < direct 1.0) by flooding top-k with
+tradition-hub siblings; that was fixed with inverse-frequency (`1/df`) bridge weighting
+(hub bridges add ~0) — an honest fix, not a tuned number. The case where multi-hop is
+*necessary* (a strong page reachable only through a weak bridge) is proven in the unit
+tests, not yet at benchmark scale. Logged in the failure ledger
+(`okf-multihop-recall-lift-not-shown-firstparty-2026-06-29`). Do not quote R@5=1.0 as a
+capability headline — it is first-party and lexically saturated.
 
 ## 5. One-line takeaway
 
 Steal SAG's **event/entity extraction + multi-hop entity index**; ignore its serving
 stack. The move that is *ours* is to run that recall **through the confidence-propagation
-and contradiction machinery** — retrieval that recalls like SAG and refuses to launder
-provenance like nothing else does. Items 1–2 are the spike in `okf/extract.py`; item 5
-is how we prove it without overclaiming.
+and contradiction machinery** — retrieval that refuses to launder provenance like nothing
+else does. Items 1–4 are shipped (`okf/extract.py`, `okf/trace.py`,
+`tools/eval_okf_recall.py`); the provenance-flooring is validated first-party, and the
+multi-hop recall-lift + third-party datasets stay gated TODOs.
 
 ## 6. Try the spike
 

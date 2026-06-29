@@ -38,8 +38,20 @@ from okf.schema import CONFIDENCE_RANK, confidence_rank
 # CONFIDENCE_RANK ladder in okf.schema so a drift there is caught by the tests.
 CAPPED_RANK = 1
 
+# Frontmatter edge keys folded into a page's entities (the typed association/lineage
+# graph). NEGATIVE signals (doNotAttributeTo / doNotMergeWith) are deliberately excluded:
+# they assert "must not associate", so indexing them for recall would be exactly backwards.
+_POSITIVE_EDGE_KEYS = okf_graph.LINK_EDGE_KEYS
+
 _SENTENCE_SPLIT = re.compile(r"(?<=[.!?。！？])\s+|\n+")
 _TOKEN = re.compile(r"[a-z0-9]+")
+# Function words stripped from QUERY tokens only (never from indexed text/entities) so a
+# query like "what later thinkers extend the teachings of X" does not score every page
+# that merely contains "the"/"of". Deliberately small and domain-neutral.
+_STOP = frozenset(
+    "a an and are as at be by for from in into is it its of on or that the their "
+    "these this to was were what which who whom whose with about over later".split()
+)
 # Lines we never treat as an event sentence: markdown headings, list bullets that are
 # pure metadata, and the generated provenance footer.
 _SKIP_LINE = re.compile(r"^\s*(#|_Provenance frontmatter|<!--)")
@@ -85,6 +97,37 @@ def is_capped(floor: int) -> bool:
 
 def _tokens(text: str) -> "set[str]":
     return set(_TOKEN.findall((text or "").lower()))
+
+
+def _query_tokens(text: str) -> "set[str]":
+    """Query tokens with function words removed (see _STOP)."""
+    return _tokens(text) - _STOP
+
+
+def _page_edge_entities(page) -> "list[str]":
+    """Frontmatter-derived entities for a page: typed forward edges + author + tradition.
+
+    Uses *frontmatter* edges only (``edge_targets``), never body links — body links are
+    handled per-sentence. The real wiki authors its graph in ``links:``/typed keys rather
+    than inline ``[[wikilinks]]``, so without this a frontmatter-linked corpus would
+    collapse to disconnected page-level units and lose all multi-hop reach. Negative
+    signals (``doNotAttributeTo``/``doNotMergeWith``) are never included.
+    """
+    ents: list[str] = []
+
+    def _add(slug) -> None:
+        s = wikilinks.normalize_target(str(slug))
+        if s and s != page.id and s not in ents:
+            ents.append(s)
+
+    for key in _POSITIVE_EDGE_KEYS:
+        for target in page.edge_targets(key):
+            _add(target)
+    if page.meta.get("attributedAuthor"):
+        _add(page.meta["attributedAuthor"])
+    if page.meta.get("tradition"):
+        _add(page.meta["tradition"])
+    return ents
 
 
 def _sentences(body: str) -> "list[str]":
@@ -144,11 +187,15 @@ def extract_events(pages, graph: "okf_graph.Graph | None" = None) -> "list[Event
             events.append(_mk(n, sentence, [pid] + links))
             n += 1
 
-        if n == 0:
-            # No linked sentence — keep one page-level unit so the page is recallable.
+        # Spine unit carrying the page's frontmatter edges. Emitted when the page has no
+        # body-linked sentence (so it stays recallable) OR when its frontmatter contributes
+        # entities beyond the page itself (so the typed graph — author, tradition, links —
+        # is indexed even on pages that also have body-linked sentences).
+        fm = _page_edge_entities(page)
+        if n == 0 or fm:
             paras = _sentences(page.body)
             text = paras[0] if paras else (page.meta.get("canonicalTitleEn") or pid)
-            events.append(_mk(0, text, [pid]))
+            events.append(_mk(n, text, [pid] + fm))
 
     return events
 
@@ -196,7 +243,17 @@ def multi_hop_recall(
         index = build_entity_index(events)
     by_id = {ev.id: ev for ev in events}
 
-    qtokens = _tokens(query)
+    # Inverse-frequency weight per bridge entity: a hub like a tradition (mentioned by
+    # many pages) is a weak bridge and must not flood top-k with its siblings; a rare
+    # shared entity is a strong, specific bridge. df = distinct pages mentioning the
+    # entity; bonus = 1/df in (0, 1]. This is what stops graph expansion from drowning
+    # direct lexical hits on an over-connected corpus.
+    def _bridge_bonus(ent: str) -> float:
+        pages_with = {eid.split("::")[0] for eid in index.get(ent, ())}
+        df = len(pages_with) or 1
+        return 1.0 / df
+
+    qtokens = _query_tokens(query)
     # Direct matches seed the frontier.
     best: dict[str, RecallHit] = {}
     frontier: dict[str, tuple] = {}  # entity slug -> (floor_so_far, path_so_far)
@@ -224,8 +281,9 @@ def multi_hop_recall(
                 new_floor = min(floor, ev.confidence_rank)  # <-- provenance can only weaken
                 new_path = path + (ent,)
                 base = _lexical_score(qtokens, ev)
-                # expansion reward: connectivity even when lexical overlap is thin
-                score = (base + 1.0) * (hop_decay ** hop)
+                # connectivity reward, scaled by how *specific* the bridge entity is
+                # (1/df). Hub bridges add ~0; rare bridges add up to 1. Then hop-decayed.
+                score = (base + _bridge_bonus(ent)) * (hop_decay ** hop)
                 prev = best.get(eid)
                 # Never downgrade a direct (hop-0) lexical match to an expansion hop, even
                 # if the expansion score is nominally higher — a direct hit keeps its own

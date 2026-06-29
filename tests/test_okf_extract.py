@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from okf import extract, frontmatter, graph as okf_graph, page as okf_page  # noqa: E402
+from okf import extract, frontmatter, graph as okf_graph, page as okf_page, trace as okf_trace  # noqa: E402
 
 
 def _write(dir_: Path, rel: str, meta: dict, body: str = "body") -> None:
@@ -127,6 +127,35 @@ def test_is_capped_threshold_matches_schema_ladder() -> None:
     assert extract.is_capped(extract.CONFIDENCE_RANK["consensus"]) is False
 
 
+def test_trace_records_carry_provenance() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        d = Path(tmp)
+        _corpus(d)
+        events = extract.extract_events(okf_page.load_pages(d))
+        hits = extract.multi_hop_recall("legendary text", events, max_hops=2, top_k=10)
+        recs = okf_trace.trace_records(hits)
+        assert recs and recs[0]["rank"] == 1
+        for r in recs:
+            # every trace record exposes the provenance verdict and a retrieval reason
+            assert set(r) >= {"page", "provenanceFloor", "capped", "why", "path"}
+            assert isinstance(r["capped"], bool)
+            assert (r["provenanceFloor"] <= extract.CAPPED_RANK) == r["capped"]
+        # the legendary bridge page is reported capped in the trace
+        b = next(r for r in recs if r["page"] == "b")
+        assert b["capped"] is True and b["why"] == "direct lexical match"
+
+
+def test_format_trace_flags_capped() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        d = Path(tmp)
+        _corpus(d)
+        events = extract.extract_events(okf_page.load_pages(d))
+        hits = extract.multi_hop_recall("legendary text", events, top_k=5)
+        out = okf_trace.format_trace("legendary text", hits)
+        assert "recall trace" in out and "CAPPED" in out
+        assert "rest on weak provenance" in out
+
+
 def test_runs_on_real_wiki() -> None:
     # Smoke test against the committed wiki/ corpus (no fixtures): extraction + recall
     # complete and every unit carries a valid rank.
@@ -148,6 +177,8 @@ def main() -> int:
     test_multi_hop_floors_provenance_through_legendary_bridge()
     test_direct_consensus_hit_is_not_capped()
     test_is_capped_threshold_matches_schema_ladder()
+    test_trace_records_carry_provenance()
+    test_format_trace_flags_capped()
     test_runs_on_real_wiki()
     print("test_okf_extract: OK")
     return 0
