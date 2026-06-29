@@ -129,10 +129,15 @@ def _intent_of(prompt: str) -> str:
 
 
 def _receiver_role(receiver: str) -> str:
-    """Normalise a receiver id (e.g. 'parent.sub1-review-the-odds') to a role slug."""
-    tail = receiver.split("-", 1)[1] if "-" in receiver.split(".")[-1] else receiver.split(".")[-1]
-    words = re.findall(r"[a-z]+", tail.lower())
-    return "-".join(words[:2]) if words else (receiver or "agent")
+    """Normalise a child id to a role slug, robust to a hyphenated parent id.
+
+    Child ids look like ``<parent>.sub<i>-<label>`` (e.g. ``swarm-0.sub1-legal``), so the
+    role lives in the LAST dot-segment; we take its content words and drop the ``sub``
+    delegation marker. Operating on the full string would let a hyphen in the parent id
+    (``swarm-0``) bleed into the role."""
+    segment = receiver.split(".")[-1] if receiver else ""
+    words = [w for w in re.findall(r"[a-z]+", segment.lower()) if w != "sub"]
+    return "-".join(words[:2]) if words else (segment or receiver or "agent")
 
 
 def a2a_training_rows(events: list[dict]) -> list[A2ATrainingRow]:
