@@ -1,12 +1,12 @@
 {
   "version": "0.11.0",
-  "generated": "2026-06-29T21:48:41",
+  "generated": "2026-06-30T05:31:36",
   "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
   "failureLedgerSummary": {
     "openCount": 98,
     "byStatus": {
       "open": 98,
-      "resolved": 45,
+      "resolved": 46,
       "other": 23
     },
     "structurallyValid": true,
