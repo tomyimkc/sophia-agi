@@ -41,7 +41,6 @@ if str(ROOT) not in sys.path:
 
 from okf import extract, page as okf_page  # noqa: E402
 from okf.trace import format_trace  # noqa: E402
-from provenance_bench.dataset_guard import normalize  # noqa: E402
 from tools.assert_decontam import _jaccard, _shingles  # noqa: E402
 
 PROBES = ROOT / "eval" / "okf_recall" / "probes.jsonl"
@@ -123,7 +122,8 @@ def evaluate(*, jaccard: float = 0.6, shingle: int = 5, top_k: int = 5) -> dict:
 
     n = len(per)
     found = [r for r in per if r["rank"] is not None]
-    recall_at = {k: sum(1 for r in found if r["rank"] <= k) / n for k in RECALL_KS}
+    recall_at = {k: (sum(1 for r in found if r["rank"] <= k) / n if n else 0.0)
+                 for k in RECALL_KS}
     mrr = sum((1.0 / r["rank"]) for r in found) / n if n else 0.0
     multihop = [r for r in found if (r["hops"] or 0) >= 1]
     faithful = [r for r in per if r["faithful"]]
@@ -135,8 +135,8 @@ def evaluate(*, jaccard: float = 0.6, shingle: int = 5, top_k: int = 5) -> dict:
         "metrics": {
             "recallAt": {str(k): round(v, 3) for k, v in recall_at.items()},
             "mrr": round(mrr, 3),
-            "multiHopReach": round(len(multihop) / n, 3),
-            "provenanceFaithfulness": round(len(faithful) / n, 3),
+            "multiHopReach": round(len(multihop) / n, 3) if n else 0.0,
+            "provenanceFaithfulness": round(len(faithful) / n, 3) if n else 0.0,
             "ablation": ablation,
         },
         "perProbe": per,

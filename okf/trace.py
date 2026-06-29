@@ -16,7 +16,8 @@ Public API:
 
 from __future__ import annotations
 
-from okf.extract import CONFIDENCE_RANK, RecallHit, is_capped
+from okf.extract import RecallHit, is_capped
+from okf.schema import CONFIDENCE_RANK  # re-exported via __all__ (see below)
 
 # Rank -> short label, derived from the schema ladder so a drift there shows here.
 _RANK_LABEL = {

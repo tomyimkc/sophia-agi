@@ -27,11 +27,11 @@ Public API:
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from okf import graph as okf_graph
 from okf import wikilinks
-from okf.schema import CONFIDENCE_RANK, confidence_rank
+from okf.schema import confidence_rank
 
 # A multi-hop path whose weakest provenance is at or below this rank rests on weak
 # ground (legendary / disputed / none_extant / anachronism_risk). Mirrors the
@@ -266,11 +266,14 @@ def multi_hop_recall(
                         path=(ev.page_id,))
         best[ev.id] = hit
         for ent in ev.entities:
-            floor, path = frontier.get(ent, (ev.confidence_rank, (ev.page_id,)))
-            # keep the *strongest* (max-floor) way to reach this seed entity
-            if ev.confidence_rank >= floor or ent not in frontier:
-                frontier[ent] = (max(floor, ev.confidence_rank) if ent in frontier else ev.confidence_rank,
-                                 path if ent in frontier else (ev.page_id,))
+            cur = frontier.get(ent)
+            # Keep the *strongest* (max-floor) way to reach this seed entity. When a
+            # stronger direct match appears for an entity already on the frontier,
+            # REPLACE both floor and path together — keeping the old (lower-rank) path
+            # while bumping the floor would emit an inconsistent (floor, path) pair and
+            # a wrong seed page once `path` is extended into `new_path` downstream.
+            if cur is None or ev.confidence_rank > cur[0]:
+                frontier[ent] = (ev.confidence_rank, (ev.page_id,))
 
     # Expansion hops.
     for hop in range(1, max_hops + 1):

@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from okf import extract, frontmatter, graph as okf_graph, page as okf_page, trace as okf_trace  # noqa: E402
+from okf import extract, frontmatter, graph as okf_graph, page as okf_page, schema as okf_schema, trace as okf_trace  # noqa: E402
 
 
 def _write(dir_: Path, rel: str, meta: dict, body: str = "body") -> None:
@@ -121,10 +121,10 @@ def test_direct_consensus_hit_is_not_capped() -> None:
 
 def test_is_capped_threshold_matches_schema_ladder() -> None:
     # Guard against drift between extract.CAPPED_RANK and the schema confidence ladder.
-    assert extract.is_capped(extract.CONFIDENCE_RANK["legendary"]) is True
-    assert extract.is_capped(extract.CONFIDENCE_RANK["anachronism_risk"]) is True
-    assert extract.is_capped(extract.CONFIDENCE_RANK["attributed"]) is False
-    assert extract.is_capped(extract.CONFIDENCE_RANK["consensus"]) is False
+    assert extract.is_capped(okf_schema.CONFIDENCE_RANK["legendary"]) is True
+    assert extract.is_capped(okf_schema.CONFIDENCE_RANK["anachronism_risk"]) is True
+    assert extract.is_capped(okf_schema.CONFIDENCE_RANK["attributed"]) is False
+    assert extract.is_capped(okf_schema.CONFIDENCE_RANK["consensus"]) is False
 
 
 def test_trace_records_carry_provenance() -> None:
