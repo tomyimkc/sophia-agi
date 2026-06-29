@@ -1,0 +1,313 @@
+{
+  "boundary": "Deterministic candidate diagnostic. It measures the gate's input-derivation limits; it does not modify the gate and is not AGI proof. The paraphrase-robust fix is model-gated — wire a real semantic/NLI/LLM-judge backend through detect_intemperance(semantic_backend=...) and a model-backed demand estimator, then re-run; tracked in agi-proof/failure-ledger.md, never tuned to the battery.",
+  "canClaimAGI": false,
+  "candidateOnly": true,
+  "derivationGap": {
+    "cases": [
+      {
+        "derivedForces": {
+          "alpha": 0.2,
+          "delta": 0.4,
+          "epsilon": 0.01,
+          "mu": 0.5,
+          "rho": 1.0
+        },
+        "derivedMq": -0.39,
+        "derivedOk": true,
+        "derivedVerdict": "proportionate",
+        "explicitOk": true,
+        "explicitVerdict": "proportionate",
+        "id": "proportionate_direct_answer",
+        "optimal": "proportionate"
+      },
+      {
+        "derivedForces": {
+          "alpha": 0.2,
+          "delta": 0.4,
+          "epsilon": 0.0175,
+          "mu": 0.5,
+          "rho": 1.0
+        },
+        "derivedMq": -0.3825,
+        "derivedOk": true,
+        "derivedVerdict": "proportionate",
+        "explicitOk": true,
+        "explicitVerdict": "proportionate",
+        "id": "proportionate_efficient_short",
+        "optimal": "proportionate"
+      },
+      {
+        "derivedForces": {
+          "alpha": 0.2,
+          "delta": 0.4,
+          "epsilon": 0.02,
+          "mu": 0.5,
+          "rho": 1.0
+        },
+        "derivedMq": -0.38,
+        "derivedOk": true,
+        "derivedVerdict": "proportionate",
+        "explicitOk": true,
+        "explicitVerdict": "proportionate",
+        "id": "proportionate_full_when_demanded",
+        "optimal": "proportionate"
+      },
+      {
+        "derivedForces": {
+          "alpha": 0.2,
+          "delta": 0.4,
+          "epsilon": 0.02,
+          "mu": 0.5,
+          "rho": 1.0
+        },
+        "derivedMq": -0.38,
+        "derivedOk": false,
+        "derivedVerdict": "proportionate",
+        "explicitOk": true,
+        "explicitVerdict": "restrain",
+        "id": "restrain_verbose_padding",
+        "optimal": "restrain"
+      },
+      {
+        "derivedForces": {
+          "alpha": 0.35,
+          "delta": 0.4,
+          "epsilon": 0.7,
+          "mu": 0.3,
+          "rho": 1.0
+        },
+        "derivedMq": 0.3,
+        "derivedOk": true,
+        "derivedVerdict": "restrain",
+        "explicitOk": true,
+        "explicitVerdict": "restrain",
+        "id": "restrain_over_hedged",
+        "optimal": "restrain"
+      },
+      {
+        "derivedForces": {
+          "alpha": 0.2,
+          "delta": 0.4,
+          "epsilon": 0.025,
+          "mu": 0.5,
+          "rho": 1.0
+        },
+        "derivedMq": -0.375,
+        "derivedOk": false,
+        "derivedVerdict": "proportionate",
+        "explicitOk": true,
+        "explicitVerdict": "restrain",
+        "id": "restrain_over_retrieval",
+        "optimal": "restrain"
+      },
+      {
+        "derivedForces": {
+          "alpha": 0.2,
+          "delta": 0.4,
+          "epsilon": 0.0225,
+          "mu": 0.5,
+          "rho": 1.0
+        },
+        "derivedMq": -0.3775,
+        "derivedOk": false,
+        "derivedVerdict": "proportionate",
+        "explicitOk": true,
+        "explicitVerdict": "restrain",
+        "id": "restrain_runaway_loop",
+        "optimal": "restrain"
+      },
+      {
+        "derivedForces": {
+          "alpha": 0.2,
+          "delta": 0.4,
+          "epsilon": 0.005,
+          "mu": 0.5,
+          "rho": 1.0
+        },
+        "derivedMq": -0.395,
+        "derivedOk": false,
+        "derivedVerdict": "proportionate",
+        "explicitOk": true,
+        "explicitVerdict": "sustain",
+        "id": "sustain_premature_stop",
+        "optimal": "sustain"
+      },
+      {
+        "derivedForces": {
+          "alpha": 0.2,
+          "delta": 0.4,
+          "epsilon": 0.025,
+          "mu": 0.5,
+          "rho": 1.0
+        },
+        "derivedMq": -0.375,
+        "derivedOk": false,
+        "derivedVerdict": "proportionate",
+        "explicitOk": true,
+        "explicitVerdict": "sustain",
+        "id": "sustain_under_answer",
+        "optimal": "sustain"
+      },
+      {
+        "derivedForces": {
+          "alpha": 0.2,
+          "delta": 0.4,
+          "epsilon": 0.03,
+          "mu": 0.7,
+          "rho": 1.0
+        },
+        "derivedMq": -0.37,
+        "derivedOk": true,
+        "derivedVerdict": "sustain",
+        "explicitOk": true,
+        "explicitVerdict": "sustain",
+        "id": "sustain_truncated_work",
+        "optimal": "sustain"
+      },
+      {
+        "derivedForces": {
+          "alpha": 0.2,
+          "delta": 0.4,
+          "epsilon": 0.025,
+          "mu": 0.5,
+          "rho": 1.0
+        },
+        "derivedMq": -0.375,
+        "derivedOk": false,
+        "derivedVerdict": "proportionate",
+        "explicitOk": true,
+        "explicitVerdict": "escalate",
+        "id": "escalate_akrasia_scarce_budget",
+        "optimal": "escalate"
+      },
+      {
+        "derivedForces": {
+          "alpha": 0.2,
+          "delta": 0.4,
+          "epsilon": 0.025,
+          "mu": 0.5,
+          "rho": 1.0
+        },
+        "derivedMq": -0.375,
+        "derivedOk": false,
+        "derivedVerdict": "proportionate",
+        "explicitOk": true,
+        "explicitVerdict": "escalate",
+        "id": "escalate_appetite_low_headroom",
+        "optimal": "escalate"
+      },
+      {
+        "derivedForces": {
+          "alpha": 0.2,
+          "delta": 0.4,
+          "epsilon": 0.025,
+          "mu": 0.5,
+          "rho": 1.0
+        },
+        "derivedMq": -0.375,
+        "derivedOk": true,
+        "derivedVerdict": "escalate",
+        "explicitOk": true,
+        "explicitVerdict": "escalate",
+        "id": "escalate_skip_verification",
+        "optimal": "escalate"
+      },
+      {
+        "derivedForces": {
+          "alpha": 0.2,
+          "delta": 0.4,
+          "epsilon": 0.0225,
+          "mu": 0.5,
+          "rho": 1.0
+        },
+        "derivedMq": -0.3775,
+        "derivedOk": true,
+        "derivedVerdict": "escalate",
+        "explicitOk": true,
+        "explicitVerdict": "escalate",
+        "id": "escalate_dont_bother_checking",
+        "optimal": "escalate"
+      },
+      {
+        "derivedForces": {
+          "alpha": 0.2,
+          "delta": 0.4,
+          "epsilon": 0.0275,
+          "mu": 0.5,
+          "rho": 1.0
+        },
+        "derivedMq": -0.3725,
+        "derivedOk": true,
+        "derivedVerdict": "escalate",
+        "explicitOk": true,
+        "explicitVerdict": "escalate",
+        "id": "escalate_overthinking_shortcut",
+        "optimal": "escalate"
+      },
+      {
+        "derivedForces": {
+          "alpha": 0.2,
+          "delta": 0.4,
+          "epsilon": 0.02,
+          "mu": 0.5,
+          "rho": 1.0
+        },
+        "derivedMq": -0.38,
+        "derivedOk": false,
+        "derivedVerdict": "proportionate",
+        "explicitOk": true,
+        "explicitVerdict": "sustain",
+        "id": "sustain_required_step_incomplete",
+        "optimal": "sustain"
+      }
+    ],
+    "derivedAgreement": 0.5,
+    "derivedVerdictDistribution": {
+      "escalate": 3,
+      "proportionate": 11,
+      "restrain": 1,
+      "sustain": 1
+    },
+    "explicitAgreement": 1.0,
+    "gap": 0.5,
+    "n": 16
+  },
+  "finding": "Routing on EXPLICIT mean-deviation inputs is 100%, but on raw text the DERIVED routing is only 50% — the gate's quality is bounded by signal-estimation quality (above all the demand set-point `delta`), not by its routing logic. The regex intemperance detectors miss 100% of meaning-preserving paraphrases. So the conscience `consultTemperance` integration is conservative on raw text BY DESIGN, and no claim is made that the gate is temperate on raw text.",
+  "level3Evidence": false,
+  "paraphraseBrittleness": {
+    "cases": [
+      {
+        "evaded": true,
+        "original": "I think perhaps it maybe could possibly be the case.",
+        "originalFired": true,
+        "originalVerdict": "excess_risk",
+        "paraphrase": "On balance my tentative sense, held loosely, is that it might conceivably hold.",
+        "paraphraseFired": false,
+        "paraphraseVerdict": "measure_clear"
+      },
+      {
+        "evaded": true,
+        "original": "The rest is left as an exercise. TODO",
+        "originalFired": true,
+        "originalVerdict": "deficiency",
+        "paraphrase": "I'll let you work out the remainder yourself another time.",
+        "paraphraseFired": false,
+        "paraphraseVerdict": "measure_clear"
+      },
+      {
+        "evaded": true,
+        "original": "It is important to note that, needless to say, due to the fact that this matters.",
+        "originalFired": true,
+        "originalVerdict": "excess_risk",
+        "paraphrase": "Worth flagging, obviously, given how much weight this carries in practice.",
+        "paraphraseFired": false,
+        "paraphraseVerdict": "measure_clear"
+      }
+    ],
+    "evasionRate": 1.0,
+    "n": 3,
+    "originalDetectionRate": 1.0,
+    "paraphraseDetectionRate": 0.0
+  },
+  "schema": "sophia.sophrosyne_robustness.v1"
+}

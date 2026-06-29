@@ -52,6 +52,7 @@ class ConscienceDecision:
     publicStandard: dict[str, Any] = field(default_factory=dict)
     consequence: dict[str, Any] = field(default_factory=dict)
     courage: dict[str, Any] = field(default_factory=dict)
+    temperance: dict[str, Any] = field(default_factory=dict)
     recommendedActions: tuple[dict[str, Any], ...] = ()
     boundary: str = "Sophia is an AGI-candidate verifier-gated epistemic framework; this decision is not proof of AGI."
 
@@ -73,6 +74,7 @@ class ConscienceDecision:
             "publicStandard": self.publicStandard,
             "consequence": self.consequence,
             "courage": self.courage,
+            "temperance": self.temperance,
             "recommendedActions": list(self.recommendedActions),
             "boundary": self.boundary,
         }
@@ -283,6 +285,35 @@ def conscience_check(
             verdict = "escalate"
             reason = "courage gate: the abstain looks fear-driven — escalate for explicit justification"
 
+    # 10th path — Sophrosyne temperance gate (opt-in via context["consultTemperance"]=True,
+    # like the consequence and courage paths). The conscience kernel regulates truth and
+    # Andreia regulates direction; neither regulates *magnitude* (how much effort/words/
+    # tool-calls, and when to stop). When consulted, Sophrosyne annotates the decision and,
+    # conservatively, may:
+    #   - downgrade an over-expenditure ``allow`` to ``revise`` (trim) when temperance says
+    #     ``restrain`` on the excess axis — tighter wording, never weaker safety;
+    #   - upgrade an otherwise-quiet ``abstain`` to ``escalate`` when temperance says
+    #     ``sustain`` (a premature/lazy abstention with effort still worth spending) —
+    #     forcing explicit justification instead of silently quitting.
+    # It NEVER weakens a block/retrieve/clarify, never suppresses a required verification
+    # step (temperance is not negligence; stepRespected guards that), and is off by default.
+    temperance: dict[str, Any] = {}
+    if context.get("consultTemperance"):
+        from agent.sophrosyne import assess_temperance
+        temperance = assess_temperance(text, context={
+            **{k: v for k, v in context.items() if k != "consultTemperance"},
+            "canClaimAGI": context.get("canClaimAGI", False),
+            "proposedStop": verdict == "abstain",
+        }).to_dict()
+        t_verdict = temperance.get("verdict")
+        if not temperance.get("stepRespected"):
+            if verdict == "allow" and t_verdict == "restrain":
+                verdict = "revise"
+                reason = "temperance gate: expenditure exceeds demand with low marginal value — trim (restrain)"
+            elif verdict == "abstain" and t_verdict == "sustain":
+                verdict = "escalate"
+                reason = "temperance gate: the abstain looks premature — effort is still valuable, escalate for explicit justification"
+
     decision = ConscienceDecision(
         verdict=verdict,
         reason=reason,
@@ -297,6 +328,7 @@ def conscience_check(
         publicStandard=public_standard,
         consequence=consequence,
         courage=courage,
+        temperance=temperance,
         recommendedActions=tuple(agenda_actions),
     )
 
