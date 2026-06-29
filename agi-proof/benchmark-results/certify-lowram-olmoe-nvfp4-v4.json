@@ -1,0 +1,32 @@
+{
+  "passed": false,
+  "mean_kl": 0.053669,
+  "top1_agreement": 0.925781,
+  "protected_max_kl": 0.713308,
+  "protected_min_agreement": 0.925781,
+  "mem_ratio": 3.3016,
+  "n_eval": 256,
+  "reasons": [
+    "mean_kl 0.0537 > 0.05",
+    "top1_agreement 0.9258 < 0.97",
+    "protected_max_kl 0.7133 > 0.1",
+    "protected_min_agreement 0.9258 < 0.95"
+  ],
+  "device": "cuda",
+  "scheme": "nvfp4",
+  "base_model": "allenai/OLMoE-1B-7B-0924-Instruct",
+  "adapter": "training/lora/checkpoints/olmoe-qat-spark-v4",
+  "lora_load": "peft.merge_and_unload",
+  "lora_modules_merged": null,
+  "lora_modules_skipped": null,
+  "incomplete_merge": false,
+  "merge_warnings": [],
+  "per_tensor_mem_ratio": 3.5556,
+  "quantized_modules": 3136,
+  "quantized_params": 6710886400,
+  "kept_params": 208275456,
+  "total_model_params": 6919161856,
+  "quantized_fraction": 0.9699,
+  "coverage_warning": null,
+  "n_calib_rows": 89
+}

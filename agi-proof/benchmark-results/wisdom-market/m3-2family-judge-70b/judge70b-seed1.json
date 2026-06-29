@@ -1,0 +1,86 @@
+{
+  "pilot_judge": "sophia-wisdom-4b-m3",
+  "answers": "/tmp/claude-1000/-home-tomyimkc-sophia-agi/36cf4f7b-9666-4408-a0e0-39ab631d0dcd/scratchpad/ans-seed1.json",
+  "judges": [
+    "ollama:qwen2.5:7b-instruct@http://localhost:11434/v1",
+    "openai:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1"
+  ],
+  "nCasesJudged": 268,
+  "protocol": "tie-allowed",
+  "perJudge": {
+    "ollama:qwen2.5:7b-instruct@http://localhost:11434/v1": {
+      "n": 268,
+      "adapter": 179,
+      "base": 78,
+      "tie": 11,
+      "adapter_winrate": 0.6679,
+      "base_winrate": 0.291
+    },
+    "openai:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": {
+      "n": 268,
+      "adapter": 211,
+      "base": 57,
+      "tie": 0,
+      "adapter_winrate": 0.7873,
+      "base_winrate": 0.2127
+    }
+  },
+  "interJudgeKappa": 0.2306,
+  "consensus": {
+    "adapter_better": 153,
+    "base_better": 30
+  },
+  "winRate": {
+    "ollama:qwen2.5:7b-instruct@http://localhost:11434/v1": {
+      "nBinary": 257,
+      "adapterWins": 179,
+      "baseWins": 78,
+      "adapterWinrate": 0.6965,
+      "wilson95": [
+        0.6377,
+        0.7495
+      ],
+      "bootstrap95": [
+        0.6381,
+        0.751
+      ],
+      "binomialTwoSidedP_vs_0_5": 0.0,
+      "significantVs0_5_at_0_05": true
+    },
+    "openai:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": {
+      "nBinary": 268,
+      "adapterWins": 211,
+      "baseWins": 57,
+      "adapterWinrate": 0.7873,
+      "wilson95": [
+        0.7344,
+        0.8321
+      ],
+      "bootstrap95": [
+        0.7388,
+        0.8358
+      ],
+      "binomialTwoSidedP_vs_0_5": 0.0,
+      "significantVs0_5_at_0_05": true
+    }
+  },
+  "interJudgeReliability": {
+    "ollama:qwen2.5:7b-instruct@http://localhost:11434/v1 vs openai:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": {
+      "nBinaryPairs": 257,
+      "observedAgreement": 0.7121,
+      "cohenKappaBinary": 0.2601,
+      "PABAK": 0.4241,
+      "biasIndex": -0.0856,
+      "prevalenceIndex": 0.4786,
+      "table": {
+        "bothAdapter": 153,
+        "bothBase": 30,
+        "xAdapter_yBase": 26,
+        "xBase_yAdapter": 48
+      }
+    }
+  },
+  "majorityVote": null,
+  "statsNote": "Win-rate vs 0.5 (Wilson/binomial/bootstrap) is the capability evidence; κ/PABAK/bias+prevalence indices report JUDGE RELIABILITY (Feinstein & Cicchetti 1990; Byrt 1993; Warrens 2010). Do NOT compare PABAK/AC1 to a κ-derived 0.40 bar — Landis & Koch cutoffs are not transferable (Zec 2023).",
+  "boundary": "Independent LLM judges (≠ subject, ≠ gate). Validates whether the adapter's marker-based source-discipline gains hold up SEMANTICALLY. Single seed's answers; not a market or AGI claim."
+}
