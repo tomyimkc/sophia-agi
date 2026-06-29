@@ -286,11 +286,11 @@ training a VLM and **without** weakening any honesty machinery:
 |---|---|---|
 | 2.5D scene schema | objects carry optional scalar `z` (camera-frame depth; larger = farther) and `size` (real-world size, decoupled from apparent box area) | `multimodal_bench/data/visual_traps.json` (`_meta.depthSemantics`) |
 | Physical verifiers (judge-free) | `depth_order` (in-front/behind), `occludes` (box overlap **and** nearer), `bigger_than` (real size, not pixels), `distance_between`/`distance_cmp` (3D Euclidean) — all **fail closed** (False/None) on a missing object/field | `multimodal_bench/verifiers.py` |
-| 12 physical traps + controls | `depth_order`, `occlusion`, `size_illusion`, `distance` + `*_control` rows with mixed yes/no gold, so neither blanket-deny nor abstain-all wins; every gold re-derived by the verifier | `multimodal_bench/data/visual_traps.json` |
+| physical traps + controls (34 physical rows) | `depth_order`, `occlusion`, `size_illusion`, `distance` + `*_control` rows with mixed yes/no gold, so neither blanket-deny nor abstain-all wins; every gold re-derived by the verifier | `multimodal_bench/data/visual_traps.json` |
 | Depth-aware render | far→near paint order so the real-VLM PNG shows occlusion consistent with the `occludes` verifier (non-physical scenes render unchanged) | `multimodal_bench/render.py` |
 | Tests | depth/occlusion/size/distance verifier semantics + fail-closed + category/polarity coverage | `tests/test_multimodal_traps.py` |
 
-The suite is now **50 traps across 15 categories**. The physical rows inherit the
+The suite is now **69 traps across 15 categories** (34 of them physical). The physical rows inherit the
 existing reward (`correct > abstain > wrong`), the contamination-free family split
 (they enter as new families — `depth_order`/`depth`/`distance_control` etc.), and
 the no-overclaim gate for free. Honesty bound: the depth/size fields are *authored*
@@ -318,7 +318,7 @@ claim is a hypothesis, re-checked before it is accepted.
 Offline behaviour: the gate accepts 2/2 grounded claims and blocks 3/3 hallucinated
 ones (distinct reasons, all escalated); the Depth Anything source returns a clean
 blocker without weights, and the gate then fails closed (blocks every claim). The
-suite is now **50 traps**; `tests/test_metric_gate.py` covers the gate and the
+suite is now **69 traps**; `tests/test_metric_gate.py` covers the gate and the
 backend seam. Run:
 
 ```
@@ -331,3 +331,19 @@ source the depth is declared, not seen; pixel-derived depth needs the Depth
 Anything V2 weights, tracked OPEN in the failure ledger
 (`physical-spatial-verifier-real-vlm-not-run-2026-06-29`). The gate is the
 machinery; no physical-understanding capability is claimed here.
+
+### Real-run pre-registration (the gated, human-triggered next step)
+
+The path from this offline harness to a *measured* physical-understanding number
+is **pre-registered** (thresholds + judge families fixed before any number exists)
+in `agi-proof/benchmark-results/physical-understanding/measurement_spec.json` +
+`RUNBOOK.md`. The harness is now scoped to the physical axes via
+`tools/run_multimodal_traps.py --physical` (a category allowlist; `--categories a,b`
+for a custom subset), so a real VLM can be judged on exactly the physical split by
+≥2 distinct families through the sanctioned judge farm
+(`.github/workflows/open-judge-runpod.yml`), and the metric gate re-checked with
+`--depth depth-anything` once the Depth Anything V2 weights are on a GPU runner.
+The run itself stays a **cost-gated, human-triggered** step (RunPod approval +
+the `wisdom-gpu-prebaked` runbook), and the headline caveat is stated up front:
+the physical split is **34 rows** (doubled from the initial 15) — still a coarse
+GO/NO-GO that wants further expansion, never a powered claim.

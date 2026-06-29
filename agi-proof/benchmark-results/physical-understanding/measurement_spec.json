@@ -1,0 +1,44 @@
+{
+  "experimentId": "physical-understanding-vlm-eval",
+  "question": "On the physical / 2.5D axes a VLM is weakest on (depth order, occlusion, real-vs-apparent size, 3D distance), does a real VLM ground the answer rather than fall for the co-occurrence-prior trap, and does the fail-closed metric gate block its confident metric errors?",
+  "status": "PRE-REGISTRATION ONLY — no real-VLM or pixel-depth run has executed. This file fixes the thresholds and judge families BEFORE any number exists, so a later run cannot be gamed. See RUNBOOK.md.",
+  "constructs": [
+    "judge-free scene verifier (gold; multimodal_bench/verifiers.py) — non-circular ground truth",
+    "llm-judge multi-family panel (>=2 distinct provider families, != subject)",
+    "metric-gate block-rate (multimodal_bench/metric_gate.py) — confident physical claims re-checked against a depth source"
+  ],
+  "primaryMetric": "hallucination rate on the physical trap rows (lower is better), real VLM vs the credulous-baseline reference; grounding rate reported alongside",
+  "primaryN": "34 physical rows x >=3 runs",
+  "primaryMDE": null,
+  "guardrails": {
+    "judge": {
+      "rule": "manual + >=2 LLM-judge families agree; Cohen's kappa >= 0.40 (or Gwet AC1 + CI under prevalence skew)",
+      "families_must_differ_from": ["subject"]
+    },
+    "metricGate": {
+      "rule": "on grounded vs hallucinated physical claims: accept-rate on grounded >= 0.95 AND block-rate on hallucinated >= 0.95",
+      "depthSource": "depth-anything (pixel-derived) for the headline; authored z is harness-only and never a headline"
+    },
+    "calibration": {
+      "rule": "abstention preferred over confident error on ungroundable rows (correct > abstain > wrong) — risk-coverage reported, not just accuracy"
+    }
+  },
+  "stoppingRule": "fixed-n bootstrap 95% CI (multimodal_bench/runner.aggregate_runs). The physical split is SMALL — treat any verdict as a coarse GO/NO-GO, not a powered effect; expand the suite before a powered claim.",
+  "decontam": "the RL family split (multimodal_bench/visual_dataset.build_visual_rl_dataset) keeps whole categories disjoint train/eval; the eval here is read-only over the authored gold and shares no code with the model or the judge.",
+  "ranking": "guardrails first (judge agreement + metric-gate), then physical grounding/hallucination; never rank on the small-N point estimate alone.",
+  "claimCeiling": "candidate_only; canClaimAGI:false; narrow corpus-bound feasibility; authored scenes are not natural images.",
+  "honestLimits": [
+    "N=34 physical rows (doubled from the initial 15) is still below the power needed for a tight effect — treat as a coarse GO/NO-GO and keep expanding the suite before any powered claim.",
+    "scenes are structured 2.5D specs rendered to simple PNGs, NOT natural photographs — a real-photo benchmark is a separate, larger build.",
+    "authored z/size measure the harness; only the depth-anything (pixel-derived) source measures perception, and it needs weights (BLOCKER until wired).",
+    "no first-party frontier VLM/judge (GPT/Claude/Gemini egress-blocked in CI) — use an OpenAI-compatible vision endpoint or the local/RunPod judge farm.",
+    "kappa can be depressed by prevalence skew on a small split — report Gwet AC1 + CI as the cross-check, never silently relax the floor."
+  ],
+  "enforcement": {
+    "answer_eval": "tools/run_multimodal_traps.py --physical --answer openai:<vlm> --judge-spec <family-a> --judge-spec <family-b> --runs 3",
+    "judge_farm": ".github/workflows/open-judge-runpod.yml — the sanctioned multi-family judge path (no first-party egress in CI)",
+    "metric_gate": "tools/run_metric_gate.py --depth depth-anything (needs torch+transformers+Depth-Anything-V2 weights on a GPU runner)",
+    "no_overclaim": "a number is `validated` only when runner.aggregate_runs reports notMock + multiFamilyJudges + kappaAboveFloor + atLeast3Runs + ciComputed — mock/authored runs stay illustrative",
+    "ledger": "agi-proof/failure-ledger.md :: physical-spatial-verifier-real-vlm-not-run-2026-06-29 stays OPEN until this clears"
+  }
+}

@@ -147,6 +147,17 @@ def test_physical_categories_present_and_balanced():
     assert "yes" in golds and "no" in golds  # mixed polarity
 
 
+def test_physical_category_filter_scopes_the_eval():
+    all_traps = runner.load_traps()
+    phys = runner.filter_by_category(all_traps, runner.PHYSICAL_CATEGORIES)
+    assert 0 < len(phys) < len(all_traps)                      # a real, proper subset
+    assert all(t["category"] in runner.PHYSICAL_CATEGORIES for t in phys)
+    assert {"depth_order", "occlusion", "size_illusion", "distance"} <= {t["category"] for t in phys}
+    assert any(t["answer_type"] == "measure" for t in phys)    # numeric distance rows included
+    # an empty allowlist yields nothing (the CLI turns this into a clean error)
+    assert runner.filter_by_category(all_traps, []) == []
+
+
 def test_ocr_contains_and_blank_sentinel():
     scene = {"objects": [], "texts": [{"value": "OPEN", "box": [0, 0, 10, 10]}]}
     assert verifiers.ocr_contains(scene, "open") is True       # case/format tolerant

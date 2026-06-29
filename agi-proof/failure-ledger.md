@@ -1526,7 +1526,14 @@ rasterising the depth-ordered scenes — and clear the no-overclaim gate on the
 physical categories (≥2 distinct-family judges, Cohen's κ ≥ 0.40, ≥3 runs, 95%
 bootstrap CI). For *pixel-derived* depth (not authored z), wire a monocular metric
 backend (e.g. Depth Anything V2) as the verifier's evidence source so the metric
-ground truth is measured, not declared.
+ground truth is measured, not declared. **Pre-registered** (thresholds + judge
+families fixed before any number exists) in
+`agi-proof/benchmark-results/physical-understanding/measurement_spec.json` with a
+step-by-step `RUNBOOK.md`; the physical split is scoped via
+`tools/run_multimodal_traps.py --physical` and the GPU/judge path goes through
+`.github/workflows/open-judge-runpod.yml` (cost-gated, human-triggered). Honest
+caveat recorded in the spec: the physical split is 34 rows — coarse GO/NO-GO
+until the suite is expanded.
 
 **Gate hardening (2026-06-24, retention gate):** The original W2 promote verdict was reached on a
 gate that read only the eval ladder + the protected-floor proof — it had **no old-task retention

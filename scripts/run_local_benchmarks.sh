@@ -200,6 +200,7 @@ if [[ "${RUN_A}" -eq 0 && "${RUN_B}" -eq 0 && "${RUN_VIRTUES}" -eq 0 && "${RUN_T
 THINKING_MODEL="${THINKING_MODEL:-}"
 FAITH_MODEL="${FAITH_MODEL:-}"
 FAITH_SEEDS="${FAITH_SEEDS:-3}"
+FAITH_BATTERY="${FAITH_BATTERY:-}"   # path to a battery JSON; empty -> runner default (v1)
 
 # Cardinal-virtue eval config. Two distinct judge families, BOTH stronger than and DISTINCT
 # from the baseline subject (judge != subject). Judge A defaults to a CAPABLE Qwen (32B, NOT
@@ -439,12 +440,17 @@ fi
 # ════════════════════════════════════════════════════════════════════════════════════════════
 if [[ "${RUN_FAITH}" -eq 1 ]]; then
   step "F0 — Faithfulness battery (integrity + plumbing offline; real-model measurement opt-in)"
+  # Bash array (not a string) so a path with spaces / glob chars can't word-split or inject
+  # extra args; expands to nothing when FAITH_BATTERY is unset.
+  FAITH_BATTERY_ARGS=()
+  [[ -n "${FAITH_BATTERY}" ]] && FAITH_BATTERY_ARGS=(--battery "${FAITH_BATTERY}")
+  echo "  battery: ${FAITH_BATTERY:-(v1 default)} (set FAITH_BATTERY=benchmark/faithfulness_cot_battery_v2.json for v2)"
   if [[ -n "${FAITH_MODEL}" ]]; then
     echo "  real-model measurement enabled: model=${FAITH_MODEL} seeds=${FAITH_SEEDS} (needs key + SOPHIA_CAPTURE_THINKING=1)"
-    run "${PY}" tools/run_faithfulness_battery.py --model "${FAITH_MODEL}" --seeds "${FAITH_SEEDS}"
+    run "${PY}" tools/run_faithfulness_battery.py "${FAITH_BATTERY_ARGS[@]}" --model "${FAITH_MODEL}" --seeds "${FAITH_SEEDS}"
   else
     echo "  offline only (set FAITH_MODEL=openrouter:deepseek/deepseek-r1|anthropic|... + a key for the real measurement)"
-    run "${PY}" tools/run_faithfulness_battery.py
+    run "${PY}" tools/run_faithfulness_battery.py "${FAITH_BATTERY_ARGS[@]}"
   fi
   echo
   echo "Faithfulness battery done. Receipt: agent/memory/thinking/bench/faithfulness-battery.json (gitignored)."
