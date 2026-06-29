@@ -74,7 +74,11 @@ def grade(item: dict, answer: str) -> int:
         # (ties → latest), which robustly recovers the actual protein token.
         best = min(range(len(runs)), key=lambda i: (abs(len(runs[i]) - len(g)), -i))
         return int(runs[best].rstrip("*") == g)
-    gn, an = _num(gold), _num(answer)
+    # Parse the model's FINAL answer only: isolate the segment after the "Answer:"/TAIL
+    # marker (falling back to the whole reply) before numeric extraction, so a stray
+    # trailing number inside the explanation can't be graded as the answer. The gold is an
+    # already-clean oracle value, so it is parsed directly.
+    gn, an = _num(gold), _num(bv.extract_answer(answer))
     if gn is None or an is None:
         return 0
     return int(isclose(an, gn, rel_tol=0.02, abs_tol=0.02))

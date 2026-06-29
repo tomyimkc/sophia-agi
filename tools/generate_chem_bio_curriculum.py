@@ -367,7 +367,11 @@ def generate_heldout() -> list[dict]:
                     "question": f"A dihybrid cross AaBb x AaBb yields {n} offspring. How many show both "
                                 f"recessive traits (9:3:3:1; whole number)?",
                     "goldAnswer": str(int(n / 16))})
+    # Eval prompts MUST carry the same TAIL ("Answer: <value>") instruction the training
+    # prompts use, so the held-out reply format matches what the model was taught and the
+    # grader can isolate the final answer. Re-baseline v1: this was previously omitted.
     for it in out:
+        it["question"] = it["question"] + TAIL
         it.update({"candidateOnly": True, "trainingOracleOnly": True,
                    "labelSource": "oracle-generated committed fixture (NOT externally authored)",
                    "externalSource": False})

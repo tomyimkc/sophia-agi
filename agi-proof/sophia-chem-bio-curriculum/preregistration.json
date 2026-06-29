@@ -13,7 +13,7 @@
     "seeds": [0, 1, 2],
     "minSeedsForCitedNumbers": 3,
     "decontamination": "tools/generate_chem_bio_curriculum.py --check → CLEAN (train disjoint from eval/chem_bio_capability + all eval/** surfaces)",
-    "heldout": "eval/chem_bio_capability/heldout_v1.jsonl (tier3, never trained)"
+    "heldout": "eval/chem_bio_capability/heldout_v1.jsonl (tier3, never trained; re-baselined 2026-06-30 — eval prompts now carry the same 'Answer: <value>' TAIL instruction as the training prompts, and the deterministic grader isolates that final-answer segment before numeric parsing)"
   },
   "trainingOracle": {
     "chemistry": "agent/chem_verifier.py — formula parse, molar mass, exact rational equation balancing",
