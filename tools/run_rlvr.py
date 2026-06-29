@@ -452,7 +452,17 @@ def _run_gpu(args: argparse.Namespace) -> int:
         "evalCases": n_eval,
         "trainSealed": data["train_sealed"],
         "evalSealed": data["eval_sealed"],
-        "baseModelLicense": "glm-4-9b License (NOT MIT; commercial use needs Zhipu registration)",
+        # Derive from the actual --model: the old hardcoded glm-4-9b string was wrong for any
+        # non-glm base (e.g. Qwen2.5-Math-7B is Apache-2.0), and license is a provenance field.
+        "baseModelLicense": (
+            "glm-4-9b License (NOT MIT; commercial use needs Zhipu registration)"
+            if any(x in args.model.lower() for x in ("glm", "zai-org"))
+            else "Apache-2.0"
+            if any(x in args.model.lower() for x in ("qwen", "olmoe", "allenai", "mistral", "smol"))
+            else "Llama Community License (Meta)"
+            if "llama" in args.model.lower()
+            else f"unverified — see the model card for {args.model}"
+        ),
         "rewardSelected": args.reward,
         # M1 headline measurement: within-group reward std over training. A single-axis
         # run is expected to collapse (final std -> 0); multiaxis should stay > 0.
