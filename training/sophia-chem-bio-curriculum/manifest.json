@@ -1,0 +1,131 @@
+{
+  "schema": "sophia.chem_bio_curriculum.v1",
+  "experimentId": "sophia-chem-bio-curriculum",
+  "baseModel": "Qwen/Qwen2.5-7B-Instruct",
+  "seed": 20260629,
+  "trainingOracleOnly": true,
+  "canClaimAGI": false,
+  "counts": {
+    "total": 116,
+    "chemistry": 62,
+    "biology": 54,
+    "abstention": 12,
+    "byTier": {
+      "tier0": 40,
+      "tier1": 54,
+      "tier2": 22
+    },
+    "heldoutEval": 16
+  },
+  "verification": {
+    "tiers": {
+      "tier0": {
+        "kept": 40,
+        "dropped": 0,
+        "generated": 40,
+        "byDomain": {
+          "chemistry": {
+            "generated": 18,
+            "kept": 18,
+            "dropped": 0,
+            "verdicts": {
+              "accepted": 18
+            }
+          },
+          "biology": {
+            "generated": 22,
+            "kept": 22,
+            "dropped": 0,
+            "verdicts": {
+              "accepted": 22
+            }
+          }
+        }
+      },
+      "tier1": {
+        "kept": 54,
+        "dropped": 0,
+        "generated": 54,
+        "byDomain": {
+          "chemistry": {
+            "generated": 24,
+            "kept": 24,
+            "dropped": 0,
+            "verdicts": {
+              "accepted": 24
+            }
+          },
+          "biology": {
+            "generated": 18,
+            "kept": 18,
+            "dropped": 0,
+            "verdicts": {
+              "accepted": 18
+            }
+          },
+          "abstention": {
+            "generated": 12,
+            "kept": 12,
+            "dropped": 0,
+            "verdicts": {
+              "accepted": 12
+            }
+          }
+        }
+      },
+      "tier2": {
+        "kept": 22,
+        "dropped": 0,
+        "generated": 22,
+        "byDomain": {
+          "chemistry": {
+            "generated": 14,
+            "kept": 14,
+            "dropped": 0,
+            "verdicts": {
+              "accepted": 14
+            }
+          },
+          "biology": {
+            "generated": 8,
+            "kept": 8,
+            "dropped": 0,
+            "verdicts": {
+              "accepted": 8
+            }
+          }
+        }
+      }
+    },
+    "totals": {
+      "generated": 116,
+      "kept": 116,
+      "dropped": 0
+    }
+  },
+  "contamination": {
+    "clean": true,
+    "nTrain": 116,
+    "nEval": 959,
+    "overlap": [],
+    "overlapCount": 0
+  },
+  "oracles": {
+    "chemistry": "agent.chem_verifier (formula parse, molar mass, exact rational equation balancing)",
+    "biology": "agent.bio_verifier (genetic-code translation, reverse-complement, GC%, Hardy-Weinberg, Punnett)",
+    "abstention": "deterministic calibrated-refusal check (hedge marker present, no fabricated value)",
+    "citableAsBenchmarkEvidence": false
+  },
+  "tierLadder": {
+    "tier0": "facts & parsing — molar mass, atom counts, GC%, reverse-complement, transcription",
+    "tier1": "single-step quantitative + abstention — balancing, mole<->gram, translation, Hardy-Weinberg",
+    "tier2": "multi-step — percent-by-mass, mass-to-mass stoichiometry, Punnett ratios, expected counts",
+    "heldout": "tier3 (eval/chem_bio_capability/heldout_v1.jsonl): percent yield, molarity, ORF-to-stop, dihybrid, carrier frequency — NEVER trained"
+  },
+  "outputs": {
+    "sft_chem.jsonl": 62,
+    "sft_bio.jsonl": 54,
+    "sft_all.jsonl": 116,
+    "eval/chem_bio_capability/heldout_v1.jsonl": 16
+  }
+}

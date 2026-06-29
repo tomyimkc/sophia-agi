@@ -69,14 +69,18 @@ def load_rows(path: Path) -> list[dict]:
 def resolve_train_path(path: Path) -> Path:
     """Resolve a training JSONL path or pack directory to a concrete JSONL file.
 
-    When ``path`` is a directory containing ``manifest.json`` with schema
-    ``sophia.math_code_curriculum.v1``, returns ``sft_all.jsonl`` inside that pack.
+    When ``path`` is a directory containing ``manifest.json`` with a known curriculum
+    schema (``sophia.math_code_curriculum.v1`` or ``sophia.chem_bio_curriculum.v1``),
+    returns ``sft_all.jsonl`` inside that pack.
     """
     if path.is_dir():
         manifest_path = path / "manifest.json"
         if manifest_path.exists():
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-            if manifest.get("schema") == "sophia.math_code_curriculum.v1":
+            if manifest.get("schema") in (
+                "sophia.math_code_curriculum.v1",
+                "sophia.chem_bio_curriculum.v1",
+            ):
                 return path / "sft_all.jsonl"
     return path
 
