@@ -8,4 +8,4 @@
 #
 # CI and the production DEFAULT stay sympy-only (math_verifier.verify); this is an
 # opt-in research extra, not a core dependency.
-lean-dojo>=4.0
+lean-dojo>=4.20.0
