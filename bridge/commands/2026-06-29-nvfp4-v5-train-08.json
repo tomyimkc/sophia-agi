@@ -1,0 +1,8 @@
+{
+  "id": "2026-06-29-nvfp4-v5-train-08",
+  "args": "--bench-b --run-train --execute",
+  "createdBy": "claude",
+  "createdAt": "2026-06-29T09:10:00Z",
+  "approvedBy": "user: 'do all / fix it' (2026-06-29)",
+  "note": "v5 attempt 4: + full-GPU load (device_map cuda:0) so qat_penalty doesn't hit the meta-device crash. Should now TRAIN end-to-end (~hours) then certify. Caveat: experts not QAT-co-adapted, so may NO-GO on strict top-1 (still a valid logged cert)."
+}
