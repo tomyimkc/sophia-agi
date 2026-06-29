@@ -1,7 +1,994 @@
 {
-  "updatedAt": "1970-01-01T00:00:00Z",
+  "updatedAt": "2026-06-29T04:51:43Z",
   "host": "spark-2f2d",
-  "trainwatch": {"note": "seed placeholder - overwritten by tools/github_bridge_poll.py on first tick"},
-  "artifacts": [],
+  "trainwatch": [
+    {
+      "id": "a92be4e1",
+      "name": "olmoe-qat-v4",
+      "description": "OLMoE NVFP4 QAT-LoRA v4 (3 epochs, lambda=0.01)",
+      "status": "completed",
+      "total_steps": 330,
+      "current_step": 300,
+      "started_at": 1782669990.0509489,
+      "finished_at": 1782685395.4615614,
+      "eta_seconds": 0.0,
+      "speed": 0.019908969735086424,
+      "ema_step_time": 50.22861621200104,
+      "latest_metrics": "{\"val_loss\": 1.5391, \"train_loss\": 0.1527}",
+      "created_at": 1782669990.0509489
+    },
+    {
+      "id": "4c81e111",
+      "name": "olmoe-qat-v4",
+      "description": "OLMoE NVFP4 QAT-LoRA v4 (3 epochs, lambda=0.01 \u2014 push top-1)",
+      "status": "completed",
+      "total_steps": 330,
+      "current_step": 300,
+      "started_at": 1782668365.4378307,
+      "finished_at": 1782685397.3181055,
+      "eta_seconds": 0.0,
+      "speed": 0.019882458093126908,
+      "ema_step_time": 50.295591989487775,
+      "latest_metrics": "{\"val_loss\": 1.5391, \"train_loss\": 0.1527}",
+      "created_at": 1782668365.4378307
+    },
+    {
+      "id": "843f0de3",
+      "name": "olmoe-qat-v3",
+      "description": "OLMoE-1B-7B NVFP4 QAT-LoRA (2 epochs, expert-co-adapt)",
+      "status": "completed",
+      "total_steps": 220,
+      "current_step": 210,
+      "started_at": 1782666757.885504,
+      "finished_at": 1782667670.5762265,
+      "eta_seconds": 0.0,
+      "speed": 0.2220724706430559,
+      "ema_step_time": 4.503034514383062,
+      "latest_metrics": "{\"loss\": 1.5427, \"lr\": 4.36e-07}",
+      "created_at": 1782666757.885504
+    },
+    {
+      "id": "b8ad5e80",
+      "name": "demo-finetune",
+      "description": "Simulated LoRA fine-tune (loss/lr/grad-norm)",
+      "status": "completed",
+      "total_steps": 200,
+      "current_step": 200,
+      "started_at": 1782665103.2233422,
+      "finished_at": 1782665139.2229486,
+      "eta_seconds": 0.0,
+      "speed": 5.568142192531602,
+      "ema_step_time": 0.17959311479891316,
+      "latest_metrics": "{\"loss\": 0.2963479789017798, \"lr\": 1.25e-05, \"grad_norm\": 0.2925770542680106}",
+      "created_at": 1782665103.2233422
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "agi-proof/benchmark-results/abstention-scoring.public-report.json",
+      "bytes": 2519,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/agent-faithfulness-judged.public-report.json",
+      "bytes": 1738,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/agent-faithfulness.public-report.json",
+      "bytes": 6052,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/agentbench-sophia.public-report.json",
+      "bytes": 16082,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/all-phase-benchmarks.public-report.json",
+      "bytes": 4587,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/baseline-code.json",
+      "bytes": 4664,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/baseline-math.json",
+      "bytes": 6242,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/baseline-physics.json",
+      "bytes": 1670,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/belief-revision.public-report.json",
+      "bytes": 23383,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/capability-retention.public-report.json",
+      "bytes": 1442,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/certify-lowram-olmoe-nvfp4-v3.json",
+      "bytes": 875,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/certify-lowram-olmoe-nvfp4-v4.json",
+      "bytes": 906,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/cls-consolidation-manifest.json",
+      "bytes": 2035,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/cluster/faults.public-report.json",
+      "bytes": 2350,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/cluster/nccl-measure-blocker.public-report.json",
+      "bytes": 3800,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/cluster/scheduler.public-report.json",
+      "bytes": 1473,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/code-provenance.public-report.json",
+      "bytes": 10746,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/code-uplift-dolphin.public-report.json",
+      "bytes": 4959,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/code-uplift.public-report.json",
+      "bytes": 4964,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/concept-discipline-inference.public-report.json",
+      "bytes": 4247,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/conformal-policy.public-report.json",
+      "bytes": 5537,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/conformal-real/abstention-scoring.deepseek-v3.public-report.json",
+      "bytes": 2524,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/conformal-real/conformal-policy.deepseek-v3.public-report.json",
+      "bytes": 3079,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/consequence-cascade.public-report.json",
+      "bytes": 16334,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/continual-qa-wiki.public-report.json",
+      "bytes": 27758,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/continual-qa.judged-3family-enriched-hybrid-full92.json",
+      "bytes": 4069,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/continual-qa.judged-enriched-strict-full92.json",
+      "bytes": 3640,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/continual-qa.judged-hybrid-full92.json",
+      "bytes": 3723,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/continual-qa.judged-xgateway-full92.json",
+      "bytes": 3506,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/continual-qa.judged-xgateway.json",
+      "bytes": 3435,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/continual-qa.judged.json",
+      "bytes": 2936,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/continual-qa.llm-control-flow.json",
+      "bytes": 1301,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/continual-qa.public-report.json",
+      "bytes": 5162,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/continual-qa.recall-audit.json",
+      "bytes": 11944,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/continual-qa.validation-report.json",
+      "bytes": 2041,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/core-lean-passk.deepseek-r1.public-report.json",
+      "bytes": 5544,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/core-lean-passk.deepseek-v3.public-report.json",
+      "bytes": 5014,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/cot-faithfulness.public-report.json",
+      "bytes": 2080,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/council-diversity.public-report.json",
+      "bytes": 1694,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/council-panel-weak-baseline.public-report.json",
+      "bytes": 827,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/council-panel.public-report.json",
+      "bytes": 814,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/formal-proofs-eval.public-report.json",
+      "bytes": 2505,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/gpqa-provenance-smoke.public-report.json",
+      "bytes": 3392,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/graded-calibration-live.public-report.json",
+      "bytes": 16795,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/graded-confidence.public-report.json",
+      "bytes": 1904,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/graded-threshold-curve.public-report.json",
+      "bytes": 1842,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/grounded-search.public-report.json",
+      "bytes": 1399,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/hidden-fresh-reviewer-pack-2026-06-19-sophia-deepseek-coding-council-repair3.public-report.json",
+      "bytes": 5719,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/hidden-fresh-reviewer-pack-2026-06-19-sophia-deepseek-coding-council.public-report.json",
+      "bytes": 5693,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/hidden-fresh-reviewer-pack-2026-06-19-sophia-deepseek.public-report.json",
+      "bytes": 5082,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/hidden-fresh-reviewer-pack-2026-06-19-sophia-grok.public-report.json",
+      "bytes": 5727,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/hidden-prepared-pack-2026-06-19-grok-cli.public-report.json",
+      "bytes": 3412,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2.artifact-manifest.json",
+      "bytes": 5169,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2.manual-review-completed.json",
+      "bytes": 162957,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2.manual-review.json",
+      "bytes": 158406,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2.private.json",
+      "bytes": 13582,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2.public.json",
+      "bytes": 8952,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2.responses.json",
+      "bytes": 149336,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1-v2.reviewed-report.json",
+      "bytes": 17251,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/hidden-selfauthored-pack-2026-06-26-deepseek-w1.invalid-run-summary.json",
+      "bytes": 1731,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/legal-citation-bench.json",
+      "bytes": 321,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/legal-faithfulness-bench.json",
+      "bytes": 823,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/local-agent-delta.public-report.json",
+      "bytes": 2021,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/minif2f-v2-passk.public-report.json",
+      "bytes": 162336,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/pif.public-report.json",
+      "bytes": 615,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/provenance-delta-dolphin-lexical-screen-null.public-report.json",
+      "bytes": 1406,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/prover-verifier.public-report.json",
+      "bytes": 2037,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/published-results.json",
+      "bytes": 28697,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/real-model/cot-faithfulness-validation.public-report.json",
+      "bytes": 1383,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/real-model/cot-faithfulness.deepseek.public-report.json",
+      "bytes": 3193,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/real-model/google-factcheck-coverage.public-report.json",
+      "bytes": 3115,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/real-model/prover-verifier.deepseek-claude.public-report.json",
+      "bytes": 4599,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/real-model/simpleqa/CROSS-MODEL.public-report.json",
+      "bytes": 1699,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/real-model/simpleqa/HEADLINE.public-report.json",
+      "bytes": 2222,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/real-model/simpleqa/REPORT.public-report.json",
+      "bytes": 1712,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/real-model/simpleqa/abstention.json",
+      "bytes": 2584,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/real-model/simpleqa/conformal.logprob.json",
+      "bytes": 3121,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/real-model/simpleqa/conformal.selfcons.json",
+      "bytes": 3128,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/real-model/simpleqa/conformal.stated.json",
+      "bytes": 3139,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/real-model/simpleqa/qwen/HEADLINE.public-report.json",
+      "bytes": 2950,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/real-model/simpleqa/qwen/summary.json",
+      "bytes": 582,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/real-model/simpleqa/qwen_power/HEADLINE.public-report.json",
+      "bytes": 2236,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/real-model/simpleqa/qwen_power/summary.json",
+      "bytes": 608,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/real-model/simpleqa/summary.json",
+      "bytes": 563,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/real-model/truth-probe.deepseek-claude.public-report.json",
+      "bytes": 1803,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/religion-visible-reference-2026-06-19.report.json",
+      "bytes": 639,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/retrieval-recall.public-report.json",
+      "bytes": 1247,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/rlvr-mock-offline-2026-06-24.public-report.json",
+      "bytes": 1363,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/rlvr-replication/aggregate.public-report.json",
+      "bytes": 1648,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/rlvr-replication/seed0.adapter-eval.json",
+      "bytes": 507,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/rlvr-replication/seed1.adapter-eval.json",
+      "bytes": 517,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/rlvr-replication/seed2.adapter-eval.json",
+      "bytes": 517,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/rlvr.public-report.json",
+      "bytes": 2255,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/3h39uu9fzo08j3.rlvr.offline-report.json",
+      "bytes": 1346,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/3h39uu9fzo08j3.rlvr.public-report.json",
+      "bytes": 1346,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/8x742vmn3nnzom.rlvr.offline-report.json",
+      "bytes": 1363,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/8x742vmn3nnzom.rlvr.public-report.json",
+      "bytes": 722,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/krjk0y6q092qt6.rlvr.offline-report.json",
+      "bytes": 1346,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/mr9sr03clgpk5g.judge-answers.json",
+      "bytes": 174186,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/mr9sr03clgpk5g.judge-forced-panel.json",
+      "bytes": 2534,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/mr9sr03clgpk5g.judge-forced.json",
+      "bytes": 1014,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/mr9sr03clgpk5g.judge-panel4.json",
+      "bytes": 6101,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/mr9sr03clgpk5g.judge.json",
+      "bytes": 967,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/mr9sr03clgpk5g.rlvr.adapter-eval.json",
+      "bytes": 191345,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/mr9sr03clgpk5g.rlvr.offline-report.json",
+      "bytes": 1801,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/mr9sr03clgpk5g.rlvr.public-report.json",
+      "bytes": 761,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-rlvr/xcu45skyjv32rv.rlvr.offline-report.json",
+      "bytes": 1346,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-speedup/run-28125095723.speedup_report.json",
+      "bytes": 1092,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-train/qwen2.5-3b-lora-1ep-seed0.eval-ladder.public-report.json",
+      "bytes": 4290,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-train/qwen2.5-3b-lora-3ep-rankalloc-seed0.eval-ladder.public-report.json",
+      "bytes": 4733,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/runpod-train/qwen2.5-3b-lora-3ep-seed0.eval-ladder.public-report.json",
+      "bytes": 4216,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/search-quality.public-report.json",
+      "bytes": 2030,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/seib-100-ollama-llama32-3b.public-report.json",
+      "bytes": 498647,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/seib-100-openrouter-deepseek.public-report.json",
+      "bytes": 728534,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/seib-100.public-report.json",
+      "bytes": 543413,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/seib-20-balanced-ollama-qwen3-30b-a3b.public-report.json",
+      "bytes": 184991,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/seib-20-balanced-openrouter-deepseek-judged.public-report.json",
+      "bytes": 557613,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/seib-20-ollama-qwen3-30b-a3b-training-smoke.public-report.json",
+      "bytes": 141346,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/seib-arena-20.public-report.json",
+      "bytes": 2792,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/seib-mlx-sophia-v3.json",
+      "bytes": 787398,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/steering.demo-report.json",
+      "bytes": 2728,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/steering.public-report.json",
+      "bytes": 929,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/team-agents-longtask.public-report.json",
+      "bytes": 3006,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/team-agents.public-report.json",
+      "bytes": 288,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/truth-probe.public-report.json",
+      "bytes": 1624,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/unified-uplift-dolphin-v0.7.32-grounded.public-report.json",
+      "bytes": 1324,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/unified-uplift-dolphin-validated.public-report.json",
+      "bytes": 1130,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/unified-uplift.public-report.json",
+      "bytes": 1059,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/visual-rlvr.public-report.json",
+      "bytes": 736,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-answers-seed1.json",
+      "bytes": 988826,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-answers-seed10.json",
+      "bytes": 403093,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-answers-seed2.json",
+      "bytes": 987595,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-answers-seed7.json",
+      "bytes": 65525,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-answers-seed8.json",
+      "bytes": 209439,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-answers-seed9.json",
+      "bytes": 356698,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-eval-seed1.json",
+      "bytes": 22018,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-eval-seed10.json",
+      "bytes": 18429,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-eval-seed2.json",
+      "bytes": 21920,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-eval-seed7.json",
+      "bytes": 17838,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-eval-seed8.json",
+      "bytes": 18516,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-eval-seed9.json",
+      "bytes": 18422,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-eval.json",
+      "bytes": 21919,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-judge.json",
+      "bytes": 2128,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-retention-answers.json",
+      "bytes": 335378,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-retention-eval.json",
+      "bytes": 2495,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-retention-smoke.json",
+      "bytes": 1732,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot-smoke.json",
+      "bytes": 17671,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-pilot.gate.json",
+      "bytes": 1502,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-stable-answers.json",
+      "bytes": 986239,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-stable-eval.json",
+      "bytes": 21992,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-stable-judge.json",
+      "bytes": 2122,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-stable-retention-answers.json",
+      "bytes": 23340,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-stable-retention.json",
+      "bytes": 1706,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-stable.gate.json",
+      "bytes": 1489,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-transfer-answers.json",
+      "bytes": 467019,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-transfer-eval.json",
+      "bytes": 20007,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-transfer-judge.json",
+      "bytes": 2121,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M3-transfer.gate.json",
+      "bytes": 1454,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M4-orpo-answers.json",
+      "bytes": 1422074,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M4-orpo-eval.json",
+      "bytes": 22103,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M4-orpo-judge.json",
+      "bytes": 2127,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M4-orpo-sft-answers.json",
+      "bytes": 984340,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M4-orpo-sft-eval.json",
+      "bytes": 22045,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M4-orpo-sft-judge.json",
+      "bytes": 2125,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M4-orpo-sft.gate.json",
+      "bytes": 1457,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/M4-orpo.gate.json",
+      "bytes": 1480,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/baselines_gemma-3-4b-it_2026-06-25.json",
+      "bytes": 16741,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/baselines_gemma-3-4b-it_gatefix_2026-06-25.json",
+      "bytes": 16688,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/baselines_llama-3.2-3b-instruct_2026-06-25.json",
+      "bytes": 16601,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/baselines_phi-4-mini-instruct_2026-06-25.json",
+      "bytes": 16823,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/calibration-check.json",
+      "bytes": 1186,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/calibration-fix-result.json",
+      "bytes": 4925,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/factcheck-corroboration.json",
+      "bytes": 5098,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/frontier_baselines.json",
+      "bytes": 11993,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/frontier_prompt_baselines.json",
+      "bytes": 11977,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/m3-2family-judge/judge-seed1.json",
+      "bytes": 2783,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/m3-2family-judge/judge-seed2.json",
+      "bytes": 2772,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/m3-2family-judge-70b/judge70b-seed1.json",
+      "bytes": 2763,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/m3-2family-judge-70b/judge70b-seed2.json",
+      "bytes": 2762,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/m3-2family-judge-70b/judge70b-seed3.json",
+      "bytes": 2762,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/measurement_spec.json",
+      "bytes": 2683,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/reality-check.json",
+      "bytes": 16127,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/reality-judge-adapter-vs-mistral.json",
+      "bytes": 2067,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/recipe-benchmark.gate.json",
+      "bytes": 591,
+      "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/recipe-benchmark.json",
+      "bytes": 2915,
+      "mtime": "2026-06-29T04:51:17Z"
+    }
+  ],
   "pendingCommands": []
 }
