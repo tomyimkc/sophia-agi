@@ -109,18 +109,59 @@ def _eval_contamination(prompt: str, evalset: set[str],
     return False, {}
 
 
+def _higher_temp(client: ModelClient, temperature: float) -> ModelClient:
+    """A copy of ``client`` whose primary config samples at a higher temperature (for the
+    self-consistency vote, T7) — diversity is what makes a verified majority meaningful."""
+    import copy
+    import dataclasses
+
+    new = copy.copy(client)
+    try:
+        new.primary = dataclasses.replace(client.primary, temperature=temperature)
+    except Exception:  # noqa: BLE001 - duck-typed/fake clients: leave primary as-is
+        pass
+    return new
+
+
+def _self_consistent_answer(item: dict[str, Any], client: ModelClient, n: int,
+                            temperature: float) -> tuple[str | None, float, dict]:
+    """Sample ``n`` higher-temperature completions and keep one only if a VERIFIED majority
+    (>= ceil(n/2)) pass the oracle (T7). Returns (answer_or_None, cost, detail)."""
+    hot = _higher_temp(client, temperature)
+    spec = _spec_of(item)
+    passing: list[str] = []
+    cost = 0.0
+    for _ in range(max(1, n)):
+        res = hot.generate(item.get("system") or MODE_PROMPTS["advisor"], item["prompt"])
+        cost += res.cost_usd or 0.0
+        if res.ok and res.text.strip() and oracle.evaluate(spec, res.text, question=item["prompt"])["passed"]:
+            passing.append(res.text)
+    need = (n // 2) + 1
+    detail = {"n": n, "passed": len(passing), "needed": need}
+    return (passing[0] if len(passing) >= need else None, cost, detail)
+
+
 def distill(prompts: list[dict[str, Any]], client: ModelClient, *, decontam: bool = True,
             eval_root: Path = ROOT, eval_prompts: set[str] | None = None,
-            jaccard_thr: float = 0.9, shingle_k: int = 5) -> dict[str, Any]:
-    """Run the teacher over ``prompts``, gate each answer, and (by default) DECONTAMINATE
-    every kept trace against the held-out eval before it can become SFT data (T4).
+            jaccard_thr: float = 0.9, shingle_k: int = 5,
+            patch_client: ModelClient | None = None,
+            self_consistency_n: int = 0, patch_temperature: float = 0.9) -> dict[str, Any]:
+    """Run the teacher over ``prompts``, gate each answer, DECONTAMINATE every kept trace
+    against the held-out eval (T4), and optionally RECOVER the failed subset (T1/T7).
 
-    Buckets: ``sft`` (gate-passed AND eval-disjoint), ``rejectedRows`` (gate failed),
-    ``decontaminatedRows`` (gate passed but the prompt collides with the held-out eval).
-    Every SFT row is tagged ``verification_provenance: passed_first_try`` (T8).
+    Buckets: ``sft`` (kept: passed-first-try, patched, or self-consistent — all eval-disjoint),
+    ``rejectedRows`` (gate failed AND not recovered), ``decontaminatedRows`` (verified but
+    collides with the held-out eval), ``dpoPairs`` ({prompt,chosen,rejected} mined from a
+    main-teacher failure that a stronger teacher patched — teaches debug-and-recover).
 
-    ``eval_prompts`` (a set of NORMALIZED prompts) may be injected to override the loaded
-    held-out set — used by tests and by callers that already hold the eval surface.
+    Recovery tiers (applied to the failed subset, in this order):
+      * ``patch_client`` (T1): a stronger auxiliary teacher re-answers; re-verified passes are
+        tagged ``patched_after_failure`` and also yield a DPO pair vs the main failure.
+      * ``self_consistency_n`` (T7): if no patch client, sample N higher-temp completions from
+        the SAME teacher and keep one iff a verified majority pass — tagged ``self_consistent``.
+
+    Every kept SFT row carries a ``verification_provenance`` tag (T8). ``eval_prompts`` (a set
+    of NORMALIZED prompts) may be injected to override the loaded held-out set (tests/callers).
     """
     evalset: set[str] = set()
     eval_sh: list[tuple[str, set]] = []
@@ -128,34 +169,89 @@ def distill(prompts: list[dict[str, Any]], client: ModelClient, *, decontam: boo
         evalset = eval_prompts if eval_prompts is not None else eval_prompt_set(root=eval_root)
         eval_sh = build_eval_shingles(evalset, k=shingle_k)
 
+    def route_clean(prompt: str, answer: str, *, teacher: str, item_id: Any, provenance: str):
+        """Decontaminate then bucket: ('sft', row) or ('decontam', info)."""
+        if decontam:
+            leak, detail = _eval_contamination(prompt, evalset, eval_sh, jaccard_thr=jaccard_thr, k=shingle_k)
+            if leak:
+                return "decontam", {"id": item_id, "prompt": prompt, "reason": detail, "answer": answer}
+        return "sft", _sft_row(prompt, answer, teacher=teacher, item_id=item_id, provenance=provenance)
+
     sft: list[dict] = []
     rejected: list[dict] = []
     decontaminated: list[dict] = []
+    dpo_pairs: list[dict] = []
     trajectory: list[dict] = []
+    teacher_split: dict[str, int] = {}
     total_cost = 0.0
+
+    # ---- main pass ----
+    failures: list[tuple[dict, dict]] = []  # (item, main_outcome) for the recovery stage
     for item in prompts:
         outcome = distill_one(item, client)
         total_cost += outcome.get("costUsd", 0.0) or 0.0
         traj = {k: v for k, v in outcome.items() if k != "answer"} | {"accepted": outcome["accepted"]}
         if outcome["accepted"]:
-            leak, detail = (False, {})
-            if decontam:
-                leak, detail = _eval_contamination(outcome["prompt"], evalset, eval_sh,
-                                                    jaccard_thr=jaccard_thr, k=shingle_k)
-            if leak:
-                traj["decontaminated"] = detail
-                decontaminated.append({"id": outcome["id"], "prompt": outcome["prompt"],
-                                       "reason": detail, "answer": outcome["answer"]})
+            bucket, payload = route_clean(outcome["prompt"], outcome["answer"],
+                                          teacher=outcome["model"], item_id=outcome["id"],
+                                          provenance=PROV_PASSED)
+            if bucket == "sft":
+                sft.append(payload)
+                teacher_split[outcome["model"]] = teacher_split.get(outcome["model"], 0) + 1
             else:
-                sft.append(_sft_row(outcome["prompt"], outcome["answer"],
-                                    teacher=outcome["model"], item_id=outcome["id"],
-                                    provenance=PROV_PASSED))
+                traj["decontaminated"] = payload["reason"]
+                decontaminated.append(payload)
         else:
-            rejected.append({"id": outcome["id"], "prompt": outcome["prompt"], "rejected": outcome["answer"], "reasons": outcome["reasons"]})
+            rejected.append({"id": outcome["id"], "prompt": outcome["prompt"],
+                             "rejected": outcome["answer"], "reasons": outcome["reasons"]})
+            failures.append((item, outcome))
         trajectory.append(traj)
+
+    # ---- recovery stage (T1 patch tier, else T7 self-consistency) ----
+    patched = self_consistent = 0
+    for item, main_outcome in failures:
+        recovered_answer: str | None = None
+        provenance = ""
+        teacher = ""
+        if patch_client is not None:
+            po = distill_one(item, patch_client)
+            total_cost += po.get("costUsd", 0.0) or 0.0
+            if po["accepted"]:
+                recovered_answer, provenance, teacher = po["answer"], PROV_PATCHED, po["model"]
+        elif self_consistency_n:
+            ans, cost, _detail = _self_consistent_answer(item, client, self_consistency_n, patch_temperature)
+            total_cost += cost
+            if ans is not None:
+                recovered_answer, provenance, teacher = ans, PROV_SELF_CONSISTENT, main_outcome["model"]
+        if recovered_answer is None:
+            continue
+        bucket, payload = route_clean(item["prompt"], recovered_answer,
+                                      teacher=teacher, item_id=item.get("id"), provenance=provenance)
+        if bucket != "sft":
+            decontaminated.append(payload)
+            continue
+        sft.append(payload)
+        teacher_split[teacher] = teacher_split.get(teacher, 0) + 1
+        if provenance == PROV_PATCHED:
+            patched += 1
+            # mine the recovery as a preference pair: stronger-teacher answer is chosen,
+            # the main teacher's failed answer is rejected (debug-and-recover signal).
+            if (main_outcome.get("answer") or "").strip() and main_outcome["answer"] != recovered_answer:
+                dpo_pairs.append({"prompt": item["prompt"], "chosen": recovered_answer,
+                                  "rejected": main_outcome["answer"],
+                                  "metadata": {"source": "distill_patch", "teacher": teacher,
+                                               "verification_provenance": PROV_PATCHED}})
+        else:
+            self_consistent += 1
+        # this failure was recovered — drop it from the rejected bucket
+        rejected = [r for r in rejected if r["id"] != item.get("id")]
+
     n = len(prompts)
     return {
         "accepted": len(sft),
+        "passedFirstTry": len(sft) - patched - self_consistent,
+        "patched": patched,
+        "selfConsistent": self_consistent,
         "rejected": len(rejected),
         "decontaminated": len(decontaminated),
         "total": n,
@@ -163,9 +259,11 @@ def distill(prompts: list[dict[str, Any]], client: ModelClient, *, decontam: boo
         "totalCostUsd": round(total_cost, 6),
         # cost per VERIFIED-and-KEPT row — the real sample-efficiency number (T9).
         "costPerVerifiedRow": round(total_cost / len(sft), 6) if sft else None,
+        "teacherSplit": teacher_split,  # rows kept per teacher (main vs patch) — T9 budgeting
         "sft": sft,
         "rejectedRows": rejected,
         "decontaminatedRows": decontaminated,
+        "dpoPairs": dpo_pairs,
         "trajectory": trajectory,
     }
 
@@ -178,18 +276,32 @@ def main() -> int:
     parser.add_argument("--no-decontam", action="store_true",
                         help="DANGER: skip the held-out-eval decontamination of teacher traces")
     parser.add_argument("--jaccard", type=float, default=0.9, help="near-dup decontam threshold")
+    parser.add_argument("--patch-provider", default=None,
+                        help="T1: stronger auxiliary teacher for the failed subset (e.g. glm:glm-5.2, "
+                             "claude); patched answers are SFT'd + mined as DPO pairs")
+    parser.add_argument("--self-consistency-n", type=int, default=0,
+                        help="T7: if no --patch-provider, sample N higher-temp completions from the "
+                             "main teacher on failures and keep a verified majority")
+    parser.add_argument("--patch-temperature", type=float, default=0.9,
+                        help="sampling temperature for the self-consistency vote (T7)")
     args = parser.parse_args()
 
     prompts = json.loads(args.prompts.read_text(encoding="utf-8")) if args.prompts else DEFAULT_PROMPTS
     client = default_client(args.provider)
-    data = distill(prompts, client, decontam=not args.no_decontam, jaccard_thr=args.jaccard)
+    patch_client = default_client(args.patch_provider) if args.patch_provider else None
+    data = distill(prompts, client, decontam=not args.no_decontam, jaccard_thr=args.jaccard,
+                   patch_client=patch_client, self_consistency_n=args.self_consistency_n,
+                   patch_temperature=args.patch_temperature)
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     (args.out_dir / "distill_sft.jsonl").write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in data["sft"]) + ("\n" if data["sft"] else ""), encoding="utf-8")
     (args.out_dir / "distill_rejected.jsonl").write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in data["rejectedRows"]) + ("\n" if data["rejectedRows"] else ""), encoding="utf-8")
     (args.out_dir / "distill_decontaminated.jsonl").write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in data["decontaminatedRows"]) + ("\n" if data["decontaminatedRows"] else ""), encoding="utf-8")
-    summary = {k: data[k] for k in ("accepted", "rejected", "decontaminated", "total",
-                                    "acceptRate", "totalCostUsd", "costPerVerifiedRow")}
+    (args.out_dir / "distill_dpo.jsonl").write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in data["dpoPairs"]) + ("\n" if data["dpoPairs"] else ""), encoding="utf-8")
+    summary = {k: data[k] for k in ("accepted", "passedFirstTry", "patched", "selfConsistent",
+                                    "rejected", "decontaminated", "total", "acceptRate",
+                                    "totalCostUsd", "costPerVerifiedRow", "teacherSplit")}
+    summary["dpoPairs"] = len(data["dpoPairs"])
     summary["runAt"] = datetime.now().isoformat(timespec="seconds")
     print(json.dumps(summary, indent=2, ensure_ascii=False))
     return 0
