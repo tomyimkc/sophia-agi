@@ -1,0 +1,550 @@
+{
+  "base": [
+    {
+      "id": "pat-001",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "64",
+      "reply": "64",
+      "correct": true
+    },
+    {
+      "id": "pat-002",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "21",
+      "reply": "21",
+      "correct": true
+    },
+    {
+      "id": "pat-003",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "36",
+      "reply": "36",
+      "correct": true
+    },
+    {
+      "id": "pat-004",
+      "category": "abstraction_pattern",
+      "match": "exact",
+      "gold": "B C D A",
+      "reply": "BCD A",
+      "correct": false
+    },
+    {
+      "id": "pat-005",
+      "category": "abstraction_pattern",
+      "match": "exact",
+      "gold": "c a",
+      "reply": "b a\nd c",
+      "correct": false
+    },
+    {
+      "id": "pat-006",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "38",
+      "reply": "38",
+      "correct": true
+    },
+    {
+      "id": "pat-007",
+      "category": "abstraction_pattern",
+      "match": "exact",
+      "gold": "1 0 1 1 0",
+      "reply": "1 0 1 0 0",
+      "correct": false
+    },
+    {
+      "id": "arith-001",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "70",
+      "reply": "70",
+      "correct": true
+    },
+    {
+      "id": "arith-002",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "32.4",
+      "reply": "68",
+      "correct": false
+    },
+    {
+      "id": "arith-003",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "29",
+      "reply": "21",
+      "correct": false
+    },
+    {
+      "id": "arith-004",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "5",
+      "reply": "5",
+      "correct": true
+    },
+    {
+      "id": "arith-005",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "28",
+      "reply": "28",
+      "correct": true
+    },
+    {
+      "id": "arith-006",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "12.5",
+      "reply": "5.00",
+      "correct": false
+    },
+    {
+      "id": "arith-007",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "30",
+      "reply": "30",
+      "correct": true
+    },
+    {
+      "id": "logic-001",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "yes",
+      "reply": "Yes.",
+      "correct": true
+    },
+    {
+      "id": "logic-002",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "Mike",
+      "reply": "Mike",
+      "correct": true
+    },
+    {
+      "id": "logic-003",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "no",
+      "reply": "No.",
+      "correct": true
+    },
+    {
+      "id": "logic-004",
+      "category": "logic_wordproblem",
+      "match": "numeric",
+      "gold": "2",
+      "reply": "2",
+      "correct": true
+    },
+    {
+      "id": "logic-005",
+      "category": "logic_wordproblem",
+      "match": "numeric",
+      "gold": "0.05",
+      "reply": "0.05",
+      "correct": true
+    },
+    {
+      "id": "logic-006",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "yes",
+      "reply": "Yes.",
+      "correct": true
+    },
+    {
+      "id": "analogy-001",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "down",
+      "reply": "Down",
+      "correct": true
+    },
+    {
+      "id": "analogy-002",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "tree",
+      "reply": "Tree",
+      "correct": true
+    },
+    {
+      "id": "analogy-003",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "cat",
+      "reply": "Cat",
+      "correct": true
+    },
+    {
+      "id": "analogy-004",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "winter",
+      "reply": "Winter",
+      "correct": true
+    },
+    {
+      "id": "analogy-005",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "symphony|music|song|score",
+      "reply": "Music",
+      "correct": true
+    },
+    {
+      "id": "analogy-006",
+      "category": "analogy",
+      "match": "numeric",
+      "gold": "27",
+      "reply": "27",
+      "correct": true
+    },
+    {
+      "id": "ood-001",
+      "category": "out_of_domain",
+      "match": "regex",
+      "gold": "hello",
+      "reply": "hello",
+      "correct": true
+    },
+    {
+      "id": "ood-002",
+      "category": "out_of_domain",
+      "match": "regex",
+      "gold": "desserts",
+      "reply": "desserts",
+      "correct": true
+    },
+    {
+      "id": "ood-003",
+      "category": "out_of_domain",
+      "match": "regex",
+      "gold": "mi",
+      "reply": "Mi",
+      "correct": true
+    },
+    {
+      "id": "ood-004",
+      "category": "out_of_domain",
+      "match": "numeric",
+      "gold": "11",
+      "reply": "11",
+      "correct": true
+    },
+    {
+      "id": "ood-005",
+      "category": "out_of_domain",
+      "match": "numeric",
+      "gold": "1",
+      "reply": "4",
+      "correct": false
+    },
+    {
+      "id": "ood-006",
+      "category": "out_of_domain",
+      "match": "numeric",
+      "gold": "3",
+      "reply": "Three",
+      "correct": false
+    },
+    {
+      "id": "ood-007",
+      "category": "out_of_domain",
+      "match": "exact",
+      "gold": "1 2 3 4",
+      "reply": "1 2 3 4",
+      "correct": true
+    },
+    {
+      "id": "ood-008",
+      "category": "out_of_domain",
+      "match": "numeric",
+      "gold": "1",
+      "reply": "1",
+      "correct": true
+    }
+  ],
+  "adapter": [
+    {
+      "id": "pat-001",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "64",
+      "reply": "64",
+      "correct": true
+    },
+    {
+      "id": "pat-002",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "21",
+      "reply": "21",
+      "correct": true
+    },
+    {
+      "id": "pat-003",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "36",
+      "reply": "36",
+      "correct": true
+    },
+    {
+      "id": "pat-004",
+      "category": "abstraction_pattern",
+      "match": "exact",
+      "gold": "B C D A",
+      "reply": "A B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA B C D\nA",
+      "correct": false
+    },
+    {
+      "id": "pat-005",
+      "category": "abstraction_pattern",
+      "match": "exact",
+      "gold": "c a",
+      "reply": "The top row of the rotated grid is 'c a'.",
+      "correct": false
+    },
+    {
+      "id": "pat-006",
+      "category": "abstraction_pattern",
+      "match": "numeric",
+      "gold": "38",
+      "reply": "46",
+      "correct": false
+    },
+    {
+      "id": "pat-007",
+      "category": "abstraction_pattern",
+      "match": "exact",
+      "gold": "1 0 1 1 0",
+      "reply": "0 1 0 0 1 -> 0 0 0 1 0",
+      "correct": false
+    },
+    {
+      "id": "arith-001",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "70",
+      "reply": "70",
+      "correct": true
+    },
+    {
+      "id": "arith-002",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "32.4",
+      "reply": "1. Calculate the discount amount: $40 * 0.25 = $10\n2. Calculate the discounted price: $40 - $10 = $30\n3. Calculate the sales tax amount: $30 * 0.08 = $2.40\n4. Calculate the final price: $30 + $2.40 = ",
+      "correct": false
+    },
+    {
+      "id": "arith-003",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "29",
+      "reply": "15",
+      "correct": false
+    },
+    {
+      "id": "arith-004",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "5",
+      "reply": "5",
+      "correct": true
+    },
+    {
+      "id": "arith-005",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "28",
+      "reply": "28",
+      "correct": true
+    },
+    {
+      "id": "arith-006",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "12.5",
+      "reply": "12.50",
+      "correct": true
+    },
+    {
+      "id": "arith-007",
+      "category": "multistep_arithmetic",
+      "match": "numeric",
+      "gold": "30",
+      "reply": "30",
+      "correct": true
+    },
+    {
+      "id": "logic-001",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "yes",
+      "reply": "Yes. If all bloops are razzies and all razzies are lazzies, then all bloops must be lazzies.",
+      "correct": true
+    },
+    {
+      "id": "logic-002",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "Mike",
+      "reply": "Mike",
+      "correct": true
+    },
+    {
+      "id": "logic-003",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "no",
+      "reply": "No. If it were raining, the ground would be wet. Since the ground is not wet, it cannot be raining.",
+      "correct": true
+    },
+    {
+      "id": "logic-004",
+      "category": "logic_wordproblem",
+      "match": "numeric",
+      "gold": "2",
+      "reply": "Two",
+      "correct": false
+    },
+    {
+      "id": "logic-005",
+      "category": "logic_wordproblem",
+      "match": "numeric",
+      "gold": "0.05",
+      "reply": "$0.05",
+      "correct": true
+    },
+    {
+      "id": "logic-006",
+      "category": "logic_wordproblem",
+      "match": "regex",
+      "gold": "yes",
+      "reply": "Yes. If some cats are black and no black things glow, then some cats do not glow.",
+      "correct": true
+    },
+    {
+      "id": "analogy-001",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "down",
+      "reply": "Down",
+      "correct": true
+    },
+    {
+      "id": "analogy-002",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "tree",
+      "reply": "Tree",
+      "correct": true
+    },
+    {
+      "id": "analogy-003",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "cat",
+      "reply": "Cat",
+      "correct": true
+    },
+    {
+      "id": "analogy-004",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "winter",
+      "reply": "Winter",
+      "correct": true
+    },
+    {
+      "id": "analogy-005",
+      "category": "analogy",
+      "match": "regex",
+      "gold": "symphony|music|song|score",
+      "reply": "Music",
+      "correct": true
+    },
+    {
+      "id": "analogy-006",
+      "category": "analogy",
+      "match": "numeric",
+      "gold": "27",
+      "reply": "6",
+      "correct": false
+    },
+    {
+      "id": "ood-001",
+      "category": "out_of_domain",
+      "match": "regex",
+      "gold": "hello",
+      "reply": "'hffmm'",
+      "correct": false
+    },
+    {
+      "id": "ood-002",
+      "category": "out_of_domain",
+      "match": "regex",
+      "gold": "desserts",
+      "reply": "desserts",
+      "correct": true
+    },
+    {
+      "id": "ood-003",
+      "category": "out_of_domain",
+      "match": "regex",
+      "gold": "mi",
+      "reply": "Red",
+      "correct": false
+    },
+    {
+      "id": "ood-004",
+      "category": "out_of_domain",
+      "match": "numeric",
+      "gold": "11",
+      "reply": "11",
+      "correct": true
+    },
+    {
+      "id": "ood-005",
+      "category": "out_of_domain",
+      "match": "numeric",
+      "gold": "1",
+      "reply": "1",
+      "correct": true
+    },
+    {
+      "id": "ood-006",
+      "category": "out_of_domain",
+      "match": "numeric",
+      "gold": "3",
+      "reply": "3",
+      "correct": true
+    },
+    {
+      "id": "ood-007",
+      "category": "out_of_domain",
+      "match": "exact",
+      "gold": "1 2 3 4",
+      "reply": "1 2 3 4",
+      "correct": true
+    },
+    {
+      "id": "ood-008",
+      "category": "out_of_domain",
+      "match": "numeric",
+      "gold": "1",
+      "reply": "1",
+      "correct": true
+    }
+  ]
+}

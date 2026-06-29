@@ -7,14 +7,14 @@
   "nTasks": 34,
   "scoring": "deterministic (numeric/exact/regex) — NO LLM judge",
   "contaminationLeaks": [],
-  "base_accuracy": 0.7353,
-  "adapter_accuracy": 0.7647,
-  "delta": 0.0294,
+  "base_accuracy": 0.7647,
+  "adapter_accuracy": 0.7059,
+  "delta": -0.0588,
   "delta_ci95": [
-    0.0,
+    -0.2353,
     0.0882
   ],
-  "retains": true,
+  "retains": false,
   "retains_ci": true,
   "forgetting_established": false,
   "byCategoryBase": {
@@ -29,9 +29,9 @@
       "acc": 0.571
     },
     "logic_wordproblem": {
-      "correct": 5,
+      "correct": 6,
       "n": 6,
-      "acc": 0.833
+      "acc": 1.0
     },
     "analogy": {
       "correct": 6,
@@ -46,24 +46,24 @@
   },
   "byCategoryAdapter": {
     "abstraction_pattern": {
-      "correct": 4,
+      "correct": 3,
       "n": 7,
-      "acc": 0.571
+      "acc": 0.429
     },
     "multistep_arithmetic": {
-      "correct": 4,
+      "correct": 5,
       "n": 7,
-      "acc": 0.571
+      "acc": 0.714
     },
     "logic_wordproblem": {
-      "correct": 6,
+      "correct": 5,
       "n": 6,
-      "acc": 1.0
+      "acc": 0.833
     },
     "analogy": {
-      "correct": 6,
+      "correct": 5,
       "n": 6,
-      "acc": 1.0
+      "acc": 0.833
     },
     "out_of_domain": {
       "correct": 6,

@@ -1,17 +1,17 @@
-[pod] M3 pilot self-report job starting Sun Jun 28 17:59:44 UTC 2026
-Sun Jun 28 17:59:48 2026       
+[pod] M3 pilot self-report job starting Mon Jun 29 02:32:24 UTC 2026
+Mon Jun 29 02:32:30 2026       
 +-----------------------------------------------------------------------------------------+
-| NVIDIA-SMI 570.211.01             Driver Version: 570.211.01     CUDA Version: 12.8     |
-|-----------------------------------------+------------------------+----------------------+
+| NVIDIA-SMI 580.126.20             Driver Version: 580.126.20     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
 | GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
 | Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
 |                                         |                        |               MIG M. |
 |=========================================+========================+======================|
-|   0  NVIDIA H100 80GB HBM3          On  |   00000000:E5:00.0 Off |                    0 |
-| N/A   38C    P0             75W /  700W |       0MiB /  81559MiB |      0%      Default |
+|   0  NVIDIA H100 80GB HBM3          On  |   00000000:5D:00.0 Off |                    0 |
+| N/A   26C    P0             68W /  700W |       0MiB /  81559MiB |      0%      Default |
 |                                         |                        |             Disabled |
 +-----------------------------------------+------------------------+----------------------+
-                                                                                         
+
 +-----------------------------------------------------------------------------------------+
 | Processes:                                                                              |
 |  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
@@ -20,7 +20,7 @@ Sun Jun 28 17:59:48 2026
 |  No running processes found                                                             |
 +-----------------------------------------------------------------------------------------+
 Cloning into 'sophia-agi'...
-Updating files:   6% (234/3456)Updating files:   7% (242/3456)Updating files:   8% (277/3456)Updating files:   9% (312/3456)Updating files:  10% (346/3456)Updating files:  11% (381/3456)Updating files:  12% (415/3456)Updating files:  13% (450/3456)Updating files:  13% (459/3456)Updating files:  14% (484/3456)Updating files:  15% (519/3456)Updating files:  16% (553/3456)Updating files:  17% (588/3456)Updating files:  18% (623/3456)Updating files:  18% (645/3456)Updating files:  19% (657/3456)Updating files:  20% (692/3456)Updating files:  21% (726/3456)Updating files:  22% (761/3456)Updating files:  23% (795/3456)Updating files:  23% (824/3456)Updating files:  24% (830/3456)Updating files:  25% (864/3456)Updating files:  26% (899/3456)Updating files:  27% (934/3456)Updating files:  28% (968/3456)Updating files:  28% (972/3456)Updating files:  29% (1003/3456)Updating files:  30% (1037/3456)Updating files:  31% (1072/3456)Updating files:  32% (1106/3456)Updating files:  33% (1141/3456)Updating files:  33% (1167/3456)Updating files:  34% (1176/3456)Updating files:  35% (1210/3456)Updating files:  36% (1245/3456)Updating files:  37% (1279/3456)Updating files:  38% (1314/3456)Updating files:  39% (1348/3456)Updating files:  39% (1376/3456)Updating files:  40% (1383/3456)Updating files:  41% (1417/3456)Updating files:  42% (1452/3456)Updating files:  43% (1487/3456)Updating files:  44% (1521/3456)Updating files:  45% (1556/3456)Updating files:  45% (1579/3456)Updating files:  46% (1590/3456)Updating files:  47% (1625/3456)Updating files:  48% (1659/3456)Updating files:  49% (1694/3456)Updating files:  50% (1728/3456)Updating files:  50% (1740/3456)Updating files:  51% (1763/3456)Updating files:  52% (1798/3456)Updating files:  53% (1832/3456)Updating files:  54% (1867/3456)Updating files:  55% (1901/3456)Updating files:  56% (1936/3456)Updating files:  57% (1970/3456)Updating files:  58% (2005/3456)Updating files:  59% (2040/3456)Updating files:  60% (2074/3456)Updating files:  60% (2085/3456)Updating files:  61% (2109/3456)Updating files:  62% (2143/3456)Updating files:  63% (2178/3456)Updating files:  64% (2212/3456)Updating files:  65% (2247/3456)Updating files:  66% (2281/3456)Updating files:  66% (2311/3456)Updating files:  67% (2316/3456)Updating files:  68% (2351/3456)Updating files:  69% (2385/3456)Updating files:  70% (2420/3456)Updating files:  71% (2454/3456)Updating files:  72% (2489/3456)Updating files:  73% (2523/3456)Updating files:  73% (2553/3456)Updating files:  74% (2558/3456)Updating files:  75% (2592/3456)Updating files:  76% (2627/3456)Updating files:  77% (2662/3456)Updating files:  78% (2696/3456)Updating files:  79% (2731/3456)Updating files:  80% (2765/3456)Updating files:  80% (2773/3456)Updating files:  81% (2800/3456)Updating files:  82% (2834/3456)Updating files:  83% (2869/3456)Updating files:  84% (2904/3456)Updating files:  85% (2938/3456)Updating files:  85% (2959/3456)Updating files:  86% (2973/3456)Updating files:  87% (3007/3456)Updating files:  88% (3042/3456)Updating files:  89% (3076/3456)Updating files:  90% (3111/3456)Updating files:  91% (3145/3456)Updating files:  92% (3180/3456)Updating files:  92% (3182/3456)Updating files:  93% (3215/3456)Updating files:  94% (3249/3456)Updating files:  95% (3284/3456)Updating files:  96% (3318/3456)Updating files:  97% (3353/3456)Updating files:  98% (3387/3456)Updating files:  98% (3395/3456)Updating files:  99% (3422/3456)Updating files: 100% (3456/3456)Updating files: 100% (3456/3456), done.
+Updating files:   2% (97/3458)Updating files:   3% (104/3458)Updating files:   4% (139/3458)Updating files:   5% (173/3458)Updating files:   5% (203/3458)Updating files:   6% (208/3458)Updating files:   7% (243/3458)Updating files:   8% (277/3458)Updating files:   8% (282/3458)Updating files:   9% (312/3458)Updating files:  10% (346/3458)Updating files:  11% (381/3458)Updating files:  11% (387/3458)Updating files:  12% (415/3458)Updating files:  13% (450/3458)Updating files:  13% (479/3458)Updating files:  14% (485/3458)Updating files:  15% (519/3458)Updating files:  16% (554/3458)Updating files:  16% (573/3458)Updating files:  17% (588/3458)Updating files:  18% (623/3458)Updating files:  18% (645/3458)Updating files:  19% (658/3458)Updating files:  20% (692/3458)Updating files:  20% (720/3458)Updating files:  21% (727/3458)Updating files:  22% (761/3458)Updating files:  22% (789/3458)Updating files:  23% (796/3458)Updating files:  23% (809/3458)Updating files:  24% (830/3458)Updating files:  25% (865/3458)Updating files:  25% (868/3458)Updating files:  26% (900/3458)Updating files:  26% (918/3458)Updating files:  27% (934/3458)Updating files:  28% (969/3458)Updating files:  28% (988/3458)Updating files:  29% (1003/3458)Updating files:  30% (1038/3458)Updating files:  30% (1042/3458)Updating files:  31% (1072/3458)Updating files:  32% (1107/3458)Updating files:  32% (1134/3458)Updating files:  33% (1142/3458)Updating files:  34% (1176/3458)Updating files:  35% (1211/3458)Updating files:  35% (1213/3458)Updating files:  36% (1245/3458)Updating files:  37% (1280/3458)Updating files:  37% (1300/3458)Updating files:  38% (1315/3458)Updating files:  39% (1349/3458)Updating files:  39% (1373/3458)Updating files:  40% (1384/3458)Updating files:  41% (1418/3458)Updating files:  41% (1447/3458)Updating files:  42% (1453/3458)Updating files:  43% (1487/3458)Updating files:  43% (1498/3458)Updating files:  44% (1522/3458)Updating files:  45% (1557/3458)Updating files:  45% (1567/3458)Updating files:  46% (1591/3458)Updating files:  47% (1626/3458)Updating files:  48% (1660/3458)Updating files:  49% (1695/3458)Updating files:  50% (1729/3458)Updating files:  51% (1764/3458)Updating files:  52% (1799/3458)Updating files:  52% (1813/3458)Updating files:  53% (1833/3458)Updating files:  53% (1865/3458)Updating files:  54% (1868/3458)Updating files:  54% (1888/3458)Updating files:  55% (1902/3458)Updating files:  56% (1937/3458)Updating files:  56% (1947/3458)Updating files:  57% (1972/3458)Updating files:  58% (2006/3458)Updating files:  58% (2010/3458)Updating files:  59% (2041/3458)Updating files:  60% (2075/3458)Updating files:  60% (2076/3458)Updating files:  61% (2110/3458)Updating files:  61% (2122/3458)Updating files:  62% (2144/3458)Updating files:  62% (2159/3458)Updating files:  63% (2179/3458)Updating files:  63% (2211/3458)Updating files:  64% (2214/3458)Updating files:  65% (2248/3458)Updating files:  65% (2255/3458)Updating files:  66% (2283/3458)Updating files:  66% (2307/3458)Updating files:  67% (2317/3458)Updating files:  68% (2352/3458)Updating files:  68% (2356/3458)Updating files:  69% (2387/3458)Updating files:  69% (2402/3458)Updating files:  70% (2421/3458)Updating files:  70% (2446/3458)Updating files:  71% (2456/3458)Updating files:  72% (2490/3458)Updating files:  72% (2510/3458)Updating files:  73% (2525/3458)Updating files:  74% (2559/3458)Updating files:  74% (2564/3458)Updating files:  74% (2585/3458)Updating files:  75% (2594/3458)Updating files:  75% (2621/3458)Updating files:  76% (2629/3458)Updating files:  76% (2662/3458)Updating files:  77% (2663/3458)Updating files:  78% (2698/3458)Updating files:  78% (2712/3458)Updating files:  79% (2732/3458)Updating files:  79% (2748/3458)Updating files:  80% (2767/3458)Updating files:  80% (2800/3458)Updating files:  81% (2801/3458)Updating files:  82% (2836/3458)Updating files:  83% (2871/3458)Updating files:  83% (2894/3458)Updating files:  84% (2905/3458)Updating files:  85% (2940/3458)Updating files:  86% (2974/3458)Updating files:  87% (3009/3458)Updating files:  87% (3016/3458)Updating files:  88% (3044/3458)Updating files:  89% (3078/3458)Updating files:  89% (3109/3458)Updating files:  90% (3113/3458)Updating files:  91% (3147/3458)Updating files:  92% (3182/3458)Updating files:  92% (3214/3458)Updating files:  93% (3216/3458)Updating files:  94% (3251/3458)Updating files:  94% (3283/3458)Updating files:  95% (3286/3458)Updating files:  96% (3320/3458)Updating files:  96% (3353/3458)Updating files:  97% (3355/3458)Updating files:  98% (3389/3458)Updating files:  98% (3417/3458)Updating files:  99% (3424/3458)Updating files: 100% (3458/3458)Updating files: 100% (3458/3458), done.
 [pod] HEARTBEAT PUSH OK — delivery channel works
 [pod] ENV PROBE PUSH OK
 Collecting transformers<5,>=4.52
@@ -44,7 +44,7 @@ Requirement already satisfied: numpy>=1.17 in /usr/local/lib/python3.12/dist-pac
 Requirement already satisfied: packaging>=20.0 in /usr/local/lib/python3.12/dist-packages (from transformers<5,>=4.52) (26.2)
 Requirement already satisfied: pyyaml>=5.1 in /usr/local/lib/python3.12/dist-packages (from transformers<5,>=4.52) (6.0.3)
 Collecting regex!=2019.12.17 (from transformers<5,>=4.52)
-  Downloading regex-2026.5.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+  Downloading regex-2026.6.28-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
 Requirement already satisfied: requests in /usr/local/lib/python3.12/dist-packages (from transformers<5,>=4.52) (2.34.2)
 Collecting tokenizers<=0.23.0,>=0.22.0 (from transformers<5,>=4.52)
   Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)
@@ -122,26 +122,26 @@ Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /usr/local/lib/python3
 Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich->trl<0.15,>=0.12)
   Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
 Downloading transformers-4.57.6-py3-none-any.whl (12.0 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.0/12.0 MB 110.9 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.0/12.0 MB 14.9 MB/s  0:00:00
 Downloading peft-0.19.1-py3-none-any.whl (680 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 680.7/680.7 kB 16.5 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 680.7/680.7 kB 778.4 kB/s  0:00:00
 Downloading trl-0.14.0-py3-none-any.whl (313 kB)
 Downloading accelerate-1.14.0-py3-none-any.whl (389 kB)
 Downloading huggingface_hub-0.36.2-py3-none-any.whl (566 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 12.2 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 1.5 MB/s  0:00:00
 Downloading hf_xet-1.5.1-cp37-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.5 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.5/4.5 MB 80.3 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.5/4.5 MB 20.1 MB/s  0:00:00
 Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.3 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 43.7 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 11.7 MB/s  0:00:00
 Downloading datasets-5.0.0-py3-none-any.whl (555 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 555.1/555.1 kB 10.7 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 555.1/555.1 kB 5.2 MB/s  0:00:00
 Downloading dill-0.4.1-py3-none-any.whl (120 kB)
 Downloading multiprocess-0.70.19-py312-none-any.whl (150 kB)
 Downloading sentencepiece-0.2.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (1.4 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 40.9 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 9.2 MB/s  0:00:00
 Downloading protobuf-7.35.1-cp310-abi3-manylinux2014_x86_64.whl (327 kB)
 Downloading aiohttp-3.14.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (1.8 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 43.7 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 12.1 MB/s  0:00:00
 Downloading multidict-6.7.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (256 kB)
 Downloading yarl-1.24.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (105 kB)
 Downloading aiohappyeyeballs-2.6.2-py3-none-any.whl (15 kB)
@@ -149,20 +149,20 @@ Downloading aiosignal-1.4.0-py3-none-any.whl (7.5 kB)
 Downloading frozenlist-1.8.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (242 kB)
 Downloading propcache-0.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (61 kB)
 Downloading pyarrow-24.0.0-cp312-cp312-manylinux_2_28_x86_64.whl (48.9 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 48.9/48.9 MB 186.8 MB/s  0:00:00
-Downloading regex-2026.5.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (801 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 801.2/801.2 kB 21.3 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 48.9/48.9 MB 98.8 MB/s  0:00:00
+Downloading regex-2026.6.28-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (801 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 801.3/801.3 kB 1.7 MB/s  0:00:00
 Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (516 kB)
 Downloading tqdm-4.68.3-py3-none-any.whl (78 kB)
 Downloading pandas-3.0.4-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (10.8 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 104.4 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 39.8 MB/s  0:00:00
 Downloading rich-15.0.0-py3-none-any.whl (310 kB)
 Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
 Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
 Downloading xxhash-3.8.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (220 kB)
 Installing collected packages: xxhash, tqdm, sentencepiece, safetensors, regex, pyarrow, protobuf, propcache, multidict, mdurl, hf-xet, frozenlist, dill, aiohappyeyeballs, yarl, pandas, multiprocess, markdown-it-py, huggingface-hub, aiosignal, tokenizers, rich, aiohttp, transformers, accelerate, peft, datasets, trl
 
-Successfully installed accelerate-1.14.0 aiohappyeyeballs-2.6.2 aiohttp-3.14.1 aiosignal-1.4.0 datasets-5.0.0 dill-0.4.1 frozenlist-1.8.0 hf-xet-1.5.1 huggingface-hub-0.36.2 markdown-it-py-4.2.0 mdurl-0.1.2 multidict-6.7.1 multiprocess-0.70.19 pandas-3.0.4 peft-0.19.1 propcache-0.5.2 protobuf-7.35.1 pyarrow-24.0.0 regex-2026.5.9 rich-15.0.0 safetensors-0.8.0 sentencepiece-0.2.1 tokenizers-0.22.2 tqdm-4.68.3 transformers-4.57.6 trl-0.14.0 xxhash-3.8.0 yarl-1.24.2
+Successfully installed accelerate-1.14.0 aiohappyeyeballs-2.6.2 aiohttp-3.14.1 aiosignal-1.4.0 datasets-5.0.0 dill-0.4.1 frozenlist-1.8.0 hf-xet-1.5.1 huggingface-hub-0.36.2 markdown-it-py-4.2.0 mdurl-0.1.2 multidict-6.7.1 multiprocess-0.70.19 pandas-3.0.4 peft-0.19.1 propcache-0.5.2 protobuf-7.35.1 pyarrow-24.0.0 regex-2026.6.28 rich-15.0.0 safetensors-0.8.0 sentencepiece-0.2.1 tokenizers-0.22.2 tqdm-4.68.3 transformers-4.57.6 trl-0.14.0 xxhash-3.8.0 yarl-1.24.2
 {
   "totals": {
     "candidates": 2033,
@@ -248,169 +248,124 @@ Successfully installed accelerate-1.14.0 aiohappyeyeballs-2.6.2 aiohttp-3.14.1 a
 
 WROTE training/local_sophia_v3: 1560 gate-passed rows, 233 preference pairs, 92 decontam drops.
 1491 training/local_sophia_v3/mlx/train.jsonl
-[pod] SMOKE (sft)
-[pilot 18:00:58] SMOKE: train 2 steps then eval 2 cases x1 run
+[pod] SMOKE (retention)
+[pilot 02:35:56] SMOKE: train 2 steps then eval 2 cases x1 run
 `torch_dtype` is deprecated! Use `dtype` instead!
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:11<00:11, 11.62s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:19<00:00,  9.58s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:19<00:00,  9.89s/it]
-[pilot 18:01:48] loaded base via AutoModelForImageTextToText
-[pilot 18:01:50] trainable params: 29,802,496 (rank=16 alpha=32 rslora=False kl_coef=0.0)
-[pilot 18:01:50] training rows: 8 (0 general_retention — KL-anchored if kl_coef>0)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.36s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.16s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.19s/it]
+[pilot 02:36:47] loaded base via AutoModelForImageTextToText
+[pilot 02:36:52] trainable params: 29,802,496 (rank=16 alpha=32 rslora=False kl_coef=0.0)
+[pilot 02:36:52] training rows: 8 (0 general_retention — KL-anchored if kl_coef>0)
 `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
-[pilot 18:01:51] step 1/2 loss=4.0761 kl=0.0000
-[pilot 18:01:51] step 2/2 loss=3.4034 kl=0.0000
-[pilot 18:01:52] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
-[pilot 18:01:52] eval cases: 2 x 1 runs x (base, adapter)
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.20it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.52it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.46it/s]
-[pilot 18:01:55] loaded base via AutoModelForImageTextToText
-[pilot 18:02:09]   gen 2/2
-[pilot 18:02:23]   gen 2/2
-[pilot 18:02:23]   run 1/1 done
-[pilot 18:02:23] loading adapter onto base ...
-[pilot 18:02:49]   gen 2/2
-[pilot 18:03:12]   gen 2/2
-[pilot 18:03:12]   run 1/1 done
-[pilot 18:03:12] wrote eval report -> /workspace/sophia-agi/agi-proof/benchmark-results/wisdom-market/M3-pilot-smoke.json
-[pilot 18:03:12] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
-[pilot 18:03:12]   tradition_merge_rate               Δ None ci=[None, None]  
-[pilot 18:03:12]   qualification_rate_on_contested    Δ 0.0 ci=[0.0, 0.0]  
-[pilot 18:03:12]   false_attribution_rate             Δ None ci=[None, None]  
-[pilot 18:03:12]   citation_fidelity                  Δ None ci=[None, None]  
-[pilot 18:03:12]   adapter protected_history_regression       None
-[pilot 18:03:12]   adapter protected_religion_regression      None
-[pilot 18:03:12]   adapter over_abstention_rate               0.0
-[pilot 18:03:12] PRIMARY habit-transfer signal present: False
-[pilot 18:03:12] SMOKE OK
-[pod] FULL sft seed=3
+[pilot 02:36:53] step 1/2 loss=4.0761 kl=0.0000
+[pilot 02:36:53] step 2/2 loss=3.4070 kl=0.0000
+[pilot 02:36:56] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
+[pilot 02:36:56] eval cases: 2 x 1 runs x (base, adapter)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.29s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.09s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.12s/it]
+[pilot 02:37:01] loaded base via AutoModelForImageTextToText
+[pilot 02:37:15]   gen 2/2
+[pilot 02:37:27]   gen 2/2
+[pilot 02:37:29]   run 1/1 done
+[pilot 02:37:29] loading adapter onto base ...
+[pilot 02:37:52]   gen 2/2
+[pilot 02:38:13]   gen 2/2
+[pilot 02:38:13]   run 1/1 done
+[pilot 02:38:13] wrote eval report -> /workspace/sophia-agi/agi-proof/benchmark-results/wisdom-market/M3-pilot-smoke.json
+[pilot 02:38:13] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
+[pilot 02:38:13]   tradition_merge_rate               Δ None ci=[None, None]  
+[pilot 02:38:13]   qualification_rate_on_contested    Δ 0.0 ci=[0.0, 0.0]  
+[pilot 02:38:13]   false_attribution_rate             Δ None ci=[None, None]  
+[pilot 02:38:13]   citation_fidelity                  Δ None ci=[None, None]  
+[pilot 02:38:13]   adapter protected_history_regression       None
+[pilot 02:38:13]   adapter protected_religion_regression      None
+[pilot 02:38:13]   adapter over_abstention_rate               0.0
+[pilot 02:38:13] PRIMARY habit-transfer signal present: False
+[pilot 02:38:13] retention: 34 held-out generality tasks x (base, adapter)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.01s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.09it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.08it/s]
+[pilot 02:38:18] loaded base via AutoModelForImageTextToText
+[pilot 02:38:18]   gen 32/34
+[pilot 02:38:19]   gen 34/34
+[pilot 02:38:19] loading adapter onto base for retention ...
+[pilot 02:38:22]   gen 32/34
+[pilot 02:38:22]   gen 34/34
+[pilot 02:38:22] wrote retention report -> /workspace/sophia-agi/agi-proof/benchmark-results/wisdom-market/M3-pilot-retention-smoke.json
+[pilot 02:38:22] === RETENTION (criterion #3): base 0.735 -> adapter 0.765 (Δ +0.029 ci95=[0.0, 0.0882]) retains=True forgetting_established=False ===
+[pilot 02:38:23] SMOKE OK
+[pod] FULL retention seed=1
 `torch_dtype` is deprecated! Use `dtype` instead!
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.19it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.50it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.44it/s]
-[pilot 18:03:20] loaded base via AutoModelForImageTextToText
-[pilot 18:03:23] trainable params: 29,802,496 (rank=16 alpha=32 rslora=False kl_coef=0.0)
-[pilot 18:03:23] training rows: 1491 (260 general_retention — KL-anchored if kl_coef>0)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.33s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.14s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.17s/it]
+[pilot 02:38:36] loaded base via AutoModelForImageTextToText
+[pilot 02:38:40] trainable params: 29,802,496 (rank=16 alpha=32 rslora=False kl_coef=0.0)
+[pilot 02:38:40] training rows: 1491 (260 general_retention — KL-anchored if kl_coef>0)
 `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
-[pilot 18:03:30] step 25/1491 loss=1.9229 kl=0.0000
-[pilot 18:03:36] step 50/1491 loss=1.3422 kl=0.0000
-[pilot 18:03:42] step 75/1491 loss=1.3106 kl=0.0000
-[pilot 18:03:48] step 100/1491 loss=0.0188 kl=0.0000
-[pilot 18:03:54] step 125/1491 loss=0.1616 kl=0.0000
-[pilot 18:04:00] step 150/1491 loss=0.0371 kl=0.0000
-[pilot 18:04:06] step 175/1491 loss=1.6499 kl=0.0000
-[pilot 18:04:12] step 200/1491 loss=0.8687 kl=0.0000
-[pilot 18:04:18] step 225/1491 loss=1.3345 kl=0.0000
-[pilot 18:04:23] step 250/1491 loss=0.0051 kl=0.0000
-[pilot 18:04:29] step 275/1491 loss=1.3936 kl=0.0000
-[pilot 18:04:35] step 300/1491 loss=0.1191 kl=0.0000
-[pilot 18:04:41] step 325/1491 loss=1.9385 kl=0.0000
-[pilot 18:04:47] step 350/1491 loss=3.5689 kl=0.0000
-[pilot 18:04:53] step 375/1491 loss=1.1329 kl=0.0000
-[pilot 18:04:59] step 400/1491 loss=0.0399 kl=0.0000
-[pilot 18:05:04] step 425/1491 loss=0.0312 kl=0.0000
-[pilot 18:05:10] step 450/1491 loss=0.0705 kl=0.0000
-[pilot 18:05:16] step 475/1491 loss=0.1381 kl=0.0000
-[pilot 18:05:22] step 500/1491 loss=0.2425 kl=0.0000
-[pilot 18:05:27] step 525/1491 loss=2.8437 kl=0.0000
-[pilot 18:05:33] step 550/1491 loss=0.7833 kl=0.0000
-[pilot 18:05:39] step 575/1491 loss=0.2336 kl=0.0000
-[pilot 18:05:45] step 600/1491 loss=1.3686 kl=0.0000
-[pilot 18:05:50] step 625/1491 loss=0.7758 kl=0.0000
-[pilot 18:05:56] step 650/1491 loss=0.0993 kl=0.0000
-[pilot 18:06:02] step 675/1491 loss=0.0009 kl=0.0000
-[pilot 18:06:08] step 700/1491 loss=0.0251 kl=0.0000
-[pilot 18:06:13] step 725/1491 loss=0.0263 kl=0.0000
-[pilot 18:06:19] step 750/1491 loss=0.0014 kl=0.0000
-[pilot 18:06:25] step 775/1491 loss=5.9417 kl=0.0000
-[pilot 18:06:30] step 800/1491 loss=0.0019 kl=0.0000
-[pilot 18:06:36] step 825/1491 loss=0.0296 kl=0.0000
-[pilot 18:06:42] step 850/1491 loss=0.0145 kl=0.0000
-[pilot 18:06:47] step 875/1491 loss=1.3547 kl=0.0000
-[pilot 18:06:53] step 900/1491 loss=0.0513 kl=0.0000
-[pilot 18:06:59] step 925/1491 loss=0.0001 kl=0.0000
-[pilot 18:07:04] step 950/1491 loss=0.0003 kl=0.0000
-[pilot 18:07:10] step 975/1491 loss=0.0248 kl=0.0000
-[pilot 18:07:16] step 1000/1491 loss=0.0892 kl=0.0000
-[pilot 18:07:21] step 1025/1491 loss=0.7161 kl=0.0000
-[pilot 18:07:27] step 1050/1491 loss=1.0150 kl=0.0000
-[pilot 18:07:33] step 1075/1491 loss=0.0001 kl=0.0000
-[pilot 18:07:38] step 1100/1491 loss=1.4104 kl=0.0000
-[pilot 18:07:44] step 1125/1491 loss=0.0237 kl=0.0000
-[pilot 18:07:50] step 1150/1491 loss=0.0024 kl=0.0000
-[pilot 18:07:55] step 1175/1491 loss=1.8134 kl=0.0000
-[pilot 18:08:01] step 1200/1491 loss=0.0017 kl=0.0000
-[pilot 18:08:07] step 1225/1491 loss=1.4884 kl=0.0000
-[pilot 18:08:12] step 1250/1491 loss=1.4321 kl=0.0000
-[pilot 18:08:18] step 1275/1491 loss=0.0003 kl=0.0000
-[pilot 18:08:24] step 1300/1491 loss=2.3073 kl=0.0000
-[pilot 18:08:29] step 1325/1491 loss=0.0075 kl=0.0000
-[pilot 18:08:35] step 1350/1491 loss=0.0001 kl=0.0000
-[pilot 18:08:41] step 1375/1491 loss=0.0605 kl=0.0000
-[pilot 18:08:46] step 1400/1491 loss=0.0265 kl=0.0000
-[pilot 18:08:52] step 1425/1491 loss=0.0395 kl=0.0000
-[pilot 18:08:58] step 1450/1491 loss=0.0254 kl=0.0000
-[pilot 18:09:03] step 1475/1491 loss=0.0090 kl=0.0000
-[pilot 18:09:08] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
-[pilot 18:09:08] eval cases: 354 x 1 runs x (base, adapter)
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.20it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.52it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.46it/s]
-[pilot 18:09:11] loaded base via AutoModelForImageTextToText
-[pilot 18:09:26]   gen 32/354
-[pilot 18:09:41]   gen 64/354
-[pilot 18:09:56]   gen 96/354
-[pilot 18:10:11]   gen 128/354
-[pilot 18:10:25]   gen 160/354
-[pilot 18:10:40]   gen 192/354
-[pilot 18:10:55]   gen 224/354
-[pilot 18:11:10]   gen 256/354
-[pilot 18:11:25]   gen 288/354
-[pilot 18:11:40]   gen 320/354
-[pilot 18:11:54]   gen 352/354
-[pilot 18:12:09]   gen 354/354
-[pilot 18:12:25]   gen 32/354
-[pilot 18:12:40]   gen 64/354
-[pilot 18:12:56]   gen 96/354
-[pilot 18:13:12]   gen 128/354
-[pilot 18:13:27]   gen 160/354
-[pilot 18:13:43]   gen 192/354
-[pilot 18:13:59]   gen 224/354
-[pilot 18:14:14]   gen 256/354
-[pilot 18:14:30]   gen 288/354
-[pilot 18:14:45]   gen 320/354
-[pilot 18:15:01]   gen 352/354
-[pilot 18:15:16]   gen 354/354
-[pilot 18:15:38]   run 1/1 done
-[pilot 18:15:38] loading adapter onto base ...
-[pilot 18:16:00]   gen 32/354
-[pilot 18:16:25]   gen 64/354
-[pilot 18:16:50]   gen 96/354
-[pilot 18:17:13]   gen 128/354
-[pilot 18:17:25]   gen 160/354
-[pilot 18:17:50]   gen 192/354
-[pilot 18:18:16]   gen 224/354
-[pilot 18:18:39]   gen 256/354
-[pilot 18:19:04]   gen 288/354
-[pilot 18:19:30]   gen 320/354
-[pilot 18:19:55]   gen 352/354
-[pilot 18:20:12]   gen 354/354
-[pilot 18:20:24]   gen 32/354
-[pilot 18:20:35]   gen 64/354
-[pilot 18:20:47]   gen 96/354
-[pilot 18:20:55]   gen 128/354
-[pilot 18:21:03]   gen 160/354
-[pilot 18:21:15]   gen 192/354
-[pilot 18:21:37]   gen 224/354
-[pilot 18:21:46]   gen 256/354
-[pilot 18:21:56]   gen 288/354
-[pilot 18:22:06]   gen 320/354
-[pilot 18:22:16]   gen 352/354
-[pilot 18:22:22]   gen 354/354
-[pilot 18:22:41]   run 1/1 done
-[pilot 18:22:41] wrote 354 base/adapter answer pairs -> agi-proof/benchmark-results/wisdom-market/M3-pilot-answers-seed3.json
-[pilot 18:22:41] wrote eval report -> agi-proof/benchmark-results/wisdom-market/M3-pilot-eval-seed3.json
-[pilot 18:22:41] === PRE-REGISTERED PRIMARY (adapter(prompt) - base(prompt); * = CI excludes 0) ===
-[pilot 18:22:41]   tradition_merge_rate               Δ 0.125 ci=[0.125, 0.125] *
-[pilot 18:22:41]   qualification_rate_on_contested    Δ 0.4098 ci=[0.4098, 0.4098] *
-[pilot 18:22:41]   false_attribution_rate             Δ 0.0117 ci=[0.0117, 0.0117] *
-[pilot 18:22:41]   citation_fidelity                  Δ 0.0 ci=[0.0, 0.0]  
-[pilot 18:22:41]   adapter protected_history_regression       0.0
-[pilot 18:22:41]   adapter protected_religion_regression      0.0
-[pilot 18:22:41]   adapter over_abstention_rate               0.0266
-[pilot 18:22:41] PRIMARY habit-transfer signal present: True
+[pilot 02:38:46] step 25/1491 loss=2.0380 kl=0.0000
+[pilot 02:38:52] step 50/1491 loss=1.3156 kl=0.0000
+[pilot 02:38:57] step 75/1491 loss=2.0527 kl=0.0000
+[pilot 02:39:03] step 100/1491 loss=0.1137 kl=0.0000
+[pilot 02:39:08] step 125/1491 loss=0.7727 kl=0.0000
+[pilot 02:39:13] step 150/1491 loss=0.0911 kl=0.0000
+[pilot 02:39:18] step 175/1491 loss=0.3572 kl=0.0000
+[pilot 02:39:24] step 200/1491 loss=0.6700 kl=0.0000
+[pilot 02:39:29] step 225/1491 loss=0.0831 kl=0.0000
+[pilot 02:39:34] step 250/1491 loss=1.4558 kl=0.0000
+[pilot 02:39:39] step 275/1491 loss=0.0077 kl=0.0000
+[pilot 02:39:44] step 300/1491 loss=0.1314 kl=0.0000
+[pilot 02:39:50] step 325/1491 loss=1.1634 kl=0.0000
+[pilot 02:39:55] step 350/1491 loss=0.0537 kl=0.0000
+[pilot 02:40:00] step 375/1491 loss=0.0313 kl=0.0000
+[pilot 02:40:05] step 400/1491 loss=0.0814 kl=0.0000
+[pilot 02:40:10] step 425/1491 loss=0.1379 kl=0.0000
+[pilot 02:40:16] step 450/1491 loss=0.0076 kl=0.0000
+[pilot 02:40:21] step 475/1491 loss=0.0272 kl=0.0000
+[pilot 02:40:26] step 500/1491 loss=0.0010 kl=0.0000
+[pilot 02:40:31] step 525/1491 loss=0.0029 kl=0.0000
+[pilot 02:40:36] step 550/1491 loss=2.1277 kl=0.0000
+[pilot 02:40:41] step 575/1491 loss=0.0451 kl=0.0000
+[pilot 02:40:47] step 600/1491 loss=0.0309 kl=0.0000
+[pilot 02:40:52] step 625/1491 loss=0.6430 kl=0.0000
+[pilot 02:40:57] step 650/1491 loss=0.9271 kl=0.0000
+[pilot 02:41:02] step 675/1491 loss=0.0022 kl=0.0000
+[pilot 02:41:07] step 700/1491 loss=1.8785 kl=0.0000
+[pilot 02:41:12] step 725/1491 loss=0.9241 kl=0.0000
+[pilot 02:41:17] step 750/1491 loss=0.0020 kl=0.0000
+[pilot 02:41:22] step 775/1491 loss=0.0235 kl=0.0000
+[pilot 02:41:27] step 800/1491 loss=0.0255 kl=0.0000
+[pilot 02:41:32] step 825/1491 loss=0.3275 kl=0.0000
+[pilot 02:41:37] step 850/1491 loss=0.0012 kl=0.0000
+[pilot 02:41:42] step 875/1491 loss=0.5347 kl=0.0000
+[pilot 02:41:47] step 900/1491 loss=0.0267 kl=0.0000
+[pilot 02:41:52] step 925/1491 loss=2.7049 kl=0.0000
+[pilot 02:41:58] step 950/1491 loss=0.0269 kl=0.0000
+[pilot 02:42:03] step 975/1491 loss=0.6596 kl=0.0000
+[pilot 02:42:08] step 1000/1491 loss=0.1071 kl=0.0000
+[pilot 02:42:13] step 1025/1491 loss=0.4713 kl=0.0000
+[pilot 02:42:18] step 1050/1491 loss=0.0255 kl=0.0000
+[pilot 02:42:24] step 1075/1491 loss=1.3722 kl=0.0000
+[pilot 02:42:29] step 1100/1491 loss=0.9658 kl=0.0000
+[pilot 02:42:34] step 1125/1491 loss=0.0259 kl=0.0000
+[pilot 02:42:39] step 1150/1491 loss=0.1208 kl=0.0000
+[pilot 02:42:44] step 1175/1491 loss=0.5620 kl=0.0000
+[pilot 02:42:49] step 1200/1491 loss=0.0264 kl=0.0000
+[pilot 02:42:54] step 1225/1491 loss=0.0021 kl=0.0000
+[pilot 02:43:00] step 1250/1491 loss=1.6754 kl=0.0000
+[pilot 02:43:05] step 1275/1491 loss=0.1975 kl=0.0000
+[pilot 02:43:10] step 1300/1491 loss=2.5820 kl=0.0000
+[pilot 02:43:15] step 1325/1491 loss=0.9422 kl=0.0000
+[pilot 02:43:20] step 1350/1491 loss=1.4655 kl=0.0000
+[pilot 02:43:25] step 1375/1491 loss=1.6049 kl=0.0000
+[pilot 02:43:31] step 1400/1491 loss=0.6908 kl=0.0000
+[pilot 02:43:37] step 1425/1491 loss=0.0001 kl=0.0000
+[pilot 02:43:42] step 1450/1491 loss=0.0121 kl=0.0000
+[pilot 02:43:47] step 1475/1491 loss=0.0026 kl=0.0000
+[pilot 02:43:53] saved adapter -> /workspace/sophia-agi/training/adapters/sophia-wisdom-4b-pilot
+[pilot 02:43:53] retention: 34 held-out generality tasks x (base, adapter)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.13s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.07it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.04it/s]
+[pilot 02:43:57] loaded base via AutoModelForImageTextToText
+[pilot 02:43:58]   gen 32/34
+[pilot 02:43:58]   gen 34/34
+[pilot 02:43:58] loading adapter onto base for retention ...
+[pilot 02:44:06]   gen 32/34
+[pilot 02:44:07]   gen 34/34
+[pilot 02:44:07] wrote retention report -> agi-proof/benchmark-results/wisdom-market/M3-pilot-retention-eval-seed1.json
+[pilot 02:44:07] === RETENTION (criterion #3): base 0.765 -> adapter 0.706 (Δ -0.059 ci95=[-0.2353, 0.0882]) retains=False forgetting_established=False ===
 [pod] result + answers written; finish() will commit + push
 [pod] job exit code=0
