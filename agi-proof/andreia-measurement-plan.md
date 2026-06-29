@@ -62,14 +62,25 @@ For GO, build a replacement that is:
 
 ## Run protocol
 
+The machinery is **built** and pre-registered — `tools/run_andreia_eval.py` +
+`agi-proof/benchmark-results/andreia/measurement_spec.json` (status
+`preregistration_only`), with the committed not-run artifact
+`andreia-courage-eval.PENDING.public-report.json` (status `not_run`, verdict
+**NO-GO**). What remains is plugging real inputs into it:
+
 1. Freeze the external battery + thresholds; commit before any scoring (git
    ancestry is the pre-registration proof, as in the existing recipes).
-2. Score three arms on the identical set: **no-gate baseline**, **Andreia
-   consulted** (`context["consultCourage"]=True` through `conscience_check`), and
-   the gate standalone (`assess_courage`).
+2. Score three arms on the identical set via the harness: **no-gate baseline**
+   (a real model deciding act/hold with NO gate), **Andreia consulted**
+   (`context["consultCourage"]=True` through `conscience_check`), and the gate
+   standalone (`assess_courage`). Offline, `--mock {fearful,reckless,oracle}`
+   exercises the Δ+CI math but is NOT a model; `--model` refuses to fabricate.
 3. Have ≥ 2 judge families label ground truth; compute κ and the per-arm
-   cowardice/recklessness error rates with bootstrap 95% CIs (`tools/eval_stats.py`).
-4. Run `tools/claim_gate.py --prefix andreia-courage` → receipt.
+   cowardice/recklessness error rates and the paired Δ with bootstrap 95% CIs
+   (already wired via `tools/eval_stats.bootstrap_ci_paired`).
+4. `gate_verdict()` in the harness emits GO only when all pillars hold (real
+   baseline, ≥ 2 judge families, Δ cowardice-error CI excludes 0, recklessness
+   guardrail held); otherwise NO-GO. Re-emit the artifact with the live numbers.
 5. GO → headline via `published-results.json` → `build_results_page.py` (RESULTS.md
    is generated; never hand-edited). NO-GO → stays candidate; update the ledger
    with the honest bound, exactly as the M3-SFT rows do.
