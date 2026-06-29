@@ -242,6 +242,142 @@
       ]
     }
   },
+  "comparisons": {
+    "updated": "2026-06-27",
+    "source": "agi-proof/benchmark-results/published-results.json",
+    "charts": [
+      {
+        "id": "fabrication-traps",
+        "title": "Fabrication on genuine “I don’t know” traps",
+        "subtitle": "Unknown-author / unknown-quote questions. DeepSeek subject, 3 runs, deterministic scorer corroborated by two independent judge families.",
+        "metric": "Fabrication rate",
+        "unit": "%",
+        "lowerIsBetter": true,
+        "max": 30,
+        "verdict": "win",
+        "verdictLabel": "Sophia wins",
+        "bars": [
+          {
+            "label": "Sophia (provenance gate)",
+            "value": 0.0,
+            "highlight": true
+          },
+          {
+            "label": "Raw model",
+            "value": 19.4
+          },
+          {
+            "label": "Raw model + tools",
+            "value": 25.0
+          }
+        ],
+        "note": "Sophia abstains rather than invent an attribution: 0% fabrication in all 3 runs vs 19.5–25% for the raw model. Two independent judge families (GPT-4o + Claude) rank Sophia lowest (inter-judge κ 0.74). Caveat: the trap pack is self-authored."
+      },
+      {
+        "id": "hallucinated-attributions",
+        "title": "Hallucinated attributions on a weak local model",
+        "subtitle": "Headline validated result — 2 independent judge families, 3 runs, 95% bootstrap CI excludes zero.",
+        "metric": "Hallucinated-attribution rate",
+        "unit": "%",
+        "lowerIsBetter": true,
+        "max": 45,
+        "verdict": "win",
+        "verdictLabel": "Sophia wins",
+        "bars": [
+          {
+            "label": "Model alone (no gate)",
+            "value": 36.1
+          },
+          {
+            "label": "With Sophia gate",
+            "value": 23.6,
+            "highlight": true
+          }
+        ],
+        "note": "Δ 12.5 points (95% CI [5.6, 19.4]) at 0.0% false-positive cost — the gate never broke a correct answer. Honest scope: this is a weak-model effect that decays toward zero on a strong, well-aligned model; the pack is self-authored."
+      },
+      {
+        "id": "selective-prediction",
+        "title": "External public benchmark: selective-accuracy lift",
+        "subtitle": "SimpleQA / SimpleQA Verified (OpenAI + Google DeepMind) — public, human-authored, external. Graded by 2 independent families.",
+        "metric": "Selective-accuracy lift @20% coverage",
+        "unit": "pts",
+        "lowerIsBetter": false,
+        "max": 25,
+        "verdict": "win",
+        "verdictLabel": "Sophia wins (external)",
+        "bars": [
+          {
+            "label": "deepseek-chat · SimpleQA Verified",
+            "value": 15.8,
+            "ci": [
+              9.8,
+              22.1
+            ],
+            "highlight": true
+          },
+          {
+            "label": "qwen-2.5-72b-instruct · SimpleQA (original)",
+            "value": 7.8,
+            "ci": [
+              2.3,
+              13.5
+            ],
+            "highlight": true
+          }
+        ],
+        "note": "The first Sophia calibration result on non-self-authored data: knowing when to abstain lifts selective accuracy on both subject models, each lift's 95% CI excludes zero. The effect depends on the underlying model — larger for the overconfident model than the cautious one."
+      },
+      {
+        "id": "grounding-tradeoff",
+        "title": "The honest tradeoff: grounded answering vs the raw model",
+        "subtitle": "Continual Provenance QA over a 92-page corpus, 3 runs (CANDIDATE — self-authored benchmark). Higher is better.",
+        "metric": "Pass rate",
+        "unit": "%",
+        "lowerIsBetter": false,
+        "max": 100,
+        "verdict": "tradeoff",
+        "verdictLabel": "Mixed — raw wins overall",
+        "groups": [
+          {
+            "label": "Overall accuracy",
+            "bars": [
+              {
+                "label": "Sophia (grounded)",
+                "value": 52.9,
+                "highlight": true
+              },
+              {
+                "label": "Raw model",
+                "value": 88.4
+              }
+            ]
+          },
+          {
+            "label": "Attribution / abstention traps",
+            "bars": [
+              {
+                "label": "Sophia (grounded)",
+                "value": 100.0,
+                "highlight": true
+              },
+              {
+                "label": "Raw model",
+                "value": 0.0
+              }
+            ]
+          }
+        ],
+        "note": "Published honestly: the raw model wins OVERALL (88.4% vs 52.9%) because answers are constrained to a thin, stubby corpus — grounding costs recall. But on attribution traps and retractions Sophia is 100% vs 0%: it fails closed where the raw model confidently fabricates. The win is trap-safety, not a blanket accuracy lead."
+      }
+    ],
+    "honesty": [
+      "Every figure here is from the curated published-results set; each cleared its own no-overclaim gate or is explicitly labelled a tradeoff / candidate / null result.",
+      "Sophia’s anti-fabrication edge is largest on weak or overconfident models and shrinks toward zero on strong, well-aligned models — it is a guardrail, not a capability multiplier.",
+      "A live test of the multi-agent swarm structure found NO measured benefit over a single well-prompted pass, and sometimes degraded it — published as a null result.",
+      "Most packs are self-authored and keys are held by one operator; the SimpleQA selective-prediction result is the first on fully external, human-authored data."
+    ]
+  },
   "rag": {
     "indexChunks": 649
   },
