@@ -59,6 +59,7 @@ concurrency:
 
 jobs:
   pretrain:
+    environment: runpod-paid
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:

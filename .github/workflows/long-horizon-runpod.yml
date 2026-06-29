@@ -65,6 +65,7 @@ concurrency:
 
 jobs:
   long-horizon:
+    environment: runpod-paid
     runs-on: ubuntu-latest
     timeout-minutes: 300
     steps:
