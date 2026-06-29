@@ -1,11 +1,23 @@
 # The Cardinal Virtues — a thesis for Temperance (Sophrosyne) & Justice (Dikaiosyne)
 
-> **Status: research thesis / pre-implementation design.** Nothing here is built,
-> measured, or claimed. This is the brainstorm that precedes the pre-registered
-> measurement plans (mirroring how `andreia-measurement-plan.md` was committed
-> *before* any powered run). `canClaimAGI` stays **false**. Every system described
-> below is, by construction, **candidate infrastructure** until it earns a GO
-> receipt under the existing measurement contract (`tools/claim_gate.py`).
+> **Status: thesis + shipped candidate instruments.** This is the design; the
+> instruments it specifies are now **built and routing-gated** (Temperance/Sophrosyne
+> and Justice/Dikaiosyne + the inter-virtue arbiter), each with a deterministic
+> routing battery, a three-arm eval harness emitting a **NO-GO** PENDING receipt, a
+> robustness probe, and pre-registered measurement plans — exactly the Andreia pattern.
+> **Nothing here is measured as a real-decision effect, and nothing is claimed beyond
+> routing.** `canClaimAGI` stays **false**. Every system is, by construction,
+> **candidate infrastructure** until it earns a GO receipt under the existing
+> measurement contract (`tools/claim_gate.py`).
+>
+> **Implementation map.** Temperance: `agent/sophrosyne.py`,
+> `agent/intemperance_signals.py`, `docs/11-Platform/Sophrosyne-Temperance-System.md`,
+> `agi-proof/sophrosyne-measurement-plan.md`. Justice: `agent/dikaiosyne.py`,
+> `agent/partiality_signals.py`, `agent/virtue_parliament.py` (the arbiter),
+> `docs/11-Platform/Dikaiosyne-Justice-System.md`,
+> `agi-proof/dikaiosyne-measurement-plan.md`. Cross-virtue:
+> `tools/run_virtue_orthogonality_bench.py` (the confusion matrix of §5.2).
+> Open claims tracked in `agi-proof/failure-ledger.md` (+ the temperance/justice ledgers).
 
 ---
 
