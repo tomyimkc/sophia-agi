@@ -5,7 +5,7 @@
 
 RESULT (2026-06-29): the powered run is COMPLETE and the verdict is NO-GO. On the
 external 2-family-labelled battery, consulting the gate did not reduce cowardice-error
-vs a real no-gate baseline — it reversed it (Δ +0.2968, CI [0.2694, 0.3242]). See
+vs a real no-gate baseline — it reversed it (Δ +0.2747, CI [0.2473, 0.304]). See
 agi-proof/benchmark-results/andreia/andreia-courage-eval.public-report.json.
 
 Turns the Andreia measurement plan into a runnable, gated instrument — the same

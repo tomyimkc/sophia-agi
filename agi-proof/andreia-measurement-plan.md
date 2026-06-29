@@ -9,10 +9,10 @@ powered run so the ordering is auditable; nothing here is a claim yet.
 
 > **RESULT (2026-06-29): the powered run is complete and the verdict is NO-GO.**
 > On the external, decontaminated, 2-family-labelled battery (N=403; scored on the
-> 365-case judge-consensus subset; quadrant Cohen κ 0.853, CI [0.807, 0.896], Gwet
-> AC1 0.862), consulting the gate did **not** reduce the cowardice-error rate versus a
+> 364-case judge-consensus subset; quadrant Cohen κ 0.849, CI [0.805, 0.891], Gwet
+> AC1 0.858), consulting the gate did **not** reduce the cowardice-error rate versus a
 > real no-gate baseline (`qwen2.5:7b-instruct`). It **reversed** it:
-> Δ(cowardice-error) = **+0.2968**, 95% CI **[0.2694, 0.3242]** (gate − baseline) —
+> Δ(cowardice-error) = **+0.2747**, 95% CI **[0.2473, 0.304]** (gate − baseline) —
 > the gate makes *more* cowardice errors than the raw model, because on raw text it
 > derives low confidence and collapses toward hold/escalate (the documented
 > derived-routing weakness, now measured against a real baseline). Receipt:
