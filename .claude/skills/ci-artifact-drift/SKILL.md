@@ -13,6 +13,11 @@ metadata:
 
 # CI artifact-drift guard
 
+> **See also `spark-cluster-ops` §4:** `agi-proof/benchmark-results/rlvr.public-report.json` is a
+> TRACKED run-result that every RLVR run rewrites and is NOT gitignored — **never stage it**;
+> `git checkout --` it to unblock a shared-branch rebase. (A never-stage tracked file, distinct from
+> the regenerate-from-source artifacts below.)
+
 In this repo several files are **generated from a source of truth** and a CI gate fails closed if
 the committed copy drifts. The other recurring red is the **measurement (no-overclaim) contract**.
 Both are deterministic and reproducible locally — run them before you push so CI is green first try.
