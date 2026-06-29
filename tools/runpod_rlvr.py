@@ -191,6 +191,14 @@ def _build_create_payload(args: argparse.Namespace, public_key: str, api_key: st
         "dockerEntrypoint": [],
         "dockerStartCmd": _startup_cmd(args.auto_exit_seconds),
     }
+    if args.network_volume_id:
+        # Persistent network volume mounted at /workspace (where HF_HOME lives): the model weight
+        # cache then SURVIVES pod deletion, so subsequent runs skip the cold ~8GB+ download (billed
+        # GPU minutes) — the saving the ephemeral volumeInGb above CANNOT give (it dies with the pod).
+        # NB: a network volume is data-center-scoped, so the pod is pinned to that volume's DC (can
+        # reduce GPU availability there). Only worth it past the break-even runs/mo — see
+        # tools/runpod_volume_breakeven.py.
+        payload["networkVolumeId"] = args.network_volume_id
     if args.allowed_cuda_versions:
         payload["allowedCudaVersions"] = [
             v.strip() for v in args.allowed_cuda_versions.split(",") if v.strip()
@@ -602,6 +610,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--image-name", default=DEFAULT_IMAGE)
     ap.add_argument("--container-disk-gb", type=int, default=120)
     ap.add_argument("--volume-gb", type=int, default=80)
+    ap.add_argument("--network-volume-id", default="",
+                    help="attach an existing persistent RunPod network volume at /workspace (HF_HOME) so the "
+                         "weight cache survives pod deletion; pod is then pinned to that volume's data center. "
+                         "Run tools/runpod_volume_breakeven.py first — only pays off past the break-even runs/mo.")
     ap.add_argument("--allowed-cuda-versions", default="")
     ap.add_argument("--ssh-timeout-s", type=int, default=1200)
     ap.add_argument("--auto-exit-seconds", type=int, default=6 * 60 * 60)
