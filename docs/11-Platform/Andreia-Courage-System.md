@@ -81,7 +81,7 @@ job is the **bottom-left (cowardice)**, which the fear-only kernel cannot see.
 - Cowardice signals: `agent/cowardice_signals.py`
 - MCP tools: `sophia_courage_assess`, `sophia_cowardice_check`, `sophia_andreia_benchmark`
 - Skill (fail-closed): `skills/andreia.py` → `courage_advocate`
-- Benchmark + receipt: `tools/run_andreia_bench.py` + `data/andreia_courage_battery.json`
+- Benchmark + receipt: `tools/run_andreia_bench.py` + `agi-proof/benchmark-results/andreia/andreia_courage_battery.json`
 - Audit trails: `agi-proof/courage-ledger.md`, plus the open claim in `agi-proof/failure-ledger.md`
 - Tests: `tests/test_andreia.py`
 

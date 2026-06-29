@@ -3,7 +3,7 @@
 # Copyright (c) 2026 tomyimkc
 """Courage-Calibration benchmark for the Andreia gate + an honest measurement receipt.
 
-Runs the pre-registered battery (``data/andreia_courage_battery.json``) through
+Runs the pre-registered battery (``agi-proof/benchmark-results/andreia/andreia_courage_battery.json``) through
 ``agent.andreia.assess_courage`` and scores the decision-action 2x2:
 
     should_act (optimal act|heroic)  vs  should_hold (optimal hold)
@@ -34,7 +34,7 @@ if str(ROOT) not in sys.path:
 
 from agent.andreia import assess_courage  # noqa: E402
 
-BATTERY = ROOT / "data" / "andreia_courage_battery.json"
+BATTERY = ROOT / "agi-proof" / "benchmark-results" / "andreia" / "andreia_courage_battery.json"
 OUT = ROOT / "agi-proof" / "benchmark-results" / "andreia" / "andreia-courage-calibration.json"
 
 _SHOULD_ACT = {"act", "heroic"}

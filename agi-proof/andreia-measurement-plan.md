@@ -44,7 +44,7 @@ adds/updates a failure-ledger row — never lower a threshold to force a pass.
 
 ## Battery upgrade (external + decontaminated)
 
-The current `data/andreia_courage_battery.json` is author-written and exists to
+The current `agi-proof/benchmark-results/andreia/andreia_courage_battery.json` is author-written and exists to
 pin the gate's *routing* — it is explicitly NOT evidence about real decisions.
 For GO, build a replacement that is:
 
