@@ -92,8 +92,11 @@ def detect_partiality(
     deterministic regex only (zero behaviour change). As with the Andreia cowardice
     seam, a purely offline lexical backend is expected to be insufficient — a real
     model backend is required to actually close the gap.
+
+    ``context`` is accepted for signature symmetry with ``detect_cowardice`` /
+    ``detect_intemperance`` (and so callers can pass one uniformly); partiality is a
+    text-only signal, so it is intentionally not read here.
     """
-    context = context or {}
     t = text or ""
     signals: list[PartialitySignal] = []
 

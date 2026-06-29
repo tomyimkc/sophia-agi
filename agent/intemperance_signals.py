@@ -55,7 +55,7 @@ _FILLER_RE = re.compile(
 # Truncation / deficiency markers: the work was cut short.
 _TRUNCATION_RE = re.compile(
     r"(?:\.\.\.$|\[truncated\]|\[\.\.\.\]|left as an exercise|"
-    r"\bTODO\b|\bTBD\b|and so on(?:\s*,?\s*etc\.?)?$|the rest is (?:trivial|similar))",
+    r"\bTODO\b|\bTBD\b|and so on\b|the rest is (?:trivial|similar))",
     re.I,
 )
 
