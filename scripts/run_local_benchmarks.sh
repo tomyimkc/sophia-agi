@@ -55,22 +55,49 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 cd "${ROOT}"
 
-PY="${PYTHON:-python3}"
+# Interpreter resolution: GPU steps (train_lora / certify_lowram) need the Spark's torch+numpy
+# venv, NOT the bare system python3 (which lacks numpy -> the B0 self-test fails fast). Prefer
+# $PYTHON, else the first candidate that can import numpy, else system python3 (caught by preflight).
+_pick_py() {
+  local c
+  for c in "${PYTHON:-}" ".venv/bin/python" "../sophia-agi/.venv/bin/python" \
+           "${HOME}/sophia-agi/.venv/bin/python" "${HOME}/.venv/bin/python" python3; do
+    [ -n "${c}" ] || continue
+    if { command -v "${c}" >/dev/null 2>&1 || [ -x "${c}" ]; } && "${c}" -c "import numpy" >/dev/null 2>&1; then
+      echo "${c}"; return 0
+    fi
+  done
+  echo "${PYTHON:-python3}"
+}
+PY="$(_pick_py)"
 
 # ── Tunable placeholders (override via env) ───────────────────────────────────────────────────
 # Hostnames/ports for the two-box judge farm. Fill these in (link-local IPs, Tailscale, or DNS).
-SPARK_HOST="${SPARK_HOST:-SPARK_HOST}"          # DGX Spark — vLLM Qwen judge (family 'qwen')
-SPARK_PORT="${SPARK_PORT:-8000}"
-MAC_HOST="${MAC_HOST:-MAC_HOST}"                # Mac Studio — MLX Llama judge (family 'mlx')
-MAC_PORT="${MAC_PORT:-8080}"
+# Two-box judge farm. Defaults match the PROVEN 2026-06-29 strong-judge run: Spark Qwen-7B via
+# ollama (already serving) + Mac Studio Llama-3.3-70B-4bit via mlx_lm.server reached over the Cat6
+# link-local cable with the OpenAI transport. NB the `mlx:` provider is a LOCAL loader (returns
+# empty on the Spark — see Mac-Spark-Judge-Farm.md); use `openai:` to a REMOTE mlx server.
+SPARK_HOST="${SPARK_HOST:-127.0.0.1}"           # DGX Spark — Qwen judge (family 'qwen', via ollama)
+SPARK_PORT="${SPARK_PORT:-11434}"               # ollama serve
+MAC_HOST="${MAC_HOST:-169.254.26.171}"          # Mac Studio over the Cat6 link-local cable
+MAC_PORT="${MAC_PORT:-8081}"                     # mlx_lm.server (strong 70B judge)
 
-# Judge models (must stay DIFFERENT vendors from each other AND from the subject lineage).
-SPARK_JUDGE_MODEL="${SPARK_JUDGE_MODEL:-Qwen/Qwen2.5-7B-Instruct}"
-MAC_JUDGE_MODEL="${MAC_JUDGE_MODEL:-mlx-community/Meta-Llama-3.1-8B-Instruct-4bit}"
+# Judge models (DIFFERENT vendors from each other AND from the subject lineage allenai/olmoe+gemma).
+SPARK_JUDGE_MODEL="${SPARK_JUDGE_MODEL:-qwen2.5:7b-instruct}"            # ollama tag
+MAC_JUDGE_MODEL="${MAC_JUDGE_MODEL:-mlx-community/Llama-3.3-70B-Instruct-4bit}"
 
-# The combined --judges flag (provider:model@base_url, comma-separated). vLLM keys to vendor
-# 'qwen'; mlx keys to engine 'mlx' → 2 distinct families. (See Mac-Spark-Judge-Farm.md.)
-JUDGES="${JUDGES:-vllm:${SPARK_JUDGE_MODEL}@http://${SPARK_HOST}:${SPARK_PORT}/v1,mlx:${MAC_JUDGE_MODEL}@http://${MAC_HOST}:${MAC_PORT}/v1}"
+# Auto-start the Mac judge over the Cat6 cable (SSH), so Benchmark A is hands-free. Fixed command,
+# gated to EXECUTE mode. Set AUTO_START_JUDGES=0 to require manual bring-up instead.
+AUTO_START_JUDGES="${AUTO_START_JUDGES:-1}"
+MAC_SSH_USER="${MAC_SSH_USER:-tom}"
+MAC_SSH_HOST="${MAC_SSH_HOST:-169.254.26.171}"  # Cat6 link-local IP (Tailscale name also works)
+MAC_SSH_KEY="${MAC_SSH_KEY:-${HOME}/.ssh/id_ed25519}"
+MAC_MLX_BIN="${MAC_MLX_BIN:-mlx_lm.server}"     # on the Mac login-shell PATH (pyenv 3.10.6)
+JUDGE_READY_TRIES="${JUDGE_READY_TRIES:-80}"    # x3s ~= 4 min max wait for the 70B-4bit load
+
+# The combined --judges flag (provider:model@base_url). ollama->family 'qwen'; openai-transport to
+# the remote mlx server->family 'mlx' = 2 distinct families, both != subject. Override JUDGES to tune.
+JUDGES="${JUDGES:-ollama:${SPARK_JUDGE_MODEL}@http://${SPARK_HOST}:${SPARK_PORT},openai:${MAC_JUDGE_MODEL}@http://${MAC_HOST}:${MAC_PORT}/v1}"
 
 # Two-box farm config (consumed by run_local_judge_eval.py --config).
 JUDGE_CONFIG="${JUDGE_CONFIG:-config/inference.local.mac-judge.json}"
@@ -176,22 +203,63 @@ echo "  mode:        $([[ "${DRY_RUN}" -eq 1 ]] && echo DRY-RUN || echo EXECUTE)
 echo "  benchmark A: $([[ "${RUN_A}" -eq 1 ]] && echo yes || echo no)"
 echo "  benchmark B: $([[ "${RUN_B}" -eq 1 ]] && echo yes || echo no) (run-train: $([[ "${RUN_TRAIN}" -eq 1 ]] && echo yes || echo no))"
 echo "  repo root:   ${ROOT}"
+echo "  python:      ${PY}"
 cost_guard_reminder
+
+# Preflight: in EXECUTE mode the chosen interpreter MUST have numpy (and torch for --run-train),
+# else fail with an actionable message instead of the cryptic B0 self-test failure (no GPU spent).
+if [[ "${DRY_RUN}" -eq 0 ]]; then
+  if ! "${PY}" -c "import numpy" >/dev/null 2>&1; then
+    echo "FATAL: interpreter '${PY}' has no numpy — GPU steps need the Spark's torch venv." >&2
+    echo "  Fix: restart the bridge poller with PYTHON=/abs/path/to/torch-venv/bin/python exported," >&2
+    echo "       or place the venv at ./.venv or ../sophia-agi/.venv. Aborting (no GPU spent)." >&2
+    exit 3
+  fi
+  if [[ "${RUN_B}" -eq 1 && "${RUN_TRAIN}" -eq 1 ]] && ! "${PY}" -c "import torch" >/dev/null 2>&1; then
+    echo "FATAL: interpreter '${PY}' has no torch; --run-train needs it. Set PYTHON to the torch venv. Aborting." >&2
+    exit 3
+  fi
+fi
 
 # ════════════════════════════════════════════════════════════════════════════════════════════
 # BENCHMARK A — ≥2-family VALIDATED judging of the M3-SFT source-discipline uplift
 # ════════════════════════════════════════════════════════════════════════════════════════════
 if [[ "${RUN_A}" -eq 1 ]]; then
 
-  step "A0 — Bring-up reminder (start these BY HAND before --execute; not automated here)"
-  cat <<EOF
-  On the DGX Spark (CUDA, vLLM):
-    vllm serve ${SPARK_JUDGE_MODEL} --port ${SPARK_PORT}
-  On the Mac Studio (Apple Silicon, MLX):
-    mlx_lm.server --model ${MAC_JUDGE_MODEL} --port ${MAC_PORT}
-  These give 2 distinct judge families: 'qwen' (vLLM→vendor) + 'mlx' (engine). judge != subject
-  (subject lineage allenai/olmoe). See docs/11-Platform/Mac-Spark-Judge-Farm.md.
-EOF
+  step "A0 — Bring up the two-box judge farm (Spark ollama Qwen + Mac MLX 70B over Cat6)"
+  if [[ "${DRY_RUN}" -eq 1 ]]; then
+    echo "  [dry-run] would verify Spark ollama (${SPARK_HOST}:${SPARK_PORT}) has ${SPARK_JUDGE_MODEL}"
+    echo "  [dry-run] would ensure Mac judge ${MAC_HOST}:${MAC_PORT}; if down, ssh ${MAC_SSH_USER}@${MAC_SSH_HOST}"
+    echo "  [dry-run]   '${MAC_MLX_BIN} --model ${MAC_JUDGE_MODEL} --port ${MAC_PORT}' (nohup, over the Cat6 cable)"
+    echo "  [dry-run] judges: ${JUDGES}"
+  elif [[ "${AUTO_START_JUDGES}" -eq 1 ]]; then
+    # Spark Qwen judge: ollama is a long-running service; just verify it answers.
+    if curl -sf "http://${SPARK_HOST}:${SPARK_PORT}/api/tags" >/dev/null 2>&1; then
+      echo "  [A0] Spark ollama up on ${SPARK_HOST}:${SPARK_PORT}"
+    else
+      echo "  [A0] WARN: Spark ollama not answering on ${SPARK_HOST}:${SPARK_PORT} (start 'ollama serve')"
+    fi
+    # Mac 70B judge: start it over the Cat6 cable via ssh if not already listening.
+    if curl -sf "http://${MAC_HOST}:${MAC_PORT}/v1/models" >/dev/null 2>&1; then
+      echo "  [A0] Mac MLX judge already listening on ${MAC_HOST}:${MAC_PORT}"
+    else
+      echo "  [A0] starting Mac MLX judge over Cat6: ssh ${MAC_SSH_USER}@${MAC_SSH_HOST}"
+      ssh -i "${MAC_SSH_KEY}" -o StrictHostKeyChecking=accept-new -o ConnectTimeout=10 \
+        "${MAC_SSH_USER}@${MAC_SSH_HOST}" \
+        "nohup ${MAC_MLX_BIN} --model ${MAC_JUDGE_MODEL} --port ${MAC_PORT} >/tmp/mlx-judge-${MAC_PORT}.log 2>&1 & disown" \
+        || echo "  [A0] WARN: ssh start returned non-zero (key/host?); will still poll for readiness"
+      echo -n "  [A0] waiting for Mac judge to load (70B-4bit)"
+      for _i in $(seq 1 "${JUDGE_READY_TRIES}"); do
+        if curl -sf "http://${MAC_HOST}:${MAC_PORT}/v1/models" >/dev/null 2>&1; then echo " ready."; break; fi
+        echo -n "."; sleep 3
+      done
+      curl -sf "http://${MAC_HOST}:${MAC_PORT}/v1/models" >/dev/null 2>&1 \
+        || { echo; echo "  [A0] FATAL: Mac judge not ready after ~$((JUDGE_READY_TRIES*3))s — aborting A (need 2 families, judge != subject)" >&2; exit 4; }
+    fi
+    echo "  [A0] judges: ${JUDGES}"
+  else
+    echo "  [A0] AUTO_START_JUDGES=0 — assuming judges already up: ${JUDGES}"
+  fi
 
   step "A1 — Smoke test the two-box farm (connectivity only, CI-safe, no GPU job)"
   # Print-only path: emits the ready --judges flag + each box's serve command from the config.
