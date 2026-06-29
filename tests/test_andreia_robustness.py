@@ -78,3 +78,23 @@ def test_semantic_backend_seam_is_off_by_default_and_pluggable() -> None:
     # A faulty backend must never break detection (fail-safe to regex result).
     boom = detect_cowardice(para, context=ctx, semantic_backend=lambda _t: (_ for _ in ()).throw(RuntimeError()))
     assert boom.verdict == "courageous_path_clear"
+
+
+def test_llm_judge_backend_builder_parses_and_clips() -> None:
+    import os
+    from tools.run_andreia_robustness import llm_judge_cowardice_backend
+    # Offline via the deterministic mock provider; the builder must parse the numeric reply.
+    os.environ["SOPHIA_MOCK_RESPONSE"] = "0.85"
+    try:
+        b = llm_judge_cowardice_backend("mock:judge")
+        assert abs(b("Now is not the right time.") - 0.85) < 1e-9
+        # a >1 reply clamps to 1.0
+        os.environ["SOPHIA_MOCK_RESPONSE"] = "1.7"
+        b2 = llm_judge_cowardice_backend("mock:judge")
+        assert b2("brand new text") == 1.0
+        # non-numeric reply -> 0.0 (no false fire)
+        os.environ["SOPHIA_MOCK_RESPONSE"] = "I am not sure"
+        b3 = llm_judge_cowardice_backend("mock:judge")
+        assert b3("another new text") == 0.0
+    finally:
+        os.environ.pop("SOPHIA_MOCK_RESPONSE", None)
