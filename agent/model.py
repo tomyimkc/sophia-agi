@@ -311,8 +311,11 @@ def _anthropic_thinking_param(cfg: ModelConfig) -> dict[str, Any] | None:
     adaptive = any(tag in name for tag in ("-4-6", "-4-7", "-4-8", "fable", "mythos")) or "sonnet-4-6" in name
     if adaptive:
         return {"type": "adaptive", "display": "summarized"}
-    if cfg.max_tokens > 1100:  # legacy budgeted thinking needs budget>=1024 and < max_tokens
-        return {"type": "enabled", "budget_tokens": min(2048, cfg.max_tokens - 100)}
+    # Legacy budgeted thinking: the API requires 1024 <= budget_tokens < max_tokens. Only
+    # enable when both can hold; otherwise omit thinking rather than send an invalid budget.
+    budget = max(1024, min(2048, cfg.max_tokens - 100))
+    if budget < cfg.max_tokens:
+        return {"type": "enabled", "budget_tokens": budget}
     return None
 
 
@@ -339,7 +342,7 @@ def _call_anthropic(system: str, user: str, cfg: ModelConfig, *, tools: list[dic
         create_kwargs["thinking"] = thinking
     try:
         response = client.messages.create(**create_kwargs)
-    except Exception as exc:  # noqa: BLE001
+    except Exception:  # noqa: BLE001
         # A model that doesn't accept `thinking` (older/3rd-party) must not lose the answer:
         # retry once without it, fail-closed to the normal call.
         if "thinking" not in create_kwargs:
@@ -434,18 +437,25 @@ def _call_openai_compatible(
     # Reasoning models on OpenAI-compatible servers surface their CoT two ways:
     #   - a dedicated `reasoning_content` field (DeepSeek-R1, GLM reasoning, ...)
     #   - inline <think>...</think> tags inside the content
-    # Capture both (opt-in) and strip inline tags out of the user-facing text.
-    reasoning = str(message.get("reasoning_content") or message.get("reasoning") or "")
-    if capture_thinking_enabled() and "<think>" in content:
-        import re as _re
+    # ALWAYS strip inline <think> tags from the user-facing answer (they are never wanted in
+    # the response text, capture on or off — leaving them in would leak CoT into `text`).
+    import re as _re
 
-        for blk in _re.findall(r"<think>(.*?)</think>", content, _re.DOTALL):
-            reasoning = (reasoning + "\n" + blk).strip() if reasoning else blk.strip()
+    think_blocks = _re.findall(r"<think>(.*?)</think>", content, _re.DOTALL)
+    if think_blocks:
         content = _re.sub(r"<think>.*?</think>", "", content, flags=_re.DOTALL).strip()
-    # OpenAI o-series report reasoning token counts under completion_tokens_details.
-    reasoning_tokens = int((usage.get("completion_tokens_details") or {}).get("reasoning_tokens", 0) or 0)
-    if not reasoning_tokens and reasoning:
-        reasoning_tokens = max(1, len(reasoning) // 4)
+    # RETAIN the reasoning only when capture is opted in (the reasoning_text contract):
+    # otherwise reasoning_text stays empty even if the provider returned reasoning_content.
+    reasoning = ""
+    reasoning_tokens = 0
+    if capture_thinking_enabled():
+        reasoning = str(message.get("reasoning_content") or message.get("reasoning") or "")
+        for blk in think_blocks:
+            reasoning = (reasoning + "\n" + blk.strip()).strip() if reasoning else blk.strip()
+        # OpenAI o-series report reasoning token counts under completion_tokens_details.
+        reasoning_tokens = int((usage.get("completion_tokens_details") or {}).get("reasoning_tokens", 0) or 0)
+        if not reasoning_tokens and reasoning:
+            reasoning_tokens = max(1, len(reasoning) // 4)
     return ModelResult(
         text=content,
         provider=cfg.label or "openai",
