@@ -1,0 +1,26 @@
+Injection half — edit-in-place vs re-route after the reflex fires
+====================================================================
+params: {"L": 10, "inject_cost": 2.0, "p_clean": 0.5, "tpr_refire": 0.9}
+best steering strength = 0.53  (inject correct 0.6619); MC~closed 0.001
+
+POLICY (conditioned on a detected error)   correct   cost
+  commit (do nothing)                       0.000   0.0
+  reroute (restart)                         0.500   10.0
+  inject (edit in place, best strength)     0.662   2.0
+  hybrid (inject then reroute on refire)    0.814   5.0
+
+STRENGTH SWEEP (brittleness roofline)
+  s=0.0: flip 0.00 corrupt 0.00 -> inject 0.000  hybrid 0.450
+  s=0.1: flip 0.26 corrupt 0.01 -> inject 0.258  hybrid 0.592
+  s=0.2: flip 0.45 corrupt 0.02 -> inject 0.440  hybrid 0.692
+  s=0.3: flip 0.59 corrupt 0.05 -> inject 0.561  hybrid 0.759
+  s=0.4: flip 0.70 corrupt 0.10 -> inject 0.632  hybrid 0.797
+  s=0.5: flip 0.78 corrupt 0.15 -> inject 0.660  hybrid 0.813
+  s=0.6: flip 0.83 corrupt 0.22 -> inject 0.654  hybrid 0.810
+  s=0.7: flip 0.88 corrupt 0.29 -> inject 0.620  hybrid 0.791
+  s=0.8: flip 0.91 corrupt 0.38 -> inject 0.560  hybrid 0.758
+  s=0.9: flip 0.93 corrupt 0.49 -> inject 0.479  hybrid 0.714
+  s=1.0: flip 0.95 corrupt 0.60 -> inject 0.380  hybrid 0.659
+  over-drive (s=1.0) inject correct = 0.3801 (< best 0.6619: over-steering hurts)
+
+candidateOnly=True  boundary: planted p_flip/p_corrupt curves; a real steering measurement (white-box) is gated.

@@ -385,6 +385,37 @@ This is the Instrumented-Evaluation-Contract thesis applied to our own result: t
 (how `is_error` and the detectors are defined) was quietly generating the headline number, and
 naming that is the deliverable.
 
+### 3g. The injection half — editing the chain in place (the original thesis, second part)
+
+The operator's question had two halves; everything above answered "detect and *re-route*." The
+unbuilt half is the literal one: **inject the chain and change its mind in place** — a
+backtrack-token or an activation-steering edit at the error step — instead of restarting.
+[`reasoning/instinct_injection.py`](../../reasoning/instinct_injection.py) models the mechanics.
+Conditioned on a detected error (good prefix), an in-place edit flips the bad step with
+probability `p_flip(strength)` but corrupts the good chain with `p_corrupt(strength)` (the
+steering-unreliability finding, §1c): `P(correct|inject) = (1−p_corrupt)·p_flip`.
+
+```
+policy (given a detected error)        correct   cost
+  reroute (restart)                      0.50     10.0
+  inject (edit in place, best strength)  0.66      2.0     ← dominates: more correct, 5× cheaper
+  hybrid (inject, reroute on re-fire)    0.81      5.0     ← best
+brittleness roofline:  s=0.5 → 0.66   (peak)    s=1.0 → 0.38   (over-steering corrupts)
+```
+
+Findings: (I1/I2) when steering is effective, **in-place injection strictly dominates re-route** —
+more correct *and* far cheaper, because it reuses the good prefix instead of paying a restart.
+(I3) but it has a **brittleness roofline**: net correctness is concave in steering strength with
+an interior optimum; over-driving collapses it as corruption overtakes flips — you must *tune*
+the edit, not max it. (I4) the **hybrid** (inject; if the reflex still fires, fall back to
+re-route) beats both — cheap wins kept, failures recovered.
+
+*Honest scope:* `p_flip`/`p_corrupt` are planted curves, not a measured steering experiment. The
+real version needs white-box access — add a contrastive "error-direction" vector at a mid-layer
+and measure the actual flip/corrupt rates against this harness (gated; the hosted providers used
+above are black-box, so steering can't be measured through them). It maps the design space and
+says *when* to edit vs restart; `canClaimAGI` stays false.
+
 ## 4. From model to measured claim (pre-registration sketch)
 
 To graduate this from `candidateOnly` to a real eval under the Instrumented Evaluation Contract
