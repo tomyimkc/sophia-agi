@@ -47,6 +47,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--scorer", choices=["numeric", "symbolic"], default="numeric",
                     help="numeric exact-match (GSM8K-style) or symbolic equivalence (MATH-style, sympy)")
+    ap.add_argument("--out", default=None, help="write the full JSON report to this path")
     args = ap.parse_args(argv)
 
     items = _load(Path(args.dataset))
@@ -75,6 +76,16 @@ def main(argv: list[str] | None = None) -> int:
     print(f"oracle:  {report['oracle']}")
     if args.model and is_sample:
         print("\nNOTE: point --dataset at the real GSM8K/GAIA/ARC JSONL for a citable external number.")
+    if args.out:
+        artifact = {
+            "dataset": Path(args.dataset).name,
+            "dataset_is_style_sample": is_sample,
+            "model": label,
+            "scorer": args.scorer,
+            **report,
+        }
+        Path(args.out).write_text(json.dumps(artifact, indent=2), encoding="utf-8")
+        print(f"wrote report -> {args.out}")
     return 0
 
 
