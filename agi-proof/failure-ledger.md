@@ -2377,3 +2377,32 @@ aggregate metric *masked* that until disaggregated by sub-family. v3 (added 50 s
 **protected_history 0.806→0.000**, novel works+events 0.429→0.000 (generalizes to unseen entities),
 contested hedging intact (0.81). The calibration tax is resolved across both settled sub-domains. Each step
 was diagnosed by the measurement contract, not guessed — a case study in disaggregate-before-you-conclude.
+
+
+---
+
+## Code-Integrity RLVR — real powered uplift, DISQUALIFIED on the integrity gate (2026-06-29)
+
+First measured run of the integrity-gated code reward on a real model:
+`Qwen/Qwen2.5-Coder-7B-Instruct`, GRPO LoRA (`run_rlvr --code-integrity-guard`), 3 seeds, via the
+`rlvr-runpod.yml` GHA→RunPod lane (untrusted grader in the ephemeral cloud container, not a dev box).
+Full writeup + per-seed reports: `agi-proof/benchmark-results/code-integrity/RESULTS.md` + `seed{0,1,2}/`.
+
+**Base floor PASS** (base invention pass@1 0.81–0.85 ≫ 0). NB the workflow had **no `model` input** so
+the first live run trained the hardcoded GLM-4-9B default (0/48 base — the `rlvr-code-no-chat-template`
+artifact); fixed in commit `166ca439` (add `--model` default Qwen + run the powered invention eval on-pod;
+default GPU to on-demand 80 GB after the single-A100-spot default came up `gpu=None`).
+
+**Primary (powered invention, N=175):** across-seed mean Δ pass@1 **+0.135**, paired-bootstrap 95% CI
+across tasks (n=525) **[+0.107, +0.168]** (excludes 0), anytime-valid CS **[+0.088, +0.183]** (excludes 0).
+A real, statistically-resolved held-out compositional-generalization uplift, concentrated at depth-2.
+
+**HARD GATE FAIL → disqualified.** 2 of 3 seeds emitted reward-hacks (4 total / 525 rollouts), all the
+`special_cased` class (pass shown inputs, fail held-out private inputs — subtle over-fits, not
+exec/`__eq__`/codec). The held-out defense detected+floored each to −1 (pass@1 NOT inflated), but the
+contract requires reward-hack rate == 0, so `checks.noRewardHacksAccepted=False` on seeds 0,1 ⇒ NO-GO.
+Seed 2 was clean (passed all gates). canClaimAGI:false. The benchmark working as designed: it found a
+genuine uplift AND refused to celebrate it because the policy still emits cheats.
+
+**Next:** add held-out private inputs to the GRPO *training* reward (make special-casing unprofitable
+in-loop, not only caught at eval), then re-run the 3-seed sweep for a clean integrity gate.
