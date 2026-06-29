@@ -1,0 +1,125 @@
+name: virtue-evals-runpod
+
+# Manual-only launcher for the powered cardinal-virtue GO-path evals (Sophrosyne + Dikaiosyne)
+# — the RunPod analogue of the Spark+Mac judge farm. Rents ONE GPU pod big enough to serve the
+# subject + two independent judge families locally via ollama, runs the exact PR-275 pipeline
+# (build batteries -> decontam -> 2-family label with kappa gate -> 3-arm real-model eval with
+# bootstrap CIs), then GIT-PUSHES the two public reports + a run log back to the branch and
+# self-deletes. This NEVER promotes a result: GO/NO-GO is decided by each tool's pre-registered
+# measurement_spec.json; a NO-GO is a valid outcome that stays candidate. canClaimAGI stays false.
+#
+# SSH-FREE design: tools/runpod_virtue_evals.py creates the pod via the RunPod HTTPS API; the
+# pod runs the WHOLE job in its start command and pushes results back using this run's
+# GITHUB_TOKEN, then self-deletes. The launcher runs with --wait so the token stays valid until
+# the pod is gone. Anti-wastage: leak-sweep before launch + restart-loop guard in the job script.
+#
+# Secret required: RUNPOD_API_KEY (GPU). No HF token needed (ollama models are public).
+# Always read the wisdom-gpu-prebaked skill (the anti-wastage runbook) before a paid run, and
+# confirm zero leaked pods afterwards (see docs/11-Platform/Cardinal-Virtue-Benchmarks.md §5b).
+#
+# COST GUARD — cheap pipeline-smoke FIRST: dispatch with small distinct models + a tiny label
+# cap to validate the wiring for ~$0.30 before the full ~$3-6 run, e.g.
+#   judge_a=qwen2.5:14b-instruct  judge_b=llama3.1:8b  label_limit=24
+# then re-dispatch with the full default roster (32B + 70B-q4 judges, label_limit blank).
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type RUN to confirm renting a paid GPU pod'
+        required: true
+        default: ''
+      subject:
+        description: 'No-gate baseline subject model (ollama tag)'
+        required: false
+        default: 'qwen2.5:7b-instruct'
+      judge_a:
+        description: 'Judge family A (ollama tag)'
+        required: false
+        default: 'qwen2.5:32b-instruct'
+      judge_b:
+        description: 'Judge family B (ollama tag; != A, != subject)'
+        required: false
+        default: 'llama3.3:70b-instruct-q4_K_M'
+      seeds:
+        description: 'Baseline sampling seeds (3 = pre-registered)'
+        required: false
+        default: '3'
+      label_limit:
+        description: 'Smoke: label only first N cases/classes (blank/0 = full)'
+        required: false
+        default: ''
+      image:
+        description: 'Pod image (blank = default CUDA pytorch image)'
+        required: false
+        default: ''
+      registry_auth_id:
+        description: 'RunPod container-registry-auth id (to pull a PRIVATE image)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write   # the pod pushes the public reports back with this run's GITHUB_TOKEN
+
+concurrency:
+  group: virtue-evals-runpod
+  cancel-in-progress: false
+
+jobs:
+  evals:
+    environment: runpod-paid
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Preflight — confirm + secret present
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
+        run: |
+          [ "$CONFIRM" = "RUN" ] || { echo "::error::input 'confirm' must be exactly RUN. Aborting (no pod)."; exit 1; }
+          [ -n "$RUNPOD_API_KEY" ] || { echo "::error::secret RUNPOD_API_KEY missing."; exit 1; }
+          echo "Preflight OK. GPU runs on the rented pod, not this runner."
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Dry-run self-report payload (no pod, no cost)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          GH_PILOT_PAT: ${{ github.token }}
+          IN_SUBJECT: ${{ github.event.inputs.subject }}
+          IN_JUDGE_A: ${{ github.event.inputs.judge_a }}
+          IN_JUDGE_B: ${{ github.event.inputs.judge_b }}
+          IN_SEEDS: ${{ github.event.inputs.seeds }}
+        run: |
+          python tools/runpod_virtue_evals.py --dry-run --branch "$GITHUB_REF_NAME" \
+            --subject "$IN_SUBJECT" --judge-a "$IN_JUDGE_A" --judge-b "$IN_JUDGE_B" --seeds "$IN_SEEDS"
+
+      - name: Launch SSH-free virtue evals on RunPod (pod self-reports via git push; waits until done)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          GH_PILOT_PAT: ${{ github.token }}
+          RUNPOD_REGISTRY_AUTH_ID: ${{ github.event.inputs.registry_auth_id }}
+          IN_SUBJECT: ${{ github.event.inputs.subject }}
+          IN_JUDGE_A: ${{ github.event.inputs.judge_a }}
+          IN_JUDGE_B: ${{ github.event.inputs.judge_b }}
+          IN_SEEDS: ${{ github.event.inputs.seeds }}
+          IN_LABEL_LIMIT: ${{ github.event.inputs.label_limit }}
+          IN_IMAGE: ${{ github.event.inputs.image }}
+        run: |
+          # Build argv as a bash array; optional flags are appended as separate quoted elements
+          # (no unquoted expansion of dispatch inputs -> no shell injection/word-splitting).
+          args=(--yes --wait --branch "$GITHUB_REF_NAME"
+                --subject "$IN_SUBJECT" --judge-a "$IN_JUDGE_A" --judge-b "$IN_JUDGE_B" --seeds "$IN_SEEDS")
+          [ -n "$IN_LABEL_LIMIT" ] && args+=(--label-limit "$IN_LABEL_LIMIT")
+          [ -n "$IN_IMAGE" ] && args+=(--image-name "$IN_IMAGE")
+          python tools/runpod_virtue_evals.py "${args[@]}"
+
+      - name: Surface the pushed reports (pull what the pod committed)
+        if: always()
+        run: |
+          git pull --no-edit origin "$GITHUB_REF_NAME" || true
+          echo "Reports (if pushed) are on the branch under agi-proof/benchmark-results/{sophrosyne,dikaiosyne}/"
