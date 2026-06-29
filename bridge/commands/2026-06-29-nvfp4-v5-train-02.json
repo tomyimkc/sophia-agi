@@ -1,0 +1,8 @@
+{
+  "id": "2026-06-29-nvfp4-v5-train-02",
+  "args": "--bench-b --run-train --execute",
+  "createdBy": "claude",
+  "createdAt": "2026-06-29T05:35:00Z",
+  "approvedBy": "user: 'Do all possible next steps' / 'Implement all' (2026-06-29)",
+  "note": "v5 first pass: epochs 3 @ lambda=0.001, FULL NVFP4 quant (KEEP_SUFFIXES empty). If top1 < 0.97, a follow-up with KEEP_SUFFIXES=down_proj will be queued. Owned hardware (free)."
+}
