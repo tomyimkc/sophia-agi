@@ -1,0 +1,12 @@
+{"id": "cq-001", "question": "Who is traditionally credited as the author of the Dao De Jing?", "gold": ["Laozi", "Lao Tzu", "Lao-tzu", "Laozi (Lao Tzu)"], "domain": "history", "source_note": "Author-written calibration question, decontam-safe; excluded from training rows."}
+{"id": "cq-002", "question": "In what year did the first crewed Moon landing occur?", "gold": ["1969"], "domain": "history", "source_note": "Author-written calibration question, decontam-safe."}
+{"id": "cq-003", "question": "What is the chemical symbol for gold?", "gold": ["Au"], "domain": "science", "source_note": "Author-written calibration question, decontam-safe."}
+{"id": "cq-004", "question": "What is the capital city of Australia?", "gold": ["Canberra"], "domain": "geography", "source_note": "Author-written calibration question, decontam-safe."}
+{"id": "cq-005", "question": "How many sides does a hexagon have?", "gold": ["6", "six"], "domain": "math", "source_note": "Author-written calibration question, decontam-safe."}
+{"id": "cq-006", "question": "Which planet in our solar system is the largest by mass?", "gold": ["Jupiter"], "domain": "science", "source_note": "Author-written calibration question, decontam-safe."}
+{"id": "cq-007", "question": "Who wrote the play 'Romeo and Juliet'?", "gold": ["William Shakespeare", "Shakespeare"], "domain": "literature", "source_note": "Author-written calibration question, decontam-safe."}
+{"id": "cq-008", "question": "What gas do plants primarily absorb from the atmosphere during photosynthesis?", "gold": ["carbon dioxide", "CO2", "CO₂"], "domain": "science", "source_note": "Author-written calibration question, decontam-safe."}
+{"id": "cq-009", "question": "What is the square root of 144?", "gold": ["12", "twelve"], "domain": "math", "source_note": "Author-written calibration question, decontam-safe."}
+{"id": "cq-010", "question": "In which country is the ancient city of Petra located?", "gold": ["Jordan"], "domain": "geography", "source_note": "Author-written calibration question, decontam-safe."}
+{"id": "cq-011", "question": "What is the largest ocean on Earth?", "gold": ["Pacific", "Pacific Ocean"], "domain": "geography", "source_note": "Author-written calibration question, decontam-safe."}
+{"id": "cq-012", "question": "Who developed the theory of general relativity?", "gold": ["Albert Einstein", "Einstein"], "domain": "science", "source_note": "Author-written calibration question, decontam-safe."}

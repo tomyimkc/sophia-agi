@@ -329,7 +329,57 @@ def _wait_ssh_login(conn: PodConnection, key_path: Path, timeout_s: int = 300) -
     raise RunPodError(f"Timed out waiting for SSH login to {conn.public_ip}:{conn.ssh_port}")
 
 
+def _remote_calibration_script(args: argparse.Namespace) -> str:
+    """T3 calibration-verifier trace generation + scoring on the pod (task=calibration).
+
+    Isolated from the RLVR body so that path stays byte-identical. offline mode uses the
+    deterministic mock backend (no model load — the cheap smoke that validates rent -> clone
+    -> generate -> score -> copy-back -> delete); live mode runs the hf backend across the
+    comma-separated --model list (the >=3-size scaling axis). Writes the report + traces to
+    /workspace/sophia-runpod/ for scp-back."""
+    if args.remote_mode == "live":
+        backend = "hf"
+        models = args.model  # comma-separated HF ids, e.g. Qwen 0.5B,3B,7B
+        install = 'python -m pip install "transformers>=4.53,<5" "accelerate>=0.30" || true'
+    else:
+        backend = "mock"
+        models = "mock-small,mock-mid,mock-large"
+        install = 'echo "offline smoke: mock backend, no model install"'
+    return f"""
+set -Eeuo pipefail
+export DEBIAN_FRONTEND=noninteractive
+export HF_HOME=/workspace/.cache/huggingface
+export PIP_CACHE_DIR=/workspace/.cache/pip
+export SOPHIA_CALIB_MODELS={shlex.quote(models)}
+export SOPHIA_CALIB_BACKEND={shlex.quote(backend)}
+export SOPHIA_CALIB_SEED={shlex.quote(str(args.seed))}
+mkdir -p /workspace/sophia-runpod /workspace/.cache/huggingface /workspace/.cache/pip
+cd /workspace/sophia-runpod
+if [ {shlex.quote(args.source)} = "git" ] && [ ! -d sophia-agi/.git ]; then
+  git clone --depth 1{(" --branch " + shlex.quote(args.branch)) if args.branch else ""} {shlex.quote(args.repo_url)} sophia-agi
+fi
+cd sophia-agi
+(git rev-parse HEAD || true) | tee /workspace/sophia-runpod/repo-head.txt
+nvidia-smi || true
+python -m pip install --upgrade pip setuptools wheel
+{install}
+python tools/run_calibration_traces.py \\
+  --backend "$SOPHIA_CALIB_BACKEND" \\
+  --models "$SOPHIA_CALIB_MODELS" \\
+  --seed "$SOPHIA_CALIB_SEED" \\
+  --out /workspace/sophia-runpod/calibration-traces.jsonl
+python tools/run_calibration_verifier_eval.py \\
+  --traces /workspace/sophia-runpod/calibration-traces.jsonl \\
+  --seed "$SOPHIA_CALIB_SEED" \\
+  --out /workspace/sophia-runpod/calibration-verifier.public-report.json
+echo "Sophia calibration-verifier remote run complete."
+ls -lh /workspace/sophia-runpod/calibration-* || true
+"""
+
+
 def _remote_training_script(args: argparse.Namespace) -> str:
+    if args.task == "calibration":
+        return _remote_calibration_script(args)
     # Avoid installing vLLM when explicitly not using it. This is the most robust
     # one-GPU path and avoids a large optional dependency.
     req_cmd = """
@@ -610,7 +660,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--branch", default="", help="optional git branch/tag to clone")
     ap.add_argument("--model", default="zai-org/glm-4-9b-chat-hf")
     ap.add_argument("--remote-mode", choices=["offline", "live"], default="live", help="run only remote offline smoke test or full live GRPO")
-    ap.add_argument("--task", choices=["provenance", "math", "code", "concept"], default="provenance", help="RLVR reward task: provenance (provenance_faithful), math (sympy math_equivalent), code (hidden-tests-pass via code_exec), or concept (concept-TBox gate; no extra deps)")
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "calibration"], default="provenance", help="RLVR reward task: provenance / math / code / concept; or 'calibration' (T3 calibration-verifier trace gen + scoring, not RLVR)")
     ap.add_argument("--reward", choices=["verifier", "gate", "multiaxis"], default="verifier", help="reward signal (provenance task): verifier (default), gate (single-axis), or multiaxis (Thesis D dense reward; M1 collapse comparison)")
     ap.add_argument("--quant", choices=["bf16", "4bit"], default="bf16")
     ap.add_argument("--vllm", choices=["none", "server", "colocate"], default="none")
@@ -777,6 +827,19 @@ def main(argv: list[str] | None = None) -> int:
                 key_path,
                 "/workspace/sophia-runpod/repo-head.txt",
                 args.artifacts_dir / f"{pod_id}.repo-head.txt",
+            )
+            # T3 calibration-verifier artifacts (task=calibration only; best-effort).
+            _scp_from_pod(
+                conn,
+                key_path,
+                "/workspace/sophia-runpod/calibration-verifier.public-report.json",
+                args.artifacts_dir / f"{pod_id}.calibration-verifier.public-report.json",
+            )
+            _scp_from_pod(
+                conn,
+                key_path,
+                "/workspace/sophia-runpod/calibration-traces.jsonl",
+                args.artifacts_dir / f"{pod_id}.calibration-traces.jsonl",
             )
             _scp_from_pod(
                 conn,

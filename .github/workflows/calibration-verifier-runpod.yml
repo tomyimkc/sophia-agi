@@ -1,0 +1,149 @@
+name: calibration-verifier-runpod
+
+# Manual-only RunPod launcher for the T3 calibration-verifier experiment (the "GPU step").
+#
+# Like rlvr-runpod.yml this is dispatch-only, uses the RUNPOD_API_KEY secret, and spends
+# real money. It reuses the existing orchestrator tools/runpod_rlvr.py (task=calibration),
+# which rents a pod, runs over SSH, copies the report back, and ALWAYS deletes the pod
+# (finally block + remote watchdog), so a runner death still reaps the GPU.
+#
+# WHAT IT RUNS on the pod (tools/run_calibration_traces.py -> run_calibration_verifier_eval.py):
+#   offline = the MOCK backend (no model load) — the cheap smoke that validates the whole
+#             path (rent -> clone -> generate -> score -> copy-back -> delete) for a few cents.
+#             ALWAYS run this first to validate before opting into a paid live run.
+#   live    = the hf backend across the comma-separated model list (the >=3-size scaling axis):
+#             generate K answer samples + retrieval evidence + self-confidence per question,
+#             label correctness by gold-match, fit the trace-feature verifier, score AUROC/ECE.
+#
+# The result is gated by tools/run_calibration_verifier_eval.py's gate_verdict. It stays
+# NO-GO until a >=2-judge-family correctness panel and a decontaminated corpus are supplied
+# (see agi-proof/benchmark-results/calibration-verifier/measurement_spec.json). No claim is
+# auto-promoted; canClaimAGI stays false.
+#
+# PREREQUISITES (only you can do these):
+#   1. Add a VALID RunPod API key as the repo secret RUNPOD_API_KEY
+#      (Settings -> Secrets and variables -> Actions). Never written to the repo or logs.
+#   2. Your RunPod account must have GPU credit. A pod costs real money while it runs.
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type RUN to confirm you accept renting a paid GPU pod'
+        required: true
+        default: ''
+      remote_mode:
+        description: 'offline = cheap mock smoke (run this FIRST); live = real hf generation across the model list'
+        required: true
+        default: 'offline'
+        type: choice
+        options: [offline, live]
+      models:
+        description: 'Comma-separated HF model ids = the scaling axis (live mode). Default = Qwen2.5 0.5B/3B/7B.'
+        required: false
+        default: 'Qwen/Qwen2.5-0.5B-Instruct,Qwen/Qwen2.5-3B-Instruct,Qwen/Qwen2.5-7B-Instruct'
+      seed:
+        description: 'Generation+scoring seed (vary across runs for independent replications)'
+        required: false
+        default: '0'
+      gpu_type:
+        description: 'RunPod GPU type preference (comma-separated; an available one is picked)'
+        required: false
+        default: 'NVIDIA A100 80GB PCIe,NVIDIA A100-SXM4-80GB,NVIDIA H100 80GB HBM3,NVIDIA H100 PCIe'
+      interruptible:
+        description: 'Use cheaper spot/interruptible pod (false = on-demand, more reliable allocation)'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['true', 'false']
+
+# contents: write so the runner can commit the copied-back calibration report to the
+# dispatch branch (durable evidence, no artifact download needed).
+permissions:
+  contents: write
+
+concurrency:
+  group: calibration-verifier-runpod-${{ github.event.inputs.seed }}-${{ github.event.inputs.remote_mode }}
+  cancel-in-progress: false
+
+jobs:
+  calibration:
+    environment: runpod-paid
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    # Job-level env indirection: dispatch inputs are mapped to env vars and referenced as
+    # quoted shell variables inside run: blocks (avoids ${{ }} expression injection).
+    env:
+      IN_CONFIRM: ${{ github.event.inputs.confirm }}
+      IN_REMOTE_MODE: ${{ github.event.inputs.remote_mode }}
+      IN_MODELS: ${{ github.event.inputs.models }}
+      IN_SEED: ${{ github.event.inputs.seed }}
+      IN_GPU_TYPE: ${{ github.event.inputs.gpu_type }}
+      IN_INTERRUPTIBLE: ${{ github.event.inputs.interruptible }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Preflight — confirm + secret present
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          if [ "$IN_CONFIRM" != "RUN" ]; then
+            echo "::error::Dispatch input 'confirm' must be exactly RUN to acknowledge GPU cost. Aborting (no pod created)."
+            exit 1
+          fi
+          if [ -z "$RUNPOD_API_KEY" ]; then
+            echo "::error::Repo secret RUNPOD_API_KEY is not set (or empty). Add a VALID key in Settings -> Secrets and variables -> Actions. Aborting (no pod created)."
+            exit 1
+          fi
+          echo "Preflight OK: confirmed, secret present. GPU runs on the rented pod, not this runner."
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Dry-run payload (no pod, no cost — sanity check the request)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          python tools/runpod_rlvr.py --dry-run \
+            --task calibration \
+            --source git --branch "${{ github.ref_name }}" \
+            --remote-mode "$IN_REMOTE_MODE" \
+            --model "$IN_MODELS" \
+            --gpu-type "$IN_GPU_TYPE" || true
+
+      - name: Launch RunPod calibration (rents GPU, runs over SSH, deletes pod)
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+        run: |
+          args=(--yes --task calibration --source git --branch "${{ github.ref_name }}" --remote-mode "$IN_REMOTE_MODE" --model "$IN_MODELS" --seed "$IN_SEED" --quant bf16 --vllm none --gpu-type "$IN_GPU_TYPE")
+          [ "$IN_INTERRUPTIBLE" = "true" ] && args+=(--interruptible)
+          python tools/runpod_rlvr.py "${args[@]}"
+
+      - name: Commit the copied-back calibration report to the dispatch branch
+        if: always()
+        run: |
+          shopt -s globstar nullglob
+          found=""
+          for f in agi-proof/benchmark-results/runpod-rlvr/*.calibration-verifier.public-report.json; do found="$f"; break; done
+          if [ -n "$found" ]; then
+            echo "Found fresh calibration report: $found"
+            git config user.name "sophia-ci"
+            git config user.email "ci@users.noreply.github.com"
+            git add agi-proof/benchmark-results/runpod-rlvr/*.calibration-* || true
+            git commit -m "calibration-verifier RunPod report (${IN_REMOTE_MODE}, seed ${IN_SEED})" || echo "nothing to commit"
+            git push origin HEAD:"${{ github.ref_name }}" || echo "::warning::push failed; report is still in the uploaded artifact"
+          else
+            echo "::warning::No calibration report was copied back from the pod (run may have failed). See the train log artifact."
+          fi
+
+      - name: Upload RunPod artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: calibration-verifier-runpod-reports
+          path: |
+            agi-proof/benchmark-results/runpod-rlvr/**
+          if-no-files-found: warn

@@ -151,10 +151,29 @@ def _synthetic_traces(n: int, *, seed: int = 0) -> list[dict]:
     return traces
 
 
+def _as_evidence(evidence: list) -> list:
+    """Accept evidence as Evidence objects (synthetic traces) OR plain confidence floats
+    (generated traces from tools/run_calibration_traces.py). Returns a list[Evidence]."""
+    out = []
+    for i, e in enumerate(evidence or []):
+        if isinstance(e, Evidence):
+            out.append(e)
+        else:
+            try:
+                out.append(Evidence(source_id=f"ev{i}", confidence=float(e)))
+            except (TypeError, ValueError):
+                continue
+    return out
+
+
 def extract_features(trace: dict) -> dict:
-    """Run the REAL feature code over a trace. Uses NO access to the correctness label."""
+    """Run the REAL feature code over a trace. Uses NO access to the correctness label.
+
+    Evidence may be Evidence objects (synthetic) or confidence floats (generated traces);
+    an empty/absent evidence list falls back to the 0.5 corroboration prior (honest)."""
     se = semantic_entropy(trace["samples"], mode="lexical")["entropy"]  # 0=certain, 1=scattered
-    corr = corroborated_confidence(trace["evidence"], method="logodds")
+    ev = _as_evidence(trace.get("evidence", []))
+    corr = corroborated_confidence(ev, method="logodds") if ev else 0.5
     return {
         "agreement": round(1.0 - se, 6),          # high when paraphrases agree
         "corroboration": round(corr, 6),
@@ -243,6 +262,112 @@ def run_mock(*, n: int = 400, seed: int = 0) -> dict:
     }
 
 
+def _provenance_score_features(f: dict) -> float:
+    """Provenance prior arm over generated traces: corroboration feature only (the cheap,
+    source-quality prior — what agent/grounded_confidence.py pools)."""
+    return f["corroboration"]
+
+
+def run_real(traces_path: Path, *, seed: int = 0, judge_families: int = 1) -> dict:
+    """Score a REAL generated trace corpus (tools/run_calibration_traces.py output).
+
+    Splits questions into disjoint train/test, fits the verifier on train (all models), and
+    reports per-model AUROC/ECE on the test split (the >=3-size scaling axis) plus the delta vs
+    the provenance prior. Correctness labels come from the traces (gold-match = family 1); the
+    >=2-family requirement and the real-corpus pillar are enforced by gate_verdict downstream.
+    """
+    traces = [json.loads(line) for line in traces_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    if not traces:
+        raise ValueError(f"no traces in {traces_path}")
+    models = sorted({t["model"] for t in traces})
+    qids = sorted({t["id"] for t in traces})
+    # Deterministic held-out split on QUESTION id (so a question never spans train and test).
+    rng = random.Random(seed)
+    shuffled = qids[:]
+    rng.shuffle(shuffled)
+    cut = max(1, len(shuffled) // 2)
+    train_qids, test_qids = set(shuffled[:cut]), set(shuffled[cut:])
+
+    feats = {id(t): extract_features(t) for t in traces}
+    train = [t for t in traces if t["id"] in train_qids]
+    train_model = _fit_verifier_from_features([(feats[id(t)], t["correct"]) for t in train])
+
+    per_model: dict[str, dict] = {}
+    for m in models:
+        test = [t for t in traces if t["model"] == m and t["id"] in test_qids]
+        if not test:
+            continue
+        labels = [t["correct"] for t in test]
+        v_scores = [_score_from_features(feats[id(t)], train_model) for t in test]
+        p_scores = [_provenance_score_features(feats[id(t)]) for t in test]
+        per_model[m] = {
+            "n": len(test),
+            "verifier": {"auroc": auroc(v_scores, labels), "ece": ece(v_scores, labels)},
+            "provenance": {"auroc": auroc(p_scores, labels), "ece": ece(p_scores, labels)},
+        }
+
+    # Scaling: ECE trend of the verifier across models (in given order = size order by convention).
+    eces = [(m, per_model[m]["verifier"]["ece"]) for m in models if m in per_model and per_model[m]["verifier"]["ece"] is not None]
+    ece_slope = None
+    if len(eces) >= 2:
+        ys = [e for _, e in eces]
+        ece_slope = round((ys[-1] - ys[0]) / max(1, len(ys) - 1), 6)  # >0 = calibration worsens with size
+
+    # Pooled delta over the full test split (all models).
+    test_all = [t for t in traces if t["id"] in test_qids]
+    labels_all = [t["correct"] for t in test_all]
+    v_all = [_score_from_features(feats[id(t)], train_model) for t in test_all]
+    p_all = [_provenance_score_features(feats[id(t)]) for t in test_all]
+    delta_auroc = round((auroc(v_all, labels_all) or 0) - (auroc(p_all, labels_all) or 0), 6)
+    delta_ece = round((ece(v_all, labels_all) or 0) - (ece(p_all, labels_all) or 0), 6)
+    ci = bootstrap_ci_auroc_delta(v_all, p_all, labels_all, seed=seed)
+
+    from tools.audit_feature_leakage import audit
+    leak = audit(test_all, extract_features)
+    verdict = gate_verdict(real_corpus=False, judge_families=judge_families, leakage_audited=leak["passed"],
+                           delta_auroc=delta_auroc, delta_auroc_ci=ci, delta_ece=delta_ece,
+                           base_sizes=len(per_model))
+    return {
+        "mode": "real-traces",
+        "tracesPath": str(traces_path),
+        "models": models,
+        "nTrain": len(train), "nTest": len(test_all),
+        "perModel": per_model,
+        "eceSlopeAcrossModels": ece_slope,
+        "deltaAUROC": delta_auroc,
+        "deltaAUROCCI95": ci,
+        "deltaECE": delta_ece,
+        "leakageAudit": {"passed": leak["passed"], "verdict": leak["verdict"]},
+        "verdict": verdict["verdict"],
+        "go": verdict["go"],
+        "criticalFailures": verdict["criticalFailures"],
+        "canClaimAGI": False,
+        "boundary": "real generated traces with gold-match labels (family 1). The >=2-judge-family "
+                    "and real-corpus pillars remain until a judge panel + decontaminated external "
+                    "corpus are supplied; gate stays NO-GO accordingly. canClaimAGI:false.",
+    }
+
+
+def _fit_verifier_from_features(rows: list) -> dict:
+    """Fit the linear combiner from (features, label) rows (shared by mock + real paths)."""
+    keys = ("agreement", "corroboration", "authorConfidence")
+    ys = [y for _, y in rows]
+    my = sum(ys) / len(ys) if ys else 0.0
+    weights: dict[str, float] = {}
+    for kkey in keys:
+        xs = [f[kkey] for f, _ in rows]
+        mx = sum(xs) / len(xs) if xs else 0.0
+        cov = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / len(xs) if xs else 0.0
+        var = (sum((x - mx) ** 2 for x in xs) / len(xs)) if xs else 0.0
+        weights[kkey] = cov / (var or 1e-9)
+    return {"weights": weights}
+
+
+def _score_from_features(f: dict, model: dict) -> float:
+    raw = sum(model["weights"][k] * f[k] for k in model["weights"])
+    return 1.0 / (1.0 + pow(2.718281828, -raw))
+
+
 def gate_verdict(*, real_corpus: bool, judge_families: int, leakage_audited: bool,
                  delta_auroc: float | None, delta_auroc_ci: list | None,
                  delta_ece: float | None, base_sizes: int) -> dict:
@@ -316,12 +441,25 @@ def emit_pending() -> Path:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--mock", action="store_true", help="run the deterministic synthetic-trace machinery check")
+    ap.add_argument("--traces", type=Path, default=None, help="score a REAL generated trace corpus (run_calibration_traces.py output)")
+    ap.add_argument("--judge-families", type=int, default=1, help="number of independent correctness-judge families behind the labels")
+    ap.add_argument("--out", type=Path, default=None, help="write the report JSON here (for --traces)")
     ap.add_argument("--emit-pending", action="store_true", help="write the committed not-run / NO-GO artifact")
     ap.add_argument("--model", default=None, help="real-model spec (refused offline; result stays PENDING)")
     ap.add_argument("--n", type=int, default=400)
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args(argv)
 
+    if args.traces:
+        report = run_real(args.traces, seed=args.seed, judge_families=args.judge_families)
+        out = json.dumps(report, indent=2, ensure_ascii=False)
+        if args.out:
+            args.out.parent.mkdir(parents=True, exist_ok=True)
+            args.out.write_text(out + "\n", encoding="utf-8")
+            print(f"wrote {args.out} (verdict={report['verdict']})")
+        else:
+            print(out)
+        return 0
     if args.model:
         print(json.dumps({
             "status": "refused",
