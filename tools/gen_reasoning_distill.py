@@ -48,10 +48,22 @@ from agent.gate import check_response  # noqa: E402
 THINK_OPEN, THINK_CLOSE = "<think>", "</think>"
 
 
-def _verify_answer(answer: str, *, question: str, mode: str) -> "list[str]":
-    """Return the hard violations on the answer (empty == gate-clean)."""
-    r = check_response(answer, mode=mode, question=question, route_claims=True)
-    return list(r.get("violations") or [])
+def _verify_answer(answer: str, *, question: str, mode: str,
+                   discipline: "str | None" = None) -> "tuple[list[str], str]":
+    """Return ``(violations, verifier_id)`` — empty violations == gate-clean.
+
+    When a ``discipline`` is given, gate via that seat's verifier (``council_registry.verify``);
+    a reference seat that abstains (no gold) falls back to the provenance gate so we do not drop
+    every trace. No discipline -> the general provenance gate (back-compat)."""
+    if discipline:
+        from agent.council_registry import verify as council_verify
+
+        r = council_verify(discipline, answer, question=question)
+        if not r.get("abstained"):
+            return list(r.get("reasons") or []), f"council:{discipline}"
+        # reference seat with no gold -> fall back to provenance rather than drop
+    rr = check_response(answer, mode=mode, question=question, route_claims=True)
+    return list(rr.get("violations") or []), "agent.gate"
 
 
 def row_from_trace(trace: dict) -> "tuple[dict | None, str | None]":
@@ -66,12 +78,15 @@ def row_from_trace(trace: dict) -> "tuple[dict | None, str | None]":
 
     question = (trace.get("question") or prompt).strip()
     mode = trace.get("mode") or "advisor"
-    violations = _verify_answer(answer, question=question, mode=mode)
+    discipline = trace.get("discipline")
+    violations, verifier_id = _verify_answer(answer, question=question, mode=mode, discipline=discipline)
     if violations:
         return None, f"answer_failed_gate:{violations[:2]}"
 
     content = f"{THINK_OPEN}\n{thinking}\n{THINK_CLOSE}\n{answer}"
-    meta = {"verified": True, "label_source": "machine_verified", "verifier": "agent.gate"}
+    meta = {"verified": True, "label_source": "machine_verified", "verifier": verifier_id}
+    if discipline:
+        meta["discipline"] = discipline
     if trace.get("caseId"):
         meta["caseId"] = trace["caseId"]
     row = {

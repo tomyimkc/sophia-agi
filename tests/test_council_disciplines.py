@@ -107,6 +107,25 @@ def test_council_catches_more_than_monolith() -> None:
     assert r["routingAccuracy"] >= 0.75
 
 
+def test_distillation_seeds_all_gate_clean() -> None:
+    from tools.build_council_seeds import build
+    rows, stats = build()
+    assert stats["drops"] == [], stats["drops"]      # every seed's answer clears ITS discipline gate
+    assert stats["kept"] == stats["total"] >= 25
+    # rows are <think>-delimited SFT and carry the discipline label
+    for r in rows:
+        assert r["messages"][1]["content"].startswith("<think>")
+        assert r["metadata"]["discipline"]
+
+
+def test_finance_medicine_v2_floor_met() -> None:
+    from tools.eval_discipline_verifier import offline_invariants
+    ok, detail = offline_invariants()
+    assert ok, detail["checks"]
+    assert detail["finance"]["recallOnBad"] >= 0.9 and detail["finance"]["passRateOnGood"] >= 0.9
+    assert detail["medicine"]["recallOnBad"] >= 0.9 and detail["medicine"]["passRateOnGood"] >= 0.9
+
+
 def test_council_heldout_pack() -> None:
     pack = ev.load_pack(ROOT / "eval" / "council" / "heldout_v1.jsonl")
     assert len(pack) >= 18

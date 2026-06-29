@@ -72,6 +72,25 @@ That delta *is* the council's reason to exist:
 domains) a single strong generalist may match it — which is why this stays a pre-registered
 experiment to run on real adapters, not an assumed win.
 
+## Distillation seed packs (Stage-1 SFT nucleus per seat)
+
+`training/council_seeds/<discipline>.jsonl` holds hand-authored teacher CoT traces — the gate-clean
+nucleus each `sophia-<discipline>-3b` adapter is SFT-seeded on. `tools/gen_reasoning_distill.py` is now
+**discipline-aware**: a trace with a `discipline` field is gated by THAT seat's verifier, so a
+chemistry seed with an unbalanced equation is dropped by the chemistry verifier, not waved through the
+general gate. `tools/build_council_seeds.py` validates every seed is gate-clean (a drop is a *seed
+bug* to fix — it caught two on first run: a `math_sound` sub-expression misparse and a missing Freud
+denial) and emits the combined `distill_v1.jsonl` (29 rows across 8 disciplines). Real volume is added
+from a teacher model through the same gate.
+
+## Independent v2 validation of the new verifiers
+
+`tools/eval_discipline_verifier.py` runs a discipline's raw verifier over an independent v2 pack and
+reports recall (reject the bad) + pass-rate (accept the good). On `eval/council/{finance,medicine}_
+heldout_v2.jsonl` both score **recall 1.0 / pass-rate 1.0** (floor 0.9). Honest caveat: v2 is
+independent of the self-checks and `heldout_v1` but authored knowing the verifier's rules — so this is
+self-consistency on a fresh set, **not** blind generalisation; a truly third-party pack stays OPEN.
+
 ## Honest limits / OPEN
 
 - Stub answers; the per-discipline **3B adapters are OPEN** (each needs gate-clean distillation data
