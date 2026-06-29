@@ -107,3 +107,87 @@ def run_solution(solution_code: str, test_code: str, *, timeout_sec: int = 15) -
 def check_answer(answer: str, test_code: str, *, timeout_sec: int = 15) -> dict:
     """Extract code from a model ``answer`` and run it against ``test_code``."""
     return run_solution(extract_code(answer), test_code, timeout_sec=timeout_sec)
+
+
+# A runner template whose VERDICT is an unforgeable token, not the process exit
+# code. The token is delivered on stdin (which the runner consumes BEFORE running
+# the solution) and lives only in the runner's local frame — the solution, exec'd
+# in a separate globals dict, can neither read it from a file (it is not in any
+# file) nor from stdin (already consumed) nor from the runner's locals. It is
+# written ONLY after every assertion in ``test_code`` passes. Therefore any
+# premature process death — ``sys.exit``/``os._exit``/``atexit``/``raise
+# SystemExit``, however it is triggered (directly, via ``exec``, or via a decoded
+# payload) — prevents the token and reads as FAIL. This converts the dominant
+# reward-hack class from "detected" to "structurally impossible".
+_RUNNER_SRC = (
+    "import sys\n"
+    "_tok = sys.stdin.readline().strip()\n"   # consume the secret first
+    "_g = {'__name__': '__sol__'}\n"
+    "try:\n"
+    "    exec(compile(_SOLUTION, 'solution', 'exec'), _g)\n"
+    "    exec(compile(_TEST, 'test', 'exec'), _g)\n"
+    "except BaseException:\n"
+    "    sys.exit(1)\n"                         # any error/exit -> no token -> FAIL
+    "sys.stdout.write(_tok)\n"
+    "sys.stdout.flush()\n"
+)
+
+
+def run_solution_isolated(solution_code: str, test_code: str, *, timeout_sec: int = 15) -> dict:
+    """Grade ``solution_code`` against ``test_code`` with an exit-code-proof harness.
+
+    Unlike :func:`run_solution` (whose pass/fail is the process exit status, and is
+    therefore hackable by a solution that exits 0 before the test fails), the verdict
+    here is whether a per-call secret token reaches stdout, which only happens after
+    every assertion passes. Structurally defeats the whole process-death family;
+    equality-override is NOT defeated here (it is a static-scan concern) — the
+    integrity gate runs the AST scan first for that class.
+
+    Same ``SOPHIA_ALLOW_CODE_EXEC`` opt-in and syntax-only fallback contract as
+    :func:`run_solution`. Still NOT a real sandbox — run untrusted models in a VM.
+    """
+    if not solution_code.strip():
+        return {"passed": False, "reason": "no code in answer", "executed": False}
+
+    if not _exec_on():
+        program = solution_code.rstrip() + "\n\n" + test_code.lstrip()
+        try:
+            compile(program, "<sol>", "exec")
+            return {"passed": True, "reason": "syntax-only (exec disabled; set SOPHIA_ALLOW_CODE_EXEC=1)", "executed": False}
+        except SyntaxError as exc:
+            return {"passed": False, "reason": f"syntax error: {exc}", "executed": False}
+
+    import signal
+
+    token = "OK_" + os.urandom(16).hex()
+    runner = (
+        "_SOLUTION = " + repr(solution_code) + "\n"
+        "_TEST = " + repr(test_code) + "\n"
+        + _RUNNER_SRC
+    )
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp) / "runner.py"
+        path.write_text(runner, encoding="utf-8")
+        proc = subprocess.Popen(
+            [sys.executable, str(path)], cwd=tmp, text=True,
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            start_new_session=True,
+        )
+        try:
+            out, err = proc.communicate(input=token + "\n", timeout=timeout_sec)
+        except subprocess.TimeoutExpired:
+            try:
+                os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+            except (ProcessLookupError, PermissionError):
+                proc.kill()
+            proc.communicate()
+            return {"passed": False, "reason": f"timed out after {timeout_sec}s", "executed": True}
+    if token in (out or ""):
+        return {"passed": True, "reason": "tests passed (isolated)", "executed": True}
+    tail = (err or "").strip().splitlines()
+    return {"passed": False, "reason": (tail[-1] if tail else "no pass-token (failed/exited before tests)"), "executed": True}
+
+
+def check_answer_isolated(answer: str, test_code: str, *, timeout_sec: int = 15) -> dict:
+    """Extract code from ``answer`` and grade it with the exit-code-proof harness."""
+    return run_solution_isolated(extract_code(answer), test_code, timeout_sec=timeout_sec)

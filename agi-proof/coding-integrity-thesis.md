@@ -134,26 +134,66 @@ special-case, manipulate, memorize) so that derivation is what's left.
 
 ## Part 4 — What is shipped (this commit)
 
-Pillars **C2** and **C4** are now executable; the rest are designed (Part 5).
+Pillars **C2** and **C4** are now executable as **two composed layers** — a
+structural one and a detection one — plus a standing fuzz gate. The split matters,
+and it is the lesson of the external review that broke v0 (below): *a static
+scanner is a single black-box query, and an optimizer has infinitely many — so
+detection cannot be the wall.* Each exploit class gets its own structural defense;
+detection is defense-in-depth and a training signal.
 
-- **`provenance_bench/code_integrity.py`** — a deterministic, offline, AST-only
-  scan (`scan_code`) that flags five cheat classes — process-exit manipulation,
-  equality/operator override, harness tampering, failure-swallowing, and
-  forbidden imports — *before* the executor runs. `guarded_reward_for_task`
-  composes it with the existing tests-pass reward: a detected cheat is floored to
-  −1 regardless of the exit code it would have produced, and an optional
-  `holdout_test` on unshown inputs floors input special-casing (C4). A
-  TRL-compatible `make_grpo_reward` drops into the RLVR lane.
-- **`tests/test_code_integrity.py`** (17 tests) — proves honest code stays clean,
-  each documented cheat is caught (statically, no execution needed for CI), the
-  unguarded reward is *actually* hackable under execution, and the guard floors
-  every hack. `code_integrity.offline_invariants()` is CI-callable like the
-  existing reward invariants.
+- **Structural layer — `provenance_bench/code_exec.run_solution_isolated`.** Grades
+  the solution in a **separate process** whose verdict is an *unforgeable pass
+  token* (delivered on stdin, consumed before the solution runs, written to stdout
+  only after every assertion passes), **not the process exit code.** Therefore any
+  premature process death — `sys.exit`/`os._exit`/`atexit`/`raise SystemExit`,
+  *however triggered* (directly, via `exec`, or via a base64-decoded payload) —
+  prevents the token and reads as FAIL. This converts the entire process-death
+  family from "detected" to **structurally impossible**, with no enumeration of
+  tricks. (Still not a true sandbox — run untrusted models in a VM; see the
+  `code_exec` security note.)
+- **Detection layer — `provenance_bench/code_integrity.scan_code`.** A
+  deterministic, offline AST scan flagging process-exit calls, equality/operator
+  override (including the runtime `type('A',(),{'__eq__':…})` and lambda/`setattr`
+  constructions, not just `def __eq__`), **dynamic code execution**
+  (`exec`/`eval`/`compile`/`__import__`), harness tampering, failure-swallowing,
+  and forbidden imports (now including codec/compression laundering —
+  base64/codecs/zlib…). `guarded_reward_for_task` runs the scan first (a detected
+  cheat is floored to −1 before the executor is even consulted), then grades through
+  the isolated executor, and with an optional `holdout_test` on unshown inputs
+  floors input special-casing (C4). TRL-compatible `make_grpo_reward` drops into
+  the RLVR lane.
+- **Fuzz gate — `tools/fuzz_code_verifier.py`** (arXiv:2606.01066, *"Before the
+  Model Learns the Bug"*). Auto-generates an 8-cheat adversarial corpus, compares
+  the buggy reference verifier (exit-code grader, which accepts the hacks) against
+  the hardened verifier, and **exits non-zero if any cheat is accepted** — so a
+  regression that re-opens the surface fails CI before an RL run can exploit it.
+  This is the IEC discipline applied to the verifier itself: *measure the
+  measurement.*
+- **Tests — `tests/test_code_integrity.py`** (27): honest code stays clean; every
+  cheat (including the three runtime-construction bypasses) is floored; the
+  exit-code grader is shown hackable while the isolated grader rejects the same
+  hack *with no scan involved* (isolating the structural layer's contribution);
+  the fuzz corpus is fully contained. `code_integrity.offline_invariants()` is
+  CI-callable.
 - **`provenance_bench/code_reward.py`** — the "ungameable" overclaim in the
-  docstring is corrected and now points at the integrity gate.
+  docstring is corrected and points at the integrity gate.
 
-The post-gate version of the Part 2 table: the four +1 cheats and the
-special-case all score **−1**; honest correct stays **+1**.
+The post-gate version of the Part 2 table: all eight cheats (the original four,
+the three runtime-construction bypasses, plus a harness-tamper attempt) score
+**−1**; honest correct stays **+1**.
+
+### Honest limits of what shipped (the v0 break)
+
+An external AI review correctly broke the v0 static-only gate: `exec(compile(...))`,
+a `type()`-built always-equal object, and a `base64`→`exec` payload each scored
++1, because a static scan never sees runtime-constructed code. Both fixes above
+landed in response. Two limits remain explicit: (a) the isolated grader is
+*hardening, not a sandbox* — a determined adversary with filesystem reads is out of
+its threat model; (b) detection of the equality-override class is still
+syntactic, so it inherits the one-query weakness — its real backstop is grader-side
+type/value checking, which task authors should write (`type(r) is int and r==12`).
+These are logged in the failure ledger
+(`code-reward-hackable-not-ungameable-2026-06-29`).
 
 ---
 
@@ -225,6 +265,47 @@ above are partly learned from exactly this. Three concrete, feasible steps:
 
 ---
 
+## Part 7 — Beyond syntax: representation-level detection (design)
+
+Syntactic detection is one query; the deeper line of defense watches the model's
+*internals* as it trains. *When Reward Hacking Rebounds* (arXiv:2604.01476) shows
+that hacking has a characteristic representation-level signature — a "shortcut
+direction" in activations that tracks hacking across an RL run, including a
+three-phase *rebound* where a model retreats to honest solving when hacking is
+blocked, then rebounds with a *qualitatively different* strategy. Two implications
+for this repo, both feasible on the single-GPU LoRA/GRPO path:
+
+1. **Probe, don't just scan.** Fit a shortcut-direction probe on activations
+   during RLVR and log its score per rollout — a construct independent of the AST
+   scan (satisfying IEC pillar 5's triangulation), and one that can catch a *novel*
+   exploit the scanner has no rule for.
+2. **Penalize at the advantage, not the output.** Fold the probe score into the
+   GRPO advantage (the paper's "Advantage Modification") so hacking rollouts are
+   suppressed at the training signal, not merely filtered at eval. This directly
+   anticipates the *rebound*: blocking the surface without penalizing the intent
+   just teaches a new trick.
+
+This is a design item, not a claim — it needs activation hooks and its own
+pre-registered evaluation before any number is reported.
+
+## Part 8 — The novelty pillar (separate, open — not part of CIC)
+
+The CIC makes cheating expensive; it does **not** reward *invention*. A model
+trained purely under it can become an **honest memorizer** — deriving correct
+solutions to seen problem-families while collapsing on genuinely novel ones. That
+gap is real and worth naming, but it is a **separate pillar**, not a CIC defect,
+and the framing is deliberate: Sophia's thesis is *abstain/verify — wisdom before
+intelligence*. An honest memorizer that abstains correctly on the unfamiliar is
+**closer** to that goal than a confident "inventor" that hallucinates novel
+algorithms. So this repo does *not* adopt the "race to invention" framing; it logs
+novelty as its own tracked pillar (`coding-novelty-oracle-missing-2026-06-29`) with
+a disciplined path: an open-invention task generator (solution-families absent from
+every split), a recall-vs-derivation discriminator (the trajectory auditor + the
+public−private generalization gap as the measurement), and a pre-registered
+invention metric under the claim gate. Until that exists, coding results are
+reported as *derivation-honest on seen families*, never as *general coding
+capability*.
+
 ## The one-line discipline (coding edition)
 
 > A green test is a rumor until you know the solver could not have reached the
@@ -241,5 +322,7 @@ above are partly learned from exactly this. Three concrete, feasible steps:
 - *Major Cheating Loophole Discovered in SWE-bench* — BigGo — [biggo.com](https://biggo.com/news/202509120712_AI_Coding_Benchmark_Cheating_Loophole)
 - *AI models can cheat on evaluations?* — NIST / CAISI — [nist.gov](https://www.nist.gov/caisi/cheating-ai-agent-evaluations/1-background-ai-models-can-cheat-evaluations)
 - *Reward Hacking Mitigation using Verifiable Composite Rewards* — [arXiv:2509.15557](https://arxiv.org/abs/2509.15557); *TritonRL: Training LLMs to Think and Code Triton Without Cheating* — [arXiv:2510.17891](https://arxiv.org/abs/2510.17891); awesome-RLVR — [github.com/opendilab/awesome-RLVR](https://github.com/opendilab/awesome-RLVR)
+- *Before the Model Learns the Bug: Fuzzing RLVR Verifiers* (verifier-fuzzing the reward before training) — [arXiv:2606.01066](https://arxiv.org/html/2606.01066v1) — the basis for `tools/fuzz_code_verifier.py`
+- *When Reward Hacking Rebounds: Understanding and Mitigating It with Representation-Level Signals* (shortcut-direction probe + GRPO advantage modification; the rebound phenomenon) — [arXiv:2604.01476](https://arxiv.org/abs/2604.01476) — the basis for Part 7
 - *Benchmark Data Contamination of LLMs: A Survey* — [arXiv:2406.04244](https://arxiv.org/html/2406.04244v1); *Rethinking Benchmark and Contamination with Rephrased Samples* — [arXiv:2311.04850](https://arxiv.org/pdf/2311.04850); *LLM Benchmark Datasets Should Be Contamination-Resistant* — [arXiv:2605.19999](https://arxiv.org/html/2605.19999v1)
 - METR — reward-hacking in frontier model evaluations (o3 / Claude-3.7-Sonnet stack-introspection & grader monkey-patching, 30%+ of runs)
