@@ -30,6 +30,14 @@ lives only in the pod's credential store and is scrubbed from the pushed log. De
 
     RUNPOD_API_KEY=... GH_PILOT_PAT=... python tools/runpod_virtue_evals.py --dry-run
     ... --yes      # actually create the paid pod
+
+Cost guard (per the wisdom-gpu-prebaked anti-wastage runbook, adapted in
+docs/11-Platform/Cardinal-Virtue-Benchmarks.md §5b): there is NO pip step (stdlib-only tools
++ ollama via curl), so the pip restart-loop can't occur; the one long step is the ~65GB
+ollama model pull (120GB volume so it can't fill). Validate the wiring CHEAPLY first with
+small distinct models + a tiny label cap, e.g.
+    --subject qwen2.5:7b-instruct --judge-a qwen2.5:14b-instruct --judge-b llama3.1:8b --label-limit 24
+then run the full default roster (32B + 70B-q4 judges, no --label-limit).
 """
 from __future__ import annotations
 

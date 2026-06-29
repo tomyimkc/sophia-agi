@@ -15,7 +15,12 @@ name: virtue-evals-runpod
 #
 # Secret required: RUNPOD_API_KEY (GPU). No HF token needed (ollama models are public).
 # Always read the wisdom-gpu-prebaked skill (the anti-wastage runbook) before a paid run, and
-# confirm zero leaked pods afterwards.
+# confirm zero leaked pods afterwards (see docs/11-Platform/Cardinal-Virtue-Benchmarks.md §5b).
+#
+# COST GUARD — cheap pipeline-smoke FIRST: dispatch with small distinct models + a tiny label
+# cap to validate the wiring for ~$0.30 before the full ~$3-6 run, e.g.
+#   judge_a=qwen2.5:14b-instruct  judge_b=llama3.1:8b  label_limit=24
+# then re-dispatch with the full default roster (32B + 70B-q4 judges, label_limit blank).
 
 on:
   workflow_dispatch:
