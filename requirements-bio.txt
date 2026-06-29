@@ -1,0 +1,5 @@
+# Optional biology oracle extras (fail-closed).
+# agent/bio_verifier.py (genetic-code translation, reverse-complement, GC%,
+# Hardy-Weinberg, Punnett) is pure stdlib and needs NONE of these. biopython is only
+# for long-sequence alignment families not used by the base curriculum.
+biopython>=1.83
