@@ -4,6 +4,28 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+### Added — semantic-grounding & compositional-grammar benchmark (Phase 0, candidate; honest NULL)
+
+A sealed, deterministic benchmark + 3-arm ablation asking whether grounding word meaning in
+explicit OKF definitions (D1) and composing meaning with a small concept grammar (D2) beats a
+distributional baseline. Built on a feature branch (`claude/ai-semantics-grammar-research-zmdtn0`);
+not merged. `candidateOnly`; `canClaimAGI` false.
+
+- **`eval/semantic_grounding/`** — D1 (34 closed-book word-sense cases from `wiki/concept` glosses)
+  + D2 (41 compositional-derivation cases over 10 closed-world taxonomies, gold **derived** by
+  `agent/datalog_engine`). Deterministic scorer, `--self-test`, train/eval folds, drift gate.
+- **`tools/run_semantic_grounding_eval.py`** — 3-arm ablation (A0 closed-book / A1 +retrieved OKF
+  gloss / A2 +provenance + chain-of-thought), real multi-seed loop, offline `--mock`. Wired to the
+  DeepSeek + llmhub model presets.
+- **`tools/assert_semantic_grounding_decontam.py`**, `measurement_spec.json`,
+  **`tools/wiki_to_sense_training.py`** (Phase-2 SFT/DPO from the train fold only).
+- **Result (DeepSeek `deepseek-chat`, 3 seeds, 75 cases):** A1−A0 Δ +0.004 [−0.027, 0.036], A2−A0
+  Δ +0.031 [−0.022, 0.084] — both NULL and underpowered (MDE 0.132 > 0.10). Honest NO-GO; root
+  cause = base model already grounded on common concepts. Logged in
+  `agi-proof/failure-ledger.md` (`semantic-grounding-grounding-beats-baseline-2026-06-29`).
+- **+8 sourced science concepts** in `data/science.json` (regenerated wiki, provenance-clean).
+- Handover: `SESSION-HANDOVER-2026-06-29-semantic-grounding.md`.
+
 ### Added — always-available RunPod connection + stalled-pod checker
 
 Makes reaching RunPod reliable even when `RUNPOD_API_KEY` is absent from the current
