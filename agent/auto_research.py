@@ -154,8 +154,13 @@ class AutoResearcher:
 
     def run(self, *, n: int = 6, hypotheses: "list[Hypothesis] | None" = None) -> "dict[str, Any]":
         hyps = hypotheses if hypotheses is not None else generate_hypotheses(n)
-        for h in hyps:
-            outcome = self.agent.evolve(_experiment_for(h))
+        return self.run_experiments([(h, _experiment_for(h)) for h in hyps])
+
+    def run_experiments(self, pairs: "list[tuple[Hypothesis, Experience]]") -> "dict[str, Any]":
+        """Run pre-built (hypothesis, experiment) pairs -- e.g. drawn from a real
+        corpus -- through the self-evolving agent and judge each against its prereg."""
+        for h, exp in pairs:
+            outcome = self.agent.evolve(exp)
             self.ledger.append(self._judge(h, outcome))
         return self.report()
 

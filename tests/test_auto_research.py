@@ -68,10 +68,40 @@ def test_live_wiring_command_targets_committed_domain() -> None:
     assert "danger_intent" in " ".join(cmd)
 
 
+def test_okf_corpus_experiments_are_real_domains() -> None:
+    from agent.okf_research_source import okf_experiments
+    pairs = okf_experiments("wiki")
+    domains = {h.domain for h, _ in pairs}
+    # the OKF wiki has these labelled domains with both grounded + contested claims
+    assert {"okf_history", "okf_philosophy", "okf_science"} <= domains
+    # every experiment carries real labelled claim text and committable pages
+    for h, exp in pairs:
+        assert exp.examples and any(lab for _, lab in exp.examples)
+        assert any(not lab for _, lab in exp.examples)
+
+
+def test_okf_corpus_run_confirms_only_through_gates() -> None:
+    from agent.auto_research import AutoResearcher
+    from agent.okf_research_source import okf_experiments
+    from agent.self_evolving_agent import SelfEvolvingAgent
+    agent = SelfEvolvingAgent(evolve_mode="verifier")
+    report = AutoResearcher(agent).run_experiments(okf_experiments("wiki"))
+    # honest mix on real data: at least one confirmation AND at least one refutation
+    assert report["confirmed"] >= 1
+    assert report["refuted"] >= 1
+    assert report["invariants"]["no_confirmed_without_passing_gates"] is True
+    assert report["invariants"]["no_overclaim"] is True
+    # committed domains contributed real OKF pages to memory, with no forgetting
+    assert agent.knowledge_size > 0
+    assert agent.session_report()["forgottenGroundedClaimsAcrossRun"] == 0
+
+
 if __name__ == "__main__":
     test_auto_research_confirms_learnable_refutes_null()
     test_no_confirmed_without_passing_gates()
     test_null_hypotheses_are_present_and_refuted()
     test_live_wiring_hands_only_committed_domains_to_optimizer()
     test_live_wiring_command_targets_committed_domain()
+    test_okf_corpus_experiments_are_real_domains()
+    test_okf_corpus_run_confirms_only_through_gates()
     print("ok")
