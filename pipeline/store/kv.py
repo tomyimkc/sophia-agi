@@ -20,9 +20,9 @@ from typing import Protocol, runtime_checkable
 
 @runtime_checkable
 class SeenSet(Protocol):
-    def add(self, key: str) -> bool: ...
-    def contains(self, key: str) -> bool: ...
-    def __len__(self) -> int: ...
+    def add(self, key: str) -> bool: pass
+    def contains(self, key: str) -> bool: pass
+    def __len__(self) -> int: pass
 
 
 class MemorySeenSet:

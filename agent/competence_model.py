@@ -37,7 +37,6 @@ from typing import Any, Sequence
 
 from agent.calibration import calibration_report
 from agent.conformal_gate import fit_conformal_policy
-from okf.schema import DOMAINS
 
 __all__ = [
     "reliability_diagram",

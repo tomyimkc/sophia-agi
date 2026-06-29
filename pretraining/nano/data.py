@@ -19,7 +19,6 @@ from __future__ import annotations
 
 import math
 import random
-from typing import Any
 
 
 def make_source(vocab: int, order: int, *, seed: int = 0, peak: float = 4.0) -> dict:

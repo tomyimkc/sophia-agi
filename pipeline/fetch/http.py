@@ -39,6 +39,8 @@ def make_http_transport(
         try:
             ctx.load_verify_locations(ca)
         except Exception:
+            # Bad/unreadable CA bundle: fall back to the default context's trust
+            # store rather than failing connection setup.
             pass
 
     def _blocking(url):
@@ -54,6 +56,8 @@ def make_http_transport(
             try:
                 body = e.read(max_bytes).decode("utf-8", errors="replace")
             except Exception:
+                # Error body is best-effort context only; an empty body is fine
+                # since the status code already drives the crawler's decision.
                 pass
             return e.code, {k.lower(): v for k, v in (e.headers or {}).items()}, body
         # URLError / timeout / socket errors propagate -> crawler retries with backoff.

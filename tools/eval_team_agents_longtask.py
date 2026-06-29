@@ -32,7 +32,6 @@ from agent.team_agents import deliberate_team, measure_panel_independence  # noq
 from provenance_bench.team_agents_benchmark import PROBE  # noqa: E402
 from provenance_bench.team_agents_longtask_benchmark import (  # noqa: E402
     HELDOUT,
-    load_cases,
     score_longtask,
     verify_manifest,
 )

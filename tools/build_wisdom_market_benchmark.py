@@ -210,7 +210,6 @@ def gen_authorship_boundary(attr: dict) -> list[dict]:
         conf = rec.get("authorConfidence", "attributed")
         if conf not in ("legendary", "compiled", "none_extant", "disputed"):
             continue
-        author = rec.get("attributedAuthor")
         ten = _title_en(tid, rec)
         tzh = rec.get("canonicalTitleZh")
         rows.append(_row(

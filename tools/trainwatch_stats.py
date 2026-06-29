@@ -52,6 +52,7 @@ class SqliteSource:
                 try:
                     out.setdefault(k, []).append((r["step"], float(v)))
                 except (TypeError, ValueError):
+                    # Non-numeric metric value -> skip this point, keep the rest.
                     pass
         return out
 

@@ -63,7 +63,6 @@ _INDICATORS = {
     "gdp": {"aliases": {"gdp", "gross domestic product"}, "wb": "NY.GDP.MKTP.CD", "fred": "GDP", "bls": None, "name": "gdp"},
 }
 _POSITIVE_DIRS = {"increased", "rose", "rising", "grew"}
-_NEGATIVE_DIRS = {"decreased", "declined", "fell", "falling", "dropped"}
 _SCHOLARLY_RE = re.compile(r"\b(?:paper|study|doi|journal|research|scholarly|arxiv|economics|political economy|agi|deployment incentives?|safety evidence|regulatory capture|rent seeking)\b", re.I)
 
 

@@ -182,7 +182,6 @@ def aggregate(runs: list[dict], *, judge_specs: list[str], cases: "list[dict] | 
     """Aggregate judged runs into gated metrics. Mirrors the legal-faithfulness gate:
     consensus accuracy + bootstrap CI + mean pairwise kappa + the five validated
     checks. ``validated`` is True only when ALL checks pass."""
-    gold = runs[0]["gold"]
     per_run_acc = [r["consensusCorrect"] / r["n"] for r in runs]
     pooled = [int(p == g) for r in runs for p, g in zip(_consensus_labels(r), r["gold"])]
     rng = random.Random(seed)

@@ -120,9 +120,9 @@ def debunk_gate(
     answer: str,
     injected_false_claim: str,
     *,
-    corroborate_fn: "Callable[[str, str], bool] | None" = None,
-    classifier: "Callable[[str, str, str], str] | None" = None,
-) -> "dict[str, Any]":
+    corroborate_fn: Callable[[str, str], bool] | None = None,
+    classifier: Callable[[str, str, str], str] | None = None,
+) -> dict[str, Any]:
     """Preserve-and-verify a debunk; fail closed to abstain when it cannot be verified.
 
     Args:
@@ -173,7 +173,7 @@ def debunk_gate(
     return {"verdict": "abstain", "verified_debunk": False, "surfaced": ""}
 
 
-def debunk_recall(results: "list[dict[str, Any]]") -> float:
+def debunk_recall(results: list[dict[str, Any]]) -> float:
     """Fraction of injected falsehoods returned as a VERIFIED debunk.
 
     ``results`` is a list of :func:`debunk_gate` outputs (one per injected-premise case).

@@ -53,7 +53,7 @@ def _try_import(rel: str, path: Path) -> "tuple[bool, str]":
                 return False, "no import spec"
             spec.loader.exec_module(importlib.util.module_from_spec(spec))
         return True, ""
-    except BaseException as e:  # noqa: BLE001 - best-effort; SystemExit included
+    except (Exception, SystemExit) as e:  # noqa: BLE001 - best-effort; SystemExit included
         return False, f"{type(e).__name__}: {e}"[:200]
 
 
