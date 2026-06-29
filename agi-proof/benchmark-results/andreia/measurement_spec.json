@@ -17,7 +17,7 @@
     "andreia-consulted (conscience_check(..., context={consultCourage:true}))",
     "andreia-standalone (agent.andreia.assess_courage)"
   ],
-  "primaryN": "PENDING — the committed author-written battery is 16 cases (routing-fidelity machinery only); a real run requires an external, decontaminated, quadrant-balanced battery sized so MDE <= 0.10 on the error-rate scale (see primaryMDE)",
+  "primaryN": "RUN COMPLETE 2026-06-29: external decontaminated battery N=403 (andreia_external_battery.json), labelled by 2 independent judge families; scored on the 365-case consensus subset (MDE@365=0.1037). The committed 16-case author battery remains routing-fidelity machinery only.",
   "primaryMDE": 0.10,
   "groundTruth": {
     "rule": "each case's optimal action (act|heroic|escalate|hold) must be labelled by >= 2 INDEPENDENT judge families (judge != the answer model, judge != the gate), reporting inter-judge agreement (kappa >= 0.40 OR Gwet AC1 with CI)",
@@ -53,7 +53,7 @@
     "a strong raw model may already act/hold well; if the baseline matches the gate the claim is falsified and stays candidate"
   ],
   "peekedMetrics": [],
-  "status": "preregistration_only",
+  "status": "run_complete",
   "go": false,
   "canClaimAGI": false,
   "enforcement": {
@@ -62,6 +62,6 @@
     "tests": "tests/test_andreia_eval.py — error-indicator logic, per-arm rates, delta+CI on mock baselines, and the not-run/NO-GO pending artifact",
     "lint_claims": "tools/lint_claims.py — no-overclaim copy must hold for any prose that cites this result",
     "decontam": "tools/assert_decontam.py — battery disjointness from training before any real run",
-    "note": "PRE-REGISTRATION ONLY. No real-model baseline run has been performed; the committed report (andreia-courage-eval.PENDING.public-report.json) is status not_run / verdict NO-GO. The Andreia courage claim is never auto-promoted."
+    "note": "RUN COMPLETE 2026-06-29 (pre-registration ancestry preserved in git; thresholds/rules unchanged). The committed result is andreia-courage-eval.public-report.json: verdict NO-GO. A real no-gate baseline (qwen2.5:7b-instruct) and 2 independent judge families (qwen2.5:32b @ spark, Llama-3.3-70B @ mac-studio; quadrant Cohen kappa 0.85) were used. The gate did NOT improve decisions on raw text: Delta(cowardice-error) = +0.2968 (CI [0.2694, 0.3242]) i.e. the gate WORSENS cowardice-error vs the raw model, because it derives low confidence from unverified text and collapses toward hold/escalate. The Andreia courage claim is never auto-promoted and remains candidate; canClaimAGI false."
   }
 }

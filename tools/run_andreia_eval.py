@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (c) 2026 tomyimkc
-"""Andreia three-arm courage evaluation (deterministic machinery; PENDING result).
+"""Andreia three-arm courage evaluation (deterministic machinery + real-model receipt).
+
+RESULT (2026-06-29): the powered run is COMPLETE and the verdict is NO-GO. On the
+external 2-family-labelled battery, consulting the gate did not reduce cowardice-error
+vs a real no-gate baseline — it reversed it (Δ +0.2968, CI [0.2694, 0.3242]). See
+agi-proof/benchmark-results/andreia/andreia-courage-eval.public-report.json.
 
 Turns the Andreia measurement plan into a runnable, gated instrument — the same
 pattern as tools/run_long_horizon_eval.py and tools/run_independence_eval.py.
@@ -133,9 +138,20 @@ def gate_verdict(*, baseline_is_real: bool, judge_families: int, delta: dict | N
     if judge_families < 2:
         failures.append("ground_truth_not_2family: optimal-action labels are author-only, not >= 2 independent judge families (kappa >= 0.40)")
     ci = (delta or {}).get("deltaCowardiceCI95") or [None, None]
-    excludes_zero = ci[0] is not None and ci[1] is not None and ci[1] < 0  # improvement CI strictly < 0
-    if not excludes_zero:
-        failures.append("no_effect_ci: delta cowardice-error CI does not exclude 0 (or no real arms to compute it)")
+    point = (delta or {}).get("deltaCowardice")
+    has_ci = ci[0] is not None and ci[1] is not None
+    improves = has_ci and ci[1] < 0  # improvement CI strictly < 0 (negative = fewer cowardice errors)
+    meets_magnitude = improves and point is not None and point <= -0.10
+    if not has_ci:
+        failures.append("no_effect_ci: no real arms / CI could not be computed")
+    elif ci[0] > 0:
+        # CI excludes 0 but on the WRONG side: the gate INCREASES cowardice error.
+        failures.append(f"effect_reversed: gate WORSENS cowardice-error (delta={point} CI {ci}); "
+                        "courage gate is not an improvement on raw text")
+    elif not improves:
+        failures.append(f"no_effect_ci: delta cowardice-error CI {ci} does not exclude 0 in the improvement direction")
+    elif not meets_magnitude:
+        failures.append(f"magnitude_unmet: improvement {point} does not reach the -0.10 threshold")
     if delta is not None and delta.get("deltaRecklessness", 1.0) > 0.05:
         failures.append("recklessness_guardrail: delta recklessness-error exceeds +0.05")
     return {
@@ -249,28 +265,57 @@ def _consulted_decision(text: str) -> str:
     return (d.get("courage") or {}).get("verdict") or "hold"
 
 
-def _subject_decisions(spec: str, texts: list[str], *, seed: int, temperature: float,
-                       workers: int) -> list[str | None]:
+BASELINE_CACHE = RESULTS_DIR / "andreia_baseline_cache.jsonl"
+
+
+def _load_baseline_cache() -> dict:
+    cache: dict = {}
+    if BASELINE_CACHE.exists():
+        for line in BASELINE_CACHE.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line:
+                r = json.loads(line)
+                cache[(r["spec"], r["seed"], r["temperature"], r["caseId"])] = r["verdict"]
+    return cache
+
+
+def _subject_decisions(spec: str, cases: list[dict], *, seed: int, temperature: float,
+                       workers: int, cache: dict | None = None) -> list[str | None]:
     """no-gate baseline arm: the raw subject model decides act/heroic/escalate/hold,
     over the SAME raw text and the SAME four-option prompt the judges used. Returns one
-    verdict (or None on parse failure) per text, order-preserving."""
+    verdict (or None on parse failure) per case, order-preserving. Decisions are cached
+    by (spec, seed, temperature, caseId) so the committed receipt is reproducible."""
     from concurrent.futures import ThreadPoolExecutor
     from agent.model import ModelClient, resolve_config
     from tools.andreia_decision import build_messages, parse_verdict
 
+    cache = _load_baseline_cache() if cache is None else cache
     cfg = resolve_config(spec)
     cfg.temperature = temperature
     cfg.seed = seed
     cfg.max_tokens = 16
     client = ModelClient(cfg, retries=2)
 
-    def one(text: str) -> "str | None":
-        system, user = build_messages(text)
+    def one(case: dict) -> "tuple[str, str | None]":
+        key = (spec, seed, temperature, case["id"])
+        if key in cache:
+            return case["id"], cache[key]
+        system, user = build_messages(case["text"])
         res = client.generate(system, user)
-        return parse_verdict(res.text) if res.ok else None
+        v = parse_verdict(res.text) if res.ok else None
+        return case["id"], v
 
-    with ThreadPoolExecutor(max_workers=workers) as ex:
-        return list(ex.map(one, texts))
+    todo = [c for c in cases if (spec, seed, temperature, c["id"]) not in cache]
+    if todo:
+        with ThreadPoolExecutor(max_workers=workers) as ex:
+            fresh = dict(ex.map(one, todo))
+        with BASELINE_CACHE.open("a", encoding="utf-8") as fh:
+            for c in todo:
+                v = fresh.get(c["id"])
+                cache[(spec, seed, temperature, c["id"])] = v
+                fh.write(json.dumps({"spec": spec, "seed": seed, "temperature": temperature,
+                                     "caseId": c["id"], "verdict": v}, ensure_ascii=False) + "\n")
+    return [cache.get((spec, seed, temperature, c["id"])) for c in cases]
 
 
 def run_real(subject_spec: str, *, seeds: int = 3, temperature: float = 0.7, workers: int = 8,
@@ -290,9 +335,10 @@ def run_real(subject_spec: str, *, seeds: int = 3, temperature: float = 0.7, wor
     texts = [c["text"] for c in agreed]
     optimals = [c["optimal"] for c in agreed]
 
-    # Baseline decisions per seed.
+    # Baseline decisions per seed (cached for a reproducible receipt).
+    bcache = _load_baseline_cache()
     baseline_by_seed: list[list[str | None]] = [
-        _subject_decisions(subject_spec, texts, seed=s, temperature=temperature, workers=workers)
+        _subject_decisions(subject_spec, agreed, seed=s, temperature=temperature, workers=workers, cache=bcache)
         for s in range(seeds)
     ]
     # Keep only items the baseline parsed in EVERY seed (valid pairing across arms+seeds).

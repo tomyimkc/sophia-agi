@@ -59,8 +59,9 @@ def test_gate_beats_reckless_baseline_on_recklessness() -> None:
 
 
 def test_gate_verdict_requires_all_pillars() -> None:
+    # A clean improving effect that ALSO meets the -0.10 magnitude (per the spec).
+    good_delta = {"deltaCowardice": -0.35, "deltaCowardiceCI95": [-0.5, -0.2], "deltaRecklessness": 0.0}
     # Even a clean improving CI is NO-GO without a real baseline + 2 judge families.
-    good_delta = {"deltaCowardiceCI95": [-0.5, -0.2], "deltaRecklessness": 0.0}
     v_offline = ev.gate_verdict(baseline_is_real=False, judge_families=1, delta=good_delta)
     assert v_offline["verdict"] == "NO-GO" and v_offline["criticalFailures"]
     # All pillars satisfied -> GO (this branch is only reachable with a real run).
@@ -68,8 +69,16 @@ def test_gate_verdict_requires_all_pillars() -> None:
     assert v_go["verdict"] == "GO" and v_go["go"] is True and not v_go["criticalFailures"]
     # Recklessness guardrail trips even with a real, 2-family, improving cowardice CI.
     v_guard = ev.gate_verdict(baseline_is_real=True, judge_families=2,
-                              delta={"deltaCowardiceCI95": [-0.5, -0.2], "deltaRecklessness": 0.2})
+                              delta={"deltaCowardice": -0.35, "deltaCowardiceCI95": [-0.5, -0.2], "deltaRecklessness": 0.2})
     assert v_guard["verdict"] == "NO-GO"
+    # A CI that excludes 0 on the WRONG side (gate worsens cowardice) is NO-GO with a clear reason.
+    v_rev = ev.gate_verdict(baseline_is_real=True, judge_families=2,
+                            delta={"deltaCowardice": 0.28, "deltaCowardiceCI95": [0.25, 0.30], "deltaRecklessness": 0.0})
+    assert v_rev["go"] is False and any("effect_reversed" in f for f in v_rev["criticalFailures"])
+    # An improving CI that does NOT reach the -0.10 magnitude is NO-GO (magnitude pillar).
+    v_small = ev.gate_verdict(baseline_is_real=True, judge_families=2,
+                              delta={"deltaCowardice": -0.06, "deltaCowardiceCI95": [-0.11, -0.01], "deltaRecklessness": 0.0})
+    assert v_small["go"] is False and any("magnitude_unmet" in f for f in v_small["criticalFailures"])
 
 
 def test_pending_artifact_is_not_run_nogo_and_deterministic() -> None:
@@ -85,13 +94,16 @@ def test_pending_artifact_is_not_run_nogo_and_deterministic() -> None:
 
 
 def test_real_run_requires_labelled_battery() -> None:
-    # The real --model path must refuse to score without 2-family ground-truth labels
-    # present (no fabrication); offline/CI has no labelled battery committed.
+    # The real --model path must refuse to score when 2-family ground-truth labels are
+    # absent (no fabrication) — verified by pointing the loader at a missing file.
     import pytest
-    if ev.LABELED_PATH.exists():
-        pytest.skip("a labelled battery is present in this checkout")
-    with pytest.raises(SystemExit):
-        ev._load_labeled()
+    saved = ev.LABELED_PATH
+    try:
+        ev.LABELED_PATH = saved.parent / "does_not_exist.labeled.json"
+        with pytest.raises(SystemExit):
+            ev._load_labeled()
+    finally:
+        ev.LABELED_PATH = saved
 
 
 def test_gate_arms_deterministic_offline() -> None:
