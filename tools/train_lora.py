@@ -643,6 +643,8 @@ def run_manual_train(
     qat: bool = False,
     qat_scheme: str = "int8",
     qat_lambda: float = 1e-3,
+    qat_consistency: bool = False,
+    qat_consistency_lambda: float = 1e-3,
 ) -> dict:
     import torch
     from torch.utils.data import DataLoader
@@ -651,11 +653,20 @@ def run_manual_train(
     # QAT: add a quant-pushing penalty so the released weights serve cleanly at low bits
     # (the fake-quant forward is installed by attach_qat in main(); this is the loss term).
     qat_penalty_fn = None
+    qat_consistency_fn = None
     if qat:
         from training.qat import qat_penalty as _qat_penalty
 
         def qat_penalty_fn() -> Any:
             return _qat_penalty(model, scheme=qat_scheme, lam=qat_lambda)
+
+        # T6: optional output-space consistency — train the quantized forward to match the
+        # fp forward's next-token distribution (the LowRamGate metric). Costs a 2nd forward.
+        if qat_consistency:
+            from training.qat import qat_consistency_kl as _qat_kl
+
+            def qat_consistency_fn(batch: dict) -> Any:
+                return _qat_kl(model, batch, lam=qat_consistency_lambda)
 
     device = model.get_input_embeddings().weight.device
     # Packing concatenates short rows into one flat sequence (no padding) and relies on
@@ -709,6 +720,8 @@ def run_manual_train(
             loss = outputs.loss / grad_accum
             if qat_penalty_fn is not None:
                 loss = loss + qat_penalty_fn() / grad_accum
+            if qat_consistency_fn is not None:
+                loss = loss + qat_consistency_fn(batch) / grad_accum
             loss.backward()
             if (step + 1) % grad_accum == 0:
                 torch.nn.utils.clip_grad_norm_(trainable, max_grad_norm)
@@ -841,6 +854,12 @@ def main() -> int:
                         help="Deployment quantization grid the model co-adapts to (default: int8).")
     parser.add_argument("--qat-lambda", type=float, default=1e-3,
                         help="Weight on the quant-pushing penalty term (default: 1e-3).")
+    parser.add_argument("--qat-consistency", action="store_true",
+                        help="T6: add a next-token KL term between the fp and fake-quant forwards "
+                             "(the serving/lowram_eval LowRamGate metric), co-designing training "
+                             "against the certifier. Requires --qat; costs a 2nd forward/step.")
+    parser.add_argument("--qat-consistency-lambda", type=float, default=1e-3,
+                        help="Weight on the QAT-consistency KL term (default: 1e-3).")
     parser.add_argument("--shard", choices=("none", "fsdp"), default="none",
                         help="Multi-GPU param sharding for high/top-tier MoE bases (training/sharding.py). "
                              "'fsdp' shards the frozen base across torch.distributed ranks; launch with torchrun.")
@@ -895,6 +914,10 @@ def main() -> int:
             f"batch < 32; consider lowering --batch-size or --grad-accum.",
             flush=True,
         )
+
+    if args.qat_consistency and not args.qat:
+        print("NOTE: --qat-consistency requires --qat (it needs the fake-quant forward); "
+              "ignoring it. Add --qat to enable the next-token KL co-design term.", flush=True)
 
     args.train = resolve_train_path(args.train)
     if not args.train.exists():
@@ -1084,6 +1107,8 @@ def main() -> int:
         "qat": args.qat,
         "qatScheme": args.qat_scheme if args.qat else None,
         "qatLambda": args.qat_lambda if args.qat else None,
+        "qatConsistency": args.qat_consistency if args.qat else False,
+        "qatConsistencyLambda": args.qat_consistency_lambda if (args.qat and args.qat_consistency) else None,
         "shard": args.shard,
         "expertParallel": args.expert_parallel if args.shard == "fsdp" else False,
     }
@@ -1115,6 +1140,8 @@ def main() -> int:
         qat=args.qat and args.backend != "mlx",
         qat_scheme=args.qat_scheme,
         qat_lambda=args.qat_lambda,
+        qat_consistency=args.qat_consistency and args.backend != "mlx",
+        qat_consistency_lambda=args.qat_consistency_lambda,
     )
 
     # Remove the NEFTune noise hook before persisting so inference is noise-free.
