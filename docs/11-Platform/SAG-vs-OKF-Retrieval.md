@@ -1,0 +1,111 @@
+# SAG (Zleap-AI) vs. OKF/LLM-Wiki — retrieval comparison and roadmap
+
+Status: analysis + spike. The spike (`okf/extract.py`, `tests/test_okf_extract.py`) is
+runnable and tested but **not** a validated benchmark. No capability claim here is
+gated; see [`agi-proof/failure-ledger.md`](../../agi-proof/failure-ledger.md) for what
+remains unproven.
+
+Source compared: <https://github.com/Zleap-AI/SAG> (README + architecture, read
+2026-06-29).
+
+## 1. The two systems optimize for opposite things
+
+They look alike (markdown → graph → query) but the objective functions diverge:
+
+| | **Zleap-AI/SAG** | **OKF / LLM-Wiki (this repo)** |
+|---|---|---|
+| Optimizes for | Recall@K on multi-hop QA | epistemic honesty (no overclaiming) |
+| Graph nodes | machine-**extracted** events + entities | human-**curated** typed pages |
+| Edges | entity co-occurrence, cheap to rebuild | hand-authored typed edges (`contradicts`, `supersedes`, `subClassOf`, `derivesFrom`) |
+| Retrieval unit | one **event** per chunk + entity index | whole page / RAG chunk |
+| Signature feature | multi-hop entity traversal, served | confidence-laundering + contradiction ledger (`okf/graph.py`) |
+| Provenance | none | the entire point |
+| Shape | one product: TS, Postgres+pgvector, React UI, MCP | dependency-free Python lib + committed numpy index, in a research monorepo |
+
+SAG is a **retrieval engine**. OKF is a **belief-discipline engine**. The correct move
+is not to converge on SAG but to put SAG-style recall *underneath* the OKF provenance
+layer. SAG has no way to say a claim is `legendary`, anachronistic, or laundered — that
+is our moat.
+
+## 2. What SAG does better (worth borrowing)
+
+1. **Event-as-retrieval-unit.** SAG extracts *one complete event + N entities* per
+   chunk — finer-grained and more semantically coherent than our page/chunk granularity.
+2. **An extracted entity index for multi-hop expansion.** Our graph edges are
+   hand-authored frontmatter — high precision, but sparse (hence `orphans()` /
+   `dangling_links()` in `okf/linker.py`). SAG gets cross-document traversal for free
+   from shared entity mentions.
+3. **Search-trace visualization** — it shows *why* each result was retrieved. We compute
+   a trace in `agent/ai_search.py` but never surface it.
+4. **A public, falsifiable retrieval number** — "Recall@2 68.14 → 79.30 vs HippoRAG 2"
+   on HotpotQA / 2WikiMultiHop / MuSiQue. We have no standard multi-hop retrieval bench.
+5. **Cheap-rebuild discipline** — events stay as semantic units, entities are just an
+   index; no heavyweight KG rebuild. Our `okf.graph.build()` reconstructs the typed
+   graph in memory per call (fine at ~96 pages, a wall later).
+
+**Not worth copying:** the Postgres/Fastify/React serving shell. That is productization,
+off-thesis; our committed-index + MCP approach is right for research.
+
+## 3. What OKF already does that SAG cannot
+
+- Provenance-native frontmatter (`authorConfidence`, `doNotAttributeTo`,
+  `doNotMergeWith`, `tradition`).
+- Confidence-laundering detection via min-over-chain propagation
+  (`okf.graph.propagate_confidence`).
+- Contradiction ledger: self-merges, supersede cycles, TBox subclass cycles, disjointness
+  violations, cross-tradition unscoped mappings (`okf.graph.contradiction_ledger`).
+- Counterfactual retraction / belief revision / abstention (`okf/counterfactual.py`,
+  `okf/revision.py`).
+- No-overclaim gates, decontamination, claim linting (`tools/lint_claims.py`,
+  `tools/claim_gate.py`).
+
+We also already have hybrid dense+sparse RRF retrieval (`agent/hybrid_retrieval.py`) and
+multi-hop sub-query fan-out + rerank (`agent/ai_search.py`). SAG's retrieval is partly
+something we have — just not productized as an extracted event/entity index.
+
+## 4. Roadmap — thesis-aligned, ranked
+
+1. **Provenance-tainted event/entity extraction (foundation).** Extract `(event,
+   entities)` units from wiki bodies, each stamped with the page's *effective*
+   confidence rank. → shipped as a spike: `okf/extract.py::extract_events`.
+2. **Provenance-aware multi-hop recall (the actual contribution).** Traverse shared
+   entities like SAG, but floor each path by the weakest page it touches, so a confident
+   event reached through a `legendary`/`anachronism_risk` bridge surfaces with a low
+   `provenanceFloor` and `capped=True`. SAG can report Recall@K; we can report Recall@K
+   **and** a provenance-faithfulness score. → spike:
+   `okf/extract.py::multi_hop_recall`.
+3. **Auto-extracted entity index to close the orphan/dangling gap.** Keep hand-authored
+   typed edges as the *trusted* layer; add the extracted entity-mention index as a
+   *candidate* layer that must earn promotion through the existing gate — never
+   auto-merged. → entity index shipped (`build_entity_index`); promotion path = TODO.
+4. **Surface the retrieval trace with per-hop provenance.** Emit each unit + why it
+   matched + its effective rank + the hop that contributed it. SAG's search-trace, but
+   provenance-colored. → TODO (the `path` / `provenance_floor` fields on `RecallHit`
+   already carry the data).
+5. **Decontaminated multi-hop QA benchmark (HotpotQA / 2Wiki / MuSiQue).** Report
+   Recall@K like SAG, run it through `assert_decontam`, pair it with the
+   provenance-faithfulness metric. Converts "trust me" into a gated, falsifiable claim.
+   → TODO.
+6. **(Optional, off critical path) Provenance-colored graph viz.** Color nodes by
+   `effectiveConfidenceRank`; draw contradiction-ledger edges. SAG literally cannot
+   render this — it has no provenance.
+
+## 5. One-line takeaway
+
+Steal SAG's **event/entity extraction + multi-hop entity index**; ignore its serving
+stack. The move that is *ours* is to run that recall **through the confidence-propagation
+and contradiction machinery** — retrieval that recalls like SAG and refuses to launder
+provenance like nothing else does. Items 1–2 are the spike in `okf/extract.py`; item 5
+is how we prove it without overclaiming.
+
+## 6. Try the spike
+
+```bash
+python tests/test_okf_extract.py        # provenance-floor property tests
+python - <<'PY'
+from okf import page, extract
+events = extract.extract_events(page.load_pages("wiki"))
+for h in extract.multi_hop_recall("penicillin discovery", events, top_k=5):
+    print(f"{h.event.page_id:24} hops={h.hops} floor={h.provenance_floor} capped={h.capped}")
+PY
+```
