@@ -15,7 +15,9 @@ shell out to it for the hot text-scan loops:
 If the binary is missing or anything goes wrong, every helper raises
 `LexUnavailable`; callers must catch it and fall back to Python. Nothing here is
 allowed to make a gate pass that Python would fail — acceleration is opt-in
-(`--accel`) and verified byte-for-byte against Python by tools/test_lex_parity.py.
+(`--accel`) and parity-tested against Python by tools/test_lex_parity.py, which
+asserts the same set of (line, why) verdicts, not byte-identical output/columns/
+ordering.
 """
 from __future__ import annotations
 

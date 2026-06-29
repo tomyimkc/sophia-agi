@@ -5,7 +5,9 @@ A deterministic, single-DFA text scanner for the Sophia **measurement gate**,
 built on [`logos`](https://github.com/maciejhirsz/logos) (compile-time lexer
 generation). It is an **optional accelerator** for the pure-Python gate tools —
 the Python tools stay the reference oracle and the CI default. Acceleration is
-opt-in and verified byte-for-byte against Python (`tools/test_lex_parity.py`).
+opt-in and parity-tested against Python: `tools/test_lex_parity.py` asserts the
+same set of `(line, why)` verdicts — not byte-identical output, columns, or
+ordering.
 
 ## Why a lexer here
 

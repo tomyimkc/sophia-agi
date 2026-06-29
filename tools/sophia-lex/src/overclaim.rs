@@ -188,8 +188,17 @@ fn scan_line(line_no: usize, line: &str, out: &mut Vec<Violation>) {
     let low = line.to_lowercase();
     let toks = lex_line(&low);
 
-    let mut push = |why: &str, col_byte: usize| {
-        out.push(Violation { line: line_no, col: col_byte + 1, why: why.to_string() });
+    // The Python oracle (lint_claims FORBIDDEN) matches with `re.search`, so it
+    // records at most ONE hit per pattern per line. This token scan visits every
+    // token start, so a phrase that recurs on a line — or two alternatives of the
+    // same rule both matching — would otherwise push the same `why` more than once.
+    // Dedupe per (line, why) so the emitted verdict set matches the Python linter
+    // exactly (each `why` maps 1:1 to a Python FORBIDDEN pattern).
+    let mut seen: std::collections::HashSet<&'static str> = std::collections::HashSet::new();
+    let mut push = |why: &'static str, col_byte: usize| {
+        if seen.insert(why) {
+            out.push(Violation { line: line_no, col: col_byte + 1, why: why.to_string() });
+        }
     };
 
     // Whitespace-separated word run starting at i matches `words`?
