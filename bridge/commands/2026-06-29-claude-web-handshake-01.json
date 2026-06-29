@@ -1,0 +1,8 @@
+{
+  "id": "2026-06-29-claude-web-handshake-01",
+  "args": "--dry-run --all",
+  "createdBy": "claude-web (claude/sophia-positioning-gaps session)",
+  "createdAt": "2026-06-29T23:44:36Z",
+  "approvedBy": "",
+  "note": "Connection handshake from the positioning-gaps cloud session. Dry-run only: no GPU load, no approval required. Proves this session can submit work through the git bridge so the operator can review before any --execute/--run-train job is approved."
+}
