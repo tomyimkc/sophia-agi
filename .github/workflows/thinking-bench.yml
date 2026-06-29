@@ -21,7 +21,10 @@ on:
       - "agent/subagent.py"
       - "agent/a2a_distill.py"
       - "tools/run_thinking_bench.py"
+      - "tools/run_faithfulness_battery.py"
       - "tests/test_thinking_trace.py"
+      - "tests/test_faithfulness_battery.py"
+      - "benchmark/faithfulness_cot_battery.json"
       - "scripts/run_local_benchmarks.sh"
       - ".github/workflows/thinking-bench.yml"
 
@@ -45,13 +48,19 @@ jobs:
       - name: Unit tests (reasoning capture + A2A logging + distill, offline)
         run: python tests/test_thinking_trace.py
 
+      - name: Unit tests (faithfulness battery metrics, offline scripted models)
+        run: python tests/test_faithfulness_battery.py
+
       - name: Offline pipeline benchmark (capture coverage + A2A distill yield)
         run: python tools/run_thinking_bench.py --offline
 
-      # Real-model CoT faithfulness pass — only when manually dispatched with a model.
-      # Provide whatever key the chosen provider needs as a repo secret; the runner
-      # auto-falls back to "not run" (mock) if the key is absent, so this never hard-fails.
-      - name: Real-model faithfulness pass (manual, needs key)
+      - name: Faithfulness battery integrity + plumbing (offline)
+        run: python tools/run_faithfulness_battery.py
+
+      # Real-model passes — only when manually dispatched with a model. Provide whatever key
+      # the chosen provider needs as a repo secret; the runner auto-falls back to "not run"
+      # (mock) if the key is absent, so this never hard-fails. Numbers are measurements, not claims.
+      - name: Real-model CoT faithfulness pass (manual, needs key)
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.model != '' }}
         env:
           SOPHIA_MODEL_PROVIDER: ${{ github.event.inputs.model }}
@@ -59,12 +68,14 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-        run: python tools/run_thinking_bench.py --model "${{ github.event.inputs.model }}"
+        run: |
+          python tools/run_thinking_bench.py --model "${{ github.event.inputs.model }}"
+          python tools/run_faithfulness_battery.py --model "${{ github.event.inputs.model }}" --seeds 3
 
-      - name: Upload benchmark receipt
+      - name: Upload benchmark receipts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: thinking-bench-receipt
-          path: agent/memory/thinking/bench/thinking-bench.json
+          name: thinking-bench-receipts
+          path: agent/memory/thinking/bench/*.json
           if-no-files-found: ignore
