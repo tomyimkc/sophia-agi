@@ -7,3 +7,4 @@
 {"utc":"20260629T033549Z","bench":"roofline-fp4","file":"roofline-fp4-20260629T033549Z.json"}
 {"utc":"20260629T033613Z","bench":"nvfp4-quant-invariants","file":"nvfp4-quant-invariants-20260629T033613Z.json"}
 {"utc":"20260629T033735Z","bench":"roofline-fp4","file":"roofline-fp4-20260629T033735Z.json"}
+{"utc":"20260629T033749Z","bench":"nvfp4-quant-invariants","file":"nvfp4-quant-invariants-20260629T033749Z.json"}
