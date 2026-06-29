@@ -50,6 +50,8 @@ from provenance_bench import (  # noqa: E402
     math_reward,
     ontology_rl_dataset,
     ontology_rl_reward,
+    physics_dataset,
+    physics_reward,
     rl_dataset,
     rl_reward,
 )
@@ -67,6 +69,23 @@ DEFAULT_MODEL = "zai-org/glm-4-9b-chat-hf"
 # (query_key_value/dense/...), but the published HF weights use these suffixes:
 #   self_attn.{q,k,v,o}_proj, mlp.gate_up_proj, mlp.down_proj
 GLM_TARGET_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_up_proj", "down_proj"]
+# Qwen2.5 / Llama-3 / Mistral expose a SPLIT gate/up MLP (gate_proj + up_proj),
+# unlike GLM-4's fused gate_up_proj. Pointing LoRA at the wrong names silently
+# adapts nothing (or errors), so the target set must follow the model family.
+STD_TARGET_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+
+
+def resolve_target_modules(model_spec: str, override: str | None = None) -> list[str]:
+    """Pick LoRA target modules for the model family (override wins).
+
+    ``--lora-target-modules q_proj,v_proj`` forces an explicit set; otherwise GLM
+    models get the fused ``gate_up_proj`` set and everything else (Qwen/Llama/
+    Mistral) gets the split ``gate_proj``/``up_proj`` set. This is what lets a true
+    ≤8B base (e.g. ``Qwen/Qwen2.5-7B-Instruct``) train without hand-editing.
+    """
+    if override:
+        return [m.strip() for m in override.split(",") if m.strip()]
+    return GLM_TARGET_MODULES if "glm" in (model_spec or "").lower() else STD_TARGET_MODULES
 
 # Synthetic case set for the offline reward-machinery check (decoupled from any
 # corpus quirks, so the invariants are about the code, not the data).
@@ -201,6 +220,53 @@ def _write_report(detail: dict, out: Path) -> None:
     print(f"wrote {out}")
 
 
+def _wrap_collapse_logger(reward_fn, *, num_generations: int):
+    """Wrap a GRPO reward fn to record within-group reward std per step.
+
+    GRPO computes advantages from the spread of rewards across the ``num_generations``
+    completions of each prompt. If that within-group std collapses to ~0, every
+    completion gets the same reward, the advantage is zero, and the policy stops
+    learning (reward collapse). We log the mean within-group std at each call so the
+    M1 report can show single-axis collapsing where multi-axis does not.
+    """
+    import statistics
+
+    log: dict = {"stepGroupStd": [], "n_calls": 0}
+
+    def _fn(*a, **kw):
+        rewards = reward_fn(*a, **kw)
+        try:
+            g = max(1, int(num_generations))
+            groups = [rewards[i : i + g] for i in range(0, len(rewards), g)]
+            stds = [statistics.pstdev(grp) for grp in groups if len(grp) > 1]
+            if stds:
+                log["stepGroupStd"].append(round(sum(stds) / len(stds), 6))
+            log["n_calls"] += 1
+        except Exception:  # noqa: BLE001 - logging must never break training
+            pass
+        return rewards
+
+    return _fn, log
+
+
+def _collapse_summary(log: dict) -> dict:
+    """Summarise the collapse log: mean within-group std + a collapse flag."""
+    import statistics
+
+    series = log.get("stepGroupStd", [])
+    if not series:
+        return {"steps": 0, "meanGroupStd": None, "finalGroupStd": None, "collapsed": None}
+    tail = series[-5:] if len(series) >= 5 else series
+    final = sum(tail) / len(tail)
+    return {
+        "steps": len(series),
+        "meanGroupStd": round(statistics.fmean(series), 6),
+        "finalGroupStd": round(final, 6),
+        # Heuristic: a near-zero tail std means the within-group signal vanished.
+        "collapsed": final < 1e-3,
+    }
+
+
 def _run_gpu(args: argparse.Namespace) -> int:
     """Live GRPO on a rented CUDA GPU. Validated by structure; not run in CI."""
     try:
@@ -258,6 +324,11 @@ def _run_gpu(args: argparse.Namespace) -> int:
         # test column -> hidden-tests-pass (provenance_bench.code_exec). Judge-free;
         # the interpreter decides. No false-positive axis (every item has a test).
         reward_fn = code_reward.make_grpo_reward(timeout_sec=args.code_timeout)
+    elif args.task == "physics":
+        data = physics_dataset.build_physics_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+        # gold column -> dimensional+numeric verifier (agent.units). Judge-free and
+        # pure-Python; right-number/wrong-unit cannot game it.
+        reward_fn = physics_reward.make_grpo_reward()
     else:
         data = rl_dataset.build_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
         if args.reward == "gate":
@@ -267,11 +338,34 @@ def _run_gpu(args: argparse.Namespace) -> int:
             from agent import gate_reward
 
             reward_fn = gate_reward.make_grpo_reward()
+        elif args.reward == "multiaxis":
+            # Thesis D: dense deterministic multi-axis reward. Same fail-closed
+            # provenance dominator as the gate, but decomposed so within-group reward
+            # variance does not vanish (the anti-reward-collapse property). The reward
+            # rows carry their case via the kept dataset columns; make_grpo_reward maps
+            # them through to the answerability/provenance axes when present.
+            from agent import multiaxis_reward as _mar
+
+            reward_fn = _mar.make_grpo_reward()
         else:
             reward_fn = rl_reward.make_grpo_reward(records=data["train_gate_records"])
+
+    # Collapse logger: wrap whatever reward we chose to record within-group reward std
+    # per GRPO step. Reward collapse == within-group std -> 0 (constant reward => zero
+    # advantage => no learning signal). This is the headline M1 measurement.
+    reward_fn, _collapse_log = _wrap_collapse_logger(reward_fn, num_generations=args.num_generations)
     train_rows = data["train_rows"]
     if args.curriculum:
         train_rows = _gate_curriculum_order(train_rows, samples=args.curriculum_samples)
+    if args.task == "code":
+        # Wrap each prompt in the model's chat template so an instruct/chat base
+        # generates an extractable fenced code block during GRPO rollouts. Must
+        # match the eval side (eval_rlvr_adapter, chat_template=True), else the
+        # adapter trains on raw prompts but is graded on templated ones. No-op for a
+        # base/completion model (no template); math/provenance are untouched (they
+        # cleared on the raw-prompt path). See failure-ledger rlvr-code-no-chat-template.
+        _tok = AutoTokenizer.from_pretrained(args.model)
+        train_rows = [{**r, "prompt": code_dataset.chat_wrap(_tok, r["prompt"])} for r in train_rows]
     ds = Dataset.from_list(train_rows)  # columns kept: remove_unused_columns=False
 
     model_init_kwargs: dict = {"trust_remote_code": False}
@@ -292,6 +386,7 @@ def _run_gpu(args: argparse.Namespace) -> int:
         max_prompt_length=args.max_prompt_len,
         max_completion_length=args.max_completion_len,
         num_train_epochs=args.epochs,
+        max_steps=args.max_steps,  # >0 bounds a smoke run (overrides epochs)
         beta=args.beta,
         logging_steps=5,
         save_strategy="no",
@@ -314,9 +409,10 @@ def _run_gpu(args: argparse.Namespace) -> int:
             grpo_kwargs["vllm_max_model_len"] = args.max_prompt_len + args.max_completion_len
     cfg = GRPOConfig(**grpo_kwargs)
 
+    target_modules = resolve_target_modules(args.model, args.lora_target_modules)
     peft_cfg = LoraConfig(
         r=args.lora_r, lora_alpha=args.lora_alpha, lora_dropout=0.05,
-        bias="none", task_type="CAUSAL_LM", target_modules=GLM_TARGET_MODULES,
+        bias="none", task_type="CAUSAL_LM", target_modules=target_modules,
     )
     tokenizer = AutoTokenizer.from_pretrained(args.model)
     if tokenizer.pad_token is None:
@@ -342,13 +438,17 @@ def _run_gpu(args: argparse.Namespace) -> int:
         "config": {
             "vllm": args.vllm, "quant": args.quant, "epochs": args.epochs, "lr": args.lr,
             "beta": args.beta, "num_generations": args.num_generations,
-            "target_modules": GLM_TARGET_MODULES,
+            "target_modules": target_modules,
         },
         "trainCases": n_train,
         "evalCases": n_eval,
         "trainSealed": data["train_sealed"],
         "evalSealed": data["eval_sealed"],
         "baseModelLicense": "glm-4-9b License (NOT MIT; commercial use needs Zhipu registration)",
+        "rewardSelected": args.reward,
+        # M1 headline measurement: within-group reward std over training. A single-axis
+        # run is expected to collapse (final std -> 0); multiaxis should stay > 0.
+        "collapse": _collapse_summary(_collapse_log),
     }
     _write_report(report, args.out)
     print("Live GRPO complete. Held-out pass@1 eval + gating is a separate step.")
@@ -360,7 +460,7 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     ap.add_argument("--model", default="mock", help=f'subject model (default "mock"; GPU: "{DEFAULT_MODEL}")')
-    ap.add_argument("--task", choices=["provenance", "math", "code", "concept"], default="provenance",
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "physics"], default="provenance",
                     help="reward task: provenance (provenance_faithful), math (sympy math_equivalent), "
                          "code (hidden-tests-pass via provenance_bench.code_exec), or concept "
                          "(concept-TBox gate: don't merge cross-tradition concepts)")
@@ -371,6 +471,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--vllm", default="colocate", choices=["colocate", "server", "none"])
     ap.add_argument("--quant", default="4bit", choices=["4bit", "bf16"])
     ap.add_argument("--epochs", type=float, default=1.0)
+    ap.add_argument("--max-steps", type=int, default=-1,
+                    help="cap GRPO optimizer steps (>0 bounds a smoke run; overrides --epochs)")
     ap.add_argument("--lr", type=float, default=1e-5)
     ap.add_argument("--beta", type=float, default=0.04)
     ap.add_argument("--batch-size", type=int, default=8)
@@ -381,14 +483,18 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--vllm-mem-util", type=float, default=0.4)
     ap.add_argument("--lora-r", type=int, default=16)
     ap.add_argument("--lora-alpha", type=int, default=32)
+    ap.add_argument("--lora-target-modules", default=None,
+                    help="comma-separated LoRA target modules (default: auto by model "
+                         "family — GLM fused gate_up_proj vs Qwen/Llama split gate/up)")
     ap.add_argument("--eval-frac", type=float, default=0.3)
     ap.add_argument("--code-timeout", type=int, default=15,
                     help="code-task only: wall-clock seconds for the hidden-test executor")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument(
-        "--reward", default="verifier", choices=["verifier", "gate"],
-        help='reward signal: "verifier" (gold/forbidden verifier-as-reward, default) '
-             'or "gate" (intrinsic fail-closed gate, reward-positive abstention)',
+        "--reward", default="verifier", choices=["verifier", "gate", "multiaxis"],
+        help='reward signal: "verifier" (gold/forbidden verifier-as-reward, default), '
+             '"gate" (single-axis intrinsic fail-closed gate, reward-positive abstention), '
+             'or "multiaxis" (Thesis D: dense deterministic multi-axis reward, anti-collapse)',
     )
     ap.add_argument(
         "--curriculum", action="store_true",
@@ -400,6 +506,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.model == "mock" or args.dry_run:
         if args.task == "math":
             ok, detail = math_reward.offline_invariants()
+        elif args.task == "physics":
+            ok, detail = physics_reward.offline_invariants()
         elif args.task == "code":
             ok, detail = code_reward.offline_invariants()
         elif args.task == "concept":
@@ -419,6 +527,22 @@ def main(argv: list[str] | None = None) -> int:
             ok = ok and gate_ok
             detail["checks"]["gateRewardInvariants"] = gate_ok
             detail["gateReward"] = gate_detail
+            # Thesis D: prove the multi-axis reward's invariants offline (fail-closed,
+            # ordering, reward-positive abstention, density-beats-single-axis). This is
+            # the CPU-side validation that the M1 GPU run's reward is sound before spend.
+            if args.reward == "multiaxis":
+                from agent import multiaxis_reward as _mar
+
+                mar_detail = _mar.self_check()
+                mar_ok = (
+                    mar_detail["fabrication"] == -1.0
+                    and mar_detail["clean"] > mar_detail["abstain"] > 0
+                    and mar_detail["distinctMultiAxisValues"] > mar_detail["distinctSingleAxisValues"]
+                    and mar_detail["weightsSumToOne"]
+                )
+                ok = ok and mar_ok
+                detail["checks"]["multiAxisRewardInvariants"] = mar_ok
+                detail["multiAxisReward"] = mar_detail
         detail["benchmark"] = f"rlvr-{args.task}"
         detail["task"] = args.task
         detail["mode"] = "mock-offline"

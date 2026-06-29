@@ -2,7 +2,7 @@
 # run on Apple Silicon. The offline reward-wiring check (--model mock) needs
 # none of these (pure Python). Install only on the rented cloud GPU.
 torch>=2.3
-transformers>=4.46.2
+transformers>=5.12.1
 trl>=0.16
 peft>=0.19.1
 datasets>=2.18

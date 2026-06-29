@@ -145,6 +145,43 @@ Turns the simulator's guessed comm penalty into a bandwidth-derived (and measura
   this pipeline on the belief graph + grounded gate + graded abstention + badcase flywheel turns
   it into a verifiable perception organ — search as Sophia's AGI substrate.
 
+## [0.11.0] - 2026-06-28
+
+### Added — layered, independence-labelled independent-verification toolkit
+
+A toolkit of independent verifiers, each routed to the fabrication mode it covers and each
+verdict tagged with its **independence tier**; fail-open on ignorance (never fabricates a
+contradiction); honest, coverage-bounded reporting. Surfaced as an MCP tool
+(`sophia_source_verify`) and a skill (`source_verify_audit`).
+
+- **`agent/citation_existence_verifier.py`** — fabricated-citation check via Crossref study/DOI
+  existence (the *Mata v. Avianca* mode); HIGH independence. Live: 0% over-block.
+- **`agent/attribution_swap_verifier.py`** — a real work credited to the wrong creator, checked
+  against the Wikidata creator/author/discoverer record; HIGH independence. Live (3-run CI):
+  caught 10.8% [9.3, 11.6] / 0.0% [0,0] over-block.
+- **`agent/source_faithfulness_verifier.py`** — misstated-finding check: a multi-judge entailment
+  panel over an INDEPENDENT retrieved source, strict-majority consensus, fail-open on
+  insufficiency; MEDIUM independence (flagged). Live demo 4/4.
+- **`agent/layered_verifier.py`, `agent/core_claim_verifier.py`, `agent/core_claim_source_verifier.py`,
+  `agent/hybrid_source_verifier.py`, `agent/llm_debunk_detector.py`, `agent/meta_labeler.py`,
+  `agent/wiki_truth_refs.py`** — supporting layers (debunk detection 0→100% live; core-claim
+  direction; Google+Wikidata routing; Wikipedia retrieval).
+- **`tools/run_source_contamination_bench.py`** — `--verifier {atomic,core,hybrid,citation,attribution,faithfulness}`,
+  `--answer-spec`/`--judge-spec` separation, `--runs N` bootstrap CIs, `--retrieve`.
+- **`agi-proof/verification-replication/`** — third-party replication pack (REPRODUCE.md,
+  EXPECTED-RESULTS.json, DECONTAMINATION-CHECKLIST.md) + `tools/verify_replication_manifest.py`
+  (54 checks). `paper/THESIS-OUTLINE.md`; whitepaper §3.6 + §5 + §8.
+
+### Method / honesty
+
+- "No free lunch" finding recorded: catching open-world contamination needs an oracle that covers
+  the claim (sparse), fail-closed strictness (over-blocks), or model knowledge (low independence).
+- **Correction:** an earlier 70.6% curated over-block figure was found to be a stale-report
+  artifact and **withdrawn** (corrected to 5.9%; the real driver is open-world retrieval). Recorded
+  in the failure ledger and `agi-proof/THEORY-ISSUES-RESOLUTION-2026-06-28.md`.
+- `canClaimAGI` remains **false**; the outstanding step is an independent third-party run on an
+  independently-authored pack.
+
 ## [0.10.0] - 2026-06-26
 
 ### Milestone — first external, cross-model validation of a Sophia calibration method

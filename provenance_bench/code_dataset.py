@@ -28,6 +28,28 @@ from typing import Any
 DATA = Path(__file__).resolve().parent / "data" / "code_tasks.json"
 
 
+def chat_wrap(tokenizer: Any, prompt: str) -> str:
+    """Wrap a raw code-task prompt in the model's chat template (a single user
+    turn + the assistant generation prompt).
+
+    Shared by training (``tools/run_rlvr.py``) and eval
+    (``tools/eval_rlvr_adapter.py``) so the code task is templated IDENTICALLY on
+    both sides. An instruct/chat base fed a raw prompt emits prose, not an
+    extractable fenced code block, so the tests-pass reward scores 0 for base AND
+    adapter alike — an eval artifact, not a capability reading (failure-ledger
+    ``rlvr-code-no-chat-template``). Returns ``prompt`` unchanged when the
+    tokenizer has no chat template (a base/completion model), so this is a no-op
+    there; math/provenance never call it (they cleared on the raw-prompt path).
+    """
+    if not getattr(tokenizer, "chat_template", None):
+        return prompt
+    return tokenizer.apply_chat_template(
+        [{"role": "user", "content": prompt}],
+        tokenize=False,
+        add_generation_prompt=True,
+    )
+
+
 def load_tasks(path: Path | None = None) -> list[dict]:
     """Load the code task rows ({id, family, split, entry_point, prompt, test, solution})."""
     p = path or DATA

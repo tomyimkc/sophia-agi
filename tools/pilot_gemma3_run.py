@@ -107,8 +107,15 @@ def _chat_ids(tok, messages, *, max_len, add_generation_prompt):
 # Train                                                                       #
 # --------------------------------------------------------------------------- #
 def train(model_id: str, adapter_out: Path, *, rows_path: Path, seq_len: int, epochs: int,
-          seed: int, lr: float, smoke: bool) -> None:
+          seed: int, lr: float, smoke: bool, lora_rank: int = 16, lora_alpha: int = 32,
+          use_rslora: bool = False, kl_coef: float = 0.0) -> None:
+    """LoRA SFT on the language tower. Stability knobs (anti-forgetting, 2026-06-26):
+    - lora_rank/lora_alpha + use_rslora: LOWER capacity overwrites less of the base.
+    - kl_coef>0: KL-ANCHOR the adapter to the FROZEN base on the GENERAL-RETENTION rows only
+      (reference logits via peft `disable_adapter()` — no 2nd model), so the general slice is
+      held near base while the discipline rows still move freely."""
     import torch
+    import torch.nn.functional as F
     from peft import LoraConfig, get_peft_model
     from torch.utils.data import Dataset, DataLoader
     from transformers import get_cosine_schedule_with_warmup
@@ -118,18 +125,19 @@ def train(model_id: str, adapter_out: Path, *, rows_path: Path, seq_len: int, ep
     if hasattr(model, "gradient_checkpointing_enable"):
         model.gradient_checkpointing_enable()
 
-    lora = LoraConfig(r=16, lora_alpha=32, lora_dropout=0.05, bias="none",
-                      task_type="CAUSAL_LM", target_modules=LANG_LORA_REGEX)
+    lora = LoraConfig(r=lora_rank, lora_alpha=lora_alpha, lora_dropout=0.05, bias="none",
+                      task_type="CAUSAL_LM", target_modules=LANG_LORA_REGEX, use_rslora=use_rslora)
     model = get_peft_model(model, lora)
     n_train = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    log(f"trainable params: {n_train:,}")
+    log(f"trainable params: {n_train:,} (rank={lora_rank} alpha={lora_alpha} rslora={use_rslora} kl_coef={kl_coef})")
     if n_train == 0:
         raise RuntimeError("LoRA matched 0 modules — the language-tower regex needs adjusting")
 
     rows = [json.loads(l) for l in rows_path.read_text(encoding="utf-8").splitlines() if l.strip()]
     if smoke:
         rows = rows[:8]
-    log(f"training rows: {len(rows)}")
+    n_gen = sum(1 for r in rows if (r.get("metadata") or {}).get("task_family") == "general_retention")
+    log(f"training rows: {len(rows)} ({n_gen} general_retention — KL-anchored if kl_coef>0)")
 
     class DS(Dataset):
         def __len__(self): return len(rows)
@@ -142,18 +150,20 @@ def train(model_id: str, adapter_out: Path, *, rows_path: Path, seq_len: int, ep
             labels = list(full)
             for j in range(min(len(prompt_only), len(labels))):
                 labels[j] = -100
-            return {"input_ids": full, "labels": labels}
+            is_general = (rows[i].get("metadata") or {}).get("task_family") == "general_retention"
+            return {"input_ids": full, "labels": labels, "is_general": is_general}
 
     def collate(batch):
         maxlen = max(len(b["input_ids"]) for b in batch)
         pad = tok.pad_token_id
-        ids, lbl, att = [], [], []
+        ids, lbl, att, gen = [], [], [], []
         for b in batch:
             n = maxlen - len(b["input_ids"])
             ids.append(b["input_ids"] + [pad] * n)
             lbl.append(b["labels"] + [-100] * n)
             att.append([1] * len(b["input_ids"]) + [0] * n)
-        return (torch.tensor(ids), torch.tensor(lbl), torch.tensor(att))
+            gen.append(bool(b["is_general"]))
+        return (torch.tensor(ids), torch.tensor(lbl), torch.tensor(att), gen)
 
     torch.manual_seed(seed)
     dl = DataLoader(DS(), batch_size=1, shuffle=True, collate_fn=collate)
@@ -164,14 +174,30 @@ def train(model_id: str, adapter_out: Path, *, rows_path: Path, seq_len: int, ep
     dev = next(model.parameters()).device
     done = 0
     for _ep in range(epochs):
-        for ids, lbl, att in dl:
-            out = model(input_ids=ids.to(dev), attention_mask=att.to(dev), labels=lbl.to(dev))
-            out.loss.backward()
+        for ids, lbl, att, gen in dl:
+            ids, lbl, att = ids.to(dev), lbl.to(dev), att.to(dev)
+            out = model(input_ids=ids, attention_mask=att, labels=lbl)
+            loss = out.loss
+            kl_val = 0.0
+            # KL-anchor ONLY the general-retention rows to the frozen base (preserve general
+            # capability) while discipline rows move freely under the plain SFT loss.
+            if kl_coef > 0 and any(gen):
+                with torch.no_grad():
+                    with model.disable_adapter():
+                        ref_logits = model(input_ids=ids, attention_mask=att).logits
+                mask = (att == 1).unsqueeze(-1)  # ignore pad positions
+                lp = F.log_softmax(out.logits, dim=-1)
+                rp = F.softmax(ref_logits, dim=-1)
+                kl_tok = (rp * (rp.clamp_min(1e-9).log() - lp)).sum(-1, keepdim=True)  # KL(base||adapter)
+                kl = (kl_tok * mask).sum() / mask.sum().clamp_min(1)
+                loss = loss + kl_coef * kl
+                kl_val = float(kl.detach())
+            loss.backward()
             torch.nn.utils.clip_grad_norm_([p for p in model.parameters() if p.requires_grad], 1.0)
             opt.step(); sched.step(); opt.zero_grad()
             done += 1
             if done % 25 == 0 or smoke:
-                log(f"step {done}/{steps} loss={out.loss.item():.4f}")
+                log(f"step {done}/{steps} loss={out.loss.item():.4f} kl={kl_val:.4f}")
             if smoke and done >= 2:
                 break
         if smoke:
@@ -180,8 +206,9 @@ def train(model_id: str, adapter_out: Path, *, rows_path: Path, seq_len: int, ep
     model.save_pretrained(str(adapter_out))
     tok.save_pretrained(str(adapter_out))
     (adapter_out / "pilot_train_meta.json").write_text(json.dumps(
-        {"baseModel": model_id, "rows": len(rows), "epochs": epochs, "seed": seed,
-         "seqLen": seq_len, "lr": lr, "trainableParams": n_train, "smoke": smoke}, indent=2))
+        {"baseModel": model_id, "rows": len(rows), "generalRows": n_gen, "epochs": epochs,
+         "seed": seed, "seqLen": seq_len, "lr": lr, "loraRank": lora_rank, "loraAlpha": lora_alpha,
+         "useRslora": use_rslora, "klCoef": kl_coef, "trainableParams": n_train, "smoke": smoke}, indent=2))
     log(f"saved adapter -> {adapter_out}")
 
 
@@ -238,10 +265,10 @@ def _run_conditions_for_model(model, tok, cases, runs, *, capture=None):
 
 
 def evaluate(model_id: str, adapter_dir: Path, *, runs: int, limit, out_path: Path,
-             answers_path: "Path | None" = None) -> None:
+             answers_path: "Path | None" = None, bench_path: Path = BENCH) -> None:
     import torch  # noqa: F401
     from peft import PeftModel
-    cases = SSMB.load_cases(BENCH, limit)
+    cases = SSMB.load_cases(bench_path, limit)
     log(f"eval cases: {len(cases)} x {runs} runs x (base, adapter)")
 
     base, tok = load_base(model_id)
@@ -309,6 +336,109 @@ def _print_prereg(report: dict) -> None:
     log(f"PRIMARY habit-transfer signal present: {any_improve}")
 
 
+def evaluate_retention(model_id: str, adapter_dir: Path, *, out_path: Path,
+                       tasks_path: Path = ROOT / "data" / "generality_tasks.json",
+                       answers_path: "Path | None" = None) -> None:
+    """Catastrophic-forgetting check for criterion #3 (learning-shift STABILITY): score base vs
+    adapter on the HELD-OUT generality probe (data/generality_tasks.json — abstraction/reasoning/
+    analogy/out-of-domain, NO provenance tasks). Scored DETERMINISTICALLY (numeric/exact/regex)
+    via tools/eval_generality.score — no LLM judge, can't be Goodharted. retains = the adapter
+    does NOT drop more than 5pts vs base. This is the gemma-3-native stand-in for
+    run_learning_shift's stability phase (that tool's adapter backend is vLLM/GLM, not gemma-3)."""
+    import importlib.util as _ilu
+    from peft import PeftModel
+    _g = _ilu.module_from_spec(_ilu.spec_from_file_location("evg", ROOT / "tools" / "eval_generality.py"))
+    _g.__spec__.loader.exec_module(_g)
+
+    doc = _g.load_tasks(tasks_path)
+    tasks = doc["tasks"]
+    contam = _g.contamination_report(tasks, TRAIN)
+    if contam:
+        log(f"WARN: {len(contam)} generality prompt(s) leaked into train — retention number is suspect")
+    sys_prompt = "You are a helpful, precise assistant. Answer concisely and follow the format requested."
+    su = [(sys_prompt, t["prompt"]) for t in tasks]
+    log(f"retention: {len(tasks)} held-out generality tasks x (base, adapter)")
+
+    base, tok = load_base(model_id)
+    base.eval()
+    base_ans = _batched_generate(base, tok, su, max_new=96)
+
+    log("loading adapter onto base for retention ...")
+    adapted = PeftModel.from_pretrained(base, str(adapter_dir))
+    adapted.eval()
+    adapter_ans = _batched_generate(adapted, tok, su, max_new=96)
+
+    def grade(answers):
+        rows, correct = [], 0
+        for t, a in zip(tasks, answers):
+            cleaned = _g.strip_prompt_echo(a, t["prompt"])
+            ok = _g.score(cleaned, t["answer"], t.get("match", "exact"))
+            correct += int(ok)
+            rows.append({"id": t["id"], "category": t.get("category"), "match": t.get("match"),
+                         "gold": t["answer"], "reply": cleaned[:200], "correct": ok})
+        return correct / len(tasks) if tasks else 0.0, rows
+
+    base_acc, base_rows = grade(base_ans)
+    adapter_acc, adapter_rows = grade(adapter_ans)
+    delta = round(adapter_acc - base_acc, 4)
+    retains = delta >= -0.05  # criterion #3: adapter stability >= base - 5pts (point estimate)
+
+    # Paired bootstrap CI on the delta (the analysis flagged N is small -> report uncertainty).
+    import random as _rnd
+    _rnd.seed(0)
+    bc = [int(r["correct"]) for r in base_rows]
+    ac = [int(r["correct"]) for r in adapter_rows]
+    N = len(bc)
+    if N:
+        boot = []
+        for _ in range(4000):
+            s = 0
+            for _ in range(N):
+                i = _rnd.randrange(N); s += ac[i] - bc[i]
+            boot.append(s / N)
+        boot.sort()
+        delta_ci = [round(boot[int(0.025 * len(boot))], 4), round(boot[int(0.975 * len(boot))], 4)]
+    else:
+        delta_ci = [None, None]
+    # CI-aware verdict: forgetting is ESTABLISHED only if the whole CI is below -0.05.
+    retains_ci = (delta_ci[0] is None) or (delta_ci[1] >= -0.05)
+    forgetting_established = (delta_ci[1] is not None) and (delta_ci[1] < -0.05)
+
+    if answers_path is not None:
+        answers_path.parent.mkdir(parents=True, exist_ok=True)
+        answers_path.write_text(json.dumps(
+            {"base": base_rows, "adapter": adapter_rows}, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    import collections
+    def by_cat(rows):
+        c = collections.Counter(); n = collections.Counter()
+        for r in rows:
+            n[r["category"]] += 1; c[r["category"]] += int(r["correct"])
+        return {k: {"correct": c[k], "n": n[k], "acc": round(c[k] / n[k], 3)} for k in n}
+
+    report = {
+        "pilot": "sophia-wisdom-4b-m3-retention",
+        "criterion": "learning-shift stability: adapter general-capability >= base - 5pts",
+        "baseModel": model_id,
+        "adapter": str(adapter_dir.relative_to(ROOT) if adapter_dir.is_relative_to(ROOT) else adapter_dir),
+        "probe": str(tasks_path.relative_to(ROOT)), "nTasks": len(tasks),
+        "scoring": "deterministic (numeric/exact/regex) — NO LLM judge",
+        "contaminationLeaks": contam,
+        "base_accuracy": round(base_acc, 4), "adapter_accuracy": round(adapter_acc, 4),
+        "delta": delta, "delta_ci95": delta_ci, "retains": retains,
+        "retains_ci": retains_ci, "forgetting_established": forgetting_established,
+        "byCategoryBase": by_cat(base_rows), "byCategoryAdapter": by_cat(adapter_rows),
+        "boundary": (f"Held-out generality probe (N={len(tasks)}); deterministic scoring; paired "
+                     "bootstrap 95% CI on delta. 'retains' is the point-estimate criterion; "
+                     "'forgetting_established' requires the whole CI below -0.05."),
+    }
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    log(f"wrote retention report -> {out_path}")
+    log(f"=== RETENTION (criterion #3): base {base_acc:.3f} -> adapter {adapter_acc:.3f} "
+        f"(Δ {delta:+.3f} ci95={delta_ci}) retains={retains} forgetting_established={forgetting_established} ===")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--model", default=DEFAULT_MODEL)
@@ -326,21 +456,50 @@ def main() -> int:
     ap.add_argument("--out", type=Path, default=ROOT / "agi-proof" / "benchmark-results" / "wisdom-market" / "M3-pilot-eval.json")
     ap.add_argument("--save-answers", type=Path, default=None,
                     help="also write per-case base/adapter advisor answers here (for the LLM-judge pass)")
+    ap.add_argument("--retention", action="store_true",
+                    help="also score base vs adapter on the held-out generality probe (criterion #3)")
+    ap.add_argument("--benchmark", type=Path, default=BENCH,
+                    help="eval benchmark JSONL (default = heldout_v1; point at transfer_v1 for the "
+                         "external-validity test on NOVEL entities)")
+    # Stability knobs (anti-forgetting). Defaults reproduce the original M3 recipe.
+    ap.add_argument("--lora-rank", type=int, default=16, help="LoRA rank (lower = less forgetting)")
+    ap.add_argument("--lora-alpha", type=int, default=32)
+    ap.add_argument("--use-rslora", action="store_true", help="rank-stabilized LoRA scaling")
+    ap.add_argument("--kl-coef", type=float, default=0.0,
+                    help="KL-anchor weight on general-retention rows (0 = off)")
     args = ap.parse_args()
+
+    def _ret_paths():
+        # retention-ONLY (no --eval): write to --out/--save-answers so the launcher stages the
+        # exact files. With --eval: derive sibling names from the eval --out stem.
+        if not args.eval:
+            return args.out, args.save_answers
+        base = args.out.name.replace("-eval", "").replace(".json", "")
+        return (args.out.with_name(f"{base}-retention.json"),
+                args.out.with_name(f"{base}-retention-answers.json"))
 
     if args.smoke:
         log("SMOKE: train 2 steps then eval 2 cases x1 run")
         train(args.model, args.adapter, rows_path=args.rows, seq_len=args.seq_len,
-              epochs=1, seed=args.seed, lr=args.lr, smoke=True)
-        evaluate(args.model, args.adapter, runs=1, limit=2, out_path=args.out.with_name("M3-pilot-smoke.json"))
+              epochs=1, seed=args.seed, lr=args.lr, smoke=True, lora_rank=args.lora_rank,
+              lora_alpha=args.lora_alpha, use_rslora=args.use_rslora, kl_coef=args.kl_coef)
+        evaluate(args.model, args.adapter, runs=1, limit=2, out_path=args.out.with_name("M3-pilot-smoke.json"),
+                 bench_path=args.benchmark)
+        if args.retention:
+            evaluate_retention(args.model, args.adapter,
+                               out_path=args.out.with_name("M3-pilot-retention-smoke.json"))
         log("SMOKE OK")
         return 0
     if args.train:
         train(args.model, args.adapter, rows_path=args.rows, seq_len=args.seq_len,
-              epochs=args.epochs, seed=args.seed, lr=args.lr, smoke=False)
+              epochs=args.epochs, seed=args.seed, lr=args.lr, smoke=False, lora_rank=args.lora_rank,
+              lora_alpha=args.lora_alpha, use_rslora=args.use_rslora, kl_coef=args.kl_coef)
     if args.eval:
         evaluate(args.model, args.adapter, runs=args.runs, limit=args.limit, out_path=args.out,
-                 answers_path=args.save_answers)
+                 answers_path=args.save_answers, bench_path=args.benchmark)
+    if args.retention:
+        ret_out, ret_ans = _ret_paths()
+        evaluate_retention(args.model, args.adapter, out_path=ret_out, answers_path=ret_ans)
     return 0
 
 

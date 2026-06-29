@@ -300,6 +300,52 @@ tr:nth-child(even) td { background: color-mix(in srgb, var(--surface) 60%, trans
 .score-fill.full { background: linear-gradient(90deg, var(--accept), var(--accept)); }
 .score-fill.low  { background: linear-gradient(90deg, var(--block), var(--block)); }
 
+/* ---- benchmark comparison charts -------------------------------------- */
+.cchart {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.25rem 1.35rem; margin: 1.25rem 0;
+  box-shadow: var(--shadow);
+}
+.cchart-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.cchart-head h3 { margin: 0; font-size: 1.05rem; }
+.cverdict {
+  font-family: var(--sans); font-size: .72rem; font-weight: 600; white-space: nowrap;
+  padding: .18rem .55rem; border-radius: 999px; border: 1px solid transparent;
+}
+.cverdict.v-win   { color: var(--accept);  background: var(--accept-bg);  border-color: var(--accept); }
+.cverdict.v-mixed { color: var(--abstain); background: var(--abstain-bg); border-color: var(--abstain); }
+.cverdict.v-loss  { color: var(--block);   background: var(--block-bg);   border-color: var(--block); }
+.cchart-sub { font-family: var(--sans); font-size: .82rem; color: var(--muted); margin: .35rem 0 0; }
+.cchart-metric { font-family: var(--sans); font-size: .78rem; color: var(--ink-soft); margin: .55rem 0 .9rem; }
+.cchart-metric span { color: var(--muted); font-style: italic; }
+.cgroup { margin-bottom: 1rem; }
+.cgroup:last-child { margin-bottom: 0; }
+.cgroup-label { font-family: var(--sans); font-size: .8rem; font-weight: 600; color: var(--ink-soft); margin-bottom: .45rem; }
+.cbar-row { display: grid; grid-template-columns: 190px 1fr; gap: .7rem; align-items: center; margin: .4rem 0; }
+.cbar-label { font-family: var(--sans); font-size: .8rem; color: var(--ink-soft); }
+.cbar-track { position: relative; background: var(--surface-2); border-radius: var(--radius-sm); height: 26px; overflow: hidden; }
+.cbar-fill { height: 100%; border-radius: var(--radius-sm); min-width: 2px; transition: width .5s ease; }
+.cbar-fill.is-sophia    { background: linear-gradient(90deg, var(--accept), var(--accept)); }
+.cbar-fill.is-rival     { background: linear-gradient(90deg, var(--bronze), var(--bronze-deep)); }
+.cbar-fill.is-rival-low { background: linear-gradient(90deg, var(--block), var(--block)); }
+.cbar-value {
+  position: absolute; left: .55rem; top: 50%; transform: translateY(-50%);
+  font-family: var(--mono); font-size: .76rem; font-weight: 500; color: var(--ink);
+  text-shadow: 0 0 4px var(--surface), 0 0 4px var(--surface);
+}
+.bar-ci { font-family: var(--sans); font-size: .68rem; color: var(--ink-soft); margin-left: .4rem; text-shadow: 0 0 4px var(--surface), 0 0 4px var(--surface); }
+.cchart-note { font-family: var(--sans); font-size: .8rem; color: var(--muted); margin: .9rem 0 0; line-height: 1.55; border-top: 1px dashed var(--border-soft); padding-top: .7rem; }
+.honesty-box {
+  background: var(--abstain-bg); border: 1px solid var(--abstain);
+  border-radius: var(--radius); padding: 1.1rem 1.35rem; margin: 1.5rem 0;
+}
+.honesty-box h3 { margin: 0 0 .6rem; font-size: .95rem; color: var(--bronze-deep); }
+.honesty-box ul { margin: 0; padding-left: 1.1rem; }
+.honesty-box li { font-family: var(--sans); font-size: .83rem; color: var(--ink-soft); margin: .4rem 0; line-height: 1.55; }
+@media (max-width: 560px) {
+  .cbar-row { grid-template-columns: 1fr; gap: .25rem; }
+}
+
 /* council panel — echoes the religion answer format */
 .council-panel {
   background: var(--surface); border: 1px solid var(--border);

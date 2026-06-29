@@ -1,0 +1,30 @@
+{
+  "schema": "sophia.attribution_swap_verifier.v1",
+  "experiment": "Attribution-swap verifier (Wikidata) \u2014 LIVE, 3 runs",
+  "date": "2026-06-28",
+  "answer_spec": "llmhub:claude-sonnet-4-6",
+  "judge_spec": "openrouter:deepseek/deepseek-chat",
+  "answer_judge_separated": true,
+  "runs": 3,
+  "contamination_caught": {
+    "mean_pct": 10.8,
+    "ci95_pct": [
+      9.3,
+      11.6
+    ]
+  },
+  "clean_over_blocked": {
+    "mean_pct": 0.0,
+    "ci95_pct": [
+      0.0,
+      0.0
+    ]
+  },
+  "independence": "high (Wikidata structured creator/author/discoverer record; no model judgment)",
+  "scope": "Targets the citation_swap STYLE only (a REAL work credited to the wrong creator). Overall pack catch is 10.8% because attribution-swap is ~10 of 60 cases; within that style it catches ~2/3 (the cleanly Wikidata-resolvable works: GR->Hilbert, periodic table->Lavoisier, Mona Lisa->Raphael, penicillin->Pasteur). 0% clean over-block across 3 runs (tight CI). Honest misses: entity-ambiguous works (Hamlet's top search hit is the wrong entity) fail OPEN (unknown, never a fabricated swap), and a genuinely co-credited person (Franklin for DNA) is correctly NOT flagged. Verifies the answer-side attribution against the authoritative record, with HIGH independence \u2014 complementary to the citation-existence verifier (fabricated studies) and Google (viral myths).",
+  "protocol_note": "Run with answer-spec != judge-spec and >=3 runs with a bootstrap 95% CI \u2014 the default rigorous protocol the capstone recommends.",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false
+}

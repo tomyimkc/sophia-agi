@@ -113,6 +113,10 @@ def collect_curated_chunks(*, include_teacher_examples: bool = True) -> list[Rag
     chunks: list[RagChunk] = []
 
     for json_path in sorted(DATA_DIR.glob("*.json")):
+        # settled_* are Sophia-Wisdom TRAINING scaffolds (direct-answer calibration aids), not
+        # curated OKF provenance records — keep them out of the general retrieval index.
+        if json_path.stem.startswith("settled_"):
+            continue
         domain = None
         if json_path.stem in ("attributions", "traditions"):
             domain = "philosophy"

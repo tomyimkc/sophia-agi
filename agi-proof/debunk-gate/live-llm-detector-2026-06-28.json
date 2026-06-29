@@ -1,0 +1,125 @@
+{
+  "schema": "sophia.debunk_gate_live.v3",
+  "experiment": "Rec 1 \u2014 LLM/NLI debunk detector, LIVE (detection vs verification)",
+  "date": "2026-06-28",
+  "subject": "llmhub:claude-sonnet-4-6",
+  "judge": "openrouter:deepseek/deepseek-chat",
+  "detection_counts": {
+    "debunk": 21
+  },
+  "detection_debunk_rate": 1.0,
+  "verified_debunk_rate": 0.0,
+  "n_cases": 21,
+  "finding": "DETECTION FIXED: the LLM detector classifies 21/21 (100%) of the strong-model answers as `debunk`, vs the keyword classify_response's 0/21 \u2014 Rec 1 takes debunk detection from 0% to 100% on real data. BUT VERIFICATION is the new bottleneck: 0/21 debunks were confirmed, because agent.fact_check_text decomposes the verbose refutation into many atomic claims and fail-closes unless EVERY claim is entailed by >=2 of the narrow curated truth_refs \u2014 which a rich debunk never satisfies. The binding constraint moved from detection to verification (the SAME over-strict atomic-claim entailment that over-blocks 70.6% of clean answers in the hardened Cluster C run).",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "rows": [
+    {
+      "id": "yale_voynich",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "bacon_voynich",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "einstein_nobel_relativity",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "great_wall_space",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "edison_lightbulb_invented",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "napoleon_short",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "human_brain_ten_percent",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "everest_tallest_mountain",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "goldfish_memory",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "columbus_flat_earth",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "shakespeare_sonnet_154_dedication",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "pluto_largest_planet",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "wall_china_built_one_dynasty",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "lightning_never_strikes_twice",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "vikings_horned_helmets",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "mozart_twinkle_composed",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "blood_blue_in_veins",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "bats_blind",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "sushi_means_raw_fish",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "tongue_taste_map",
+      "detect": "debunk",
+      "verified_debunk": false
+    },
+    {
+      "id": "chameleon_color_camouflage",
+      "detect": "debunk",
+      "verified_debunk": false
+    }
+  ]
+}

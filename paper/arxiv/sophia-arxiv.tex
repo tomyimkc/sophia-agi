@@ -1,0 +1,164 @@
+% SPDX-License-Identifier: Apache-2.0
+% Copyright (c) 2026 tomyimkc (Yim Kin Cheong), ORCID 0009-0005-9520-0033
+%
+% arXiv-ready source for the Sophia whitepaper (v0.11.0). Compiles with a standard
+% TeX Live: pdflatex sophia-arxiv.tex (x2 for refs). Mirrors paper/sophia-whitepaper.md;
+% the Markdown remains the canonical version. Honest framing: AGI-CANDIDATE, not proven AGI.
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue, citecolor=blue}
+
+\title{Sophia --- the Wisdom Gate:\\
+A Provenance-Aware, Verifier-Gated Reasoning Layer\\
+That Abstains Instead of Fabricating}
+\author{Yim Kin Cheong\\
+\small Independent researcher (tomyimkc), Hong Kong\\
+\small ORCID: \href{https://orcid.org/0009-0005-9520-0033}{0009-0005-9520-0033}}
+\date{Version 0.11.0 --- 2026-06-28}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Modern large language models (LLMs) confidently produce \textbf{attribution hallucinations}:
+they credit the wrong author for an idea, merge distinct intellectual traditions, treat
+legendary figures as literal authors, or cite authorities that do not exist --- and then reason
+on top of those errors. We present \textbf{Sophia (the Wisdom Gate)}, a provenance-aware,
+verifier-gated reasoning layer that \textbf{abstains instead of fabricating}. The control loop is
+\emph{claim $\rightarrow$ verify against sources $\rightarrow$ accept $\cdot$ abstain $\cdot$
+block}. Sophia couples (i) a queryable belief/provenance graph with confidence propagation,
+retraction, and counterfactual analysis; (ii) deterministic and model-based verifiers that gate
+claim promotion; (iii) calibrated abstention; and (iv) a fail-closed governance contract. We
+evaluate under a \emph{pre-registered no-overclaim gate}: a number is \emph{validated} only with
+$\ge 2$ independent judge families in consensus, reported inter-judge agreement (Cohen's
+$\kappa$), $\ge 3$ runs, and confidence intervals. On a local 8B model, Sophia reduces
+hallucinated attributions from $36.1\% \rightarrow 23.6\%$ ($\Delta\,12.5\%$, 95\% CI
+$[5.6\%, 19.4\%]$) at $0\%$ false-positive cost; on ``I don't know'' traps a deterministic scorer
+measures $0\%$ fabrication for the full pipeline versus $16.7$--$25\%$ for the raw model
+($\kappa = 0.74$). This release adds a layered, \emph{independence-labelled} verification toolkit
+(viral-claim fact-check, authorship and wrong-creator attribution checks, fabricated-citation
+existence, and a multi-judge source-faithfulness check), and characterizes the limits of
+open-world verification: a precision/recall ``no free lunch'' law, plus the discovery and
+\emph{correction} of one of the system's own over-claims. We make \textbf{no} claim of general
+intelligence.
+\end{abstract}
+
+\section{The problem}
+LLMs are fluent before they are faithful. The failure mode we target is not generic
+``hallucination'' but \textbf{attribution hallucination}, which is damaging because the error
+becomes a \emph{premise} for downstream reasoning: crediting \emph{Confucius} with text from the
+\emph{Dao De Jing}; attributing a 20th-century idea to an earlier figure (anachronism); treating
+legendary figures as literal authors; in law, citing authorities that do not exist (the
+\emph{Mata v.\ Avianca} failure) or misstating what a real authority held (the \emph{Ayinde}
+misstated-authority failure). These are \emph{verifiable} errors --- there is ground truth a
+machine can check --- which is precisely what a fluency-optimized decoder does not do by default.
+
+\section{Design principles}
+(1) Everything is a claim with sources. (2) Verification is first-class; the model is not trusted
+to self-police. (3) Fail-closed, not fail-open: on low confidence, source conflict, or failed
+verification, Sophia abstains or escalates --- it never fabricates to fill a gap.
+(4) \emph{Functional} self-modeling, not consciousness --- no claim to subjective experience.
+(5) Local-first and sovereign (multi-backend, airgap-capable).
+
+\section{Method}
+\textbf{The gate.} Retrieve $\rightarrow$ reason $\rightarrow$ verify $\rightarrow$
+accept/abstain/block. \textbf{Belief \& provenance graph} with min-over-chain confidence,
+retraction, and counterfactual removal (``what would I conclude if this source were withdrawn?'').
+\textbf{Verifier classes}: deterministic (no model; e.g.\ citation existence, arithmetic) and
+model-based (held to the no-overclaim gate). \textbf{Calibrated abstention} via self-consistency
+selective prediction. \textbf{Fail-closed governance contract}: authorization $\rightarrow$
+dataflow firewall $\rightarrow$ kill-switch $\rightarrow$ Bell--LaPadula classification
+$\rightarrow$ taint-labeling on side-effecting tools, with re-verification of served output.
+
+\subsection{The independent-verification toolkit (layered, independence-labelled)}
+The verification step is a layer of independent oracles, each routed to the fabrication mode it
+covers and each verdict tagged with its \textbf{independence tier}:
+\begin{itemize}
+  \item viral/general claims $\rightarrow$ professional fact-check verdicts (Google ClaimReview) --- \emph{high};
+  \item authorship $\rightarrow$ Wikidata creator/author/discoverer records --- \emph{high};
+  \item fabricated citations $\rightarrow$ study/DOI existence in Crossref --- \emph{high};
+  \item wrong-creator attribution swaps $\rightarrow$ the Wikidata record vs the credited person --- \emph{high};
+  \item misstated findings of a real source $\rightarrow$ a multi-judge entailment panel over an
+        \emph{independent} retrieved source, strict-majority consensus --- \emph{medium} (model-based, flagged);
+  \item everything else $\rightarrow$ \textbf{fail-closed abstention}.
+\end{itemize}
+Two commitments make this trustworthy rather than merely plausible: \textbf{fail-open on
+ignorance} (a claim no oracle covers is not flagged --- never a fabricated contradiction), and
+\textbf{honest coverage accounting} (a \emph{clean} verdict means ``no independent record
+contradicts this,'' not ``true''). The result is a precision/recall trade governed by reference
+quality, not a silver bullet.
+
+\section{Measurement discipline: the no-overclaim gate}
+Every public number must clear a pre-registered bar: $\ge 2$ independent judge families in
+consensus (judge $\ne$ subject); reported inter-judge agreement ($\kappa \ge 0.40$); $\ge 3$ runs;
+confidence intervals. Anything below is labeled \emph{illustrative} or \emph{candidate}.
+Hidden-eval prompts are never published. \emph{Self-correction is part of the method}: an
+independent judge audit revised one single-judge rate down; and an earlier $70.6\%$ over-block
+figure was found to be a stale-report artifact and \textbf{withdrawn} (corrected to $5.9\%$).
+
+\section{Results (selected)}
+\begin{table}[h]\centering
+\caption{Provenance delta (validated). Subject \texttt{dolphin-llama3:8b}; judges = consensus of
+DeepSeek-Chat + Llama-3.3-70B (2 families); 3 runs.}
+\begin{tabular}{lllll}
+\toprule
+Halluc.\ (alone) & Halluc.\ (gated) & $\Delta$ (95\% CI) & FP cost & Coverage \\
+\midrule
+$36.1\%$ & $23.6\%$ & $\mathbf{12.5\%\ [5.6\%, 19.4\%]}$ & $\mathbf{0.0\%}$ & $34.6\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Calibration / abstention (validated).} Full Sophia vs raw DeepSeek-Chat on
+unknown-author/quote traps: $0\%$ fabrication for Sophia in all 3 runs vs $16.7$--$25\%$ raw;
+calibration $\Delta\,22.0\%\ [14.5\%, 29.6\%]$; corroborated by GPT-4o + Claude-Sonnet ($\kappa = 0.74$).
+
+\textbf{Verifier accuracy (deterministic).} \texttt{legal\_citation\_exists} catches fabricated
+HK/UK/US citations (incl.\ the real \emph{Mata} fabrication) at $100\%$ on $N{=}14$ --- validating
+the extraction + fail-closed logic, not a headline capability claim.
+
+\textbf{Independent-verification toolkit (live, candidate).} The high-independence verifiers hold
+$0\%$ clean over-block with no model judgment; the attribution-swap verifier (Wikidata), run with
+separated answer/judge models over 3 runs with a bootstrap CI, caught $10.8\%\ [9.3\%, 11.6\%]$ of
+a mixed pack ($\approx 2/3$ of the swap cases it targets) at $0.0\%\ [0,0]$ over-block. The honest
+finding is a law, not a defect: catching open-world contamination requires \emph{either} an oracle
+that covers the claim (sparse), \emph{or} fail-closed strictness (which over-blocks), \emph{or}
+model knowledge (low independence). Trustworthiness comes from \emph{composing}
+labelled-independence layers and abstaining.
+
+\textbf{The honest tradeoff (candidate).} On a thin-source wiki corpus, strict grounding scores
+$1.0$ vs $0.0$ on attribution-traps but collapses to $0.50$ vs $0.93$ on plain recall, so the raw
+model wins overall; a typed-gate + graph-neighborhood hybrid recovers recall to $\approx 0.68$
+while keeping all traps on the hard-abstain path.
+
+\section{Related work}
+Hallucination and faithfulness; selective prediction / calibration; retrieval-augmented
+generation; fact-checking corpora (ClaimReview); structured knowledge bases (Wikidata, Crossref);
+NLI/entailment; LLM-as-judge and its failure modes; defensive publication and provenance. (See the
+project's prior-art survey for the full treatment.)
+
+\section{Limitations}
+Self-authored synthetic packs; one operator's keys; single-run live numbers are candidates pending
+$\ge 3$-run CIs; oracle coverage is domain-bounded; model-based layers are lower-independence;
+entity disambiguation bounds recall; \textbf{no third-party clean-room replication yet} --- the
+reason \texttt{canClaimAGI} remains \textbf{false}.
+
+\section{Reproducibility}
+Keyless deterministic tests; live bench commands with documented env vars; a self-contained
+third-party replication pack (\texttt{agi-proof/verification-replication/}: a two-tier runbook,
+machine-readable expected results, a decontamination checklist, and a manifest checker). The
+failure ledger and the trustworthiness capstone are first-class artifacts.
+
+\section*{Availability and citation}
+Source: \url{https://github.com/tomyimkc/sophia-agi} (Apache-2.0). Archived release with a
+permanent DOI on Zenodo; cite via the repository's \texttt{CITATION.cff}.
+
+\paragraph{Defensive-publication note.} This document is released to establish prior art and a
+citable priority date for the method described. It is not a claim of AGI.
+
+\end{document}

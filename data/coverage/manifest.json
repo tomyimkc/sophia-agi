@@ -1,0 +1,8 @@
+{
+  "schema": "sophia.coverage_pack.v1",
+  "n": 15,
+  "totalAspects": 75,
+  "sha256": "81cd4f915320579be4d895fe06eb374f8a9b9abb5fc2e5986bb6d492458156a7",
+  "author_model": "deepseek/deepseek-chat",
+  "purpose": "decomposition/coverage benchmark \u2014 the fair positive test for the swarm"
+}

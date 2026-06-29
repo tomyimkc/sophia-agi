@@ -1,0 +1,44 @@
+{
+  "subject": "meta-llama/llama-3.1-8b-instruct",
+  "n": 20,
+  "calls": 44,
+  "solo": {
+    "lexical": 1.0,
+    "stance": 0.75,
+    "llm:deepseek/deepseek-chat": 0.95
+  },
+  "swarm": {
+    "lexical": 1.0,
+    "stance": 0.8,
+    "llm:deepseek/deepseek-chat": 0.95
+  },
+  "deltas": {
+    "lexical": {
+      "delta": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "excludes_zero": false
+    },
+    "stance": {
+      "delta": 0.05,
+      "ci95": [
+        -0.15,
+        0.25
+      ],
+      "excludes_zero": false
+    },
+    "llm:deepseek/deepseek-chat": {
+      "delta": 0.0,
+      "ci95": [
+        -0.15,
+        0.15
+      ],
+      "excludes_zero": false
+    }
+  },
+  "kappa_between_families": 0.0,
+  "allFamiliesWin": false,
+  "note": "swarm 'win' = every judge family's paired CI on (swarm-solo) excludes zero."
+}

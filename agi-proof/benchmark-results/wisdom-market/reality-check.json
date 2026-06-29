@@ -1,0 +1,565 @@
+{
+  "benchmark": "wisdom-market heldout_v1 (same cases as adapter eval)",
+  "N": 1062,
+  "mde": 0.061,
+  "adapterPromptAbsolute": {
+    "qualification_rate_on_contested": 0.9781,
+    "moral_route_accuracy": 0.8628,
+    "provenance_accuracy": 1.0,
+    "citation_fidelity": 1.0,
+    "false_attribution_rate": 0.0,
+    "contested_fabrication_rate": 0.0,
+    "tradition_merge_rate": 0.0,
+    "over_abstention_rate": 0.0026
+  },
+  "frontierRawAbsolute": {
+    "openrouter:x-ai/grok-4.3": {
+      "qualification_rate_on_contested": 0.4153,
+      "moral_route_accuracy": 0.3333,
+      "provenance_accuracy": 0.9967,
+      "citation_fidelity": 1.0,
+      "false_attribution_rate": 0.0019,
+      "contested_fabrication_rate": 0.0765,
+      "tradition_merge_rate": 0.1191,
+      "over_abstention_rate": 0.0291
+    },
+    "openrouter:deepseek/deepseek-chat-v3.1": {
+      "qualification_rate_on_contested": 0.377,
+      "moral_route_accuracy": 0.3137,
+      "provenance_accuracy": 1.0,
+      "citation_fidelity": 0.6666,
+      "false_attribution_rate": 0.0,
+      "contested_fabrication_rate": 0.1093,
+      "tradition_merge_rate": 0.1726,
+      "over_abstention_rate": 0.0114
+    },
+    "openrouter:mistralai/mistral-large-2512": {
+      "qualification_rate_on_contested": 0.4098,
+      "moral_route_accuracy": 0.3922,
+      "provenance_accuracy": 0.9983,
+      "citation_fidelity": 0.9722,
+      "false_attribution_rate": 0.0,
+      "contested_fabrication_rate": 0.1257,
+      "tradition_merge_rate": 0.1845,
+      "over_abstention_rate": 0.0329
+    }
+  },
+  "frontierPromptAbsolute": {
+    "openrouter:x-ai/grok-4.3": {
+      "qualification_rate_on_contested": 0.4918,
+      "moral_route_accuracy": 0.902,
+      "provenance_accuracy": 0.9833,
+      "citation_fidelity": 1.0,
+      "false_attribution_rate": 0.0195,
+      "contested_fabrication_rate": 0.082,
+      "tradition_merge_rate": 0.244,
+      "over_abstention_rate": 0.019
+    },
+    "openrouter:deepseek/deepseek-chat-v3.1": {
+      "qualification_rate_on_contested": 0.5355,
+      "moral_route_accuracy": 0.9412,
+      "provenance_accuracy": 0.9917,
+      "citation_fidelity": 0.9444,
+      "false_attribution_rate": 0.0058,
+      "contested_fabrication_rate": 0.0601,
+      "tradition_merge_rate": 0.1548,
+      "over_abstention_rate": 0.0241
+    },
+    "openrouter:mistralai/mistral-large-2512": {
+      "qualification_rate_on_contested": 0.7869,
+      "moral_route_accuracy": 0.902,
+      "provenance_accuracy": 0.9967,
+      "citation_fidelity": 1.0,
+      "false_attribution_rate": 0.0039,
+      "contested_fabrication_rate": 0.0164,
+      "tradition_merge_rate": 0.1607,
+      "over_abstention_rate": 0.0824
+    }
+  },
+  "comparison_vs_raw": [
+    {
+      "model": "openrouter:x-ai/grok-4.3",
+      "metric": "qualification_rate_on_contested",
+      "adapter": 0.978,
+      "frontier": 0.415,
+      "gap_adapter_minus_frontier": 0.563,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": true
+    },
+    {
+      "model": "openrouter:x-ai/grok-4.3",
+      "metric": "moral_route_accuracy",
+      "adapter": 0.863,
+      "frontier": 0.333,
+      "gap_adapter_minus_frontier": 0.53,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": false
+    },
+    {
+      "model": "openrouter:x-ai/grok-4.3",
+      "metric": "provenance_accuracy",
+      "adapter": 1.0,
+      "frontier": 0.997,
+      "gap_adapter_minus_frontier": 0.003,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:x-ai/grok-4.3",
+      "metric": "citation_fidelity",
+      "adapter": 1.0,
+      "frontier": 1.0,
+      "gap_adapter_minus_frontier": 0.0,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:x-ai/grok-4.3",
+      "metric": "false_attribution_rate",
+      "adapter": 0.0,
+      "frontier": 0.002,
+      "gap_adapter_minus_frontier": 0.002,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": true
+    },
+    {
+      "model": "openrouter:x-ai/grok-4.3",
+      "metric": "contested_fabrication_rate",
+      "adapter": 0.0,
+      "frontier": 0.076,
+      "gap_adapter_minus_frontier": 0.076,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": false
+    },
+    {
+      "model": "openrouter:x-ai/grok-4.3",
+      "metric": "tradition_merge_rate",
+      "adapter": 0.0,
+      "frontier": 0.119,
+      "gap_adapter_minus_frontier": 0.119,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": true
+    },
+    {
+      "model": "openrouter:x-ai/grok-4.3",
+      "metric": "over_abstention_rate",
+      "adapter": 0.003,
+      "frontier": 0.029,
+      "gap_adapter_minus_frontier": 0.027,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:deepseek/deepseek-chat-v3.1",
+      "metric": "qualification_rate_on_contested",
+      "adapter": 0.978,
+      "frontier": 0.377,
+      "gap_adapter_minus_frontier": 0.601,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": true
+    },
+    {
+      "model": "openrouter:deepseek/deepseek-chat-v3.1",
+      "metric": "moral_route_accuracy",
+      "adapter": 0.863,
+      "frontier": 0.314,
+      "gap_adapter_minus_frontier": 0.549,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": false
+    },
+    {
+      "model": "openrouter:deepseek/deepseek-chat-v3.1",
+      "metric": "provenance_accuracy",
+      "adapter": 1.0,
+      "frontier": 1.0,
+      "gap_adapter_minus_frontier": 0.0,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:deepseek/deepseek-chat-v3.1",
+      "metric": "citation_fidelity",
+      "adapter": 1.0,
+      "frontier": 0.667,
+      "gap_adapter_minus_frontier": 0.333,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": false
+    },
+    {
+      "model": "openrouter:deepseek/deepseek-chat-v3.1",
+      "metric": "false_attribution_rate",
+      "adapter": 0.0,
+      "frontier": 0.0,
+      "gap_adapter_minus_frontier": 0.0,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": true
+    },
+    {
+      "model": "openrouter:deepseek/deepseek-chat-v3.1",
+      "metric": "contested_fabrication_rate",
+      "adapter": 0.0,
+      "frontier": 0.109,
+      "gap_adapter_minus_frontier": 0.109,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": false
+    },
+    {
+      "model": "openrouter:deepseek/deepseek-chat-v3.1",
+      "metric": "tradition_merge_rate",
+      "adapter": 0.0,
+      "frontier": 0.173,
+      "gap_adapter_minus_frontier": 0.173,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": true
+    },
+    {
+      "model": "openrouter:deepseek/deepseek-chat-v3.1",
+      "metric": "over_abstention_rate",
+      "adapter": 0.003,
+      "frontier": 0.011,
+      "gap_adapter_minus_frontier": 0.009,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:mistralai/mistral-large-2512",
+      "metric": "qualification_rate_on_contested",
+      "adapter": 0.978,
+      "frontier": 0.41,
+      "gap_adapter_minus_frontier": 0.568,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": true
+    },
+    {
+      "model": "openrouter:mistralai/mistral-large-2512",
+      "metric": "moral_route_accuracy",
+      "adapter": 0.863,
+      "frontier": 0.392,
+      "gap_adapter_minus_frontier": 0.471,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": false
+    },
+    {
+      "model": "openrouter:mistralai/mistral-large-2512",
+      "metric": "provenance_accuracy",
+      "adapter": 1.0,
+      "frontier": 0.998,
+      "gap_adapter_minus_frontier": 0.002,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:mistralai/mistral-large-2512",
+      "metric": "citation_fidelity",
+      "adapter": 1.0,
+      "frontier": 0.972,
+      "gap_adapter_minus_frontier": 0.028,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:mistralai/mistral-large-2512",
+      "metric": "false_attribution_rate",
+      "adapter": 0.0,
+      "frontier": 0.0,
+      "gap_adapter_minus_frontier": 0.0,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": true
+    },
+    {
+      "model": "openrouter:mistralai/mistral-large-2512",
+      "metric": "contested_fabrication_rate",
+      "adapter": 0.0,
+      "frontier": 0.126,
+      "gap_adapter_minus_frontier": 0.126,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": false
+    },
+    {
+      "model": "openrouter:mistralai/mistral-large-2512",
+      "metric": "tradition_merge_rate",
+      "adapter": 0.0,
+      "frontier": 0.184,
+      "gap_adapter_minus_frontier": 0.184,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": true
+    },
+    {
+      "model": "openrouter:mistralai/mistral-large-2512",
+      "metric": "over_abstention_rate",
+      "adapter": 0.003,
+      "frontier": 0.033,
+      "gap_adapter_minus_frontier": 0.03,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    }
+  ],
+  "comparison_vs_prompt": [
+    {
+      "model": "openrouter:x-ai/grok-4.3",
+      "metric": "qualification_rate_on_contested",
+      "adapter": 0.978,
+      "frontier": 0.492,
+      "gap_adapter_minus_frontier": 0.486,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": true
+    },
+    {
+      "model": "openrouter:x-ai/grok-4.3",
+      "metric": "moral_route_accuracy",
+      "adapter": 0.863,
+      "frontier": 0.902,
+      "gap_adapter_minus_frontier": -0.039,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:x-ai/grok-4.3",
+      "metric": "provenance_accuracy",
+      "adapter": 1.0,
+      "frontier": 0.983,
+      "gap_adapter_minus_frontier": 0.017,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:x-ai/grok-4.3",
+      "metric": "citation_fidelity",
+      "adapter": 1.0,
+      "frontier": 1.0,
+      "gap_adapter_minus_frontier": 0.0,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:x-ai/grok-4.3",
+      "metric": "false_attribution_rate",
+      "adapter": 0.0,
+      "frontier": 0.019,
+      "gap_adapter_minus_frontier": 0.019,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": true
+    },
+    {
+      "model": "openrouter:x-ai/grok-4.3",
+      "metric": "contested_fabrication_rate",
+      "adapter": 0.0,
+      "frontier": 0.082,
+      "gap_adapter_minus_frontier": 0.082,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": false
+    },
+    {
+      "model": "openrouter:x-ai/grok-4.3",
+      "metric": "tradition_merge_rate",
+      "adapter": 0.0,
+      "frontier": 0.244,
+      "gap_adapter_minus_frontier": 0.244,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": true
+    },
+    {
+      "model": "openrouter:x-ai/grok-4.3",
+      "metric": "over_abstention_rate",
+      "adapter": 0.003,
+      "frontier": 0.019,
+      "gap_adapter_minus_frontier": 0.016,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:deepseek/deepseek-chat-v3.1",
+      "metric": "qualification_rate_on_contested",
+      "adapter": 0.978,
+      "frontier": 0.535,
+      "gap_adapter_minus_frontier": 0.443,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": true
+    },
+    {
+      "model": "openrouter:deepseek/deepseek-chat-v3.1",
+      "metric": "moral_route_accuracy",
+      "adapter": 0.863,
+      "frontier": 0.941,
+      "gap_adapter_minus_frontier": -0.078,
+      "mde": 0.061,
+      "verdict": "BEHIND",
+      "headline": false
+    },
+    {
+      "model": "openrouter:deepseek/deepseek-chat-v3.1",
+      "metric": "provenance_accuracy",
+      "adapter": 1.0,
+      "frontier": 0.992,
+      "gap_adapter_minus_frontier": 0.008,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:deepseek/deepseek-chat-v3.1",
+      "metric": "citation_fidelity",
+      "adapter": 1.0,
+      "frontier": 0.944,
+      "gap_adapter_minus_frontier": 0.056,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:deepseek/deepseek-chat-v3.1",
+      "metric": "false_attribution_rate",
+      "adapter": 0.0,
+      "frontier": 0.006,
+      "gap_adapter_minus_frontier": 0.006,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": true
+    },
+    {
+      "model": "openrouter:deepseek/deepseek-chat-v3.1",
+      "metric": "contested_fabrication_rate",
+      "adapter": 0.0,
+      "frontier": 0.06,
+      "gap_adapter_minus_frontier": 0.06,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:deepseek/deepseek-chat-v3.1",
+      "metric": "tradition_merge_rate",
+      "adapter": 0.0,
+      "frontier": 0.155,
+      "gap_adapter_minus_frontier": 0.155,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": true
+    },
+    {
+      "model": "openrouter:deepseek/deepseek-chat-v3.1",
+      "metric": "over_abstention_rate",
+      "adapter": 0.003,
+      "frontier": 0.024,
+      "gap_adapter_minus_frontier": 0.021,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:mistralai/mistral-large-2512",
+      "metric": "qualification_rate_on_contested",
+      "adapter": 0.978,
+      "frontier": 0.787,
+      "gap_adapter_minus_frontier": 0.191,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": true
+    },
+    {
+      "model": "openrouter:mistralai/mistral-large-2512",
+      "metric": "moral_route_accuracy",
+      "adapter": 0.863,
+      "frontier": 0.902,
+      "gap_adapter_minus_frontier": -0.039,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:mistralai/mistral-large-2512",
+      "metric": "provenance_accuracy",
+      "adapter": 1.0,
+      "frontier": 0.997,
+      "gap_adapter_minus_frontier": 0.003,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:mistralai/mistral-large-2512",
+      "metric": "citation_fidelity",
+      "adapter": 1.0,
+      "frontier": 1.0,
+      "gap_adapter_minus_frontier": 0.0,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:mistralai/mistral-large-2512",
+      "metric": "false_attribution_rate",
+      "adapter": 0.0,
+      "frontier": 0.004,
+      "gap_adapter_minus_frontier": 0.004,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": true
+    },
+    {
+      "model": "openrouter:mistralai/mistral-large-2512",
+      "metric": "contested_fabrication_rate",
+      "adapter": 0.0,
+      "frontier": 0.016,
+      "gap_adapter_minus_frontier": 0.016,
+      "mde": 0.061,
+      "verdict": "PARITY",
+      "headline": false
+    },
+    {
+      "model": "openrouter:mistralai/mistral-large-2512",
+      "metric": "tradition_merge_rate",
+      "adapter": 0.0,
+      "frontier": 0.161,
+      "gap_adapter_minus_frontier": 0.161,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": true
+    },
+    {
+      "model": "openrouter:mistralai/mistral-large-2512",
+      "metric": "over_abstention_rate",
+      "adapter": 0.003,
+      "frontier": 0.082,
+      "gap_adapter_minus_frontier": 0.08,
+      "mde": 0.061,
+      "verdict": "AHEAD",
+      "headline": false
+    }
+  ],
+  "headlineSummary": "Adapter AHEAD of frontier on 6/9 headline metric(s) RAW and 6/9 even WITH the scaffold given to frontier — the LoRA adds real consistency beyond a prompt. A genuine narrow edge; still not a general-LLM claim, and pending a semantic-judge cross-check (markers reward the trained format).",
+  "boundary": "adapter(prompt) vs frontier(raw) = default/product framing; vs frontier(prompt) = isolates LoRA beyond scaffold; absolute MARKER rates (judge cross-check pending); candidate_only; canClaimAGI:false"
+}

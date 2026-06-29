@@ -14,6 +14,8 @@ Submodules:
 - ``run_arch``      : dense-vs-MoE probe at matched active compute.
 - ``run_sparse_quant`` : sparsity + adaptive-quant composition against the floor.
 - ``p7_router_ablation`` : P7 — router-policy ablation on fixed MoE experts.
+- ``recurrent_depth`` : RDT — the looped-transformer mechanism (OpenMythos / Mythos
+  reconstruction) at nano scale: LTI stability, depth extrapolation, weight sharing.
 """
 from __future__ import annotations
 
@@ -22,6 +24,17 @@ from pretraining.architecture.p7_router_ablation import (
     SCOPE_KEY,
     offline_invariants as p7_offline_invariants,
     run_ablation as p7_run_ablation,
+)
+from pretraining.architecture.recurrent_depth import (
+    NanoRDT,
+    offline_invariants as rdt_offline_invariants,
+    run_study as rdt_run_study,
+)
+from pretraining.architecture.vgrd import (
+    depth_confidence,
+    offline_invariants as vgrd_offline_invariants,
+    run_study as vgrd_run_study,
+    vgrd_decide,
 )
 from pretraining.architecture.run_arch import run as run_arch_probe
 from pretraining.architecture.run_sparse_quant import run as run_sparse_quant
@@ -32,6 +45,15 @@ __all__ = [
     "SCOPE_KEY",
     "p7_offline_invariants",
     "p7_run_ablation",
+    # Recurrent-Depth Transformer (looped-transformer mechanism)
+    "NanoRDT",
+    "rdt_offline_invariants",
+    "rdt_run_study",
+    # Verification-Gated Recurrent Depth (Phase-2 coupling to the Sophia gate)
+    "depth_confidence",
+    "vgrd_decide",
+    "vgrd_offline_invariants",
+    "vgrd_run_study",
     # study entry points
     "run_arch_probe",
     "run_sparse_quant",

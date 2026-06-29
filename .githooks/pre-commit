@@ -1,0 +1,18 @@
+#!/bin/sh
+# Opt-in pre-commit hook for the measurement contract. Install with `make hooks`
+# (sets core.hooksPath=.githooks). Runs the FAST deterministic subset so commits stay snappy;
+# the full suite (incl. the content-shingle decontam scan + claim receipts) runs in fast-ci.
+#
+# Bypass a single commit with `git commit --no-verify` (use sparingly — CI still enforces).
+set -e
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+echo "[pre-commit] claims linter (no-overclaim copy + registry/recipe receipts)…"
+python tools/lint_claims.py
+
+echo "[pre-commit] habit-not-fact training-row lint…"
+python tools/lint_training_rows.py
+
+echo "[pre-commit] OK — measurement-contract fast checks passed."

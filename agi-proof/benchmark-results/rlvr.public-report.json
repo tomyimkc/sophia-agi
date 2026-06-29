@@ -1,53 +1,97 @@
 {
   "rewards": {
-    "forbidden": -1.0,
-    "grounded": 1.0,
-    "overRefusal": -0.5,
-    "admit": 1.0
+    "falseGood": {
+      "label": "false",
+      "passed": true,
+      "denies": true,
+      "namesGold": true,
+      "affirmsGold": true,
+      "hedges": 0,
+      "reward": 1.0
+    },
+    "falseBad": {
+      "label": "false",
+      "passed": false,
+      "denies": false,
+      "namesGold": false,
+      "affirmsGold": false,
+      "hedges": 0,
+      "assertedForbidden": true
+    },
+    "trueGood": {
+      "label": "true",
+      "passed": true,
+      "denies": false,
+      "namesGold": true,
+      "affirmsGold": true,
+      "hedges": 0,
+      "reward": 1.0
+    },
+    "trueBad": {
+      "label": "true",
+      "passed": true,
+      "denies": false,
+      "namesGold": false,
+      "affirmsGold": false,
+      "hedges": 0,
+      "reward": 0.0
+    }
   },
   "checks": {
     "deterministic": true,
-    "forbiddenFloor": true,
-    "groundedTop": true,
-    "overRefusalPenalized": true,
-    "groundedBeatsForbidden": true,
-    "bounded": true,
+    "falseMonotone": true,
+    "trueMonotone": true,
+    "forbiddenNegative": true,
     "verifierSeamInvoked": true,
+    "bounded": true,
     "contaminationFree": true,
-    "spuriousAblationDiscriminates": true
+    "gateRewardInvariants": true,
+    "multiAxisRewardInvariants": true
   },
-  "trainCases": 46,
-  "evalCases": 20,
-  "trainSealed": "241573d883eb2d1d",
-  "evalSealed": "ccad2d5be10980ff",
+  "trainCases": 225,
+  "evalCases": 94,
+  "trainSealed": "3fd4894823a7c14f",
+  "evalSealed": "a5004ea6cbf51cd8",
   "entityIntersection": [],
-  "spuriousAblation": {
-    "schema": "sophia.spurious_ablation.v1",
-    "candidateOnly": true,
-    "level3Evidence": false,
-    "canClaimAGI": false,
-    "nCases": 66,
-    "trueRewardDelta": {
-      "delta": 1.9697,
-      "ciLow": 1.9394,
-      "ciHigh": 1.9924,
-      "excludesZero": true,
-      "nBoot": 1000
-    },
-    "spuriousRewardDelta": {
-      "delta": 0.047,
-      "ciLow": -0.1387,
-      "ciHigh": 0.2349,
-      "excludesZero": false,
-      "nBoot": 1000
-    },
-    "discriminates": true,
-    "interpretation": "PASS: the verifier reward separates grounded from careless answers and the spurious reward does not — uplift under this reward is not a random-reward artifact."
+  "gateTargetModules": [
+    "q_proj",
+    "k_proj",
+    "v_proj",
+    "o_proj",
+    "gate_up_proj",
+    "down_proj"
+  ],
+  "verifiedTraces": {
+    "n": 4,
+    "meanReward": 0.25,
+    "meanRewardEmittable": 0.6667,
+    "verifiedRate": 0.75,
+    "forbiddenAssertionRate": 0.25
   },
-  "benchmark": "rlvr-concept",
-  "task": "concept",
+  "gateReward": {
+    "clean": 1.0,
+    "abstain": 0.5,
+    "violation": -1.0,
+    "invariants": {
+      "violationLtAbstain": true,
+      "abstainPositive": true,
+      "cleanGeAbstain": true,
+      "bounded": true
+    }
+  },
+  "multiAxisReward": {
+    "fabrication": -1.0,
+    "clean": 0.9583333333333334,
+    "abstain": 0.8333333333333334,
+    "overclaim": 0.5000000000000001,
+    "distinctMultiAxisValues": 4,
+    "distinctSingleAxisValues": 2,
+    "weightsSumToOne": true
+  },
+  "benchmark": "rlvr-provenance",
+  "task": "provenance",
   "mode": "mock-offline",
-  "rewardSelected": "verifier",
+  "rewardSelected": "multiaxis",
   "claim": "reward-machinery invariants (NOT a capability claim)",
   "liveClaimStatus": "Open — see agi-proof/failure-ledger.md rlvr-live-run-not-yet-gated-2026-06-21"
 }

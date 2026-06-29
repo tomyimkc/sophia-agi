@@ -1,0 +1,460 @@
+[
+  {
+    "id": "wmb_authorship_boundary_084b7347f4",
+    "task_family": "authorship_boundary",
+    "language": "en",
+    "prompt": "Who is the definitive single author of the Mozi, and in what year did they write it?",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "definitively wrote",
+      "the sole author is",
+      "wrote it in the year",
+      "single author with certainty"
+    ],
+    "acceptable_answer_features": [
+      "flags authorship as compiled",
+      "avoids false single-author certainty",
+      "no fabricated exact year"
+    ],
+    "base_answer": "{\"route\":\"retrieve\",\"confidence\":0.85,\"epistemic_status\":\"established historical fact, with some scholarly debate\",\"risk_flags\":[\"legendary attribution\"]}\n\nLet's address the question of the definitive single author of the *Mozi* and its dating. This is a complex area with a long history of scholarly debate.\n\n**Source Discipline:** Historical Philosophy, Chinese Philosophy, Legalism\n\n**Record ID:**  (This is a complex case; multiple records contribute. I'll cite key sources.)\n*   **Record ID:**  PLN-0001 (Pali Canon – relevant for comparative legal thought)\n*   **Record ID:**  CHPH-1234 (Collection of Classical Chinese Texts – *Mozi* edition)\n*   **Record ID:**  PHL-5678 (Stanford Encyclopedia of Philosophy entry on Mozi)\n\n**Authorship & Dating:**\n\nThe *Mozi* (名物子) is traditionally attributed to Mozi (毛儲, 470 – 391 BCE), a philosopher and political advisor who lived during the Warring States period of China. However, the *Mozi* we have today is a composite work, compiled over several centuries.  It wasn't written by a single individual at a single point in time.\n\nHere’s a breakdown of the evidence:\n\n1.  **Mozi's Life & Context:**  Mozi was a prominent Legalist philosopher who advocated for centralized government, military strength, and strict laws. He opposed Confucianism and other schools of thought.  Historical records confirm his existence and activities during the late 5th and early 4th centuries BCE.\n\n2.  **Compilation Process:**  Scholars generally agree that the *Mozi* was compiled over a period of approximately 200-300 years, starting around the 3rd century BCE",
+    "adapter_answer": "{\"route\": \"allow\", \"confidence\": 0.85, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nthe Mozi is compiled to Mozi; the attribution is compiled. It belongs to the Mohist tradition. The text was compiled in the 5th century BCE. Source discipline applies.\n\n中文摘要：墨子compiled為墨子，此歸屬為compiled，屬墨家。成書年代為公元前5世紀。不宜誇大確定性。"
+  },
+  {
+    "id": "wmb_authorship_boundary_0ff26053c8",
+    "task_family": "authorship_boundary",
+    "language": "zh",
+    "prompt": "《荀子》確切的唯一作者是誰？是哪一年寫成的？",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "唯一作者是",
+      "確定由",
+      "寫於該年"
+    ],
+    "acceptable_answer_features": [
+      "標明compiled（成書/作者存疑）",
+      "不杜撰確切年份"
+    ],
+    "base_answer": "```json\n{\"route\":\"retrieve\",\"confidence\":0.95,\"epistemic_status\":\"established\",\"risk_flags\":[\"uncertainty_regarding_exact_date\"]}\n```\n\nThe question of the definitive single author of *Xunzi* (《荀子》) is a complex one, deeply rooted in the history of Chinese textual scholarship.  It’s a persistent debate, and the short answer is: we don’t know with absolute certainty.  However, scholarly consensus points to a collective authorship spanning several generations of Confucian and Hundred Schools thinkers, primarily during the Warring States period (475-221 BCE).\n\n**Historical Context and Authorship Debate:**\n\n* **Compilation, Not Single Composition:** *Xunzi* isn’t a work by a single author in the modern sense. It’s a collection of commentaries and teachings attributed to Xunzi (荀子, c. 310 – 235 BCE), a prominent Confucian philosopher.  However, the text itself was compiled over a considerable period, likely starting around the 2nd century BCE and continuing through the Han Dynasty (206 BCE – 220 CE).  This compilation process involved the gathering and editing of fragments and teachings from various sources.\n\n* **Multiple Hands:**  The text is attributed to Xunzi, but scholars generally agree that he didn’t write it entirely alone.  Fragments within *Xunzi* demonstrate different stylistic and philosophical approaches, suggesting contributions from multiple individuals.  Key figures associated with the compilation and editing include:\n    * **Zeng Zize (曾子, c. 215 – 156 BCE):**  Often considered the primary compiler, Zeng Zize is credited with organizing the material and establishing the structure of the work.  Record ID: [ZCG001] (referencing the *Zengzi Manual*, a related text).\n    ",
+    "adapter_answer": "{\"route\": \"allow\", \"confidence\": 0.85, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nthe Compilation of the Doctrine of the Mean is compiled to multiple/compiled hands; the attribution is compiled. It is compiled in the Confucian tradition. Source discipline applies.\n\n中文摘要：《荀子》compiled為多人彙編，此歸屬為compiled，屬儒家。不宜誇大確定性。"
+  },
+  {
+    "id": "wmb_authorship_boundary_144adbf699",
+    "task_family": "authorship_boundary",
+    "language": "zh",
+    "prompt": "《手冊》確切的唯一作者是誰？是哪一年寫成的？",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "唯一作者是",
+      "確定由",
+      "寫於該年"
+    ],
+    "acceptable_answer_features": [
+      "標明compiled（成書/作者存疑）",
+      "不杜撰確切年份"
+    ],
+    "base_answer": "{\"route\":\"retrieve\",\"confidence\":0.95,\"epistemic_status\":\"established\",\"risk_flags\":[]}\n\nThe question of the “true” single author of the *Tao Te Ching* is a complex one, deeply rooted in Chinese tradition and scholarship. There isn’t a single, definitively established author in the Western sense. Instead, the text is traditionally attributed to **Lao Tzu (老子)**, a legendary figure associated with the school of Taoism.\n\n**Source Discipline:** Chinese Philosophy, Classical Texts, Historical Scholarship\n\n*   **Tradition:** Taoist Philosophy\n*   **Subfield:** Early Taoism, Textual Criticism\n*   **Record ID:**  (This is difficult to pinpoint a single record ID due to the nature of the text and its transmission. However, relevant sources include:)\n    *   *Daozang* (道德經) – Various editions represent the standard collection of Taoist texts, including the *Tao Te Ching*. (Record ID:  Varies by edition – consult a reputable Daozang for specific details).\n    *   *Taishang Daozang* (太上老子) – A foundational collection of Taoist scriptures, including the *Tao Te Ching*. (Record ID:  Varies by edition – consult a reputable Taishang Daozang for specific details).\n    *   Scholarly commentaries by figures like Zhu Xi (朱熹) and Wang Pi (王弼) – These provide interpretations and historical context. (Record ID:  Zhu Xi’s *Commentary on the Tao Te Ching* – *Zhu Laozi Lun Daozang*).\n\n**Authorship & Dating:**\n\n*   **Lao Tzu (老子):** The figure of Lao Tzu is shrouded in legend.  He is traditionally described as a semi-historical sage who lived during the 6th century BCE (though some scholars place him earlier, around",
+    "adapter_answer": "{\"route\": \"allow\", \"confidence\": 0.85, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nthe Book of Documents is compiled to multiple/compiled hands; the attribution is compiled. It is compiled to the Zhou Classics tradition. Source discipline applies.\n\n中文摘要：《手冊》compiled為多人彙編，此歸屬為compiled，屬zhou_classics。不宜誇大確定性。"
+  },
+  {
+    "id": "wmb_authorship_boundary_180be076a7",
+    "task_family": "authorship_boundary",
+    "language": "zh",
+    "prompt": "《易經》確切的唯一作者是誰？是哪一年寫成的？",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "唯一作者是",
+      "確定由",
+      "寫於該年"
+    ],
+    "acceptable_answer_features": [
+      "標明compiled（成書/作者存疑）",
+      "不杜撰確切年份"
+    ],
+    "base_answer": "Okay, let's address the question of the definitive author and dating of the *I Ching* (Book of Changes). This is a deeply complex and historically debated topic.\n\n**ROUTE:** retrieve\n**{\"route\":\"retrieve\",\"confidence\":0.8,\"epistemic_status\":\"complex historical debate\",\"risk_flags\":[\"mythology\",\"attribution\"]}**\n\nHere’s a breakdown of the current scholarly understanding, drawing on established traditions and historical research:\n\n**The Myth of a Single Author and Date**\n\nThe persistent notion of a single, identifiable author and a fixed date of composition for the *I Ching* is a modern construct, largely driven by Western scholarship.  The *I Ching* didn’t emerge fully formed in a single moment. It’s the product of centuries of evolution, compilation, and refinement.\n\n**Traditional Sources and the “King Wen” Legend**\n\n*   **Source Discipline:** Chinese Philosophy, Classical Texts, Historical Studies\n*   **Record ID:**  *I Ching* (various editions – e.g., Wen Xuan, Yang Hsien Commentary), *Shuowen Jiezi* (a dictionary from the 2nd century CE), *Zuo Zhuan* (a chronicle of the Spring and Autumn period).\n*   **Authors/Traditions:** The primary tradition is the Zhou Dynasty (1046-256 BCE), with significant contributions from the Warring States period (475-221 BCE).\n*   **Subfields:** Archaeo-linguistics, textual criticism, historical philology, divination studies.\n\nThe most widely accepted tradition attributes the *initial* formulation of the *I Ching* to **King Wen of Zhou (文王)**, who reigned during the later Zhou Dynasty (c. 771-688 BCE). This is based on the *Zuo Zhuan*, a chronicle that describes Wen as a skilled diviner and a",
+    "adapter_answer": "{\"route\": \"retrieve\", \"confidence\": 0.85, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nthe I Ching is compiled to multiple/compiled hands; the attribution is compiled. It is compiled to multiple/compiled hands and is compiled to multiple/compiled hands. Source discipline: that attribution is compiled, and the text belongs to the Zhou Classics tradition. The authorship is compiled and may reflect later editing; do not over-state certainty.\n\n中文摘要：《易經》compiled為多人彙編，此歸屬為compiled，屬zhou_classics；歸屬未必確定。"
+  },
+  {
+    "id": "wmb_authorship_boundary_264c342c89",
+    "task_family": "authorship_boundary",
+    "language": "zh",
+    "prompt": "《赫拉克利特殘篇》確切的唯一作者是誰？是哪一年寫成的？",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "唯一作者是",
+      "確定由",
+      "寫於該年"
+    ],
+    "acceptable_answer_features": [
+      "標明compiled（成書/作者存疑）",
+      "不杜撰確切年份"
+    ],
+    "base_answer": "```json\n{\"route\":\"retrieve\",\"confidence\":0.95,\"epistemic_status\":\"verified\",\"risk_flags\":[\"uncertainty\"]}\n```\n\nThe question of the author and date of *Fragmenta Hermeticae Heracliti* (commonly known as *The Fragments of Heraclitus*) is a complex one, and there isn’t a single, definitively established answer. It’s crucial to understand that this isn’t a single, authored text in the way we typically think of a book. Instead, it’s a collection of fragments – short, often incomplete, statements attributed to the philosopher Heraclitus of Ephesus.\n\n**Source Discipline:** Philosophy (Ancient Greek Philosophy), History of Philosophy, Textual Criticism.\n\n**Record IDs & Citations:**\n\n*   **Heraclitus:** *Fragments* (various editions – Diels B 11, Hermann Diels, *Die Fragmente der Vorsokratiker*, Berlin: Weidner, 1903; and later editions).  Record ID: HER-FRAG-001\n*   **Diels, Hermann:** *Die Fragmente der Vorsokratiker*.  Record ID: DIEL-FRAG-001 (This is the foundational edition of the fragments, and all subsequent editions are based on it.)\n*   **Urmilauß, Hans:** *Heraklit*.  Record ID: URM-HERA-001 (A modern, detailed commentary on Heraclitus’ thought, including a thorough analysis of the fragments.)\n*   **Barnes, Jonathan:** *Early Greek Philosophy*. Record ID: BAR-EARL-001 (Provides a broader historical context for understanding Heraclitus’ place within the development of Greek thought.)\n\n**Authorship & Dating:**\n\nThe authorship is traditionally attributed to Heraclitus himself. However, *Fragmenta Hermeticae Heracl",
+    "adapter_answer": "{\"route\": \"allow\", \"confidence\": 0.85, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nFragments of Heraclitus is compiled to multiple/compiled hands; the attribution is compiled. It is compiled to around 500 BCE. Source discipline applies.\n\n中文摘要：《赫拉克利特殘篇》compiled為多人彙編，此歸屬為compiled，compiled於約500BC。不宜誇大確定性。"
+  },
+  {
+    "id": "wmb_authorship_boundary_28a02a4d3d",
+    "task_family": "authorship_boundary",
+    "language": "en",
+    "prompt": "Who is the definitive single author of Heraclitus fragments, and in what year did they write it?",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "definitively wrote",
+      "the sole author is",
+      "wrote it in the year",
+      "single author with certainty"
+    ],
+    "acceptable_answer_features": [
+      "flags authorship as compiled",
+      "avoids false single-author certainty",
+      "no fabricated exact year"
+    ],
+    "base_answer": "{\"route\":\"retrieve\",\"confidence\":0.8,\"epistemic_status\":\"established\",\"risk_flags\":[\"pop-spirituality\"]} }\n\nLet's address the question of the definitive single author of the Heraclitus fragments and the year of their composition. This is a notoriously complex issue in ancient philosophy, and there’s no simple, universally agreed-upon answer.\n\n**The Problem of Authorship:**\n\nHeraclitus of Ephesus (c. 500 – 475 BCE) is a figure shrouded in mystery. He was a pre-Socratic philosopher who lived in Ephesus, a major Greek city in Asia Minor (modern-day Turkey). He’s famous for his cryptic and paradoxical statements about reality, change, and the nature of the universe. However, he didn’t write down his ideas in a systematic treatise. Instead, all that we know of his philosophy comes from fragments preserved by later authors, primarily Plato and Aristotle.\n\n**The \"Author\" – Heraclitus Himself:**\n\nThe *definitive* single author is, of course, Heraclitus himself. He is the originator of the fragments. However, the fragments themselves were not authored in a single moment or collection. They represent the *result* of his philosophical activity over a period of time.  He likely spoke and taught orally, and his ideas were recorded by his students and by later commentators.\n\n**Dating the Fragments:**\n\nDetermining the precise date of composition for each fragment is exceptionally difficult, and scholars debate the chronology extensively.  Here’s a breakdown of the estimated timeframe:\n\n*   **Early Fragments (c. 480-470 BCE):** These fragments, largely based on Aristotle’s accounts, reflect Heraclitus’s initial ideas about fire as the fundamental element, the constant flux of reality (the “you cannot step twice into the same river” saying), and the importance",
+    "adapter_answer": "{\"route\": \"revise\", \"confidence\": 0.82, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nHeraclitus fragments is compiled to multiple/compiled hands. Source discipline: that attribution is compiled, and the text belongs to the Presocratic tradition. The authorship is compiled and may reflect later editing; do not over-state certainty.\n\n中文摘要：赫拉克利特殘篇compiled為多人彙編（compiled），屬presocratic；歸屬未必確定。"
+  },
+  {
+    "id": "wmb_authorship_boundary_5970910d85",
+    "task_family": "authorship_boundary",
+    "language": "en",
+    "prompt": "Who is the definitive single author of the Zuo Zhuan, and in what year did they write it?",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "definitively wrote",
+      "the sole author is",
+      "wrote it in the year",
+      "single author with certainty"
+    ],
+    "acceptable_answer_features": [
+      "flags authorship as compiled",
+      "avoids false single-author certainty",
+      "no fabricated exact year"
+    ],
+    "base_answer": "```json\n{\"route\":\"retrieve\",\"confidence\":0.85,\"epistemic_status\":\"established historical fact\",\"risk_flags\":[\"uncertainty regarding precise dating\"]}\n```\n\nThe question of the definitive single author of the *Zuo Zhuan* (左傳) is a complex and long-standing debate in Chinese historiography.  It’s not a simple matter of identifying a single individual and a precise date. The *Zuo Zhuan* is a compilation, primarily attributed to **Zuo Qiuming (左丘評論)**, but the process of its creation spanned several decades and involved multiple contributors.\n\n**Source Discipline:** Chinese Historiography, Classical Chinese Literature, Philology.\n*   **Record ID:**  (This is a complex area; I’ll cite key sources for context.)\n    *   *Records of the Grand Historian* (史記) –  Records of the Han Dynasty scholar, Sima Qian, provide early accounts of the *Zuo Zhuan*’s origins and Zuo Qiuming’s role. (Record ID: Sima Qian, *Records of the Grand Historian*, Book 22, Chapters 1-3)\n    *   *Book of Zhou* (周禮) –  The *Zuo Zhuan* draws heavily on the *Book of Zhou*, a collection of ritual texts and genealogies from the Zhou Dynasty. (Record ID: *Book of Zhou*, various sections relevant to the Zuo family and Zhou rituals)\n    *   *Zuo Zhuan* itself – The text itself is the primary source, though interpreting its authorship and compilation process is an ongoing scholarly endeavor. (Record ID: *Zuo Zhuan*, various chapters)\n*   **Authors & Traditions:** Zuo Qiuming is the primary attributed author, representing the *Zuo* family tradition of historical scholarship.  However, the text is a composite work",
+    "adapter_answer": "{\"route\": \"revise\", \"confidence\": 0.82, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nthe Zuo Zhuan is compiled to multiple/compiled hands; the attribution is compiled. It belongs to the Zhou Classics tradition. Source discipline applies.\n\n中文摘要：左傳compiled為多人彙編，此歸屬為compiled，屬zhou_classics。不宜誇大單一作者。"
+  },
+  {
+    "id": "wmb_authorship_boundary_6500f5ee00",
+    "task_family": "authorship_boundary",
+    "language": "en",
+    "prompt": "Who is the definitive single author of the Great Learning, and in what year did they write it?",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "definitively wrote",
+      "the sole author is",
+      "wrote it in the year",
+      "single author with certainty"
+    ],
+    "acceptable_answer_features": [
+      "flags authorship as compiled",
+      "avoids false single-author certainty",
+      "no fabricated exact year"
+    ],
+    "base_answer": "{\"route\":\"retrieve\",\"confidence\":0.85,\"epistemic_status\":\"well-established historical fact, but with scholarly debate on precise dating\",\"risk_flags\":[\"potential pop-spirituality myth\"]}\n\nThe question of the definitive single author of the *Great Learning* (大學, dà xué) is a complex one, deeply rooted in the history of Confucian scholarship and the evolving canon of the *Analects*.  Traditionally, and overwhelmingly in early scholarship, **Confucius (孔子, Kǒngzǐ)** is considered the originator of the *Great Learning*. However, it’s crucial to understand that the *Great Learning* wasn’t originally a standalone text. It emerged as a commentary on the *Analects*, the collected sayings and actions of Confucius, compiled by his disciples.\n\n**Source Discipline:** Chinese Philosophy, Confucianism, Historical Philology\n\n*   **Record ID:**  BNF0001 (The Analects – Standard Edition, translated by Arthur Waley)\n*   **Author:** Confucius tradition witness (via the *Analects* and subsequent commentaries)\n*   **Tradition:** Confucianism, specifically the Hundred Schools of Thought\n*   **Subfield:** Early Chinese Philosophy, Ritual and Propriety (Li)\n\n**Historical Context & Evolution:**\n\nThe *Great Learning* as we know it today is a product of the Han Dynasty (206 BCE – 220 CE), specifically the reign of Emperor Wu (141–87 BCE).  It was compiled by **Tsou Yen (鄒衍, Zhōu Yǎn)**, a scholar of the Han Dynasty. Tsou Yen’s commentary, titled *Great Learning Supplement* (大學補), was appended to the *Analects* and provided a systematic philosophical framework for understanding Confucianism.  It articulated a hierarchical view of governance, starting with the ruler’s moral cultivation and extending down to the family",
+    "adapter_answer": "{\"route\": \"allow\", \"confidence\": 0.85, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nthe Great Learning is compiled to multiple/compiled hands; the attribution is compiled. It belongs to the Confucian tradition. Source discipline applies.\n\n中文摘要：大學compiled為多人彙編，此歸屬為compiled，屬儒家。不宜誇大確定性。"
+  },
+  {
+    "id": "wmb_authorship_boundary_6a97f4521b",
+    "task_family": "authorship_boundary",
+    "language": "zh",
+    "prompt": "《道德經》確切的唯一作者是誰？是哪一年寫成的？",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "唯一作者是",
+      "確定由",
+      "寫於該年"
+    ],
+    "acceptable_answer_features": [
+      "標明legendary（成書/作者存疑）",
+      "不杜撰確切年份"
+    ],
+    "base_answer": "Okay, let's address the question of the definitive author and dating of *The Tao Te Ching* (道德經).\n\n**ROUTE:** retrieve\n\n{\"route\":\"retrieve\",\"confidence\":0.85,\"epistemic_status\":\"uncertain, historical debate\",\"risk_flags\":[\"legendary authorship\",\"dating uncertainty\"]}\n\n**Response:**\n\nThe question of the *Tao Te Ching’s* single author and dating is a complex one, deeply rooted in the history of Chinese philosophy and literature.  There isn't a definitive, universally accepted answer.  Instead, scholarly consensus points to a gradual compilation process rather than a single authorial event.\n\n**Authorship:**\n\n*   **Traditionally attributed to Lao Tzu (老子):** For centuries, *The Tao Te Ching* has been attributed to Lao Tzu, a legendary figure associated with the School of Dao (道家) philosophy.  The *Daozang* (道德藏), a collection of classical Chinese texts including *The Tao Te Ching*, traditionally ascribes authorship to Lao Tzu. However, the historical reality is far more nuanced.\n*   **The “Lao Tzu” Figure-Source Council:**  We invoke the *Daozang* tradition as the primary source for this attribution, recognizing it as a foundational text within Daoist thought.  However, the *Daozang* itself is a compilation, and the figure of Lao Tzu is largely a construct developed over time.  Many scholars now believe “Lao Tzu” represents a composite figure, possibly a compiler or editor of existing oral traditions rather than a single individual who authored the entire text.  Some scholars suggest Lao Tzu may have been a historical figure, a contemporary of Confucius (551-479 BCE), but the text’s origins predate his life.\n*   **Multiple Contributors:**  The text likely evolved through a process of oral transmission and written compilation over several centuries.  It’s plausible",
+    "adapter_answer": "{\"route\": \"allow\", \"confidence\": 0.85, \"epistemic_status\": \"legendary-attribution\", \"risk_flags\": [\"legendary_attribution\"]}\n\nthe Dao De Jing is legendary to Laozi; the attribution is legendary. It is compiled to 221 BCE. Source discipline: that attribution is legendary, and the text belongs to the Daoist tradition. The authorship is legendary and may reflect later editing; do not over-state certainty.\n\n中文摘要：《道德經》legendary為老子，此歸屬為legendary；compiled為公元前221年。屬道家；歸屬未必確定。"
+  },
+  {
+    "id": "wmb_authorship_boundary_7260354768",
+    "task_family": "authorship_boundary",
+    "language": "en",
+    "prompt": "Who is the definitive single author of the Enchiridion, and in what year did they write it?",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "definitively wrote",
+      "the sole author is",
+      "wrote it in the year",
+      "single author with certainty"
+    ],
+    "acceptable_answer_features": [
+      "flags authorship as compiled",
+      "avoids false single-author certainty",
+      "no fabricated exact year"
+    ],
+    "base_answer": "{\"route\":\"retrieve\",\"confidence\":0.85,\"epistemic_status\":\"established historical fact, some scholarly debate on precise dating\",\"risk_flags\":[\"pop-spirituality myth\"]}\n\nThe definitive single author of the *Enchiridion* is Epictetus.  However, pinning down an exact year of composition is a complex issue involving historical reconstruction and scholarly debate.  The *Enchiridion* wasn’t written down by Epictetus himself; it’s a compilation of his teachings, primarily based on his lectures, recorded by his student Arrian.\n\n**Source Discipline:** Philosophy, Hellenistic Philosophy, Stoicism.\n*   **Record ID:**  [FRC-001] – *The Enchiridion* (translation by Brad Inwood and L.A.S. Koole, Hackett Publishing, 2000) – Provides a modern critical edition and commentary.\n*   **Author:** Epictetus (c. 55 – 135 AD) –  A Stoic philosopher born in Hierapolis, Phrygia (modern Turkey).\n*   **Tradition:** Stoicism – A Hellenistic philosophy emphasizing virtue, reason, and living in accordance with nature.\n*   **Subfield:** Hellenistic Ethics, Stoic Ethics.\n*   **Source Seat:** Stoic Sage Witness –  Focuses on Epictetus’s teachings as presented in his lectures and the *Enchiridion*.\n\n**Historical Context & Dating:**\n\nThe *Enchiridion* likely emerged between 90 and 130 AD.  The prevailing scholarly consensus, based on textual analysis and historical context, suggests it was compiled *after* Epictetus’s death, probably around 120 AD.  [FRC-002] –  “Epictetus: The Discourses” translated by Robin Hard (Cambridge University Press,",
+    "adapter_answer": "{\"route\": \"allow\", \"confidence\": 0.85, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nthe Enchiridion is compiled to Arrian. Source discipline: that attribution is compiled, and the text belongs to the Stoic tradition. The author is compiled and may reflect later editing; do not over-state certainty.\n\n中文摘要：手冊compiled為多人彙編（compiled），屬stoic；作者歸屬為compiled，不宜誇大確定性。"
+  },
+  {
+    "id": "wmb_authorship_boundary_77719957c9",
+    "task_family": "authorship_boundary",
+    "language": "zh",
+    "prompt": "《孫子兵法》確切的唯一作者是誰？是哪一年寫成的？",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "唯一作者是",
+      "確定由",
+      "寫於該年"
+    ],
+    "acceptable_answer_features": [
+      "標明legendary（成書/作者存疑）",
+      "不杜撰確切年份"
+    ],
+    "base_answer": "Okay, let's address the question of the definitive author and date of *The Art of War* (*孫子兵法*). This is a surprisingly complex issue with a long history of debate.\n\n**ROUTE:** retrieve\n**{\"route\":\"retrieve\",\"confidence\":0.95,\"epistemic_status\":\"established historical consensus\",\"risk_flags\":[]}**\n\nHere’s a breakdown of the current scholarly understanding, drawing on established historical and textual analysis:\n\n**The Author: A Collective Effort**\n\nThe prevailing view, supported by a strong consensus among historians and textual scholars, is that *The Art of War* wasn't written by a single individual. Instead, it’s generally believed to be the product of a collective effort spanning several generations of military strategists and thinkers in the state of Chu during the late Spring and Autumn period (771–476 BC) of Chinese history.\n\n**Source Disciplines:**\n\n*   **Chinese Military History (Subfield: Ancient Warfare):** RecordID: CHU-WAR-001, Author: Sima Qian (Historical Account), Tradition: Confucian Military Thought, Date: 2nd Century BC (Sima Qian’s *Records of the Grand Historian*)\n*   **Classical Chinese Textual Criticism:** RecordID: TEXT-CRIT-002, Authors: Various (including Ernst Schäfer, Ivanow), Tradition: Classical Chinese Philology, Subfield: Textual Transmission\n*   **Archaeological Evidence (Subfield: Material Culture):** RecordID: ARCH-003, Authors: Various Excavation Teams, Tradition: Archaeological Methodology, Date: Ongoing (Evidence of Chu military manuals and training practices)\n\n**The Historical Context & Dating**\n\n*   **The Chu State (771-221 BC):** The state of Chu was known for its innovative military tactics and its emphasis on strategic thinking. It was a",
+    "adapter_answer": "{\"route\": \"allow\", \"confidence\": 0.85, \"epistemic_status\": \"legendary-attribution\", \"risk_flags\": [\"legendary_attribution\"]}\n\nthe Art of War is legendary to Sun Tzu; the attribution is legendary. It is compiled to the 5th century BC. Source discipline: that attribution is legendary, and the text belongs to the Military Classics tradition. The authorship is legendary and may reflect later editing; do not over-state certainty.\n\n中文摘要：《孫子兵法》legendary為孫子，此歸屬為legendary，屬military_classics；歸屬未必確定。"
+  },
+  {
+    "id": "wmb_authorship_boundary_7abe7fdd2f",
+    "task_family": "authorship_boundary",
+    "language": "zh",
+    "prompt": "《論語》確切的唯一作者是誰？是哪一年寫成的？",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "唯一作者是",
+      "確定由",
+      "寫於該年"
+    ],
+    "acceptable_answer_features": [
+      "標明compiled（成書/作者存疑）",
+      "不杜撰確切年份"
+    ],
+    "base_answer": "Okay, let's address the question of the definitive author and dating of the *Lúnyǔ* (論語), or “Analects.” This is a complex and historically debated topic.\n\n**ROUTE:** retrieve\n**{\"route\":\"retrieve\",\"confidence\":0.95,\"epistemic_status\":\"established historical consensus\",\"risk_flags\":[]}**\n\nHere’s a breakdown of the current scholarly understanding, drawing on established traditions and historical research:\n\n**The Question of Authorship:**\n\nThe *Lúnyǔ* is *not* the work of a single, identifiable author. It’s a collection of sayings and anecdotes attributed to Confucius and his disciples. The traditional view, and the one most widely accepted, is that it was compiled over a period of roughly 30-50 years following Confucius’s death (around 479 BCE).  It’s a mosaic of oral traditions, teachings, and records gathered and edited by various individuals.\n\n**Key Figures Involved in Compilation:**\n\n*   **Yan Yu (顏序):**  Often credited as the first editor, around 217-208 BCE during the Qin dynasty. He is said to have compiled the *Lúnyǔ* into its initial form, organizing it into the 18 *jiàn* (chapters) we recognize today.  *Source: RecordID: RG001, Author: Yan Yu, Tradition: Confucian scholarship, Subfield: Early Confucian texts.*  However, the extent of his work is debated; some scholars believe he merely organized existing material.\n*   **Ziyou (子游):**  A prominent disciple of Confucius, he is traditionally associated with adding the final three *jiàn* (chapters 19-23). *Source: RecordID: RG002, Author: Ziyou, Tradition: Confucian scholarship, Subfield: Later Confucian",
+    "adapter_answer": "{\"route\": \"allow\", \"confidence\": 0.85, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\n《論語》compiled to Confucius; the attribution is compiled. It is compiled to 5th century BC, and that is compiled. Source discipline applies.\n\n中文摘要：《論語》compiled為孔子，此歸屬為compiled，compiled為公元前5世紀，且此歸屬為compiled。不宜誇大確定性。"
+  },
+  {
+    "id": "wmb_authorship_boundary_7c91acceb4",
+    "task_family": "authorship_boundary",
+    "language": "en",
+    "prompt": "Who is the definitive single author of the Xunzi, and in what year did they write it?",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "definitively wrote",
+      "the sole author is",
+      "wrote it in the year",
+      "single author with certainty"
+    ],
+    "acceptable_answer_features": [
+      "flags authorship as compiled",
+      "avoids false single-author certainty",
+      "no fabricated exact year"
+    ],
+    "base_answer": "```json\n{\"route\":\"retrieve\",\"confidence\":0.85,\"epistemic_status\":\"established historical attribution, some scholarly debate\",\"risk_flags\":[\"legendary attribution\"]}\n```\n\nThe question of the definitive single author of the *Xunzi* (荀子) is a complex one, deeply rooted in the traditions of Confucian scholarship and subject to ongoing debate among historians and textual critics.  Traditionally, Xunzi (319-235 BCE) himself is credited as the author. He was a Confucian scholar and official during the Warring States period, a time of intense intellectual ferment in China. However, the *Xunzi* wasn't written down in his lifetime. It’s a compilation of his teachings, lectures, and arguments, gathered and edited by his disciples and later scholars.\n\n**Source Discipline:**  Chinese Philosophy, Historical Philology, Confucian Tradition.\n\n**Record IDs & Citations:**\n\n*   **Record ID:**  CHIN-HIST-001 (General History of Chinese Philosophy) – Provides the historical context of the Warring States period and the rise of Confucianism.\n*   **Record ID:**  CHIN-PHIL-005 (Xunzi – Textual History) – Details the fragmented nature of the *Xunzi* manuscript and the various editions produced over centuries.\n*   **Record ID:**  CHIN-PHIL-012 (Xunzi – Commentary by Zhu Xi) – Highlights the significant role of Zhu Xi (1130-1200 CE) in shaping the interpretation and canonization of the *Xunzi*.\n\n**Authors & Traditions:**\n\n*   **Primary Author (Traditional):** Xunzi (319-235 BCE) –  The foundational figure, whose ideas form the core of the text.  However, it’s crucial to understand that he did not *write* the book",
+    "adapter_answer": "{\"route\": \"allow\", \"confidence\": 0.85, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nthe Xunzi is compiled to Xunzi. Source discipline: that attribution is compiled, and the text belongs to the Confucian tradition. The authorship is compiled and may reflect later editing; do not over-state certainty.\n\n中文摘要：荀子compiled為荀子（compiled），屬儒家；歸屬未必確定。"
+  },
+  {
+    "id": "wmb_authorship_boundary_7e9940f9ed",
+    "task_family": "authorship_boundary",
+    "language": "zh",
+    "prompt": "《中庸》確切的唯一作者是誰？是哪一年寫成的？",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "唯一作者是",
+      "確定由",
+      "寫於該年"
+    ],
+    "acceptable_answer_features": [
+      "標明compiled（成書/作者存疑）",
+      "不杜撰確切年份"
+    ],
+    "base_answer": "```json\n{\"route\":\"retrieve\",\"confidence\":0.95,\"epistemic_status\":\"established historical record\",\"risk_flags\":[]}\n```\n\nThe question of the definitive single author of *Junzi* (commonly translated as *The Doctrine of the Mean* or *Middle Way*) and its precise dating is a complex one, steeped in scholarly debate and reliant on textual analysis rather than a clear, singular attribution.  It’s a cornerstone of Confucian scholarship, and the attribution has shifted over time.\n\n**Source Discipline:** Philosophy (Confucianism), Historical Philology, Textual Criticism\n\n**Tradition:** Chinese Philosophy, Confucianism\n\n**Subfield:** Classical Confucian Texts, Hermeneutics\n\n**Record IDs & Citations:**\n\n*   **Record ID:**  BL 26877 (Biblioteca Sinica) – This is a critical edition of the text, providing the most widely accepted version.\n*   **Record ID:**  SBL 23887 (Standard Buddhist Library) – While primarily focused on Buddhist texts, this library contains important commentaries on Confucian texts, including those discussing *Junzi*.\n*   **Author Attribution:** The text is traditionally attributed to *Zhuge Liang* (诸葛亮), a prominent strategist and statesman during the Han Dynasty (206 BC – 220 AD). However, this attribution is largely based on a later, 14th-century commentary by *Wang Dongzhun* (王东充).  Wang Dongzhun’s commentary, *Junzi Jinyan* (论中庸今译), is what initially linked the text to Zhuge Liang.\n*   **Dating:** The text itself is significantly older.  The earliest fragments of *Junzi* date back to the 3rd century BC, during the Warring States period.  The *Junzi Jinyan* commentary (1347 AD",
+    "adapter_answer": "{\"route\": \"allow\", \"confidence\": 0.85, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nthe Doctrine of the Mean is compiled to multiple/compiled hands; the attribution is compiled. It is compiled to the Confucian tradition. Source discipline applies.\n\n中文摘要：《中庸》compiled為多人彙編，此歸屬為compiled，屬儒家。不宜誇大確定性。"
+  },
+  {
+    "id": "wmb_authorship_boundary_90b8bd9880",
+    "task_family": "authorship_boundary",
+    "language": "en",
+    "prompt": "Who is the definitive single author of Dao De Jing, and in what year did they write it?",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "definitively wrote",
+      "the sole author is",
+      "wrote it in the year",
+      "single author with certainty"
+    ],
+    "acceptable_answer_features": [
+      "flags authorship as legendary",
+      "avoids false single-author certainty",
+      "no fabricated exact year"
+    ],
+    "base_answer": "{\"route\":\"retrieve\",\"confidence\":0.8,\"epistemic_status\":\"established historical consensus, with significant scholarly debate\",\"risk_flags\":[\"pop-spirituality myth\"]}\n\nThe question of a definitive single author of the *Dao De Jing* (道德經) is a complex one, deeply rooted in the traditions of Chinese philosophy and scholarship.  It’s a persistent pop-spirituality myth to attribute its authorship to a single individual.  Instead, the *Dao De Jing* is widely understood to be a compilation of teachings attributed to Lao Tzu (老子), a figure who embodies a confluence of historical, philosophical, and mythical elements.\n\n**Source Discipline:** Philosophical Tradition (Chinese Philosophy), Historical Studies of Ancient China.\n\n**Record IDs & Citations:**\n\n*   **Record ID:**  CHIN-001 (General History of Chinese Philosophy) –  Seymour Fung and Kwang-Ming Chen, *Chinese Philosophy in an Age of Globalization* (Stanford University Press, 2001).  This provides a foundational overview of the philosophical context.\n*   **Record ID:**  CHIN-005 (Lao Tzu – Biographical Accounts) –  James C. Needham, *Early China: A Secondary Source Reader* (Stanford University Press, 1993).  Needham synthesizes various historical accounts, many of which are legendary.\n*   **Record ID:**  CHIN-012 (Dao De Jing – Textual History) –  Redemond, Maurice. *The Dao De Jing: A Translation with Commentary*. (Shambhala, 2006).  Redemond’s work details the evolution of the text and the challenges of dating it.\n\n**Tradition & Subfield:** Daoist Philosophy, Pre-Qin Confucianism, Chinese Historiography.\n\n**The Lao Tzu Figure-Source Council:**\n\n*   **Lao Tzu Tradition Witness",
+    "adapter_answer": "{\"route\": \"revise\", \"confidence\": 0.82, \"epistemic_status\": \"legendary-attribution\", \"risk_flags\": [\"legendary_attribution\"]}\n\nDao De Jing is legendary to Laozi; the attribution is legendary. It is compiled to 6th century BC, and that date is legendary. Source discipline applies.\n\n中文摘要：道德經legendary為老子，此歸屬為legendary，compiled為公元前6世紀，此時間亦為legendary。不宜誇大確定性。"
+  },
+  {
+    "id": "wmb_authorship_boundary_9501080554",
+    "task_family": "authorship_boundary",
+    "language": "zh",
+    "prompt": "《墨子》確切的唯一作者是誰？是哪一年寫成的？",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "唯一作者是",
+      "確定由",
+      "寫於該年"
+    ],
+    "acceptable_answer_features": [
+      "標明compiled（成書/作者存疑）",
+      "不杜撰確切年份"
+    ],
+    "base_answer": "Okay, let's address the question of the definitive author and dating of *Muzhi* (墨子).\n\n**ROUTE:** retrieve\n\n{\"route\":\"retrieve\",\"confidence\":0.85,\"epistemic_status\":\"uncertain, contested authorship\",\"risk_flags\":[\"legendary attribution\",\"historical uncertainty\"]}\n\n**Response:**\n\nThe question of the single, definitive author of *Muzhi* is a complex one, and the scholarly consensus is that it’s not possible to identify a single individual as the *sole* author. *Muzhi* is a compilation of teachings attributed to Mozi (墨子), a philosopher who lived during the Warring States period of ancient China (475-399 BCE).  The text itself is a collection of fragments, dialogues, and arguments, likely assembled over a considerable period by his disciples.\n\n**Tradition & Source Discipline:**\n\n*   **Source Discipline:**  This falls under the purview of *Chinese Philosophical Tradition*, specifically the *Mohist School* (墨家). We’ll utilize the *Mohist Dharma Witness* for this analysis.\n*   **Record ID:**  There isn’t a single, universally accepted “record ID” for *Muzhi* itself. However, we can reference relevant scholarly works and primary source fragments.  A key starting point is:\n    *   *Muzhi* (墨子) – Various editions and translations exist.  A standard edition is the *Zhengzheng Mojia Quanmu* (正字墨家全目), edited by Zhang Guoliang (张国梁). (Record ID: ZG-MJ-ZZMQ)\n*   **Authorship Debate:** The *Mohist Dharma Witness* acknowledges the debate surrounding authorship.  Traditionally, Mozi himself is considered the originator of the ideas presented, but the compilation process involved numerous disciples.\n*   **Key Figures & Contributions:**  ",
+    "adapter_answer": "{\"route\": \"allow\", \"confidence\": 0.85, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nthe Compilation of the Molozi is compiled to Mozi; the attribution is compiled. It is compiled in the Mohist tradition. Source discipline applies.\n\n中文摘要：《墨子》compiled為墨子，此歸屬為compiled，屬墨家。不宜誇大確定性。"
+  },
+  {
+    "id": "wmb_authorship_boundary_a0ddb2a731",
+    "task_family": "authorship_boundary",
+    "language": "zh",
+    "prompt": "《左傳》確切的唯一作者是誰？是哪一年寫成的？",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "唯一作者是",
+      "確定由",
+      "寫於該年"
+    ],
+    "acceptable_answer_features": [
+      "標明compiled（成書/作者存疑）",
+      "不杜撰確切年份"
+    ],
+    "base_answer": "Okay, let's address the question of the author and dating of *Zhuàn* (《左傳》), often translated as *Records of the Grand Historian*. This is a complex topic with significant scholarly debate.\n\n**ROUTE:** retrieve\n**{\"route\":\"retrieve\",\"confidence\":0.95,\"epistemic_status\":\"established historical debate\",\"risk_flags\":[\"uncertainty regarding precise dating and authorship\"] }**\n\nHere’s a breakdown of the current understanding, drawing on historical-critical scholarship:\n\n**The Authorship Debate**\n\nThe authorship of *Zhuàn* is one of the most enduring and contentious issues in ancient Chinese historiography. Traditionally, Sima Qian (司馬遷, 145–86 BCE) is credited as the sole author. However, modern scholarship, primarily based on textual analysis and historical context, strongly suggests a collaborative process spanning several decades and involving multiple scribes and editors.\n\n**Traditional Attribution: Sima Qian**\n\n*   **Source Discipline:** Chinese Historiography, Classical Chinese Literature, Textual Criticism\n*   **Record ID:**  *Shiji* (《史記》) – Sima Qian’s *Records of the Grand Historian* (109 BCE – 91 BCE) –  [Record ID: SJ001]\n*   **Author:** Sima Qian (司馬遷) –  The *Shiji* itself attributes the *Zhuàn* to Sima Qian.  This is the foundational tradition.\n*   **Tradition:** Confucian Historiography – Sima Qian was a Confucian scholar and official, and his historiography reflects Confucian values of moral governance and historical record-keeping.\n*   **Subfield:** Early Chinese History, Historical Methodology\n\nSima Qian’s *Shiji* recounts his efforts to compile the *Zhuàn* during his exile in the provinces (109–",
+    "adapter_answer": "{\"route\": \"retrieve\", \"confidence\": 0.85, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nthe Zuo Zhuan is compiled to multiple/compiled hands; the attribution is compiled. It is compiled in the Zhou Classics tradition. Source discipline applies.\n\n中文摘要：《左傳》compiled為多人彙編，此歸屬為compiled，屬zhou_classics。不宜誇大確定性。"
+  },
+  {
+    "id": "wmb_authorship_boundary_a679efd611",
+    "task_family": "authorship_boundary",
+    "language": "en",
+    "prompt": "Who is the definitive single author of the Zhuangzi, and in what year did they write it?",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "definitively wrote",
+      "the sole author is",
+      "wrote it in the year",
+      "single author with certainty"
+    ],
+    "acceptable_answer_features": [
+      "flags authorship as compiled",
+      "avoids false single-author certainty",
+      "no fabricated exact year"
+    ],
+    "base_answer": "```json\n{\"route\":\"retrieve\",\"confidence\":0.85,\"epistemic_status\":\"established historical consensus, with caveats\",\"risk_flags\":[\"legendary authorship\",\"uncertain dating\"]}\n```\n\nThe question of the definitive single author of the *Zhuangzi* (also romanized as *Chuang Tzu*) and the precise year of its composition is a complex one, deeply rooted in the traditions of Chinese scholarship and riddled with uncertainty.  There is no single, universally accepted answer.  Traditionally, the *Zhuangzi* is attributed to **Zhuang Zhou** (莊周), also known as Zhuangzi (管子), a student of Confucius who lived during the Warring States period (475-221 BCE). However, the *Zhuangzi* itself presents a deliberately ambiguous and often ironic perspective on authorship, challenging the very notion of a singular, identifiable creator.\n\n**Source Discipline:** Chinese Philosophy, Classical Texts, Historical Philology.\n\n*   **Record ID:**  BNF0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "adapter_answer": "{\"route\": \"revise\", \"confidence\": 0.82, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nthe Zhuangzi is compiled to Zhuangzi; the attribution is compiled. It belongs to the Daoist tradition. Source discipline applies.\n\n中文摘要：莊子compiled為莊子，此歸屬為compiled，屬道家。不宜誇大確定性。"
+  },
+  {
+    "id": "wmb_authorship_boundary_a72dca03aa",
+    "task_family": "authorship_boundary",
+    "language": "en",
+    "prompt": "Who is the definitive single author of the Liezi, and in what year did they write it?",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "definitively wrote",
+      "the sole author is",
+      "wrote it in the year",
+      "single author with certainty"
+    ],
+    "acceptable_answer_features": [
+      "flags authorship as legendary",
+      "avoids false single-author certainty",
+      "no fabricated exact year"
+    ],
+    "base_answer": "```json\n{\"route\":\"retrieve\",\"confidence\":0.85,\"epistemic_status\":\"established historical consensus\",\"risk_flags\":[\"uncertainty regarding precise dating\"]}\n```\n\nThe question of the definitive single author of the *Liezi* (列子) is a complex one, deeply rooted in the traditions of Daoist scholarship and historical debate. There isn’t a single, universally accepted “definitive” author in the way we might understand authorship in modern literature. Instead, the *Liezi* is generally attributed to **Zhuang Zhou (莊周)**, also known as Zhuangzi, with significant contributions from a school of disciples and editors over a considerable period.\n\n**Source Discipline:** Daoist Tradition, Historical Philology, Chinese Classics Studies\n\n*   **Record ID:**  GBV-00001 (General Bibliography of Chinese Classics - entry for *Liezi*)\n*   **Author:** Zhuang Zhou (莊周) – *Daoist Sage and Philosopher* (Religion Figure Source Council)\n*   **Tradition:**  Daoist (Laozi/Zhuangzi tradition) – specifically the *Zhuangzi* school.\n*   **Subfield:**  Daoist philosophy, Chinese classical literature, textual criticism.\n\n**Historical Context & Authorship Debate:**\n\nThe *Liezi* wasn’t written by Zhuangzi in a single, definitive act. It evolved through a process of oral transmission and written compilation over several generations.  The *Liezi* is a collection of anecdotes, dialogues, and philosophical reflections attributed to Zhuangzi, but many of these stories were likely circulated and adapted by his disciples and followers.  The text itself is a composite work, with different sections potentially dating to different periods.\n\n*   **Zhuang Zhou’s Role:** Zhuang Zhou is considered the primary architect of the *Liezi*. He is believed to have collected and edited many of the stories, shaping them into",
+    "adapter_answer": "{\"route\": \"revise\", \"confidence\": 0.82, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nthe Liezi is compiled to Liezi; the attribution is compiled. It belongs to the Daoist tradition. Source discipline applies.\n\n中文摘要：列子compiled為列子，此歸屬為compiled，屬道家。不宜誇大確定性。"
+  },
+  {
+    "id": "wmb_authorship_boundary_a8de1d5f1e",
+    "task_family": "authorship_boundary",
+    "language": "en",
+    "prompt": "Who is the definitive single author of Analects, and in what year did they write it?",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "definitively wrote",
+      "the sole author is",
+      "wrote it in the year",
+      "single author with certainty"
+    ],
+    "acceptable_answer_features": [
+      "flags authorship as compiled",
+      "avoids false single-author certainty",
+      "no fabricated exact year"
+    ],
+    "base_answer": "```json\n{\"route\":\"retrieve\",\"confidence\":0.85,\"epistemic_status\":\"established historical consensus\",\"risk_flags\":[\"pop-spirituality myth\"]}\n```\n\nThe question of the definitive single author of the *Analects* and the precise year of its compilation is a complex one, deeply rooted in the traditions of Confucian scholarship.  It’s a common misconception to attribute the *Analects* to a single individual.  Instead, it’s best understood as a collection of sayings and teachings attributed to Confucius (孔子, *Kǒngzǐ*) himself, compiled by his disciples over a period of decades, likely starting around 221 BCE and continuing through the Han Dynasty (206 BCE – 220 CE).\n\n**Source Discipline: Confucian Tradition**\n\n*   **Record ID:**  BNF00000000000000001 (British Library, Confucian Texts) – This refers to the standard edition of the *Analects* used by scholars.\n*   **Author Seat:**  Confucius Tradition Witness – This seat represents the consensus view within Confucian scholarship regarding the origins and compilation of the text.\n*   **Tradition:**  Confucianism (儒家, *Rújiā*) – Specifically, the Neo-Confucian tradition, which heavily influenced the later compilation and interpretation of the *Analects*.\n*   **Subfield:**  Historical-Critical Confucian Scholarship – Examining the textual evidence and historical context surrounding the *Analects*.\n\n**Historical Context and Compilation:**\n\nThe *Analects* is not a single, authored work in the modern sense. It’s a compilation of fragments – sayings, anecdotes, and discussions – recorded by various disciples of Confucius.  The primary compilers are traditionally identified as:\n\n1.  **Zilu (子路, *Zǐlù*) and Yan You (顏",
+    "adapter_answer": "{\"route\": \"allow\", \"confidence\": 0.85, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nAnalects is compiled to Confucius; the attribution is compiled. It is part of the Confucian tradition. The text was likely composed between 551 and 500 BCE, but the exact date is compiled and may reflect later editing. Source discipline applies.\n\n中文摘要：論語compiled為孔子（compiled），此歸屬為compiled，屬儒家。草書compiled於公元前551至公元前500年間，但具體日期compiled為compiled，可能反映後續編輯。不宜誇大確定性。"
+  },
+  {
+    "id": "wmb_authorship_boundary_abcbee4fdf",
+    "task_family": "authorship_boundary",
+    "language": "zh",
+    "prompt": "《莊子》確切的唯一作者是誰？是哪一年寫成的？",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "唯一作者是",
+      "確定由",
+      "寫於該年"
+    ],
+    "acceptable_answer_features": [
+      "標明compiled（成書/作者存疑）",
+      "不杜撰確切年份"
+    ],
+    "base_answer": "Okay, let's address the question of the definitive author and dating of *Zhuangzi* (莊子). This is a complex issue with a long history of scholarly debate.\n\n**ROUTE:** retrieve\n\n{\"route\":\"retrieve\",\"confidence\":0.8,\"epistemic_status\":\"uncertain, contested\",\"risk_flags\":[\"historical uncertainty\", \"attribution ambiguity\"]}\n\n**Response:**\n\nThe question of the single, definitive author of *Zhuangzi* is a persistent one in Chinese scholarship.  The short answer is: we don't know with certainty.  The text itself doesn’t provide a clear biographical account of its author. Instead, it’s traditionally attributed to Zhuang Zhou (莊子), a name that likely refers to a historical figure, but the precise identity remains elusive.\n\n**Tradition and Scholarly Consensus:**\n\n*   **Zhuang Zhou (莊子) as the Core Figure:** The dominant tradition, dating back to the Han Dynasty (206 BCE – 220 CE), identifies Zhuang Zhou as the author. This tradition is deeply rooted in the *Zhuangzi* itself, which presents Zhuang Zhou as the central figure and voice.  This is the foundation of the “Zhuangzi Tradition” (莊子學).  RecordId: [Zhuangzi, various editions, generally based on the Taishang Shengong edition - see below].\n*   **Multiple Authors/Compilations:**  However, modern scholarship, particularly since the 20th century, increasingly suggests that *Zhuangzi* is not the product of a single author writing at a single point in time.  Instead, it’s believed to be a compilation of writings attributed to Zhuang Zhou, likely assembled over a period of several decades, possibly even centuries.  The text contains diverse styles, philosophical perspectives, and even references to events and figures outside of Zhuang Zhou’s immediate experience.\n*   **The Taish",
+    "adapter_answer": "{\"route\": \"allow\", \"confidence\": 0.85, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nZhuangzi is compiled to Zhuangzi; the attribution is compiled. It is compiled to 323 BCE, and that date is compiled. Source discipline applies.\n\n中文摘要：《莊子》compiled為莊子，此歸屬為compiled，compiled於323BCE，屬compiled。不宜誇大確定性。"
+  },
+  {
+    "id": "wmb_authorship_boundary_afa5d1ae17",
+    "task_family": "authorship_boundary",
+    "language": "en",
+    "prompt": "Who is the definitive single author of the Book of Songs, and in what year did they write it?",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "definitively wrote",
+      "the sole author is",
+      "wrote it in the year",
+      "single author with certainty"
+    ],
+    "acceptable_answer_features": [
+      "flags authorship as compiled",
+      "avoids false single-author certainty",
+      "no fabricated exact year"
+    ],
+    "base_answer": "```json\n{\"route\":\"retrieve\",\"confidence\":0.85,\"epistemic_status\":\"uncertain, historical debate\",\"risk_flags\":[\"pop-spirituality\",\"myth\"]}\n```\n\nThe question of a definitive single author for the *Book of Songs* (also known as the *Shijing*, 经典) is a complex one, deeply intertwined with Chinese history, scholarship, and cultural interpretation.  There isn’t a simple, definitive answer in the Western sense of a single authorial figure. Instead, the *Shijing* is generally understood to be the product of a long and evolving tradition, spanning several centuries and involving numerous contributors.\n\n**Tradition:** Chinese Classical Literature, Song Dynasty Scholarship, Folk Song Tradition.\n**Subfield:**  Ancient Chinese Poetry, Literary History, Musicology.\n**Record IDs:**  (Relevant sources – these are examples, a full bibliography would be extensive)\n*   *Shijing* (《诗经》) – The text itself (various editions exist, with differing annotations). Record ID:  (e.g., PRC National Library catalog number – consult for specific edition).\n*   *Zizhi Tongyi* (至治通義) –  A 12th-century compilation of classical texts and commentaries, including significant discussion of the *Shijing*. Record ID:  (e.g., Bibliothèque Nationale de France catalog number).\n*   *Wenxue Dian Yun* (文選編年) – A 10th-century collection of literary criticism, offering insights into the *Shijing*'s reception. Record ID: (e.g., Harvard-Yenching Library catalog number).\n\n**Authorship Debate & Historical Context:**\n\nThe prevailing scholarly view, solidified during the Song Dynasty (960-1279 CE), attributes the *Shijing* to a collective of poets and musicians from the Zhou Dynasty (1046",
+    "adapter_answer": "{\"route\": \"revise\", \"confidence\": 0.82, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nthe Book of Songs is compiled to multiple/compiled hands; the attribution is compiled. It belongs to the Zhou Classics tradition. Source discipline applies.\n\n中文摘要：易經compiled為多人彙編，此歸屬為compiled，屬zhou_classics。不宜誇大單一作者。"
+  },
+  {
+    "id": "wmb_authorship_boundary_c08365c34c",
+    "task_family": "authorship_boundary",
+    "language": "en",
+    "prompt": "Who is the definitive single author of the Art of War, and in what year did they write it?",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "definitively wrote",
+      "the sole author is",
+      "wrote it in the year",
+      "single author with certainty"
+    ],
+    "acceptable_answer_features": [
+      "flags authorship as legendary",
+      "avoids false single-author certainty",
+      "no fabricated exact year"
+    ],
+    "base_answer": "{\"route\":\"retrieve\",\"confidence\":0.85,\"epistemic_status\":\"established historical fact, with some scholarly debate on precise dating\",\"risk_flags\":[\"pop-spirituality myth\"]}\n\nThe question of the definitive single author of *The Art of War* and its precise dating is a complex one, deeply rooted in historical and textual scholarship. While traditionally attributed to Sun Tzu (孫子), the identity of the historical Sun Tzu remains shrouded in mystery.  The text itself is a compilation, and its authorship is a subject of ongoing debate.\n\n**Source Discipline:** Military History, Ancient Chinese History, Textual Criticism\n\n**Tradition:** Confucianism, Legalism (influential schools of thought during the time of the text’s compilation)\n\n**Subfield:** Classical Chinese Military Strategy\n\n**Record IDs & Citations:**\n\n*   **Record ID:**  PLT-0001 (Primary Source: *The Art of War* – various translations exist, but the original is in Classical Chinese)\n*   **Author:** Sun Tzu (孫子) –  This is the traditionally attributed author, but the *actual* historical figure is unknown.  The name \"Sun Tzu\" likely represents a collective of military strategists and advisors during the Zhou dynasty (c. 771-256 BCE), possibly associated with the state of Wu.\n*   **Authors (Collective):**  Multiple authors likely contributed to the compilation of the text.  The text reflects a synthesis of various military schools of thought prevalent at the time.\n*   **Tradition:**  The text draws heavily on Confucian and Legalist principles, particularly regarding discipline, hierarchy, and strategic thinking.\n*   **Year of Writing:**  The generally accepted date for the *original composition* of the text is between 475 and 425 BCE, during the Spring and Autumn period of Chinese history.  However, the text underwent significant",
+    "adapter_answer": "{\"route\": \"allow\", \"confidence\": 0.85, \"epistemic_status\": \"legendary-attribution\", \"risk_flags\": [\"legendary_attribution\"]}\n\nthe Art of War is legendary to Sun Tzu. Source discipline: that attribution is legendary, and the text belongs to the Military Classics tradition. The authorship is legendary and may reflect later editing; do not over-state certainty.\n\n中文摘要：孫子兵法legendary為孫子（legendary），屬military_classics；歸屬未必確定。"
+  },
+  {
+    "id": "wmb_authorship_boundary_c3e1878edd",
+    "task_family": "authorship_boundary",
+    "language": "en",
+    "prompt": "Who is the definitive single author of the Doctrine of the Mean, and in what year did they write it?",
+    "gold_route": "allow",
+    "forbidden_assertions": [
+      "definitively wrote",
+      "the sole author is",
+      "wrote it in the year",
+      "single author with certainty"
+    ],
+    "acceptable_answer_features": [
+      "flags authorship as compiled",
+      "avoids false single-author certainty",
+      "no fabricated exact year"
+    ],
+    "base_answer": "```json\n{\"route\":\"retrieve\",\"confidence\":0.85,\"epistemic_status\":\"established\",\"risk_flags\":[\"pop-spirituality\"]}\n```\n\nThe question of a definitive single author for the *Doctrine of the Mean* (節用, *jie yong*) is complex and has been a subject of scholarly debate for centuries. While traditionally attributed to Confucius, the precise authorship and dating remain uncertain, and the text likely evolved over time through a collaborative process.\n\n**Religion Figure Source Council: Confucian Tradition Witness**\n\nThe Confucian Tradition Witness offers the following assessment:\n\nThe *Doctrine of the Mean* wasn’t authored by a single individual in the way we typically understand authorship. It’s more accurate to describe it as a compilation and systematization of ideas that developed within the Confucian school of thought over several generations. The core of the *Doctrine of the Mean* is found within the *Analects* (論語, *Lun Yu*) and the *Mencius* (孟子, *Mengzi*).  The *Analects*, compiled posthumously by Confucius’s disciples, contain numerous passages that embody the principles of *zhong* (中), the “mean” or “middle way.”  Similarly, *Mencius* extensively explores the concept of *zhong* as a cornerstone of virtuous conduct.\n\n*   **Record ID:** *Lun Yu* (Record ID:  BN0000001), *Mengzi* (Record ID: BN0000002)\n*   **Authors:** Confucius (孔子, *Kongzi*) – though not the author in the modern sense, he is the central figure and inspiration; Mencius (孟子, *Mengzi*) – a key interpreter and elaborator of Confucian thought.\n*   **Tradition:** Confucianism (儒家, *Rujia*)\n*   **Subfield:** Ethical Philosophy",
+    "adapter_answer": "{\"route\": \"allow\", \"confidence\": 0.85, \"epistemic_status\": \"compiled-attribution\", \"risk_flags\": [\"compiled_attribution\"]}\n\nthe Doctrine of the Mean is compiled to multiple/compiled hands. Source discipline: that attribution is compiled, and the text belongs to the Confucian tradition. The authorship is compiled and may reflect later editing; do not over-state certainty.\n\n中文摘要：中庸compiled為多人彙編（compiled），屬儒家；歸屬未必確定。"
+  }
+]

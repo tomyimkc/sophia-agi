@@ -1,0 +1,31 @@
+{
+  "schema": "sophia.debunk_gate_live.v1",
+  "experiment": "debunk-preservation gate \u2014 LIVE multi-family",
+  "date": "2026-06-28",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "headline": "debunk_recall = 0.0 on BOTH families \u2014 but NOT because the models failed to debunk.",
+  "finding": "The subject models DO debunk every injected false premise (confirmed by direct inspection: Claude returns 'Einstein did not win the 1921 Nobel for relativity', 'The Great Wall is not visible from the Moon', 'Napoleon was not unusually short ... a persistent myth'). But agent.debunk_gate.classify_response \u2014 a KEYWORD heuristic \u2014 tagged 100% of these as 'affirm', never 'debunk', so the preserve-and-verify path never fired. The theory (strong models debunk) is CONFIRMED on real data; the gate's debunk DETECTOR is the broken component. Fix: replace the keyword detector with an LLM/NLI debunk-classifier \u2014 i.e. the Cluster B meta-labeler pattern applied to debunk detection.",
+  "families": {
+    "claude-sonnet-4-6 (LLMHub)": {
+      "n_cases": 21,
+      "debunk_recall": 0.0,
+      "verified_debunks": 0,
+      "classify_response_verdicts": {
+        "abstain": 8,
+        "affirm": 13
+      }
+    },
+    "deepseek-chat (OpenRouter)": {
+      "n_cases": 21,
+      "debunk_recall": 0.0,
+      "verified_debunks": 0,
+      "classify_response_verdicts": {
+        "abstain": 6,
+        "affirm": 15
+      }
+    }
+  }
+}

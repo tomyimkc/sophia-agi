@@ -25,7 +25,11 @@ abstract: >-
   (≥2 independent judge families, reported inter-judge agreement, ≥3 runs, and
   confidence intervals). Components include a belief/provenance graph with retraction
   and counterfactual analysis, deterministic and model-based verifiers, calibrated
-  abstention, and a fail-closed governance contract.
+  abstention, and a fail-closed governance contract. Release 0.11.0 adds a layered,
+  independence-labelled verification toolkit (Google fact-check, Wikidata authorship and
+  attribution-swap, Crossref citation existence, and a multi-judge source-faithfulness
+  check), each verdict tagged with its independence tier and fail-open on ignorance, plus
+  a third-party replication pack. canClaimAGI remains false.
 keywords:
   - large language models
   - hallucination
@@ -36,7 +40,11 @@ keywords:
   - retrieval-augmented generation
   - verifier-gated reasoning
   - trustworthy AI
+  - fact-checking
+  - citation verification
+  - source faithfulness
+  - defensive publication
 license: Apache-2.0
 doi: 10.5281/zenodo.20930874
-version: 0.9.1
-date-released: 2026-06-26
+version: 0.11.0
+date-released: 2026-06-28

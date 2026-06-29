@@ -1,0 +1,67 @@
+{
+  "schema": "sophia.world_model.cluster_d_baselines.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "benchmark": "Cluster D — torch-free world-model baselines vs the Path-A incumbent",
+  "valBar": 0.65,
+  "maxShiftDegradation": 0.15,
+  "corpus": {
+    "source": "agi-proof/world-model/contrastive-traces-demo.json",
+    "trainSize": 24,
+    "valSize": 10,
+    "shiftSize": 10,
+    "positiveRate": 0.5,
+    "honestBound": "Hand-authored demo data, not mined model traces. It is realistic (each action is contrastive: success when the state supplies the precondition, failure when it does not) but it is a fixture, not evidence. It exists so the retrieval-floor and self-consistency baselines can be exercised deterministically in CI; it does not prove generalization and nothing here lets canClaimAGI flip."
+  },
+  "baselines": {
+    "retrieval_D2": {
+      "name": "D2 — retrieval-augmented transition predictor (kNN, abstains OOD)",
+      "results": {
+        "valAccuracy": 1.0,
+        "shiftAccuracy": 1.0,
+        "shiftDegradation": 0.0,
+        "valAbstainRate": 0.0,
+        "shiftAbstainRate": 0.6,
+        "valAnswered": 10,
+        "shiftAnswered": 4,
+        "trainSize": 24,
+        "valSize": 10,
+        "shiftSize": 10
+      },
+      "passesBar": true,
+      "interpretation": "val accuracy 1.0 > 0.65 AND shift-degradation 0.0 <= 0.15: the retrieval floor does NOT collapse under shift. It abstains on 60% of shift queries (novel families are OOD) rather than confidently mispredicting — the validated retrieval-grounding posture, where the learned RSSM went shift-degenerate."
+    },
+    "llm_wm_D1": {
+      "name": "D1 — LLM-as-world-model (in-context dynamics; self-consistency uncertainty)",
+      "results": {
+        "valAccuracy": 1.0,
+        "shiftAccuracy": 1.0,
+        "shiftDegradation": 0.0,
+        "valAbstainRate": 0.0,
+        "shiftAbstainRate": 0.6,
+        "valAnswered": 10,
+        "shiftAnswered": 4,
+        "samples": 5,
+        "mode": "fake-oracle-completer"
+      },
+      "passesBar": true,
+      "interpretation": "In --fake CI mode the completer is a deterministic oracle: in-distribution queries give consistent samples (confident), novel families give disagreeing samples (D1 abstains, 60% of shift). This exercises the self-consistency signal (validated on SimpleQA) without a network; a live run injects a real temperature>0 completer. Borrows a pretrained prior instead of LEARNING dynamics from 25 traces."
+    }
+  },
+  "incumbent_pathA_dreamer": {
+    "name": "Path A — DreamerV3-style RSSM (learned dynamics)",
+    "synthetic25Corpus": {
+      "verdict": "hold-shift-degenerate",
+      "note": "25-pair synthetic corpus: aced held-out then collapsed under shift (memorized, did not generalize) — the negative this cluster answers."
+    },
+    "realTracesCorpus": {
+      "valAccuracy": 1.0,
+      "shiftAccuracy": 1.0,
+      "shiftDegradation": 0.0,
+      "verdict": "PROMOTE IS SPURIOUS",
+      "note": "44 real DeepSeek traces, pass-skewed (0.955); both negatives fell in train so val/shift had positive_rate 1.0 — an always-positive baseline scores 1.0, so the promote is a canary defect, not learning."
+    }
+  },
+  "verdict": "Both baselines clear the held-out bar AND bound shift-degradation by ABSTAINING on novel OOD families instead of guessing — the failure mode the 25-pair RSSM exhibited. These are candidate baselines on a hand-authored fixture, NOT Level-3 evidence and NOT an AGI claim; the honest result is that retrieval/self-consistency degrade gracefully where learned dynamics collapsed."
+}

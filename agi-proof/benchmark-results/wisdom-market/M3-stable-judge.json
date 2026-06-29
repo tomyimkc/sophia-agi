@@ -1,0 +1,68 @@
+{
+  "pilot_judge": "sophia-wisdom-4b-m3",
+  "answers": "agi-proof/benchmark-results/wisdom-market/M3-stable-answers.json",
+  "judges": [
+    "openrouter:deepseek/deepseek-chat",
+    "openrouter:mistralai/mistral-small-3.2-24b-instruct",
+    "openrouter:meta-llama/llama-3.3-70b-instruct"
+  ],
+  "nCasesJudged": 268,
+  "perJudge": {
+    "openrouter:deepseek/deepseek-chat": {
+      "n": 268,
+      "adapter": 241,
+      "base": 27,
+      "tie": 0,
+      "adapter_winrate": 0.8993,
+      "base_winrate": 0.1007
+    },
+    "openrouter:mistralai/mistral-small-3.2-24b-instruct": {
+      "n": 268,
+      "adapter": 216,
+      "base": 52,
+      "tie": 0,
+      "adapter_winrate": 0.806,
+      "base_winrate": 0.194
+    },
+    "openrouter:meta-llama/llama-3.3-70b-instruct": {
+      "n": 268,
+      "adapter": 176,
+      "base": 92,
+      "tie": 0,
+      "adapter_winrate": 0.6567,
+      "base_winrate": 0.3433
+    }
+  },
+  "pairwiseAgreement": {
+    "openrouter:deepseek/deepseek-chat ⨯ openrouter:mistralai/mistral-small-3.2-24b-instruct": {
+      "n": 268,
+      "raw_agreement": 0.7873,
+      "cohen_kappa": 0.1682,
+      "gwet_ac1": 0.7567
+    },
+    "openrouter:deepseek/deepseek-chat ⨯ openrouter:meta-llama/llama-3.3-70b-instruct": {
+      "n": 268,
+      "raw_agreement": 0.6978,
+      "cohen_kappa": 0.1937,
+      "gwet_ac1": 0.6347
+    },
+    "openrouter:mistralai/mistral-small-3.2-24b-instruct ⨯ openrouter:meta-llama/llama-3.3-70b-instruct": {
+      "n": 268,
+      "raw_agreement": 0.7761,
+      "cohen_kappa": 0.446,
+      "gwet_ac1": 0.7214
+    }
+  },
+  "majorityVote": {
+    "adapter": 216,
+    "base": 52,
+    "tie": 0,
+    "adapter_winrate": 0.806
+  },
+  "unanimous": {
+    "adapter_better": 159,
+    "base_better": 10
+  },
+  "interpretation": "κ is deflated by prevalence skew when judges agree the adapter is better; Gwet's AC1 is the prevalence-robust agreement statistic to read alongside it.",
+  "boundary": "Independent LLM judges (≠ subject, ≠ gate). Tests whether the adapter's marker-based source-discipline gains hold up SEMANTICALLY. Single seed's answers; not a market or AGI claim."
+}

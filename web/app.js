@@ -8,6 +8,7 @@ async function loadManifest() {
     manifest = await res.json();
     renderStats();
     renderLeaderboards();
+    renderComparisons();
     renderProofPackage();
     renderFooter();
   } catch {
@@ -58,6 +59,80 @@ function renderLeaderboards() {
     }
     section.appendChild(table);
     root.appendChild(section);
+  }
+}
+
+// ---- Benchmark comparison charts (dependency-free, accessible) -------------
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function renderBar(bar, max, unit, lowerIsBetter) {
+  const pct = Math.max(0, Math.min(100, (bar.value / max) * 100));
+  const tone = bar.highlight ? "is-sophia" : lowerIsBetter ? "is-rival-low" : "is-rival";
+  const ci = Array.isArray(bar.ci)
+    ? `<span class="bar-ci">95% CI [${bar.ci[0]}, ${bar.ci[1]}]</span>`
+    : "";
+  return `
+    <div class="cbar-row">
+      <div class="cbar-label">${escapeHtml(bar.label)}</div>
+      <div class="cbar-track" role="img" aria-label="${escapeHtml(bar.label)}: ${bar.value}${unit}">
+        <div class="cbar-fill ${tone}" style="width:${pct}%"></div>
+        <span class="cbar-value">${bar.value}${unit}${ci}</span>
+      </div>
+    </div>`;
+}
+
+function renderComparisons() {
+  const root = document.getElementById("comparison-charts");
+  const comp = manifest?.comparisons;
+  if (!root || !comp) return;
+  root.innerHTML = "";
+
+  for (const chart of comp.charts || []) {
+    const card = document.createElement("article");
+    card.className = "cchart";
+    const unit = chart.unit || "";
+    const max = chart.max || 100;
+    const better = `${chart.lowerIsBetter ? "Lower" : "Higher"} is better`;
+    const vClass =
+      chart.verdict === "win" ? "v-win" : chart.verdict === "tradeoff" ? "v-mixed" : "v-loss";
+
+    let bars = "";
+    if (chart.groups) {
+      bars = chart.groups
+        .map(
+          (g) =>
+            `<div class="cgroup"><div class="cgroup-label">${escapeHtml(g.label)}</div>${(g.bars || [])
+              .map((b) => renderBar(b, max, unit, chart.lowerIsBetter))
+              .join("")}</div>`
+        )
+        .join("");
+    } else {
+      bars = (chart.bars || []).map((b) => renderBar(b, max, unit, chart.lowerIsBetter)).join("");
+    }
+
+    card.innerHTML = `
+      <div class="cchart-head">
+        <h3>${escapeHtml(chart.title)}</h3>
+        ${chart.verdictLabel ? `<span class="cverdict ${vClass}">${escapeHtml(chart.verdictLabel)}</span>` : ""}
+      </div>
+      <p class="cchart-sub">${escapeHtml(chart.subtitle || "")}</p>
+      <p class="cchart-metric">${escapeHtml(chart.metric || "")} · <span>${better}</span></p>
+      <div class="cchart-bars">${bars}</div>
+      ${chart.note ? `<p class="cchart-note">${escapeHtml(chart.note)}</p>` : ""}`;
+    root.appendChild(card);
+  }
+
+  const honesty = document.getElementById("comparison-honesty");
+  if (honesty) {
+    honesty.innerHTML = "";
+    for (const item of comp.honesty || []) {
+      const li = document.createElement("li");
+      li.textContent = item;
+      honesty.appendChild(li);
+    }
   }
 }
 

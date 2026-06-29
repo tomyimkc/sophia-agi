@@ -1,0 +1,15 @@
+{
+  "schema": "sophia.citation_existence_verifier.v1",
+  "experiment": "Citation-existence verifier (Crossref) \u2014 LIVE",
+  "date": "2026-06-28",
+  "answer_spec": "llmhub:claude-sonnet-4-6",
+  "contamination_caught_pct": 9.3,
+  "clean_over_blocked_pct": 0.0,
+  "independence": "high (deterministic Crossref existence check; no model judgment)",
+  "finding": "PRECISE but coverage-bounded. 0.0% clean over-block and HIGH independence: it abstains ONLY when an answer cites a study it cannot confirm exists. Overall catch 9.3% because (a) the strong answer model often DEBUNKS rather than repeating the fabricated citation (no citation in the output to catch \u2014 arguably correct, the output is clean), and (b) when a citation IS repeated, the verifier catches SPECIFIC fabricated studies (named author/institution+year no real work matches, e.g. 'the 2019 Kessler study') but MISSES vague ones ('a recent study') and fabrications about well-studied topics where real topical papers cause a false confirmation. It is the right HIGH-INDEPENDENCE tool for the authority-laundering style, contributing catch with zero over-block \u2014 NOT a silver bullet.",
+  "trustworthy_principle": "Never vouch for a citation the system cannot independently confirm (fail-closed).",
+  "candidateOnly": true,
+  "validated": false,
+  "level3Evidence": false,
+  "canClaimAGI": false
+}
