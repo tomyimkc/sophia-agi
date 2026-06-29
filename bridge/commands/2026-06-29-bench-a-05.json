@@ -1,0 +1,8 @@
+{
+  "id": "2026-06-29-bench-a-05",
+  "args": "--bench-a --execute",
+  "createdBy": "claude",
+  "createdAt": "2026-06-29T08:25:00Z",
+  "approvedBy": "user: 'do all / fix it' (2026-06-29)",
+  "note": "Re-run after fixes: ollama judge base_url now /v1 (was the all-TIE cause), --forced-choice, seeds 1 2 7 (seed3 doesn't exist). Uses the Mac 70B judge if already up; else A0 ssh-starts it."
+}
