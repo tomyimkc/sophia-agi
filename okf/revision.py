@@ -106,7 +106,6 @@ def revise(graph: Graph, retractions: "list", *, by: str = "system") -> Revision
     removed = set(resolved)
     reduced = reduced_without(graph, removed)
     base_conf = propagate_confidence(graph)
-    cf_conf = propagate_confidence(reduced)
 
     cascade: list[dict] = []
     for nid in reduced.nodes:                       # nodes still present (not retracted)

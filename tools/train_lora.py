@@ -348,7 +348,6 @@ def build_model_and_tokenizer(
     resume_adapter: Path | None = None,
     lora_rank_alloc: bool = False,
 ) -> tuple[Any, Any]:
-    import torch
     from peft import LoraConfig, PeftModel, get_peft_model, prepare_model_for_kbit_training
     from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
@@ -648,6 +647,8 @@ def run_manual_train(
     qat_scheme: str = "int8",
     qat_lambda: float = 1e-3,
 ) -> dict:
+    import math
+
     import torch
     from torch.utils.data import DataLoader
     from transformers import get_cosine_schedule_with_warmup
@@ -767,7 +768,7 @@ def run_manual_train(
 
     return {
         "globalSteps": global_step,
-        "finalTrainLoss": round(last_train_loss, 4) if last_train_loss == last_train_loss else None,
+        "finalTrainLoss": round(last_train_loss, 4) if not math.isnan(last_train_loss) else None,
         "bestValLoss": round(best_val, 4) if best_val != float("inf") else None,
         "earlyStopped": stop,
         "savedBest": saved_any,

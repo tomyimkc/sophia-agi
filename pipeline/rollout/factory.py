@@ -122,7 +122,7 @@ class RolloutFactory:
     # -- a single planner->executor rollout --------------------------------- #
     def rollout(self, goal: str, *, gold: str | None = None,
                 reward_for: RewardFn | None = None,
-                tools: "dict[str, Tool] | None" = None, max_executor_steps: int = 4,
+                tools: dict[str, Tool] | None = None, max_executor_steps: int = 4,
                 source: str = "rollout-factory", license: str = "Apache-2.0") -> dict:
         """Run one planner→executor rollout and return a scored ``AgentTrajectory``.
 
@@ -236,7 +236,7 @@ class RolloutFactory:
     # -- stale-count repair loop (Reasonix AutoResearch) -------------------- #
     def generate_until(self, goal: str, *, gold: str, reward_for: RewardFn,
                        max_attempts: int = 6, stale_cap: int = 3,
-                       tools: "dict[str, Tool] | None" = None) -> dict:
+                       tools: dict[str, Tool] | None = None) -> dict:
         """Re-attempt until the verifier passes or progress stalls.
 
         Ports Reasonix's AutoResearch ``stale_count``: track the best reward; each

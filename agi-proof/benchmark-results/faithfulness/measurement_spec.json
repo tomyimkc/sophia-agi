@@ -1,0 +1,34 @@
+{
+  "experimentId": "reasoning-core-faithfulness",
+  "status": "pre-registration (committed before any training/eval run)",
+  "description": "Does the retrieval-faithfulness GRPO intervention raise the counterfactual grounding rate of an 8-14B reasoning core vs its untrained base, on a held-out, decontaminated case set, under the measurement contract? No capability is claimed by committing this spec.",
+  "constructs": [
+    "counterfactual-grounding (supported AND flips when its support chunk is dropped)",
+    "llm-judge-faithfulness-2family (deepseek + llmhub-family, judge != subject)",
+    "heldout-multihop-transfer (novel entities not seen in training)"
+  ],
+  "primaryMetric": "counterfactual_grounding_rate",
+  "primaryMetricDefinition": "over all KNOWLEDGE claims the policy makes on the held-out set, the fraction that are SUPPORTED by a retrieved chunk AND disappear when that chunk is dropped (survives_ablation == False).",
+  "direction": "adapter >= base + practicalThreshold",
+  "assumedBaselineP0": 0.6,
+  "mde": 0.10,
+  "requiredN": 377,
+  "requiredNnote": "required_n_for_mde(0.10, p0=0.6, power=0.8) = 377 knowledge claims; resolving a 0.05 effect would need N=1507. mde_at_n(354,p0=0.6)=0.103, so the wisdom-market N=354 surface is borderline for a 0.10 effect and underpowered for 0.05.",
+  "practicalThreshold": 0.10,
+  "uncertainty": "paired-bootstrap (fixed-n) AND anytime-valid confidence sequence",
+  "stoppingRule": "anytime-valid (RLVR peeks/iterates; fixed-n CIs invalid under optional stopping)",
+  "decontam": "content-shingle + private held-out split never used in any tuning/selection loop",
+  "judges": [
+    "deepseek:deepseek-chat",
+    "llmhub:<a-non-deepseek-family, e.g. gemini-2.5-pro or claude-opus-4-8>"
+  ],
+  "judgeConstraint": ">=2 distinct families, judge != subject (the trained policy), != the deterministic gate; report inter-judge agreement (Cohen kappa >= 0.40 or Gwet AC1 + CI excluding chance).",
+  "constructTriangulation": "a claim of uplift requires the deterministic counterfactual-grounding metric AND the >=2-family judge AND held-out transfer to agree; the strength of the claim is its weakest construct.",
+  "instrument": "provenance_bench/faithfulness_eval.py (counterfactual_grounding_rate / evaluate / compare); gate via tools/claim_gate.py.",
+  "claimCeiling": "candidate_only; canClaimAGI:false; narrow corpus-bound feasibility",
+  "openCaveats": [
+    "no trained adapter exists yet (no GPU run); base-vs-adapter compare is unrun.",
+    "the entailment verifier is a single LLM family in v1; the >=2-family judge panel for the VALIDATED bar is separate and unrun.",
+    "private held-out split for this experiment is not yet reserved."
+  ]
+}

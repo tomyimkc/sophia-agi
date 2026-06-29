@@ -11,7 +11,6 @@
 
 from __future__ import annotations
 
-import math
 import re
 from collections import Counter
 from typing import Any
@@ -67,6 +66,7 @@ def llm_rerank(query: str, docs: list[str], client: Any, *, top_k: int = 5) -> l
                 if idx:
                     return idx[:top_k]
             except (json.JSONDecodeError, ValueError):
+                # Malformed model output -> fall through to lexical rerank below.
                 pass
     return [i for i, _ in lexical_rerank(query, docs, top_k=top_k)]
 

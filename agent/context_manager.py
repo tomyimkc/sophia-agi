@@ -153,7 +153,6 @@ def head_tail_compress(text: str, budget: int, *, counter: TokenCounter) -> str:
         # that still keeps both ends.
         approx_chars = max(1, int(budget * _CHARS_PER_TOKEN_LATIN))
         half = max(1, approx_chars // 2)
-        elided = max(0, len(text) - 2 * half)
         return text[:half] + f"\n…[elided ~{estimate_tokens(text[half:len(text)-half])} tok]…\n" + text[-half:]
     # Reserve room for the marker, then grow head and tail from both ends until
     # we would exceed budget. Deterministic: head grows first on ties.

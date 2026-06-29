@@ -77,7 +77,6 @@ def load_balancing_loss(expert_idx, probs, num_experts: int):
         raise RuntimeError("numpy required")
     expert_idx = np.asarray(expert_idx)
     probs = np.asarray(probs, dtype=np.float64)
-    T = probs.shape[0]
     assignments = expert_idx.reshape(-1)
     f = np.bincount(assignments, minlength=num_experts).astype(np.float64)
     f /= f.sum()                                  # dispatch fraction per expert
