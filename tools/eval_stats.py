@@ -190,7 +190,9 @@ def cohen_kappa(a: "Sequence[str]", b: "Sequence[str]") -> "float | None":
     px = {c: sum(1 for x, _ in pairs if x == c) / n for c in cats}
     py = {c: sum(1 for _, y in pairs if y == c) / n for c in cats}
     pe = sum(px[c] * py[c] for c in cats)
-    return round((po - pe) / (1 - pe), 4) if pe != 1 else None
+    # Full precision: callers round only when presenting/serializing, so threshold
+    # comparisons (kappa>=0.40) and bootstrap resampling are not coarsened.
+    return (po - pe) / (1 - pe) if pe != 1 else None
 
 
 def gwet_ac1(a: "Sequence[str]", b: "Sequence[str]") -> "float | None":
@@ -208,7 +210,8 @@ def gwet_ac1(a: "Sequence[str]", b: "Sequence[str]") -> "float | None":
     po = sum(1 for x, y in pairs if x == y) / n
     pi = {c: (sum(1 for x, _ in pairs if x == c) + sum(1 for _, y in pairs if y == c)) / (2 * n) for c in cats}
     pe = sum(pi[c] * (1 - pi[c]) for c in cats) / (q - 1)
-    return round((po - pe) / (1 - pe), 4) if pe != 1 else None
+    # Full precision (round at presentation only) — see cohen_kappa.
+    return (po - pe) / (1 - pe) if pe != 1 else None
 
 
 def bootstrap_ci_agreement(a: "Sequence[str]", b: "Sequence[str]", stat, alpha: float = 0.05,

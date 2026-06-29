@@ -141,21 +141,22 @@ def main(argv: "list[str] | None" = None) -> int:
             parse_fail += 1
 
     n_paired = len(va)
+    _r = lambda x: round(x, 4) if x is not None else None  # noqa: E731 — present-only rounding
     agreement = {
         "nPaired": n_paired,
         "parseFailures": parse_fail,
         "verdict4class": {
             "observedAgreement": round(sum(1 for x, y in zip(va, vb) if x == y) / n_paired, 4) if n_paired else None,
-            "cohenKappa": cohen_kappa(va, vb),
+            "cohenKappa": _r(cohen_kappa(va, vb)),
             "cohenKappaCI95": bootstrap_ci_agreement(va, vb, cohen_kappa),
-            "gwetAC1": gwet_ac1(va, vb),
+            "gwetAC1": _r(gwet_ac1(va, vb)),
             "gwetAC1CI95": bootstrap_ci_agreement(va, vb, gwet_ac1),
         },
         "quadrant3class": {
             "observedAgreement": round(sum(1 for x, y in zip(qa, qb) if x == y) / n_paired, 4) if n_paired else None,
-            "cohenKappa": cohen_kappa(qa, qb),
+            "cohenKappa": _r(cohen_kappa(qa, qb)),
             "cohenKappaCI95": bootstrap_ci_agreement(qa, qb, cohen_kappa),
-            "gwetAC1": gwet_ac1(qa, qb),
+            "gwetAC1": _r(gwet_ac1(qa, qb)),
             "gwetAC1CI95": bootstrap_ci_agreement(qa, qb, gwet_ac1),
         },
     }

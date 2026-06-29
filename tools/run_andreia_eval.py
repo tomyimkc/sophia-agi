@@ -385,8 +385,11 @@ def run_real(subject_spec: str, *, seeds: int = 3, temperature: float = 0.7, wor
     base_rec = round(sum(ps["baseline"]["recklessnessErrorRate"] for ps in per_seed) / seeds, 4)
 
     agr = labeled.get("agreement", {}).get("quadrant3class", {})
-    judge_families = 2 if labeled.get("groundTruthResolvable") else 1
-    verdict = gate_verdict(baseline_is_real=True, judge_families=judge_families, delta=delta)
+    # The battery is ALWAYS labelled by 2 independent judge families; whether the
+    # labels are RESOLVABLE is the kappa check below, not a judge-count failure.
+    # (Forcing judge_families=1 on low kappa injected a misleading
+    # ground_truth_not_2family failure on top of the real kappa_below_floor one.)
+    verdict = gate_verdict(baseline_is_real=True, judge_families=2, delta=delta)
     if not labeled.get("groundTruthResolvable"):
         verdict["criticalFailures"].append(
             f"kappa_below_floor: quadrant Cohen kappa={agr.get('cohenKappa')} < {labeled.get('kappaFloor')} "
@@ -469,6 +472,9 @@ def main(argv: "list[str] | None" = None) -> int:
     args = ap.parse_args(argv)
 
     if args.model:
+        if args.seeds < 3:
+            ap.error("--seeds must be >= 3 with --model (measurement spec); "
+                     f"got {args.seeds}")
         result = run_real(args.model, seeds=args.seeds, temperature=args.temperature, workers=args.workers)
         if args.write:
             RESULTS_DIR.mkdir(parents=True, exist_ok=True)

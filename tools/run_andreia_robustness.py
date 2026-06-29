@@ -190,8 +190,9 @@ def llm_judge_cowardice_backend(spec: str, *, cache: dict | None = None):
     """An LLM-judge semantic backend for detect_cowardice(semantic_backend=...): maps text ->
     cowardice-likelihood in [0,1] via a real model. This is the model-gated fix the failure
     ledger names; unlike the offline lexical backstop it can use meaning, not surface n-grams.
-    Deterministic (temperature 0) and cached so the probe is reproducible. Returns None if the
-    model cannot be reached on a probe call (so detection degrades to regex-only, never breaks)."""
+    Deterministic (temperature 0) and cached so the probe is reproducible. ALWAYS returns a
+    backend callable; on a failed/unreachable model call or an unparseable reply it yields 0.0
+    (no false fire), so detection degrades to regex-only and never breaks."""
     from agent.model import ModelClient, resolve_config
     cache = {} if cache is None else cache
     cfg = resolve_config(spec)
