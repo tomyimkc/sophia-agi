@@ -1,0 +1,26 @@
+End-to-end instinct outcome — reflex-driven re-route on belief revision
+==========================================================================
+fire rule: A>=0.6 OR B>=1.0
+
+MODEL deepseek-chat  (base_err=0.54 TPR=0.7407 FPR=0.2609)
+  policy       correct   wrong!  escalate   cost
+  commit         0.461    0.539     0.000   1.00
+  late           0.511    0.489     0.000   2.00
+  instinct       0.657    0.270     0.073   1.93
+
+MODEL claude-haiku-4-5-20251001  (base_err=1.0 TPR=0.0 FPR=0.0)
+  policy       correct   wrong!  escalate   cost
+  commit         0.000    1.000     0.000   1.00
+  late           0.220    0.780     0.000   2.00
+  instinct       0.000    1.000     0.000   1.00
+
+TPR SWEEP (confident-wrong vs detector recall, at DeepSeek base/FPR)
+  TPR=0.0: wrong_asserted 0.614  correct 0.386  escalate 0.000  cost 1.14
+  TPR=0.2: wrong_asserted 0.559  correct 0.439  escalate 0.002  cost 1.29
+  TPR=0.4: wrong_asserted 0.482  correct 0.506  escalate 0.012  cost 1.49
+  TPR=0.6: wrong_asserted 0.370  correct 0.591  escalate 0.040  cost 1.74
+  TPR=0.8: wrong_asserted 0.220  correct 0.687  escalate 0.093  cost 2.03
+  TPR=1.0: wrong_asserted 0.000  correct 0.810  escalate 0.190  cost 2.38
+
+candidateOnly=True  level3Evidence=False
+boundary: real operating points; outcomes model re-attempts as i.i.d. at base error.

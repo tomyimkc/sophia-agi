@@ -287,6 +287,37 @@ the under-abstention mirror of B, also computable from `okf`. It would catch exa
 failure. That is the next measurement (re-run both models with A + B_over + B_under, and use
 quality-weighted fusion). Recorded as an open item, not a solved one.
 
+### 3d. End-to-end: does firing the instinct actually improve the outcome?
+
+Everything above measures *detection*. The original thesis is about *outcome* — so
+[`reasoning/instinct_endtoend.py`](../../reasoning/instinct_endtoend.py) closes the loop: it
+feeds each real model's **measured operating point** (TPR/FPR via the fire rule `A≥0.6 OR B≥1`,
+read from the §3c artifacts) into the `instinct_gate` re-route policy and measures what the
+operator cares about — above all the **confident-wrong rate** (a wrong answer asserted as
+correct; in Sophia's idiom the worst outcome, far worse than an honest `escalate`).
+
+| model (TPR) | policy | correct | **wrong-asserted** | escalate | cost |
+|---|---|---|---|---|---|
+| DeepSeek (0.74) | commit | 0.46 | **0.54** | 0.00 | 1.0 |
+| | late self-correct | 0.51 | 0.49 | 0.00 | 2.0 |
+| | **instinct re-route** | **0.66** | **0.27** | 0.07 | 1.9 |
+| Claude-haiku (≈0) | commit | 0.00 | 1.00 | 0.00 | 1.0 |
+| | **instinct re-route** | 0.00 | 1.00 | 0.00 | 1.0 |
+
+**The answer is yes — but strictly gated by detection.** With a usable detector (DeepSeek) the
+instinct **halves confident-wrong** (0.54→0.27) and *raises* correctness (0.46→0.66) at ~2×
+cost — far beating late self-correction, which is marginal (matching §1b). With a blind detector
+(haiku, whose confident under-abstentions the bus can't see) the instinct is **identical to
+doing nothing**. The TPR sweep makes it a law: confident-wrong falls **0.61→0.00** as detector
+recall goes 0→1 (correctness 0.39→0.81, escalate 0→0.19). So the entire end-to-end payoff of
+"change its mind" rides on the reflex's recall over the model's *actual* error modes — which is
+why §3c's grounding-completeness detector (to cover under-abstention) is the gating next step.
+
+*Honest scope:* operating points are real; the outcome sim models re-attempts as i.i.d. draws
+at the model's base error (`late` uses generic self-correction rates, not per-model measured),
+so it answers "what outcome would this detector profile yield under the policy," not a live
+closed-loop model claim. `canClaimAGI` stays false.
+
 ## 4. From model to measured claim (pre-registration sketch)
 
 To graduate this from `candidateOnly` to a real eval under the Instrumented Evaluation Contract
@@ -351,6 +382,11 @@ To graduate this from `candidateOnly` to a real eval under the Instrumented Eval
   quality-weighted fusion); and both detectors are **blind to confident under-abstention**, the
   dominant error mode of the weak model (haiku, fused d′≈0). Next: add a grounding-*completeness*
   detector + quality-weighted fusion. canClaimAGI stays false.
+- **End-to-end outcome (the thesis answered):** feeding the real operating points into the
+  re-route policy, the instinct **halves the confident-wrong rate** (DeepSeek 0.54→0.27) and
+  raises correctness (0.46→0.66), beating late self-correction — but does **nothing** for a model
+  whose errors it can't see (haiku). Confident-wrong falls monotonically with detector recall.
+  *Re-routing helps exactly as far as the reflex can detect.*
 - This repo already has the *policy* substrate (ko-escalate, graded decision, AGM belief
   revision, consequence gate). The missing pieces are the **reflex bus** and the **interrupt
   controller** — and a no-overclaim eval, datasets for which already exist.
