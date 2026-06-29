@@ -7,15 +7,28 @@ from **candidate** to a **GO** receipt under the same measurement contract every
 other Sophia result obeys (`tools/claim_gate.py`). It is written *before* the
 powered run so the ordering is auditable; nothing here is a claim yet.
 
+> **RESULT (2026-06-29): the powered run is complete and the verdict is NO-GO.**
+> On the external, decontaminated, 2-family-labelled battery (N=403; scored on the
+> 365-case judge-consensus subset; quadrant Cohen κ 0.853, CI [0.807, 0.896], Gwet
+> AC1 0.862), consulting the gate did **not** reduce the cowardice-error rate versus a
+> real no-gate baseline (`qwen2.5:7b-instruct`). It **reversed** it:
+> Δ(cowardice-error) = **+0.2968**, 95% CI **[0.2694, 0.3242]** (gate − baseline) —
+> the gate makes *more* cowardice errors than the raw model, because on raw text it
+> derives low confidence and collapses toward hold/escalate (the documented
+> derived-routing weakness, now measured against a real baseline). Receipt:
+> `agi-proof/benchmark-results/andreia/andreia-courage-eval.public-report.json`.
+> The gate stays **candidate**; `canClaimAGI` false. Threshold/prompt tuning was not
+> attempted — a NO-GO is a valid, published outcome.
+
 ## What is — and is NOT — claimed today
 
 - **Shipped (verifiable now):** the Andreia gate routes the pre-registered
   Courage-Calibration battery 16/16 deterministically
   (`tools/run_andreia_bench.py` →
   `agi-proof/benchmark-results/andreia/andreia-courage-calibration.json`).
-- **NOT claimed:** that the gate improves real decisions. The current receipt is
-  **NO-GO by design** — one deterministic judge, author-written battery, no
-  baseline contrast, no effect size with a CI. `canClaimAGI` stays false.
+- **NOT claimed:** that the gate improves real decisions. The powered receipt is
+  **NO-GO (measured)** — the gate's raw-text routing is *worse* than a real baseline
+  on the cowardice metric (above). `canClaimAGI` stays false.
 
 ## The claim to be tested (falsifiable)
 
