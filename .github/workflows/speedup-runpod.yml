@@ -62,15 +62,22 @@ jobs:
     environment: runpod-paid
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    env:
+      IN_CONFIRM: ${{ github.event.inputs.confirm }}
+      IN_MODEL: ${{ github.event.inputs.model }}
+      IN_LIMIT: ${{ github.event.inputs.limit }}
+      IN_SEED: ${{ github.event.inputs.seed }}
+      IN_GPU_TYPE: ${{ github.event.inputs.gpu_type }}
+      IN_INTERRUPTIBLE: ${{ github.event.inputs.interruptible }}
+      IN_IMAGE: ${{ github.event.inputs.image }}
     steps:
       - uses: actions/checkout@v7
 
       - name: Preflight — confirm + secret present
         env:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
-          CONFIRM: ${{ github.event.inputs.confirm }}
         run: |
-          if [ "$CONFIRM" != "RUN" ]; then
+          if [ "$IN_CONFIRM" != "RUN" ]; then
             echo "::error::Dispatch input 'confirm' must be exactly RUN to acknowledge GPU cost. Aborting (no pod created)."
             exit 1
           fi
@@ -89,13 +96,13 @@ jobs:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
         run: |
           IMAGE=""
-          if [ -n "${{ github.event.inputs.image }}" ]; then IMAGE="--image-name ${{ github.event.inputs.image }}"; fi
+          if [ -n "$IN_IMAGE" ]; then IMAGE="--image-name $IN_IMAGE"; fi
           python tools/runpod_speedup.py --dry-run \
             --source git --branch "${{ github.ref_name }}" \
-            --model "${{ github.event.inputs.model }}" \
-            --limit "${{ github.event.inputs.limit }}" \
-            --seed "${{ github.event.inputs.seed }}" \
-            --gpu-type "${{ github.event.inputs.gpu_type }}" \
+            --model "$IN_MODEL" \
+            --limit "$IN_LIMIT" \
+            --seed "$IN_SEED" \
+            --gpu-type "$IN_GPU_TYPE" \
             $IMAGE
 
       - name: Launch RunPod speedup bench (rents GPU, runs over SSH, deletes pod)
@@ -103,15 +110,15 @@ jobs:
           RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
         run: |
           INTERRUPTIBLE=""
-          if [ "${{ github.event.inputs.interruptible }}" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
+          if [ "$IN_INTERRUPTIBLE" = "true" ]; then INTERRUPTIBLE="--interruptible"; fi
           IMAGE=""
-          if [ -n "${{ github.event.inputs.image }}" ]; then IMAGE="--image-name ${{ github.event.inputs.image }}"; fi
+          if [ -n "$IN_IMAGE" ]; then IMAGE="--image-name $IN_IMAGE"; fi
           python tools/runpod_speedup.py --yes \
             --source git --branch "${{ github.ref_name }}" \
-            --model "${{ github.event.inputs.model }}" \
-            --limit "${{ github.event.inputs.limit }}" \
-            --seed "${{ github.event.inputs.seed }}" \
-            --gpu-type "${{ github.event.inputs.gpu_type }}" \
+            --model "$IN_MODEL" \
+            --limit "$IN_LIMIT" \
+            --seed "$IN_SEED" \
+            --gpu-type "$IN_GPU_TYPE" \
             $INTERRUPTIBLE $IMAGE
 
       - name: Show the speedup report in the run log

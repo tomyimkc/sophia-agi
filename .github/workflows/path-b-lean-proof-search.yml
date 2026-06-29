@@ -64,6 +64,15 @@ jobs:
   search:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # Inputs surfaced as env vars so `run:` blocks reference shell variables instead of
+    # interpolating ${{ inputs.* }} directly (avoids expression injection into shell).
+    env:
+      IN_THEOREM: ${{ inputs.theorem }}
+      IN_PROVIDER: ${{ inputs.provider }}
+      IN_MODEL: ${{ inputs.model }}
+      IN_MAX_NODES: ${{ inputs.max_nodes }}
+      IN_MAX_DEPTH: ${{ inputs.max_depth }}
+      IN_STUB: ${{ inputs.stub }}
     steps:
       - uses: actions/checkout@v7
 
@@ -153,8 +162,8 @@ jobs:
           SOPHIA_MODEL: ${{ inputs.model }}
         run: |
           set +e
-          args=(--theorem "${{ inputs.theorem }}" --max-nodes "${{ inputs.max_nodes }}" --max-depth "${{ inputs.max_depth }}")
-          if [ -n "${{ inputs.stub }}" ]; then args+=(--stub); fi
+          args=(--theorem "$IN_THEOREM" --max-nodes "$IN_MAX_NODES" --max-depth "$IN_MAX_DEPTH")
+          if [ -n "$IN_STUB" ]; then args+=(--stub); fi
           python tools/run_proof_search.py "${args[@]}"
           rc=$?
           # Exit-code contract for run_proof_search.py:
@@ -184,7 +193,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ts=$(date -u +%Y-%m-%dT%H-%M-%SZ)
-          out="agi-proof/proof-search/path-b-${{ inputs.theorem }}-${ts}.public-report.json"
+          out="agi-proof/proof-search/path-b-${IN_THEOREM}-${ts}.public-report.json"
           mkdir -p agi-proof/proof-search
           [ -f agi-proof/proof-search/result.json ] && cp agi-proof/proof-search/result.json "$out"
           git add agi-proof/proof-search/*.public-report.json 2>/dev/null
@@ -192,18 +201,19 @@ jobs:
             echo "no report to commit"; exit 0
           fi
           # Evidence branch off main (ruleset forbids pushing to main directly).
-          branch="evidence/path-b-${{ inputs.theorem }}-${ts}"
+          branch="evidence/path-b-${IN_THEOREM}-${ts}"
           branch="${branch//:/-}"   # ':' is illegal in a branch name
           git checkout -b "$branch"
-          git commit -m "evidence(path-b): Lean proof search ${{ inputs.theorem }} via ${{ inputs.provider }} (${{ steps.search.outputs.VERDICT || 'no-verdict' }})"
+          git commit -m "evidence(path-b): Lean proof search ${IN_THEOREM} via ${IN_PROVIDER} (${{ steps.search.outputs.VERDICT || 'no-verdict' }})"
           git push --set-upstream origin "$branch"
           verdict="${{ steps.search.outputs.VERDICT || 'no-verdict' }}"
           novel="${{ steps.search.outputs.NOVELTY || 'n/a' }}"
-          body=$(printf 'Auto-committed by the `path-b-lean-proof-search` workflow (run %s).\n\n- **Theorem:** `%s`\n- **Provider:** `%s` (stub=%s)\n- **Verdict:** `%s`\n- **Novel:** `%s`\n\n`candidateOnly`/`level3Evidence` = true/false; `canClaimAGI` unchanged. This is additive evidence — no code logic. Merge to record the result.' "${{ github.run_id }}" "${{ inputs.theorem }}" "${{ inputs.provider }}" "${{ inputs.stub != '' && 'yes' || 'no' }}" "$verdict" "$novel")
+          stub_label=$([ -n "$IN_STUB" ] && echo 'yes' || echo 'no')
+          body=$(printf 'Auto-committed by the `path-b-lean-proof-search` workflow (run %s).\n\n- **Theorem:** `%s`\n- **Provider:** `%s` (stub=%s)\n- **Verdict:** `%s`\n- **Novel:** `%s`\n\n`candidateOnly`/`level3Evidence` = true/false; `canClaimAGI` unchanged. This is additive evidence — no code logic. Merge to record the result.' "${{ github.run_id }}" "$IN_THEOREM" "$IN_PROVIDER" "$stub_label" "$verdict" "$novel")
           # FAIL LOUDLY if the evidence PR can't be created — a silent skip would mark the
           # run green while the report never lands. Needs pull-requests: write (granted above).
           gh pr create --base main --head "$branch" \
-            --title "evidence(path-b): Lean proof search ${{ inputs.theorem }} ($verdict)" \
+            --title "evidence(path-b): Lean proof search ${IN_THEOREM} ($verdict)" \
             --body "$body"
           echo "committed $out (evidence PR opened from $branch)"
 
@@ -212,9 +222,9 @@ jobs:
         run: |
           echo "## Path B — Lean proof search" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "- **Theorem:** \`${{ inputs.theorem }}\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "- **Provider:** \`${{ inputs.provider }}\` (\`${{ inputs.model || 'preset default' }}\`)" >> "$GITHUB_STEP_SUMMARY"
-          echo "- **Mode:** $([ -n '${{ inputs.stub }}' ] && echo 'stub (no model)' || echo 'real Lean + LLM proposer')" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Theorem:** \`$IN_THEOREM\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Provider:** \`$IN_PROVIDER\` (\`${IN_MODEL:-preset default}\`)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Mode:** $([ -n "$IN_STUB" ] && echo 'stub (no model)' || echo 'real Lean + LLM proposer')" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Verdict:** \`${{ steps.search.outputs.VERDICT || '(not recorded)' }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Novel:** \`${{ steps.search.outputs.NOVELTY || 'n/a' }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
