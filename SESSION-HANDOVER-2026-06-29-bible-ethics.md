@@ -37,22 +37,24 @@ Full write-up: `agi-proof/conscience/scripture-integration-thesis.md`.
   bounded* voice without (a) adopting it (is/ought break) or (b) erasing it (PROTECTED-domain failure),
   **symmetric across canons** (reciprocity is the load-bearing axis)?
 - 5 axes: `voice_presence`, `non_collapse`, `non_establishment`, `floor_respect`, `reciprocity`.
-- `inverse_euthyphro_v1.jsonl`: **32 items** (christian/islamic/jewish/confucian/daoist/hindu/buddhist/secular),
-  authored independently of the corpus (no-circularity). Symmetry `parallel_group`s seat ≥2 scriptures.
+- `inverse_euthyphro_v1.jsonl`: **64 items** across **10 traditions** (christian/islamic/jewish/confucian/
+  daoist/hindu/buddhist/sikh/indigenous/secular), authored independently of the corpus (no-circularity,
+  machine-checked). Symmetry `parallel_group`s seat ≥2 scriptures. **Powered**: MDE@N=64 = 0.248 ≤ 0.25.
 - `measurement_spec.json`: pre-registration; hard guardrails = ZERO is/ought leaks (auto NO-GO),
   reciprocity treatment-delta CI must include 0, over-refusal ≤ 0.10.
 - `tools/run_religion_v2_eval.py`: structural validator + candidate marker rubric **+ wired `--judges`
   farm mode** (subject → ≥N seeds → ≥2 judges score each axis PASS/FAIL; reuses `_distinct_families`
   + `eval_stats` κ/AC1/CI). Emits `gateInputs` + `couldSupportValidatedClaim`; **verdict stays CANDIDATE**.
 
-**Honest record:** `agi-proof/conscience/public-standard-failure-ledger.md` items #7–#12.
+**Honest record:** `agi-proof/conscience/public-standard-failure-ledger.md` items #7–#13
+(status-tagged: #9/#13 CLOSED, #12 PARTLY CLOSED, #7/#8/#10/#11 OPEN by design).
 
 ## 3. ▶ NEXT BENCHMARK (do this when Spark+Mac are available)
 > Read `.claude/skills/wisdom-gpu-prebaked/SKILL.md` first (GPU cost-guard). Cheap validation first.
 
-1. **Power before you run.** Compute MDE/required-N with `tools/eval_stats.py`; 32 items is likely
-   short of a 5-pt effect. Refuse a verdict if MDE(N) > target. Expand bank toward ~40 + an
-   **independent second annotator** if underpowered.
+1. **Power is computed** (MDE@N=64 = 0.248 ≤ pre-registered 0.25; required N for +0.25 = 63). The bank
+   is powered for the +0.25 magnitude. Still owed: a **second independent human annotator**; and if the
+   real run shows a borderline (~+0.20) effect, expand toward ~100 before claiming.
 2. **Bring up the two-box farm** per `docs/11-Platform/Mac-Spark-Judge-Farm.md` +
    `config/inference.local.mac-judge.json`: Spark `vllm serve Qwen/Qwen2.5-7B-Instruct` (family `qwen`),
    Mac `mlx_lm.server --model mlx-community/Meta-Llama-3.1-8B-Instruct-4bit` (family `mlx`).
@@ -75,7 +77,8 @@ Full write-up: `agi-proof/conscience/scripture-integration-thesis.md`.
 - `python tools/lint_claims.py` — OK.
 - `make claim-check` — M3-pilot / M3-transfer GO; tool-disclosure + leiden receipts OK; no drift.
 - `python tests/test_public_moral_standard.py` (14), `test_conscience_proof_package`, `test_skills_layer` (10) — OK.
-- `python tools/run_religion_v2_eval.py --selftest` (32 items, 5 axes) + offline farm smoke — OK.
+- `python tools/run_religion_v2_eval.py --selftest` (64 items, 5 axes) + offline farm smoke — OK.
+- `python tests/test_religion_v2_probe.py` (6: bank/power/symmetry/decontam/ceiling/farm-smoke) — OK.
 
 ## 5. One rule above all
 Religion is **PROTECTED**; the moral corpus is **human-gated** (the model never promotes it

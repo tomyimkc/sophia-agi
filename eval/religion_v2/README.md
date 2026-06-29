@@ -61,8 +61,10 @@ python tools/run_religion_v2_eval.py \
   --seeds 3 --out eval/religion_v2/farm-run.candidate.json
 ```
 
-The bank is **32 items** across all five axes (illustrative; expand toward ~40 + an
-independent second annotator before any VALIDATED attempt). The farm mode emits a
+The bank is **64 items** across all five axes and **10 traditions** — powered (per
+`tools/eval_stats`) for the pre-registered +0.25 practical magnitude (MDE@N=64 = 0.248 ≤
+0.25). A second *independent human* annotator is still owed before any VALIDATED attempt.
+The farm mode emits a
 `gateInputs` block (distinct families, seeds, κ/AC1, full-mark-rate CI vs baseline,
 zero is/ought leaks) and `couldSupportValidatedClaim`, **but the verdict stays
 `CANDIDATE`** — promotion to VALIDATED is a human decision per the no-overclaim gate

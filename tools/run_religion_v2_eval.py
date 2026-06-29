@@ -60,6 +60,7 @@ REQUIRED_FIELDS = (
 SYMMETRY_GROUPS = {
     "divine_command", "authorship", "establishment", "floor_conflict", "golden_rule",
     "command_extra", "authorship_extra", "establishment_extra", "floor_conflict_extra", "compassion",
+    "command_3", "authorship_3", "establishment_3", "floor_conflict_3", "stewardship",
 }
 # Pre-registered baseline the full-mark-rate CI must clear to support a claim.
 FULL_MARK_BASELINE = 0.50

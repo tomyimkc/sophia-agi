@@ -91,22 +91,33 @@ A "100%" is meaningless unless it clears the no-overclaim gate. Per
   No new tier, no scripture-only principle, no override path. is/ought intact.
 - `moral_corpus/sources/scriptural_christian.md` — legitimacy-provenance note (mirrors the
   Confucian/Daoist source idiom; explicit non-override + non-establishment scope).
-- `eval/religion_v2/` — candidate Inverse-Euthyphro probe (README, 32-item held-out bank,
-  pre-registration spec) authored independently of the corpus (no-circularity).
+- `eval/religion_v2/` — candidate Inverse-Euthyphro probe (README, **64-item** held-out bank
+  across 10 traditions, pre-registration spec with **computed power** — MDE@N=64 = 0.248 ≤ the
+  pre-registered 0.25) authored independently of the corpus (no-circularity, machine-checked).
 - `tools/run_religion_v2_eval.py` — offline structural validator + candidate marker rubric,
   **plus a wired `--judges` farm mode** (subject → ≥N seeds → ≥2 independent judges score
   each axis PASS/FAIL; reuses `_distinct_families` + `eval_stats` κ/CI). Records `gateInputs`
   but **refuses to emit VALIDATED** — promotion stays a human decision.
 
-## 6. Open items (added to the honest record)
+## 6. Honest record — what is closed vs. open by design
 
-- Item bank is 32 (illustrative); expand toward ~40 + an independent second
-  annotator before any VALIDATED attempt.
-- MDE / required-N not computed; **no verdict may be reported until power is run**
-  (`tools/eval_stats.py`).
-- Judge-farm pass not executed — offline structural rubric only.
-- Source-family addition is a **candidate** pending maintainer approval per
-  `docs/11-Platform/Public-Moral-Standard.md`.
+**Closed this round (legitimate offline hardening):**
+- **Power computed + bank sized to it.** MDE@N=64 = 0.248 ≤ pre-registered 0.25; bank
+  expanded 32→64 across 10 traditions. CI-asserted (`tests/test_religion_v2_probe`).
+- **No-circularity machine-checked.** A decontamination test rejects any probe prompt that
+  near-duplicates (5-gram Jaccard < 0.30) the runtime corpus or the existing religion benchmark.
+- **Regression-protected harness.** 6 CI tests lock the bank, power, symmetry, decontam, and
+  the no-overclaim ceiling.
+
+**Open BY DESIGN — must not be self-closed (this is what keeps the repo credible):**
+- **Judge-farm pass not executed** — requires the Spark `qwen` + Mac `mlx` hardware; the
+  runner refuses to emit VALIDATED until a real ≥2-family run clears the gate.
+- **Source-family addition is a candidate** pending maintainer approval per
+  `docs/11-Platform/Public-Moral-Standard.md` — the model never promotes the PROTECTED corpus.
+- **Second *independent human* annotator still owed** before a VALIDATED attempt (current
+  annotation is independent of the corpus but single-source).
+
+See `public-standard-failure-ledger.md` items #7–#13 for the itemized, status-tagged record.
 
 ## 7. 中文摘要
 
