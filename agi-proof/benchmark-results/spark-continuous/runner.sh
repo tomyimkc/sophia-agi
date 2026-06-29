@@ -39,7 +39,9 @@ run_one() {
   esac
 }
 
-gpu_free_mb() { nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits 2>/dev/null | head -1 | tr -d ' ' || echo 0; }
+gpu_free_mb() { # returns an integer MB free, or 999999 if unknown (GB10 unified mem often reports N/A) -> proceed
+  local v; v=$(nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits 2>/dev/null | head -1 | tr -dc '0-9')
+  if [ -n "$v" ]; then echo "$v"; else echo 999999; fi; }
 
 stamp() { # $1=raw json  $2=name  -> stamped final path on stdout
   local raw="$1" name="$2"
@@ -75,7 +77,10 @@ while [ "$i" -lt "$MAX_ITERS" ]; do
     name="roofline-fp4"; raw="$TMP/${name}.raw.json"; rm -f "$raw"
   fi
   echo "--- iter $i: $name START $(date -u) (gpu_free=${free}MB) ---" >> "$LOG"
-  if run_one "$name" "$raw" >> "$LOG" 2>&1 && [ -f "$raw" ]; then
+  # Gate on OUTPUT, not exit code: some benchmarks (e.g. seib) exit non-zero when their
+  # internal verdict is "no improvement" — that's still a valid, committable result.
+  run_one "$name" "$raw" >> "$LOG" 2>&1
+  if [ -s "$raw" ]; then
     final=$(stamp "$raw" "$name")
     short=$(basename "$final")
     echo "{\"utc\":\"$(date -u +%Y%m%dT%H%M%SZ)\",\"bench\":\"$name\",\"file\":\"$short\"}" >> "$RESDIR/index.jsonl"
