@@ -47,6 +47,7 @@ from provenance_bench import (  # noqa: E402
     code_dataset,
     code_integrity,
     code_reward,
+    faithfulness_rollout,
     math_dataset,
     math_reward,
     ontology_rl_dataset,
@@ -285,6 +286,16 @@ def _run_gpu(args: argparse.Namespace) -> int:
         )
         return 1
 
+    if args.task == "faithfulness":
+        # The faithfulness reward's counterfactual citation-drop term regenerates the
+        # answer with a chunk ablated — that extra inference happens DURING sampling, so
+        # it needs a custom rollout-driven GRPO loop (sampling = faithfulness_rollout.rollout,
+        # advantage over a group of rollouts), NOT the vanilla TRL GRPOTrainer whose reward
+        # callback only sees completion text. That loop is OPEN in the failure ledger.
+        from provenance_bench import faithfulness_grpo
+
+        return faithfulness_grpo.run_live(args)
+
     use_vllm = args.vllm != "none"
     four_bit = args.quant == "4bit"
     # Refuse the broken combo: QLoRA(4-bit) + vLLM colocate (trl#4973).
@@ -518,10 +529,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--model", default="mock", help=f'subject model (default "mock"; GPU: "{DEFAULT_MODEL}")')
     ap.add_argument("--step-domain", choices=["math", "physics"], default="math",
                     help="for --task step: which RL split + per-step oracle to use")
-    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "physics", "step"], default="provenance",
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "physics", "step", "faithfulness"],
+                    default="provenance",
                     help="reward task: provenance (provenance_faithful), math (sympy math_equivalent), "
-                         "code (hidden-tests-pass via provenance_bench.code_exec), or concept "
-                         "(concept-TBox gate: don't merge cross-tradition concepts)")
+                         "code (hidden-tests-pass via provenance_bench.code_exec), concept "
+                         "(concept-TBox gate: don't merge cross-tradition concepts), step "
+                         "(process: every step verified), or faithfulness "
+                         "(retrieve-then-reason + counterfactual citation-drop; offline harness only)")
     ap.add_argument("--dry-run", action="store_true", help="offline reward-wiring check only (no GPU)")
     ap.add_argument("--out", type=Path, default=OUT_JSON)
     # GPU-only args (ignored under --model mock / --dry-run)
@@ -570,6 +584,14 @@ def main(argv: list[str] | None = None) -> int:
         help="order training tasks easy->hard by gate pass-rate (offline-safe)",
     )
     ap.add_argument("--curriculum-samples", type=int, default=1)
+    # faithfulness-task knobs (ignored by other tasks)
+    ap.add_argument("--entailment-provider", choices=["deepseek", "llmhub"], default=None,
+                    help="faithfulness: use a live entailment LLM behind the verify seam "
+                         "(keys from private/secrets/<provider>_api_key); default = lexical placeholder")
+    ap.add_argument("--entailment-model", default=None,
+                    help="faithfulness: override the entailment model id for --entailment-provider")
+    ap.add_argument("--top-k", type=int, default=6, help="faithfulness: retrieved chunks per query")
+    ap.add_argument("--limit", type=int, default=None, help="faithfulness: cap the number of training cases")
     args = ap.parse_args(argv)
 
     if args.model == "mock" or args.dry_run:
@@ -589,6 +611,26 @@ def main(argv: list[str] | None = None) -> int:
                 ok = ok and integ_ok
                 detail.setdefault("checks", {})["codeIntegrityInvariants"] = integ_ok
                 detail["codeIntegrity"] = integ_detail
+        elif args.task == "faithfulness":
+            # Retrieve-then-reason rollout + counterfactual citation-drop reward.
+            # Offline harness: proves a retrieval-USING policy outscores a weights-
+            # LEAKING one on an identical answer, plus the floor / abstention / bounded
+            # invariants. The live rollout-driven GRPO loop is Open in the ledger.
+            ok, detail = faithfulness_rollout.offline_invariants()
+            # Also prove the GRPO advantage math + anti-collapse property (faithfulness
+            # gives a learning signal where a correctness-only reward would collapse) and
+            # that the LIVE retrieve/verify/extract seams conform to the rollout interface
+            # (the latter exercises the real committed RAG index, offline).
+            from provenance_bench import faithfulness_grpo, faithfulness_seams
+
+            grpo_ok, grpo_detail = faithfulness_grpo.offline_invariants()
+            seam_ok, seam_detail = faithfulness_seams.conformance_check()
+            ok = ok and grpo_ok and seam_ok
+            detail.setdefault("checks", {})
+            detail["checks"]["grpoAdvantageInvariants"] = grpo_ok
+            detail["checks"]["liveSeamConformance"] = seam_ok
+            detail["grpo"] = grpo_detail
+            detail["seams"] = seam_detail
         elif args.task == "concept":
             ok, detail = ontology_rl_reward.offline_invariants()
             # The concept task additionally requires the spurious-reward ablation to
