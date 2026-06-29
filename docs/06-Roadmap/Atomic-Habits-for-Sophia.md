@@ -236,6 +236,14 @@ exercises the thesis end-to-end without new infrastructure:
 > a clean, publishable negative (like SFT > ORPO). Either way it clears the gate or it does not;
 > `canClaimAGI` stays `false`.
 
+This experiment, plus all nine ideas, is **pre-registered** at
+[`agi-proof/benchmark-results/habit-formation/measurement_spec.json`](../../agi-proof/benchmark-results/habit-formation/measurement_spec.json)
+(flagship HST fully specified; H1/H3/H4/H6/H7/H8/H9 registered as
+`not-yet-powered` with their falsifiable claim and required metric). The spec is
+committed *before* any run so `claim_gate --assert-prereg` can prove the criteria
+predate the data; `primaryN`/`primaryMDE` are left to-be-computed by `eval_stats`
+(inventing a power number would itself break the contract).
+
 ---
 
 ## 8. Summary table — book → repo → next rung
