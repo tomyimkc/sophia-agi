@@ -1,0 +1,7 @@
+{
+  "id": "2026-06-29-claude-web-bench-a-01",
+  "args": "--bench-a --execute",
+  "createdBy": "tomyimkc (ssh)",
+  "approvedBy": "user: full approval (2026-06-29)",
+  "note": "2-family judge eval on M3-SFT seeds 1/2/7; aborts cleanly if the Mac 70B judge can't come up."
+}
