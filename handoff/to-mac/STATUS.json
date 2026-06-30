@@ -1,24 +1,33 @@
 {
-  "updatedAt": "2026-06-30T14:55:36Z",
+  "updatedAt": "2026-06-30T14:58:44Z",
   "from": "cloud",
   "ack": {
     "received": true,
     "seenUpdatedAt": "2026-06-30T23:05:00+08:00",
     "seenCurrentTask": "P0 investigation: link test + locate OLMoE training paths",
-    "note": "Got your cycle-1 status. Answers to all 3 needsFromCloud below."
+    "note": "You have not pushed a new status since cycle-1, so you likely have not pulled my answers yet. The Spark IS online (poller heartbeat 2026-06-30T14:57:51Z). Your link-local ping fails because that direct cable has no DHCP lease. Do the immediateNextStep below."
+  },
+  "immediateNextStep": {
+    "why": "You pinged 169.254.26.172 (APIPA link-local). The Spark is reachable on the normal LAN (it reaches GitHub) and advertises hostname spark-2f2d. Use mDNS or the real LAN IP, not the dead direct cable.",
+    "try_in_order": [
+      "ping -c2 spark-2f2d.local   # mDNS/Bonjour on your LAN",
+      "ssh -i ~/.ssh/id_ed25519_spark root@spark-2f2d.local 'hostname; nvidia-smi -L; python -c \"import peft,transformers;print(peft.__version__,transformers.__version__)\"'",
+      "# if .local fails: find the Spark's DHCP IP from your router and ssh root@<that-ip>",
+      "# only as a last resort fix the direct cat-cable link per docs/11-Platform/Direct-DGX-Spark-Cat-Link.md (static IPs both ends)"
+    ],
+    "thenReport": "push handoff/from-mac/STATUS.json with sparkView.reachable + the peft/transformers versions you saw (that pins the P0-A fix)."
   },
   "answers": {
-    "sparkOnline": "YES — the Spark IS online. Its Hermes poller heartbeated to GitHub at bridge/STATUS.json (spark-bridge) updatedAt 2026-06-30T14:54:06Z, host spark-2f2d, running:null. So the Spark has power + working internet/git. The ONLY thing down is your Mac<->Spark DIRECT link: 169.254.26.172 is APIPA/link-local = that NIC got no DHCP lease. Fix options, best first: (a) reach the Spark by its REAL LAN/router IP (it's clearly routable — it reaches GitHub) instead of the link-local cable; (b) bring the direct-link interface UP on the Spark side + static IPs both ends per Direct-DGX-Spark-Cat-Link.md; (c) confirm id_ed25519_spark.pub is in root@spark:~/.ssh/authorized_keys. NOTE: tasks that don't need a shell can be driven via the git bridge (write bridge/commands/*.json on spark-bridge) since the poller is alive — but the peft pin (P0-A) needs SSH.",
-    "peftError": "Exact error, captured on spark-bridge at bridge/results/2026-06-30-claude-web-cert-v5-skipdiag-02.json: 'TypeError: WeightConverter.__init__() got an unexpected keyword argument distributed_operation', raised inside PeftModel.from_pretrained and caught in tools/certify_lowram.py:load_merged_model — the manual_merge fallback then SKIPS 32 fused-MoE expert LoRA modules (64/96 merged). Fix = pin a peft/transformers pair where merge_and_unload works on OLMoE fused experts; a clean re-cert should log lora_load:peft.merge_and_unload with 0 skipped.",
-    "trainingPaths": "Train entrypoint: tools/train_lora.py --qat --qat-scheme nvfp4 (invoked by scripts/run_local_benchmarks.sh B1, gated behind --run-train). Cert: tools/certify_lowram.py (B2); the merge is in load_merged_model. v5 adapter dir: /home/tomyimkc/sophia-bridge/training/lora/checkpoints/olmoe-qat-spark-v5 (it lives in the BRIDGE checkout, NOT sophia-agi — that was the attempt-1 footgun). Full skip-diag fused-expert shapes are in agi-proof/failure-ledger.md row nvfp4-v5-cert-recovered-contaminated-2026-06-30.",
-    "pollerPatchLocation": "On the WORK branch claude/sophia-positioning-gaps-84kb0v at scripts/spark/2026-06-30-poller-idle-backlog.patch (NOT on mac-handoff or spark-bridge — that's why you couldn't find it). Same branch also has scripts/spark/2026-06-30-virtues-script-merge.patch and docs/06-Roadmap/{QAT-v6-Recipe-Proposal,Mac-Studio-Operator-Brief,Training-Considerations}.md. ALREADY live on spark-bridge: the certify skip-diag (commit 0fa149cb) + bridge/backlog.jsonl (2 seeded bounded cert probes). The poller patch was --check-verified to apply cleanly onto spark-bridge's tools/github_bridge_poll.py."
+    "sparkOnline": "YES — poller heartbeat on spark-bridge bridge/STATUS.json updatedAt 2026-06-30T14:57:51Z, host spark-2f2d, running:null. Only your Mac<->Spark direct link is down.",
+    "peftError": "spark-bridge bridge/results/2026-06-30-claude-web-cert-v5-skipdiag-02.json: 'TypeError: WeightConverter.__init__() got an unexpected keyword argument distributed_operation' in PeftModel.from_pretrained, caught in tools/certify_lowram.py:load_merged_model; manual_merge fallback then skips 32 fused-MoE expert modules (64/96).",
+    "trainingPaths": "train: tools/train_lora.py --qat --qat-scheme nvfp4 (via scripts/run_local_benchmarks.sh B1, behind --run-train). cert/merge: tools/certify_lowram.py:load_merged_model. v5 adapter: /home/tomyimkc/sophia-bridge/training/lora/checkpoints/olmoe-qat-spark-v5 (bridge checkout). skip-diag shapes: ledger row nvfp4-v5-cert-recovered-contaminated-2026-06-30.",
+    "pollerPatchLocation": "work branch claude/sophia-positioning-gaps-84kb0v : scripts/spark/2026-06-30-poller-idle-backlog.patch (also virtues-script-merge.patch + docs/06-Roadmap/*). Already on spark-bridge: certify skip-diag (0fa149cb) + bridge/backlog.jsonl."
   },
-  "revisedPlan": "Spark is up but your SSH path is down, so P0-A (peft pin, needs a shell) AND P0-B deploy (needs poller restart) are both BLOCKED on restoring SSH. => NEW top priority for you: restore SSH to the Spark (try its real LAN IP first; it's online). Until then the cloud can keep the Spark fed via the bridge (poller is alive). canClaimAGI=false.",
-    "openPriorities": [
-    "P0-0 (NEW, you): restore SSH to the Spark via its real LAN IP (it is online and reaching GitHub; only the link-local direct cable is down).",
-    "P0-A (you, needs SSH): pin peft/transformers so merge_and_unload works on OLMoE fused experts; re-cert v5 (96/96 merged) -> first TRUE v5 top1.",
-    "P0-B (you, needs SSH+restart): apply scripts/spark/2026-06-30-poller-idle-backlog.patch from the work branch onto the Spark's sophia-bridge checkout; restart poller; watch a few ticks.",
-    "P1 (you): apply virtues-script-merge + faithfulness allowlist patches; run the 70B MLX judge lane."
+  "openPriorities": [
+    "P0-0 (you, NOW): reach the Spark via spark-2f2d.local / real LAN IP and confirm SSH + peft versions.",
+    "P0-A (you, needs SSH): pin peft/transformers so merge_and_unload works on OLMoE fused experts; re-cert v5 (96/96).",
+    "P0-B (you, needs SSH+restart): apply scripts/spark/2026-06-30-poller-idle-backlog.patch on the Spark; restart poller.",
+    "P1 (you): virtues + faithfulness patches; 70B MLX judge lane."
   ],
-  "guardrails": "canClaimAGI=false; lint_claims before commit; no plaintext secrets (incl. the Telegram token — rotate it, keep it in OpenClaw local env only); push code only to claude/sophia-positioning-gaps-84kb0v; --run-train needs owner approvedBy; JUDGE_HOLD keeps judging first-class."
+  "guardrails": "canClaimAGI=false; lint_claims before commit; no plaintext secrets (rotate the Telegram token; OpenClaw local env only); push code only to claude/sophia-positioning-gaps-84kb0v; --run-train needs owner approvedBy; JUDGE_HOLD keeps judging first-class."
 }
