@@ -1,0 +1,69 @@
+diff --git a/tools/github_bridge_poll.py b/tools/github_bridge_poll.py
+index 6033f8b..502cffd 100644
+--- a/tools/github_bridge_poll.py
++++ b/tools/github_bridge_poll.py
+@@ -228,6 +228,51 @@ def _pending(root):
+     return [p for p in cmds if p.stem not in done]
+ 
+ 
++def _judge_hold(root):
++    """True if the GPU is reserved for judging. Touch bridge/JUDGE_HOLD to pause the idle backlog
++    (e.g. before a Mac judge run); remove it to resume. Real queued commands ALWAYS preempt the
++    backlog regardless of this flag (the backlog only seeds when the queue is empty)."""
++    return (root / "bridge" / "JUDGE_HOLD").exists()
++
++
++def _seed_backlog(root):
++    """Keep the GPU busy 24/7 when otherwise idle: materialize ONE entry from bridge/backlog.jsonl
++    into a normal command file, so it flows through the SAME validate/start/result path. Consumed
++    once (the line is removed), so a backlog job never re-runs unless it re-enqueues itself. Only
++    called when the queue is empty, nothing is running, and JUDGE_HOLD is absent -> judge work and
++    any real command always take priority. Fail-open: any error just skips (never wedges the loop)."""
++    backlog = root / "bridge" / "backlog.jsonl"
++    if not backlog.exists() or _judge_hold(root):
++        return None
++    try:
++        lines = [ln for ln in backlog.read_text().splitlines() if ln.strip()]
++    except Exception:  # noqa: BLE001
++        return None
++    if not lines:
++        return None
++    try:
++        spec = json.loads(lines[0])
++    except Exception:  # noqa: BLE001 - drop the bad line, keep the rest
++        backlog.write_text("\n".join(lines[1:]) + ("\n" if lines[1:] else ""))
++        return None
++    seqf = root / "bridge" / ".backlog_seq"
++    try:
++        n = int(seqf.read_text().strip()) + 1
++    except Exception:  # noqa: BLE001
++        n = 1
++    seqf.write_text(str(n))
++    cid = spec.get("id") or f"backlog-{n:04d}"
++    spec["id"] = cid
++    spec.setdefault("createdBy", "idle-backlog (spark)")
++    spec.setdefault("note", "auto-seeded by the idle GPU backlog")
++    cmd_path = root / "bridge" / "commands" / f"{cid}.json"
++    if not cmd_path.exists() and not (root / "bridge" / "results" / f"{cid}.json").exists():
++        cmd_path.write_text(json.dumps(spec) + "\n")
++    backlog.write_text("\n".join(lines[1:]) + ("\n" if lines[1:] else ""))  # consume the entry
++    sys.stderr.write(f"[bridge] idle backlog seeded {cid}: {spec.get('args')!r}\n")
++    return cid
++
++
+ def _publish(root, trainwatch_url, pending_ids, running_id):
+     status = {"updatedAt": _now(), "host": "spark-2f2d",
+               "running": running_id, "pendingCommands": pending_ids,
+@@ -266,6 +311,12 @@ def tick_nonblocking(root, branch, trainwatch_url):
+         sys.stderr.write(f"[bridge] {res['id']} finished rc={rc}\n")
+         _RUNNING = None
+ 
++    # 1b. if nothing is queued or running, seed ONE idle-backlog job (keeps the GPU busy 24/7).
++    # Materializes into bridge/commands/ so the pending loop below handles it normally; any real
++    # command or JUDGE_HOLD takes priority because this only fires when _pending(root) is empty.
++    if _RUNNING is None and not _pending(root):
++        _seed_backlog(root)
++
+     # 2. start the next pending job (one at a time)
+     started = None
+     if _RUNNING is None:
