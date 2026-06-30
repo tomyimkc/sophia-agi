@@ -1,24 +1,9 @@
 {
-  "updatedAt": "2026-06-30T03:00:19Z",
+  "updatedAt": "2026-06-30T03:00:56Z",
   "host": "spark-2f2d",
   "running": null,
   "pendingCommands": [],
   "trainwatch": [
-    {
-      "id": "ab-lora-train-v4-full",
-      "name": "lora-train-v4-full",
-      "description": "",
-      "status": "completed",
-      "total_steps": 330,
-      "current_step": 300,
-      "started_at": 1782788396.9292696,
-      "finished_at": 1782788397.4558914,
-      "eta_seconds": 0.0,
-      "speed": null,
-      "ema_step_time": null,
-      "latest_metrics": "{\"val_loss\": 1.5391, \"train_loss\": 0.1527}",
-      "created_at": 1782788396.9292696
-    },
     {
       "id": "a92be4e1",
       "name": "olmoe-qat-v4",
