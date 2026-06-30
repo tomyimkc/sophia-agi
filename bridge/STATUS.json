@@ -1,10 +1,8 @@
 {
-  "updatedAt": "2026-06-30T05:06:25Z",
+  "updatedAt": "2026-06-30T05:07:03Z",
   "host": "spark-2f2d",
-  "running": "2026-06-30-claude-web-cert-t1-v3",
-  "pendingCommands": [
-    "2026-06-30-claude-web-cert-t1-v3"
-  ],
+  "running": null,
+  "pendingCommands": [],
   "trainwatch": [
     {
       "id": "65e7ca66",
@@ -1097,6 +1095,11 @@
       "path": "agi-proof/benchmark-results/minif2f-v2-passk.public-report.json",
       "bytes": 162336,
       "mtime": "2026-06-29T04:51:17Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/nvfp4-v3-downproj-cert.json",
+      "bytes": 1186,
+      "mtime": "2026-06-30T05:06:25Z"
     },
     {
       "path": "agi-proof/benchmark-results/pif.public-report.json",
