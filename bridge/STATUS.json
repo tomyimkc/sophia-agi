@@ -1,10 +1,8 @@
 {
-  "updatedAt": "2026-06-30T01:31:58Z",
+  "updatedAt": "2026-06-30T01:32:36Z",
   "host": "spark-2f2d",
-  "running": "2026-06-30-claude-web-bench-a-03",
-  "pendingCommands": [
-    "2026-06-30-claude-web-bench-a-03"
-  ],
+  "running": null,
+  "pendingCommands": [],
   "trainwatch": [
     {
       "id": "a92be4e1",
@@ -979,6 +977,11 @@
       "mtime": "2026-06-29T04:51:17Z"
     },
     {
+      "path": "agi-proof/benchmark-results/wisdom-market/m3-2family-judge/judgments.json",
+      "bytes": 280039,
+      "mtime": "2026-06-30T01:32:21Z"
+    },
+    {
       "path": "agi-proof/benchmark-results/wisdom-market/m3-2family-judge/seed1-judge.json",
       "bytes": 2735,
       "mtime": "2026-06-30T01:07:10Z"
@@ -1000,8 +1003,18 @@
     },
     {
       "path": "agi-proof/benchmark-results/wisdom-market/m3-2family-judge/seed7-judge.json",
-      "bytes": 2333,
-      "mtime": "2026-06-30T00:18:03Z"
+      "bytes": 2716,
+      "mtime": "2026-06-30T01:32:21Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/m3-2family-judge/seed7-raw.json",
+      "bytes": 7689,
+      "mtime": "2026-06-30T01:32:21Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/wisdom-market/m3-2family-judge/uplift-validation.json",
+      "bytes": 1660,
+      "mtime": "2026-06-30T01:32:21Z"
     },
     {
       "path": "agi-proof/benchmark-results/wisdom-market/m3-2family-judge-70b/judge70b-seed1.json",
