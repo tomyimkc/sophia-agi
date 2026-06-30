@@ -95,9 +95,13 @@ MAC_SSH_KEY="${MAC_SSH_KEY:-${HOME}/.ssh/id_ed25519}"
 MAC_MLX_BIN="${MAC_MLX_BIN:-mlx_lm.server}"     # on the Mac login-shell PATH (pyenv 3.10.6)
 JUDGE_READY_TRIES="${JUDGE_READY_TRIES:-80}"    # x3s ~= 4 min max wait for the 70B-4bit load
 
-# The combined --judges flag (provider:model@base_url). ollama->family 'qwen'; openai-transport to
+# The combined --judges flag (provider:model@base_url). ollama->family 'qwen'; vllm-transport to
 # the remote mlx server->family 'mlx' = 2 distinct families, both != subject. Override JUDGES to tune.
-JUDGES="${JUDGES:-ollama:${SPARK_JUDGE_MODEL}@http://${SPARK_HOST}:${SPARK_PORT},openai:${MAC_JUDGE_MODEL}@http://${MAC_HOST}:${MAC_PORT}/v1}"
+# NB: the Mac judge uses the `vllm` provider preset, NOT `openai`. mlx_lm.server is keyless, and the
+# `openai` preset has no api_key_default — so with OPENAI_API_KEY unset, resolved_key() returns None
+# and the OpenAI client throws on EVERY judge call (swallowed -> n=0). `vllm` carries
+# api_key_default="EMPTY", which the keyless mlx server accepts. (Root cause of the 2026-06-30 n=0 run.)
+JUDGES="${JUDGES:-ollama:${SPARK_JUDGE_MODEL}@http://${SPARK_HOST}:${SPARK_PORT},vllm:${MAC_JUDGE_MODEL}@http://${MAC_HOST}:${MAC_PORT}/v1}"
 
 # Two-box farm config (consumed by run_local_judge_eval.py --config).
 JUDGE_CONFIG="${JUDGE_CONFIG:-config/inference.local.mac-judge.json}"
@@ -207,7 +211,7 @@ FAITH_BATTERY="${FAITH_BATTERY:-}"   # path to a battery JSON; empty -> runner d
 # the 7B SPARK_JUDGE_MODEL, which equals the subject and would both self-judge and deflate κ —
 # the M3 weak-judge lesson). Override any of these to retarget. SUBJECT = no-gate/no-auditor baseline.
 VIRTUE_JUDGE_A="${VIRTUE_JUDGE_A:-ollama:qwen2.5:32b-instruct@http://${SPARK_HOST}:${SPARK_PORT}/v1}"
-VIRTUE_JUDGE_B="${VIRTUE_JUDGE_B:-openai:${MAC_JUDGE_MODEL}@http://${MAC_HOST}:${MAC_PORT}/v1}"
+VIRTUE_JUDGE_B="${VIRTUE_JUDGE_B:-vllm:${MAC_JUDGE_MODEL}@http://${MAC_HOST}:${MAC_PORT}/v1}"  # vllm preset = keyless mlx (see JUDGES note above)
 VIRTUE_JUDGE_A_NAME="${VIRTUE_JUDGE_A_NAME:-qwen}"
 VIRTUE_JUDGE_B_NAME="${VIRTUE_JUDGE_B_NAME:-llama}"
 VIRTUE_SUBJECT="${VIRTUE_SUBJECT:-ollama:qwen2.5:7b-instruct@http://${SPARK_HOST}:${SPARK_PORT}/v1}"
@@ -310,24 +314,37 @@ if [[ "${RUN_A}" -eq 1 ]]; then
   step "A2 — Judge M3-SFT answers across seeds [${SEEDS}] with both families"
   # judge_pilot_answers.py judges ONE answers file per call (one seed). No --seed flag exists:
   # seeds are separate answer JSONs. We loop over seeds and write one judge report per seed.
+  RAW_SIDECARS=""
   for s in ${SEEDS}; do
     ans="${ANSWERS_DIR}/${ANSWERS_PREFIX}${s}.json"
     out="${JUDGE_OUT_DIR}/seed${s}-judge.json"
-    echo "  -- seed ${s}: answers=${ans} -> ${out}"
+    raw="${JUDGE_OUT_DIR}/seed${s}-raw.json"
+    echo "  -- seed ${s}: answers=${ans} -> ${out} (+raw ${raw})"
     run "${PY}" tools/judge_pilot_answers.py \
       --answers "${ans}" \
       --judges "${JUDGES}" \
+      --forced-choice \
+      --seed "${s}" \
+      --raw-out "${raw}" \
       --out "${out}"
+    RAW_SIDECARS="${RAW_SIDECARS} ${raw}"
   done
 
+  step "A2.5 — Assemble per-seed pairwise verdicts into the A3 judgments.json"
+  # Bridges the two protocols: A2 emits pairwise (adapter/base/tie); A3 wants per-family content
+  # booleans. assemble_uplift_judgments.py maps them (tie -> at-least-as-good on both) and stamps
+  # the subject. delta == net head-to-head preference margin (documented; NOT absolute correctness).
+  run "${PY}" tools/assemble_uplift_judgments.py \
+    --subject "${QAT_BASE}" \
+    --raw ${RAW_SIDECARS} \
+    --out "${JUDGMENTS}"
+
   step "A3 — Aggregate + apply the no-overclaim VALIDATED gate"
-  # run_lora_uplift_validation.py consumes ONE assembled judgments JSON (subjectModel + judges[]
-  # + per-seed per-item base/adapterContent per family). Assemble \$JUDGMENTS from the A2 outputs
-  # first (the upstream labelling step, per the P6 preregistration). Gate bars (ALL required):
+  # run_lora_uplift_validation.py consumes the A2.5 judgments JSON (subjectModel + judges[]
+  # + per-seed per-item base/adapterContent per family). Gate bars (ALL required):
   #   notMock; ≥2 families; judge != subject; mean κ ≥ 0.40; ≥3 seeds; 95% CI excludes zero.
   if [[ "${DRY_RUN}" -eq 0 && ! -f "${JUDGMENTS}" ]]; then
-    echo "  WARN: ${JUDGMENTS} not found. Assemble it from the per-seed A2 outputs first" >&2
-    echo "        (subjectModel='allenai/OLMoE-1B-7B-0924-Instruct', judges[], seeds[].items[])." >&2
+    echo "  WARN: ${JUDGMENTS} not found — A2.5 assembly did not run or produced nothing." >&2
   fi
   run "${PY}" tools/run_lora_uplift_validation.py \
     --judgments "${JUDGMENTS}" \

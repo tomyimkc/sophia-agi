@@ -213,6 +213,12 @@ def main() -> int:
     ap.add_argument("--answers", type=Path, required=True)
     ap.add_argument("--judges", default="openrouter:deepseek/deepseek-chat,openrouter:meta-llama/llama-3.3-70b-instruct")
     ap.add_argument("--out", type=Path, default=ROOT / "agi-proof" / "benchmark-results" / "wisdom-market" / "M3-pilot-judge.json")
+    ap.add_argument("--raw-out", type=Path, default=None,
+                    help="Also write per-item per-judge raw verdicts (adapter/base/tie/null) here. "
+                         "This is the labelling-step artifact tools/assemble_uplift_judgments.py "
+                         "consumes to build the A3 judgments.json (the summary --out drops them).")
+    ap.add_argument("--seed", type=int, default=None,
+                    help="Seed number to stamp into --raw-out (this file judges ONE seed's answers).")
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--forced-choice", action="store_true",
@@ -290,6 +296,27 @@ def main() -> int:
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    # Persist per-item per-judge raw verdicts (the labelling artifact A3 needs). The summary
+    # report above keeps only aggregates; assemble_uplift_judgments.py maps these pairwise
+    # verdicts -> the content-uplift schema run_lora_uplift_validation.py consumes.
+    if args.raw_out:
+        raw = {
+            "answers": report["answers"],
+            "seed": args.seed,
+            "judges": judge_specs,
+            "protocol": "forced-choice" if args.forced_choice else "tie-allowed",
+            "subjectHint": "allenai/OLMoE-1B-7B-0924-Instruct",
+            "items": [
+                {"id": rows[i].get("id", f"item_{i}"),
+                 "task_family": rows[i].get("task_family"),
+                 "verdicts": {s: per_judge[s][i] for s in specs}}
+                for i in range(len(rows))
+            ],
+        }
+        args.raw_out.parent.mkdir(parents=True, exist_ok=True)
+        args.raw_out.write_text(json.dumps(raw, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        print(f"wrote raw verdicts -> {args.raw_out}")
     print(f"\nκ(3-cat)={kappa}  consensus adapter-better={consensus_adapter} base-better={consensus_base}")
     for s in specs:
         w = winrate[s]
