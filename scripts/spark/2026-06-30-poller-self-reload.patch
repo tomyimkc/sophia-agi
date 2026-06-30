@@ -1,0 +1,46 @@
+diff --git a/tools/github_bridge_poll.py b/tools/github_bridge_poll.py
+index 6ee9dca1..5faf8e1f 100644
+--- a/tools/github_bridge_poll.py
++++ b/tools/github_bridge_poll.py
+@@ -71,6 +71,33 @@ def _safe_env(cmd):
+ # is re-picked on the next run.
+ _RUNNING = None  # dict: id, proc, cmd, started, outfile, before
+ 
++# Self-reload: capture this file's mtime at startup so the poller can re-exec when a pushed patch
++# ff-syncs into its working tree — otherwise the RUNNING PROCESS keeps the stale code even though
++# the file on disk changed (the 2026-06-30 env-carry footgun: patch on disk, process unaware).
++_SELF = Path(__file__).resolve()
++try:
++    _SELF_MTIME = _SELF.stat().st_mtime
++except OSError:
++    _SELF_MTIME = None
++
++
++def _maybe_reexec():
++    """Re-exec the poller if its OWN source changed on disk — but ONLY when no job is in flight.
++    Re-exec replaces the process image and would lose the in-memory _RUNNING handle (orphaning the
++    job's tracking), so we gate on ``_RUNNING is None``. Args/cwd are preserved. Re-captures mtime on
++    restart, so it fires once per change (no loop). Kills 'patch pushed but process stale' for good."""
++    if _SELF_MTIME is None or _RUNNING is not None:
++        return
++    try:
++        m = _SELF.stat().st_mtime
++    except OSError:
++        return
++    if m != _SELF_MTIME:
++        sys.stderr.write("[bridge] poller source changed on disk -> re-exec to load new code\n")
++        sys.stdout.flush()
++        sys.stderr.flush()
++        os.execv(sys.executable, [sys.executable, str(_SELF), *sys.argv[1:]])
++
+ 
+ def _now() -> str:
+     return _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+@@ -317,6 +344,7 @@ def main():
+             sys.stderr.write(f"[bridge] tick error: {exc}\n")
+         if a.once:
+             return 0
++        _maybe_reexec()   # pick up a pushed poller patch between jobs (never mid-job)
+         time.sleep(max(5, a.interval))
+ 
+ 
