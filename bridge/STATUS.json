@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-30T06:34:13Z",
+  "updatedAt": "2026-06-30T06:34:51Z",
   "host": "spark-2f2d",
   "running": "2026-06-30-claude-web-bench-a-04",
   "pendingCommands": [
@@ -20,21 +20,6 @@
       "ema_step_time": null,
       "latest_metrics": "{}",
       "created_at": 1782801250.153908
-    },
-    {
-      "id": "ab-lora-ollama-serve",
-      "name": "lora-ollama-serve",
-      "description": "",
-      "status": "running",
-      "total_steps": null,
-      "current_step": 0,
-      "started_at": 1782796343.0182734,
-      "finished_at": null,
-      "eta_seconds": null,
-      "speed": null,
-      "ema_step_time": null,
-      "latest_metrics": "{}",
-      "created_at": 1782796343.0182734
     },
     {
       "id": "65e7ca66",
@@ -755,6 +740,21 @@
       "ema_step_time": 0.009370803833007812,
       "latest_metrics": "{\"passed\": 0.0, \"score\": 27.419999999999998, \"caseCount\": 8.0, \"totalCases\": 8.0, \"maxScore\": 40.0, \"scorePct\": 68.55}",
       "created_at": 1782793623.253932
+    },
+    {
+      "id": "ae3bdce2",
+      "name": "result:hidden-fresh-reviewer-pack-2026-06-19-sophia-deepseek-coding-council-repair3.public-report",
+      "description": "model: sophia-full-deepseek-coding-council-repair3",
+      "status": "completed",
+      "total_steps": 1,
+      "current_step": 1,
+      "started_at": 1782793623.2150295,
+      "finished_at": 1782793623.243467,
+      "eta_seconds": 0.0,
+      "speed": 111.04561700775727,
+      "ema_step_time": 0.009005308151245117,
+      "latest_metrics": "{\"passed\": 0.0, \"score\": 31.899999999999995, \"caseCount\": 8.0, \"totalCases\": 8.0, \"maxScore\": 40.0, \"scorePct\": 79.75}",
+      "created_at": 1782793623.2150295
     }
   ],
   "artifacts": [
