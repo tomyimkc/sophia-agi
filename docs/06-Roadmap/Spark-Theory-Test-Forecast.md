@@ -56,6 +56,7 @@ fastest *and* the likeliest to yield a genuine GO. That is why it is first.
 | **T3** | **Sophrosyne** temperance gate-improves-decisions (`--bench-virtues`, sophrosyne only) | virtue 2-family | **~45–70 min** (judge farm) | positive decision Δ on explicit signals, but **κ < 0.40** again → CANDIDATE | 65% |
 | **T4** | **Council-vs-generalist** on one real trained discipline adapter | council eval + VALIDATED | **hours** (LoRA train + eval) | per-discipline adapter beats monolith **on-discipline** (+small Δ), risks **off-discipline regression** | 50% |
 | **T5** (parked) | **MegaTrain memory-fit + overlap** — real Spark streamed train validates the offline planner's byte accounting | planner-vs-hardware (`training/layer_stream_train.py`) | **hours** (real train) | planner is **right**: 3B adam-fp32 streamed train **fits 128 GB** (peak device ≪ whole model); 8B fits **only with recompute** (host ~119 GiB, headroom ~2 GiB) | 70% |
+| **T6** (parked) | **OKF traceable-memory vs pure-weight** — does memory/trace-augmented training buy auditability + cheap correction? | OKF A/B harness (`tools/eval_okf_vs_pureweight.py`) | **hours** (two trains + eval) | Arm A (OKF-integrated) **wins traceability + editability + correction-cost**; **ties or slightly loses on raw accuracy** vs the weight-only control | 65% |
 
 Rationale for the order: T1 is eval-only and deterministic (no κ, no judge farm) → fastest + a real
 GO is achievable. T2 is a measurement (no flaky gate) and high research value (CoT faithfulness is a
@@ -253,6 +254,46 @@ and the design needs the eviction path audited._
 
 ---
 
+## T6 (parked) — OKF traceable-memory vs pure-weight (auditability + cheap correction)
+
+**Hypothesis.** Training with an external, content-addressed **OKF** memory + a *process*-level
+verifier reward (Arm A) buys **auditability** (you can locate the exact wrong reasoning step) and
+**cheap correction** (a wrong belief is a single addressable node edit, not a retrain) — at little or
+no cost to raw accuracy vs a weight-only, outcome-only control (Arm B). The training mirror of the
+repo's verifier-gating, made step-traceable. Design: `docs/06-Roadmap/OKF-Traceable-Memory-Training.md`.
+
+**Gate & bar.** Not a single GO — a 5-metric A/B (`tools/eval_okf_vs_pureweight.py`): traceability
+(locate-the-wrong-step coverage), editability/correction-cost, forgetting, path-efficiency, and
+κ-gated answer quality. The honest framing: **a win on traceability/editability is the result**, even
+if raw accuracy ties.
+
+**Offline status (shipped this iteration — GPU-free, deterministic, CI-clean):**
+- `agent/okf_schema.py` + `agent/okf_trace.py` — the OKF node format (content-addressed, provenance
+  frontmatter mirroring `wiki/`), the decision **DAG**, an append-only retrace log, and
+  `locate_wrong_step` (the *Let's Verify Step by Step* exact-error-location primitive). Self-test 7/7.
+- `tools/eval_okf_vs_pureweight.py` + `eval/okf/fixture_v1.jsonl` — the A/B harness + a seeded
+  wrong-step fixture. Self-test 6/6; `--report` prints the A/B table using the **real** locator.
+- Built by a verified parallel workflow; an independent verify pass caught a real package-import +
+  trace-shape integration bug (fixed) before commit — units alone would have missed it.
+
+**FORECAST (2026-06-30, from the offline harness on the fixture).**
+- Traceability: Arm A **≈ 1.0** (every seeded wrong step is an addressable node) vs Arm B **≈ 0**
+  (a weight-only model exposes no per-step address).
+- Correction-cost ratio: Arm A **≪ 1** (O(1) node edit) vs Arm B **1.0** (retrain baseline).
+- Raw-accuracy/quality: **tie or slight loss** for Arm A (the control can match or exceed).
+- Confidence **65%** that a *real* two-train A/B reproduces the auditability/correction win; the ~35%
+  tail is that the process reward proves too noisy to train Arm A to parity accuracy, widening the
+  raw-accuracy gap beyond "slight."
+- If Arm A loses accuracy badly: update toward "process-memory needs the dual-write to be cheap AND
+  the verifier to be high-κ, or the auditability win isn't worth the accuracy tax."
+
+**RESULT (fill after the real two-train A/B):** _pending — parked behind the live bench queue (T1–T4)._
+**FORECAST vs ACTUAL divergence:** _pending — if Arm A holds accuracy AND wins traceability, the
+verifier-gated process-memory thesis is supported; if it tanks accuracy, the dual-write / reward
+design needs rework before any capability framing._
+
+---
+
 ## Filling in a result (protocol)
 
 When a run lands:
@@ -272,6 +313,8 @@ When a run lands:
 | T2 | unfaithful 0.25–0.45 | _pending_ | _—_ | _—_ |
 | T3 | Δ>0 but κ<0.40, CANDIDATE | _pending_ | _—_ | _—_ |
 | T4 | on-disc +0.05–0.20 | _pending_ | _—_ | _—_ |
+| T5 | 3B fits / 8B recompute-only | _pending_ | _—_ | _—_ |
+| T6 | A wins trace/edit, ties acc | _pending_ | _—_ | _—_ |
 
 `canClaimAGI` stays **false** throughout; forecasts are predictions, not results, and every landed
 number goes through `make claim-check` before it is called anything but candidate.
