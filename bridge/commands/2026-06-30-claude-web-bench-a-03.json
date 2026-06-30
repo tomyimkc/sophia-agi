@@ -1,0 +1,1 @@
+{"id":"2026-06-30-claude-web-bench-a-03","args":"--bench-a --execute","createdBy":"tomyimkc (ssh)","approvedBy":"user: retry after the n=0 + A3 fix (2026-06-30)","note":"Mac judge now vllm: (keyless EMPTY key) so the 70B returns labels; A2.5 assembles judgments.json so A3 no longer FileNotFoundErrors. SEEDS=1 2 7 (spark-bridge default)."}
