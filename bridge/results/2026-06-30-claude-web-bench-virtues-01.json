@@ -1,0 +1,11 @@
+{
+  "id": "2026-06-30-claude-web-bench-virtues-01",
+  "args": "--bench-virtues --execute",
+  "status": "error",
+  "exitCode": 2,
+  "startedAt": "2026-06-30T11:32:36Z",
+  "endedAt": "2026-06-30T11:33:13Z",
+  "approvedBy": "user: 'perform all possible benchmarking... go' (2026-06-30)",
+  "stdoutTail": "ERROR: unknown argument: --bench-virtues\nUsage: scripts/run_local_benchmarks.sh [--all|--bench-a|--bench-b] [--execute] [--run-train] [-h]\n\n  --bench-a     Run Benchmark A only (\u22652-family VALIDATED judging of M3-SFT uplift).\n  --bench-b     Run Benchmark B only (low-RAM NVFP4 certification).\n  --all         Run both (default if no bench is selected).\n  --execute     Actually run the commands. WITHOUT this flag the script DRY-RUNS (prints only).\n  --run-train   In Benchmark B, also run the QAT train step (long, GPU). Default: skip & certify\n                an existing adapter at QAT_ADAPTER.\n  -h, --help    Show this help.\n\nKey env overrides: SPARK_HOST MAC_HOST SPARK_PORT MAC_PORT JUDGES JUDGE_CONFIG\n  SEEDS ANSWERS_DIR ANSWERS_PREFIX JUDGE_OUT_DIR JUDGMENTS UPLIFT_OUT\n  QAT_BASE QAT_ADAPTER QAT_DATA QAT_EPOCHS QAT_LAMBDA CERT_CALIB CERT_OUT CERT_NEVAL PYTHON\n",
+  "artifactsTouched": []
+}
