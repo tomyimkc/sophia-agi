@@ -85,3 +85,41 @@ accounting*: params + optimizer + activations for an **8B full-precision** train
 under double-buffered streaming, with a `prefetch_hits`-style overlap bound — tested exactly like
 `tests/test_layer_stream.py`. That is the pre-registered, falsifiable first deliverable; only then
 does a real Spark train earn a (still candidate-only) throughput claim. `canClaimAGI` stays false.
+
+## 8. The offline planner (shipped)
+The §6/§7 first deliverable is shipped as **`training/layer_stream_train.py`** — a **pure, offline,
+deterministic** memory + throughput PLANNER (no `torch`, no GPU, no network, no clock, no `random`),
+the training mirror of `serving/layer_stream.py` and a sibling of `tools/run_cluster_sim.py` /
+`tools/cluster_schedule_sim.py`. It PROVES the byte-accounting — it does **no real training** and makes
+**no capability or throughput claim**. `canClaimAGI` stays **false**.
+
+What it computes:
+- `optimizer_bytes_per_param(scheme)` — host bytes/param for `adam-fp32` (16 = 4 wt+4 grad+4 m+4 v),
+  `adam-bf16-master` (16, different precision mix), `sgd-momentum` (12), `galore` (low-rank states →
+  `8 + 8·rank_ratio`), `lora` (frozen-base bf16 + a trainable-adapter surcharge).
+- `host_bytes` / `peak_device_bytes` / `activation_bytes` / `fits` / `ceiling_params` /
+  `overlap_efficiency`. The **key MegaTrain property** is enforced: `peak_device_bytes` =
+  `double_buffer_depth · (layer params + grad) + activations` — *a few streaming layer templates, NOT
+  the whole model*; the optimizer states stay host-resident.
+
+Example invocation:
+
+```
+$ python training/layer_stream_train.py --report
+== Spark (GB10, 128GB) | ceiling: ~8.6B trainable params ==   (adam-fp32)
+== Mac (M3 Ultra, 512GB) | ceiling: ~34.4B trainable params ==
+== 8-Spark (~1TB) | ceiling: ~68.7B trainable params ==
+$ python training/layer_stream_train.py --params 8e9 --layers 32 --budget-gb 128 --recompute
+  host (params+optimizer) : 119.2GiB   peak device : 6.7GiB   fits: YES (headroom 2.1GiB)
+```
+
+The pre-registered result, proven by `offline_invariants()` / `tests/test_layer_stream_train.py`:
+an **8B full-precision adam-fp32** train **fits in 128 GiB** under double-buffered streaming **with
+activation recomputation** — params+optimizer residence alone is ~119 GiB, so the fit is TIGHT and
+needs the composing recompute lever; without it the seq=4096 activation working set tips it over 128
+GiB (the planner reports both, honestly). The unified-memory ceilings (Spark ~8B / Mac ~32B / 8-Spark
+~64B) match §3. This is a **memory-fit** model, not trained-to-convergence and not FLOP-aware
+(MegaTrain solves memory, not the `6·params·tokens` FLOP wall). PLANNING ONLY.
+
+CLI: `--self-test` (offline invariants), `--report` (the box × model-size table), and a single-scenario
+fit check via `--params --layers --budget-gb --scheme --double-buffer --batch --seq --hidden --recompute`.
