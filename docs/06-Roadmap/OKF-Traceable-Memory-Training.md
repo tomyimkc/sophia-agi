@@ -184,6 +184,16 @@ thesis under measurement, not raw accuracy.
   `locate_wrong_step`, `offline_invariants`) and `agent/okf_schema.py` (`OKFNode`, `content_id`,
   markdown roundtrip, `validate`). Pure, offline, deterministic, stdlib-only, with self-tests.
 
+- **P0b — loop-engineering incident logger (shipped).** `agent/okf_loop.py` (`LoopLog`): records an
+  agentic incident-response loop (the ReAct→Reflexion *observe → reason → decide → act → verify →
+  resolve* cycle) as a chain of linked OKF nodes — the **decision DAG** — written into
+  `okf/incidents/<id>/` (one node markdown per step + an append-only `trace.jsonl`). Every error event
+  and every step taken in response (sub-agent spawn, reasoning, tool/coding-agent call, gate run) is
+  a node; `summary()` reuses `locate_wrong_step` to surface the first failing step. The real
+  `2026-06-30-bench-a-04-stall` incident is recorded as the worked example
+  (`tools/record_bench_a04_incident.py`, deterministic). This is the runtime mirror of the
+  *training-time* dual-write below — same OKF substrate, recording the agent's own loop.
+
 - **P1 — process verifier + dual-write (PARKED).** Extend `tools/gen_reasoning_distill.py` and
   `tools/gen_verifier_dpo.py` to emit a **step-level** signal keyed by OKF `node_id`, so each training
   step dual-writes a trace node and earns process-level (not just outcome-level) reward.

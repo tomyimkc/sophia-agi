@@ -10,7 +10,12 @@ from __future__ import annotations
 import hashlib
 from dataclasses import dataclass, field
 
-NODE_TYPES = {"fact", "step", "skill", "decision"}
+NODE_TYPES = {
+    "fact", "step", "skill", "decision",
+    # loop-engineering step kinds (observe -> reason -> act -> verify -> resolve);
+    # 'decision' doubles as the "decide" step. See agent/okf_loop.py.
+    "event", "observe", "reason", "act", "verify", "resolve",
+}
 VERDICTS = {"pass", "fail", "none"}  # None also allowed
 
 
