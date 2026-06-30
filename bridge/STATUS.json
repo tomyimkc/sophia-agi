@@ -1,8 +1,10 @@
 {
-  "updatedAt": "2026-06-30T04:41:42Z",
+  "updatedAt": "2026-06-30T04:42:20Z",
   "host": "spark-2f2d",
-  "running": null,
-  "pendingCommands": [],
+  "running": "2026-06-30-claude-web-envprobe-01",
+  "pendingCommands": [
+    "2026-06-30-claude-web-envprobe-01"
+  ],
   "trainwatch": [
     {
       "id": "65e7ca66",
