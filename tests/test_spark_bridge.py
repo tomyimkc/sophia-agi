@@ -16,11 +16,27 @@ if str(ROOT) not in sys.path:
 
 from tools.spark_bridge import (  # noqa: E402
     build_command,
+    format_trainwatch,
     gpu_is_free,
     is_gated,
     offline_invariants,
     validate_args,
 )
+
+
+def test_trainwatch_view() -> None:
+    # live run -> rendered as ▶ LIVE with ETA, idle/None handled
+    assert "bridge unreachable" in format_trainwatch(None)
+    live = {"updatedAt": "t", "running": "olmoe-qat-v5", "trainwatch": [
+        {"name": "olmoe-qat-v5", "status": "running", "current_step": 110, "total_steps": 330,
+         "eta_seconds": 4500, "latest_metrics": "{\"loss\": 1.54}"}]}
+    out = format_trainwatch(live)
+    assert "▶ LIVE" in out and "110/330" in out and "33%" in out and "1h15m" in out
+    # no live run -> shows recent
+    done = {"updatedAt": "t", "running": None, "trainwatch": [
+        {"name": "olmoe-qat-v4", "status": "completed", "current_step": 300, "total_steps": 330,
+         "eta_seconds": 0}]}
+    assert "completed" in format_trainwatch(done) and "▶ LIVE" not in format_trainwatch(done)
 
 
 def test_offline_invariants_pass() -> None:

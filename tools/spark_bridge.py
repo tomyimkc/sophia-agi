@@ -97,6 +97,42 @@ def read_result(command_id: str) -> "dict | None":
     return json.loads(raw) if raw else None
 
 
+def _fmt_eta(seconds) -> str:
+    try:
+        s = int(float(seconds))
+    except (TypeError, ValueError):
+        return "?"
+    if s <= 0:
+        return "—"
+    h, rem = divmod(s, 3600)
+    m, sec = divmod(rem, 60)
+    return f"{h}h{m:02d}m" if h else (f"{m}m{sec:02d}s" if m else f"{sec}s")
+
+
+def format_trainwatch(status: "dict | None") -> str:
+    """Human ETA/progress view over the bridge's mirrored TrainWatch field.
+
+    Pure + offline (no git, no network) so it is unit-testable; the poller embeds LIVE
+    trainwatch each tick (``github_bridge_poll._trainwatch`` -> localhost:8420), so this renders
+    real step/ETA/loss during a multi-hour train as seen from the cloud over the git bridge."""
+    if not status:
+        return "no STATUS.json (bridge unreachable or not fetched)"
+    running = status.get("running")
+    runs = status.get("trainwatch") or []
+    lines = [f"updatedAt: {status.get('updatedAt')}  |  running job: {running or '—'}"]
+    active = [r for r in runs if (r.get("status") or "").lower() in ("running", "training", "active")]
+    shown = active or runs[:3]  # prefer live runs; else the most recent few
+    if not shown:
+        lines.append("  trainwatch: (no runs)")
+    for r in shown:
+        cs, ts = r.get("current_step"), r.get("total_steps")
+        pct = f"{100*cs/ts:.0f}%" if (isinstance(cs, (int, float)) and ts) else "?"
+        flag = "▶ LIVE" if r in active else r.get("status", "?")
+        lines.append(f"  [{flag}] {r.get('name')}  step {cs}/{ts} ({pct})  "
+                     f"ETA {_fmt_eta(r.get('eta_seconds'))}  {r.get('latest_metrics') or ''}".rstrip())
+    return "\n".join(lines)
+
+
 def offline_invariants() -> "tuple[bool, dict]":
     checks: dict[str, bool] = {}
     checks["allow_dryrun"] = validate_args("--dry-run --all")[0]
@@ -145,6 +181,7 @@ def main(argv: "list[str] | None" = None) -> int:
     pc.add_argument("--created-at", default="")
 
     sub.add_parser("status", help="print the live Spark STATUS.json")
+    sub.add_parser("trainwatch", help="print the live training ETA/progress (mirrored TrainWatch)")
     pr = sub.add_parser("result", help="print a result by id")
     pr.add_argument("--id", required=True)
 
@@ -168,6 +205,10 @@ def main(argv: "list[str] | None" = None) -> int:
         return 0
     if args.cmd == "status":
         print(json.dumps(read_status(), indent=2, ensure_ascii=False))
+        return 0
+    if args.cmd == "trainwatch":
+        # read_status() git-fetches origin/spark-bridge via _git_show, so this is always fresh.
+        print(format_trainwatch(read_status()))
         return 0
     if args.cmd == "result":
         print(json.dumps(read_result(args.id), indent=2, ensure_ascii=False))
