@@ -1,0 +1,11 @@
+{
+  "id": "2026-06-30-claude-web-bench-a-06",
+  "args": "--bench-a --execute",
+  "createdBy": "claude-web",
+  "createdAt": "",
+  "approvedBy": "user: 'Yes and start benchmarking' (2026-06-30); pre-registered {1,2,10} confirmation of bench-a-05",
+  "note": "Runs bench-A on the pre-registered larger seeds {1,2,10} (drops underpowered seed-7) to confirm the marginal VALIDATED (kappa 0.4065) is robust, not a seed-set artifact.",
+  "env": {
+    "SEEDS": "1 2 10"
+  }
+}
