@@ -166,6 +166,15 @@ def _start(root, cmd):
     fh = open(fd, "w")
     proc = subprocess.Popen(["bash", RUNNER, *toks], cwd=str(root), stdout=fh,
                             stderr=subprocess.STDOUT, text=True, env=_safe_env(cmd))
+    # Universal live job-feed: tail the SAME outfile and feed TrainWatch so EVERY bridge job
+    # (cert/bench/judge/train) shows live at :8420, not just train_lora. Best-effort + detached:
+    # never block the tick loop, and a dead feed must not fail the job (hence the try/except).
+    try:
+        subprocess.Popen([sys.executable, "tools/trainwatch_job_feed.py", "--follow", outpath,
+                          "--name", str(cmd.get("id", "job")), "--kind", "bench", "--idle-exit", "8"],
+                         cwd=str(root), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"[bridge] job-feed sidecar failed to launch (job unaffected): {exc}\n")
     return {"id": cmd["id"], "proc": proc, "cmd": cmd, "started": _now(),
             "outfile": outpath, "before": {a["path"]: a["mtime"] for a in _artifact_index(root)},
             "_fh": fh}
