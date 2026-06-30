@@ -1,10 +1,8 @@
 {
-  "updatedAt": "2026-06-30T04:32:53Z",
+  "updatedAt": "2026-06-30T04:33:31Z",
   "host": "spark-2f2d",
-  "running": "2026-06-30-claude-web-bench-b-cert-t1",
-  "pendingCommands": [
-    "2026-06-30-claude-web-bench-b-cert-t1"
-  ],
+  "running": null,
+  "pendingCommands": [],
   "trainwatch": [
     {
       "id": "65e7ca66",
@@ -821,7 +819,7 @@
     {
       "path": "agi-proof/benchmark-results/certify-lowram-olmoe-nvfp4-v5.json",
       "bytes": 1184,
-      "mtime": "2026-06-29T11:34:02Z"
+      "mtime": "2026-06-30T04:33:00Z"
     },
     {
       "path": "agi-proof/benchmark-results/cls-consolidation-manifest.json",
