@@ -55,11 +55,16 @@ fastest *and* the likeliest to yield a genuine GO. That is why it is first.
 | **T2** | CoT **faithfulness** battery, real local model (`FAITH_MODEL=ollama:qwen2.5:7b`) | measurement | **~20–45 min** | local instruct model shows **unfaithfulCueUse ≈ 0.25–0.45**; intrinsic flip-rate moderate | 55% |
 | **T3** | **Sophrosyne** temperance gate-improves-decisions (`--bench-virtues`, sophrosyne only) | virtue 2-family | **~45–70 min** (judge farm) | positive decision Δ on explicit signals, but **κ < 0.40** again → CANDIDATE | 65% |
 | **T4** | **Council-vs-generalist** on one real trained discipline adapter | council eval + VALIDATED | **hours** (LoRA train + eval) | per-discipline adapter beats monolith **on-discipline** (+small Δ), risks **off-discipline regression** | 50% |
+| **T5** (parked) | **MegaTrain memory-fit + overlap** — real Spark streamed train validates the offline planner's byte accounting | planner-vs-hardware (`training/layer_stream_train.py`) | **hours** (real train) | planner is **right**: 3B adam-fp32 streamed train **fits 128 GB** (peak device ≪ whole model); 8B fits **only with recompute** (host ~119 GiB, headroom ~2 GiB) | 70% |
 
 Rationale for the order: T1 is eval-only and deterministic (no κ, no judge farm) → fastest + a real
 GO is achievable. T2 is a measurement (no flaky gate) and high research value (CoT faithfulness is a
 frontier question) but needs many generations. T3 reuses the bench-A judge farm (slow) and inherits
-the κ risk. T4 needs training, so it is last despite being the highest-thesis-value test.
+the κ risk. T4 needs training, so it is last among the *gate* tests despite being the highest-thesis-
+value one. **T5 is parked** behind the whole T1–T4 queue: it is the first *training-systems* test (it
+validates a planner prediction, not a gate), and per the owner it runs only **after the benchmark
+task in hand**. Its forecast is pre-registered now (from the shipped offline planner) so the real run
+is a clean falsification test, not a fit-after-the-fact.
 
 ---
 
@@ -195,6 +200,56 @@ python tools/eval_council_vs_monolith.py --emit agi-proof/benchmark-results/coun
 **RESULT (fill after run):** _pending_
 **FORECAST vs ACTUAL divergence:** _pending — if the tiny corpus still moves on-discipline catch,
 update strongly toward "verifier-routing > corpus size"; if flat, the council needs bigger seats._
+
+---
+
+## T5 (parked) — MegaTrain memory-fit + overlap (the planner meets the hardware)
+
+**Hypothesis.** A memory-centric streamed train (params + optimizer resident in unified memory, the
+GPU a transient compute engine streaming `double_buffer_depth` layers at a time — the training mirror
+of `serving/layer_stream.py`, after MegaTrain arXiv:2604.05091) makes the **peak device working set
+≪ the whole model**, so a model far larger than naive "fits-in-VRAM" trains on one Spark. The
+**offline planner `training/layer_stream_train.py` already predicts the numbers**; this test asks
+whether real hardware agrees. It is **the first test that validates a training-systems prediction
+rather than a gate** — the planner is the falsifiable artifact, the Spark is the referee.
+
+**Gate & bar.** Planner-vs-hardware, not a GO gate. Two pre-registered, falsifiable predictions:
+1. **Memory-fit:** a real streamed train of the forecast model **does not OOM** on the box the
+   planner says it fits, and **does OOM** (or thrash to host) on the one it says it doesn't.
+2. **Peak ≪ model:** measured peak device residency is within a small factor of the planner's
+   `peak_device_bytes` (the double-buffer window), **not** the full-model host figure — i.e. the
+   streaming actually bounds device memory to the buffer depth.
+   A measured **overlap efficiency** (compute vs stall) is reported and compared to
+   `overlap_efficiency` (no GO bar — a characterised number, like T2's faithfulness rates).
+
+**Command (Spark; real train — PARKED until the T1–T4 bench queue completes; a human approves
+`--run-train`):** _to be composed when unparked. The offline planner is run GPU-free first:_
+```bash
+python training/layer_stream_train.py --report        # the pre-registered prediction table
+python training/layer_stream_train.py --self-test      # 16/16 invariants must pass before any GPU time
+```
+
+**FORECAST (2026-06-30, straight from the shipped planner — verified: 16/16 invariants, 11/11 unit
+tests, lint clean):**
+- **3B adam-fp32** streamed train on **1 Spark (128 GB): FITS** — host ~44.7 GiB, peak device
+  ~15.6 GiB, headroom ~67.7 GiB. High confidence (comfortable margin).
+- **8B adam-fp32** on **1 Spark: FITS ONLY WITH activation recomputation** — params+optimizer host
+  residency ~119.2 GiB leaves only ~2.1 GiB; the seq=4096 activation working set tips it over 128 GB
+  *without* recompute (−10.9 GiB). The planner's `8B_no_recompute_is_tight` invariant pins this.
+- **Ceilings (adam-fp32-equiv):** Spark ~**8.6B**, Mac (512 GB) ~**34.4B**, 8-Spark (~1 TB) ~**68.7B**.
+- **512k context:** activations (~384 GiB) **dominate** the ~3.7 GiB param window → long-context is an
+  *activation*-bound regime, not a param-bound one (motivates the recompute / ring-attention arm).
+- Verdict prediction: **planner CORRECT on memory-fit** (3B fits, 8B-no-recompute tight) at **70%**;
+  the ~30% tail is real-world overhead the byte model omits (allocator fragmentation, framework
+  resident buffers, NCCL/driver reserve) pushing the true 8B-with-recompute case over 128 GB too.
+- If the planner is wrong (8B fails even *with* recompute, or peak ≫ buffer window): update toward
+  "unified-memory overhead is a first-class term the byte model must add," and lower every ceiling.
+
+**RESULT (fill after the real Spark train):** _pending — parked behind T1–T4._
+**FORECAST vs ACTUAL divergence:** _pending — if real peak device residency tracks the buffer-window
+prediction, the streaming property is confirmed and the §3 ceilings earn a (still candidate-only)
+hardware receipt; if peak tracks the whole model instead, the stream isn't actually evicting layers
+and the design needs the eviction path audited._
 
 ---
 
