@@ -1,0 +1,8 @@
+{
+  "id": "2026-06-30-claude-web-bench-a-05",
+  "args": "--bench-a --execute",
+  "createdBy": "claude-web",
+  "createdAt": "2026-06-30T06:43:00Z",
+  "approvedBy": "user: 'Take the wheel now' (2026-06-30); re-dispatch of bench-a-04 (SIGKILL'd during git-timeout patch apply)",
+  "note": "kappa re-run on seeds {1,2,10}; poller now carries the git-timeout fix (bf926615)"
+}
