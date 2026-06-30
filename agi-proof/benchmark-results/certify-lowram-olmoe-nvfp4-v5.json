@@ -1,0 +1,43 @@
+{
+  "passed": false,
+  "mean_kl": 0.050551,
+  "top1_agreement": 0.882812,
+  "protected_max_kl": 0.652163,
+  "protected_min_agreement": 0.882812,
+  "mem_ratio": 3.3016,
+  "n_eval": 256,
+  "reasons": [
+    "mean_kl 0.0506 > 0.05",
+    "top1_agreement 0.8828 < 0.97",
+    "protected_max_kl 0.6522 > 0.1",
+    "protected_min_agreement 0.8828 < 0.95"
+  ],
+  "device": "cuda",
+  "scheme": "nvfp4",
+  "base_model": "allenai/OLMoE-1B-7B-0924-Instruct",
+  "adapter": "training/lora/checkpoints/olmoe-qat-spark-v5",
+  "lora_load": "manual_merge (peft path failed: TypeError: WeightConverter.__init__() got an unexpected keyword argument 'distributed_operation')",
+  "lora_modules_merged": 64,
+  "lora_modules_skipped": 32,
+  "incomplete_merge": false,
+  "merge_warnings": [],
+  "per_tensor_mem_ratio": 3.5556,
+  "quantized_modules": 96,
+  "quantized_params": 6710886400,
+  "kept_params": 208275456,
+  "total_model_params": 6919161856,
+  "quantized_fraction": 0.9699,
+  "coverage_warning": null,
+  "n_calib_rows": 439,
+  "keep_suffixes": [],
+  "served_suffixes": [
+    "q_proj",
+    "k_proj",
+    "v_proj",
+    "o_proj",
+    "gate_proj",
+    "up_proj",
+    "down_proj",
+    "gate_up_proj"
+  ]
+}

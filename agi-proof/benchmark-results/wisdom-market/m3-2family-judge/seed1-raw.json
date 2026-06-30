@@ -1,0 +1,2156 @@
+{
+  "answers": "agi-proof/benchmark-results/wisdom-market/M3-pilot-answers-seed1.json",
+  "seed": 1,
+  "judges": [
+    "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1",
+    "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1"
+  ],
+  "protocol": "forced-choice",
+  "subjectHint": "allenai/OLMoE-1B-7B-0924-Instruct",
+  "items": [
+    {
+      "id": "wmb_authorship_boundary_084b7347f4",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_0ff26053c8",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_144adbf699",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_180be076a7",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_264c342c89",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_28a02a4d3d",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_5970910d85",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_6500f5ee00",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_6a97f4521b",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_7260354768",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_77719957c9",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_7abe7fdd2f",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_7c91acceb4",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_7e9940f9ed",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_90b8bd9880",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_9501080554",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_a0ddb2a731",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_a679efd611",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_a72dca03aa",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_a8de1d5f1e",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_abcbee4fdf",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_afa5d1ae17",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_c08365c34c",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_c3e1878edd",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_d06fe4e7a1",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_d2677796e9",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_e371cb498e",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_efd66fb372",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_authorship_boundary_f6954e0d8b",
+      "task_family": "authorship_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_021a070569",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_050f8ad9cf",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_089b368b25",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_107f8ac769",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_1aee4703ab",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_1cc856ec10",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_38ac5ec983",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_39fecdf9dc",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_3fca1515fb",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_41592ef6d4",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_43e975b328",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_457a61cb42",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_516b7a8eda",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_5e1680aef2",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_73d8045de1",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_7678a281f0",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_7b94a23c88",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_7ba1a5aafc",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_80ac9d9348",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_8e39ca4bf1",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_8f9efcdbc6",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_a520f367cf",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_a5c32bdf52",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_ac1d04e5f4",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_b8c9c56bb9",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_d3d7fc2e94",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_df4b075e88",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_e7faa27b69",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_f45fc4f35c",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_f81b249604",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_f8e4fddecf",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_contested_religion_ff0913e46d",
+      "task_family": "contested_religion",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_fake_citation_24c6b166f3",
+      "task_family": "fake_citation",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_fake_citation_439992c650",
+      "task_family": "fake_citation",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_fake_citation_483be8edd2",
+      "task_family": "fake_citation",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_fake_citation_5d0dcf57c6",
+      "task_family": "fake_citation",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_fake_citation_7b327c3e78",
+      "task_family": "fake_citation",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_fake_citation_7b684f5c03",
+      "task_family": "fake_citation",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_fake_citation_82f38110ec",
+      "task_family": "fake_citation",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_fake_citation_aba751bb15",
+      "task_family": "fake_citation",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_fake_citation_edff341458",
+      "task_family": "fake_citation",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_fake_citation_f277e0274c",
+      "task_family": "fake_citation",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_fake_citation_fb04931739",
+      "task_family": "fake_citation",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_fake_citation_ffa6c25407",
+      "task_family": "fake_citation",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_0228b5d4ad",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_0da01dd210",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_0e2d18e2a5",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_100a51a43b",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_11d5ea295b",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_11e5e7d31f",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_1282b38fbd",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_181d5f6831",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_186a7bc2c3",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_1b81adfd3e",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_1befaccee2",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_1c29e9e234",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_1f7fc5274c",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_20b456f1be",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_281c334914",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_29e6727603",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_2cc1511fa9",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_2d4f479ec4",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_32396476ce",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_32be60c086",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_32cad02e60",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_34e096557f",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_35007020d2",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_3833c7b3ee",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_3af3f493a5",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_3bbe3485b1",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_421e6681e5",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_44abcd2c40",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_46039334b4",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_463bfac980",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_478b3328d7",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_48dd1eae79",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_50cb41b6f0",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_58933453e1",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_5d8d18753b",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_5ecb4bc44f",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_5ee5cc4832",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_5f823ff4bb",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_6182fbe742",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_62ca3a1ae4",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_64c4093f05",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_65840029df",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_668cb35340",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_6753957c09",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_6a0b1a01ce",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_6a541d4170",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_6b0575ec0d",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_6e313070dd",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_720d65fdab",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_731416498d",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_76c1b4374b",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_76d8a477e9",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_772da6d546",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_776c1fcd24",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_7adbdfeeeb",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_7b7a906885",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_7c3488a8b6",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_7c7c4bf703",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_7d3e1a6336",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_7f78f000c1",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_7f8058e560",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_7fb162c355",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_8171ff1fa5",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_83fff055ae",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_85a3ddfeec",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_8716d1495b",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_89bac77a33",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_8b7bb6849d",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_8ffdd5f4bd",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_93062bea79",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_933a5c82fe",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_93ec6c11e5",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_94f0ab1b65",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_964745e8b4",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_983240d3f4",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_9a769b5dab",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_9b7b4d4768",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_9ba806d069",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_9d2afa05b4",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_a173cd40a2",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_a314563ca1",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_a5b1d73c12",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_a5eb4d32b4",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_a744fb5309",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_a7c97e79f8",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_a831bc44b5",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_a93c4e2a0e",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_a9c8f1f2af",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_ac41953c70",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_ade08ccb86",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_b23bb11928",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_bb064201e9",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_bc8e32e821",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_c0f56f6c57",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_c6c41e4b42",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_ca1e5bb9b6",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_ca90e34248",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_ceb443c300",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_d3b47fbf77",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_d4a2ed7fc5",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_d5afcb5757",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_e0c5341917",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_e4aebe6d65",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_e50ca4a5d3",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_e8b838c354",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_eb7f48ad59",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_ec3d6c3a16",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_ecdfe5c1da",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_f631068f7e",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_f7da53bc73",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_fe487435d2",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_false_attribution_fff3abd76a",
+      "task_family": "false_attribution",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_0230d2f195",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_041a8b6c7a",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_0a547ea997",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_0ae56d2473",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_0ea13bb9a5",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_189e46af86",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_1de129f5a1",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_29085dcfe2",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_2abaaaa1e8",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_2bc446b7ed",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_2fddd4f292",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_313a9bdd73",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_32f85314b7",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_35eee4cf30",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_3dcaf662a4",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_4676fcd648",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_467fd305b3",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_48fd6c7d7f",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_4a8652761a",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_4c19b8c730",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_4f8eab871b",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_51be8beef1",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_5228842c8b",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_534411b5d2",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_57f2830b04",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_60841cb707",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_74ca0cf73d",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_750dee7f01",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_763f78d2b4",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_83f3f913a9",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_857af52592",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_8d919482c7",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_9026f2e184",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_91ed110989",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_94d53c61be",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_9cdbab4fbf",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_a376f3a372",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_a6f4168e91",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_aa819e7f5b",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_ae66bddc44",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_b290a247d6",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_b54967cec4",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_c4489b36e0",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_c534cb3fc1",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_c5b1271712",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_cbdf1ecb1a",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_d0380414ee",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_d1e4cc8839",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_d840cb0667",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_d89b9987cc",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_d8e062db48",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_dec433d442",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_e2f1c64d2a",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_ea0b9c53b7",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_ef0013539a",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_f0aedfd436",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_f866b5f487",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_fdb15e62fc",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_provenance_qa_ff1e6b33a6",
+      "task_family": "provenance_qa",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_17fea3fca5",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_1dee5a838e",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_211f3cd8cc",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_2fcbe790e7",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_3d0e25ea0f",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_4bc1927666",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_544384d953",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_6043d0d911",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_621ec8d6c4",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_79cd52273c",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_88f7513499",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_8e7b2d5f6e",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_9020fe8a4f",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_a73d8d4ebc",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_b0e1b865dd",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_b9e9529bc4",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_ba332d7038",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_c716858548",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "base"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_c7ccd2d66c",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_d131d98b43",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_da94c89e91",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "adapter",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_eb7bdacb13",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_faf24c104e",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    },
+    {
+      "id": "wmb_tradition_boundary_ff0a665aed",
+      "task_family": "tradition_boundary",
+      "verdicts": {
+        "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1": "base",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1": "adapter"
+      }
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "benchmark": "lora-content-uplift-validation",
+  "subjectModel": "allenai/OLMoE-1B-7B-0924-Instruct",
+  "subjectFamily": "allenai",
+  "judges": [
+    "ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1",
+    "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1"
+  ],
+  "judgeFamilies": 2,
+  "judgeFamilyKeys": [
+    "ollama",
+    "mlx-community"
+  ],
+  "metric": "consensus CONTENT pass-rate uplift (adapter - base), per seed",
+  "perSeed": [
+    {
+      "seed": 1,
+      "baseContent": 0.0,
+      "adapterContent": 0.0,
+      "delta": 0.0,
+      "n": 0
+    },
+    {
+      "seed": 2,
+      "baseContent": 0.0,
+      "adapterContent": 0.0,
+      "delta": 0.0,
+      "n": 0
+    },
+    {
+      "seed": 7,
+      "baseContent": 0.0,
+      "adapterContent": 0.0,
+      "delta": 0.0,
+      "n": 0
+    }
+  ],
+  "meanDelta": 0.0,
+  "ciDelta": [
+    0.0,
+    0.0
+  ],
+  "meanPairwiseKappa": null,
+  "kappaPairs": {},
+  "kappaFloor": 0.4,
+  "validated": false,
+  "validatedChecks": {
+    "notMock": true,
+    "multiFamilyJudges": true,
+    "kappaAboveFloor": false,
+    "atLeast3Seeds": false,
+    "ciExcludesZero": false,
+    "judgeNotSubject": true
+  },
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "honest_scope": "VALIDATED requires ALL of: non-mock subject, >=2 independent judge families (judge != subject), mean pairwise Cohen's kappa >= 0.40, >=3 seeds, and a 95% bootstrap CI on the content-uplift delta excluding zero. If any fails, the result is candidate-only / illustrative, NOT a capability claim. This harness is the aggregation+gate half; the upstream 2-judge labelling step is specified in the P6 preregistration."
+}
