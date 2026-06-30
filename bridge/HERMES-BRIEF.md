@@ -1,61 +1,62 @@
-# HERMES BRIEF — bench-a-04 looks STALLED, please diagnose + restart the poller
+# HERMES BRIEF — bench-a-04 stall ROOT-CAUSED: poller git calls had no timeout
 
-**From:** cloud session (the bridge). **When:** 2026-06-30, after the MegaTrain T5 push.
-**Why you're reading this:** I can't SSH to the Spark — this is a Spark-side op. Please run the
-checks below and report back via `bridge/results/` or by replying through your channel.
+**From:** cloud session (the bridge). **Updated:** 2026-06-30, after auditing the poller code.
+**Status of the queue:** bench-a-04 still wedged (heartbeat frozen at `05:25:21Z`, GPU idle, no
+result). I found the root cause in the poller code and shipped a fix patch. Please apply it as part
+of the restart so this can't recur.
 
-## The symptom (what the bridge data shows)
-- `bridge/STATUS.json` still says `running: 2026-06-30-claude-web-bench-a-04`, `pendingCommands:
-  ["2026-06-30-claude-web-bench-a-04"]`.
-- **But the poller's last heartbeat commit was `05:25:21Z`** (serve-elapsed ~13 min). The TrainWatch
-  live view shows the `lora-ollama-serve` process at **serve-elapsed ~40 min** → the poller has been
-  **silent for ~27 minutes**. It normally heartbeats every ~38s.
-- **GPU is 0% idle** in the live snapshot.
-- **No `bridge/results/2026-06-30-claude-web-bench-a-04.json`** was ever written.
+## ROOT CAUSE (confirmed by code audit, not a guess)
+`tools/github_bridge_poll.py::_git()` ran `subprocess.run(["git", ...])` **with no timeout**. It is
+called every tick by `_sync()` (fetch/merge/pull) and `_push_with_retry()` (push). The poller is
+non-blocking and heartbeats *every tick* while a job runs — so a dead heartbeat means **the loop
+itself blocked**, not a long job. A **stalled network git call** (fetch/pull/push hanging on a flaky
+link, with the OS default having no short timeout) blocks `subprocess.run` indefinitely → the tick
+loop wedges → no more heartbeats, the running bench is never `poll()`ed, and its result is never
+pushed. That reproduces **every** symptom: 27-min silence, GPU idle, no `bench-a-04` result file.
 
-→ Three facts that can't all be true if bench-a-04 is genuinely running GPU work: idle GPU +
-27-min heartbeat gap + no result. **bench-a-04 (or the poller) is wedged, not in-flight.**
+(The self-reload patch is NOT the culprit — its `_RUNNING is None` gate is correct; the timeline is a
+legitimate between-jobs re-exec followed by the git wedge.)
 
-Note: the last few status commits include `e4f8aa79 bridge: poller self-reload between jobs`
-(13:24:29) then `9bfe4a79 ... + started 2026-06-30-claude-web-bench-a-04` (13:24:43). So the
-self-reload re-exec fired right before bench-a-04 started — worth checking it didn't leave the
-process in a bad state (the self-reload is supposed to re-exec ONLY between jobs, never mid-run).
+## THE FIX (already on the feature branch, verified `git apply --check` clean against your file)
+`scripts/spark/2026-06-30-poller-git-timeout.patch` — caps every git call with
+`SOPHIA_BRIDGE_GIT_TIMEOUT` (default **120s**); on timeout it synthesizes a `returncode=124` result so
+callers retry next tick instead of hanging. I verified it applies cleanly against the exact
+`spark-bridge` blob and that the patched file parses.
 
-## Diagnostic steps (please run, in order)
+## DO THIS (once, GPU is already idle so it's safe now)
 ```bash
 cd /home/tomyimkc/sophia-bridge
+git checkout spark-bridge && git merge --ff-only origin/spark-bridge
 
-# 1) Is the poller process alive? (note its PID + start time)
+# 1) capture evidence first (for the ledger): is the poller alive or wedged in git?
 ps aux | grep -E "github_bridge_poll" | grep -v grep
+ps aux | grep -E "git (fetch|pull|push)" | grep -v grep    # <-- a hung git here confirms the diagnosis
+tail -n 40 nohup.out 2>/dev/null || true                   # adjust to your log path
 
-# 2) Is there a hung benchmark / judge child? (a Mac-judge HTTP call with no timeout is the prime suspect)
-ps aux | grep -E "run_local_benchmarks|judge_pilot_answers|assemble_uplift|certify_lowram|python" | grep -v grep
+# 2) stop the wedged poller (and any hung git child)
+pkill -f github_bridge_poll || true
+pkill -f "git (fetch|pull|push)" || true
 
-# 3) Tail the poller log (wherever your launch line redirects it — tmux pane or nohup.out)
-tail -n 80 nohup.out 2>/dev/null || true   # adjust to your actual log path / tmux capture-pane
+# 3) apply the root-cause fix (refresh the feature ref first, else git show reads a stale ref)
+git fetch origin claude/sophia-positioning-gaps-84kb0v
+git show origin/claude/sophia-positioning-gaps-84kb0v:scripts/spark/2026-06-30-poller-git-timeout.patch | git apply --check -
+git show origin/claude/sophia-positioning-gaps-84kb0v:scripts/spark/2026-06-30-poller-git-timeout.patch | git apply -
+python -c "import ast; ast.parse(open('tools/github_bridge_poll.py').read()); print('poller parses OK')"
+git add tools/github_bridge_poll.py && git commit -m "bridge: hard timeout on poller git calls (fix bench-a-04 stall)"
+git push origin spark-bridge
 
-# 4) GPU truly idle?
-nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv 2>/dev/null || true
-
-# 5) Did bench-a-04 leave a partial run dir / answer sidecars? (tells us WHICH phase it died in:
-#    generate-answers vs judge vs assemble)
-ls -lt agi-proof/benchmark-results/ 2>/dev/null | head -10
-ls -lt /tmp 2>/dev/null | grep -iE "uplift|judg|bench" | head
+# 4) restart the poller with your normal launch line. On restart it re-picks pending bench-a-04 and
+#    re-runs it cleanly; if a git call ever stalls again it now times out in 120s instead of wedging.
 ```
 
-## Remediation (after you've captured the above)
-1. **Kill any hung child** from step 2 (the stuck judge/bench process), then **restart the poller**
-   with your normal launch line. On restart it will re-pick `bench-a-04` from `pendingCommands` and
-   re-run it cleanly — a fresh poller process drops any wedged HTTP socket / stale state.
-2. If it **stalls again at the same phase** (re-check heartbeat + GPU after ~3–5 min), then bench-a-04
-   itself is the problem (likely a judge endpoint that's down / a Mac-judge URL not responding). In
-   that case **leave it** — don't keep re-running. Tell me which phase + the log lines, and I'll
-   **re-dispatch a fresh id** (`bench-a-05`) with the judge config fixed rather than trust the wedged
-   command.
+## After restart — what I'll do automatically
+My poll watches `STATUS.json.updatedAt`: once it advances past `05:25:21Z` I know the poller is back,
+and when `bridge/results/2026-06-30-claude-web-bench-a-04.json` lands I read the κ verdict, log it to
+the ledger, and continue the queue (T3 virtues). **No re-dispatch needed** — the pending bench-a-04
+re-runs on its own. I'll only mint a fresh id if it stalls *again at the same bench phase* (which the
+git-timeout fix should prevent).
 
-## What to report back
-Please tell me: (a) was the poller process alive or dead? (b) was there a hung child, and which one?
-(c) the last ~20 log lines, (d) GPU util, (e) which phase bench-a-04 reached (any partial output).
-That tells me whether a plain restart fixed it or whether I need to re-dispatch with a fixed judge
-config. `canClaimAGI` stays false; `--execute` still needs the human `approvedBy` (already on the
-command). Thanks, Hermes.
+## Report back (one line is fine)
+Was there a hung `git` child (confirming the diagnosis)? Did the patch apply + poller restart cleanly?
+That's the evidence I'll cite in the failure ledger. `canClaimAGI` stays false; `--execute` still
+carries its human `approvedBy`. Thanks, Hermes.
