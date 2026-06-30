@@ -103,9 +103,24 @@ def _now() -> str:
     return _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def _git(*args, cwd, check=False):
-    return subprocess.run(["git", *args], cwd=str(cwd), check=check,
-                          capture_output=True, text=True)
+# A hung network git call (fetch/pull/push on a stalled link) must NEVER wedge the poller loop.
+# Without a timeout, subprocess.run blocks indefinitely -> heartbeat dies, the running job is never
+# observed, its result is never pushed (the 2026-06-30 bench-a-04 stall: 27 min of silence, GPU
+# idle, no result). Cap every git call; on timeout synthesize a failed result so callers that branch
+# on .returncode degrade gracefully (retry next tick) instead of hanging forever.
+GIT_TIMEOUT_SEC = int(os.environ.get("SOPHIA_BRIDGE_GIT_TIMEOUT", "120"))
+
+
+def _git(*args, cwd, check=False, timeout=None):
+    t = GIT_TIMEOUT_SEC if timeout is None else timeout
+    try:
+        return subprocess.run(["git", *args], cwd=str(cwd), check=check,
+                              capture_output=True, text=True, timeout=t)
+    except subprocess.TimeoutExpired as exc:
+        sys.stderr.write(f"[bridge] git {' '.join(args)} timed out after {t}s "
+                         "-> skipping this tick (loop stays alive)\n")
+        return subprocess.CompletedProcess(["git", *args], returncode=124,
+                                           stdout=(exc.stdout or ""), stderr="timeout")
 
 
 def _sync(cwd, branch):
