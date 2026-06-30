@@ -445,6 +445,27 @@ def run_certify(args: argparse.Namespace) -> dict:
     from serving.lowram_eval import LowRamGate
 
     adapter_dir = Path(args.adapter)
+    # Fail FAST with an actionable error if the adapter isn't where we're looking. The deep
+    # Peft/manual-merge FileNotFoundError is cryptic, and the #1 real cause is a RELATIVE --adapter
+    # path resolved under the wrong cwd — e.g. dispatched through the bridge (cwd = the BRIDGE
+    # checkout) while the trained adapters live in the FULL checkout. Name the path, the cwd, and
+    # the fix BEFORE loading the (expensive) base model. (2026-06-30 T1 footgun.)
+    _cfg_ok = (adapter_dir / "adapter_config.json").exists()
+    _wt_ok = ((adapter_dir / "adapter_model.safetensors").exists()
+              or (adapter_dir / "adapter_model.bin").exists())
+    if not (adapter_dir.exists() and _cfg_ok and _wt_ok):
+        import os as _os
+        if not adapter_dir.exists():
+            _why = "directory does not exist"
+        else:
+            _why = "missing " + ", ".join(
+                f for f, ok in (("adapter_config.json", _cfg_ok),
+                                ("adapter_model.safetensors|.bin", _wt_ok)) if not ok)
+        raise FileNotFoundError(
+            f"adapter not usable at {adapter_dir} ({_why}; resolved from cwd={_os.getcwd()}). "
+            f"If you dispatched this through the bridge, the cwd is the BRIDGE checkout but trained "
+            f"adapters live in the FULL checkout — pass an ABSOLUTE --adapter path "
+            f"(e.g. /home/<user>/sophia-agi/training/lora/checkpoints/<name>).")
     calib = Path(args.calib)
     rows = _load_calib_rows(calib)
     protected_ids = set(args.protected_ids.split(",")) if args.protected_ids else None
