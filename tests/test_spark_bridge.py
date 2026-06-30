@@ -20,8 +20,33 @@ from tools.spark_bridge import (  # noqa: E402
     gpu_is_free,
     is_gated,
     offline_invariants,
+    parse_env,
     validate_args,
 )
+
+
+def test_env_allowlist_and_value_safety() -> None:
+    assert parse_env("KEEP_SUFFIXES=down_proj,CERT_NEVAL=256") == {
+        "KEEP_SUFFIXES": "down_proj", "CERT_NEVAL": "256"}
+    # allowlisted env rides along on the command
+    cmd = build_command("c", "--bench-b --execute", created_by="claude",
+                        approved_by="user: go", env={"QAT_ADAPTER": "training/lora/checkpoints/x"})
+    assert cmd["env"]["QAT_ADAPTER"] == "training/lora/checkpoints/x"
+    # arbitrary key refused
+    for bad in ({"PATH": "/evil"}, {"LD_PRELOAD": "x.so"}):
+        try:
+            build_command("c", "--dry-run", created_by="claude", env=bad)
+            raised = False
+        except ValueError:
+            raised = True
+        assert raised, f"arbitrary env {bad} must be refused"
+    # unsafe value (shell metachars) refused even for an allowlisted key
+    try:
+        build_command("c", "--dry-run", created_by="claude", env={"QAT_DATA": "x; rm -rf /"})
+        raised = False
+    except ValueError:
+        raised = True
+    assert raised, "unsafe env value must be refused"
 
 
 def test_trainwatch_view() -> None:

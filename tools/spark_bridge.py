@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -34,6 +35,46 @@ ROOT = Path(__file__).resolve().parents[1]
 BRANCH = "spark-bridge"
 ALLOWLIST = {"--dry-run", "--bench-a", "--bench-b", "--all", "--execute", "--run-train"}
 GATED = {"--execute", "--run-train"}  # require a human approvedBy
+
+# Config env vars a command may carry so cert/train jobs run THROUGH the bridge (results then land
+# in bridge/results/ where the cloud reads them — no direct-SSH, no pasting). STRICTLY allowlisted:
+# only these run_local_benchmarks.sh / certify_lowram knobs, never arbitrary env (no PATH/LD_*).
+ENV_ALLOWLIST = frozenset({
+    "SEEDS", "ANSWERS_DIR", "ANSWERS_PREFIX", "JUDGE_OUT_DIR", "JUDGMENTS", "UPLIFT_OUT",
+    "JUDGES", "JUDGE_CONFIG", "AUTO_START_JUDGES", "PYTHON",
+    "QAT_BASE", "QAT_ADAPTER", "QAT_DATA", "QAT_EPOCHS", "QAT_LAMBDA",
+    "KEEP_SUFFIXES", "CERT_NEVAL", "CERT_CALIB", "CERT_OUT",
+    "SPARK_HOST", "MAC_HOST", "SPARK_PORT", "MAC_PORT", "SPARK_JUDGE_MODEL", "MAC_JUDGE_MODEL",
+    "VIRTUE_JUDGE_A", "VIRTUE_JUDGE_B", "VIRTUE_JUDGE_A_NAME", "VIRTUE_JUDGE_B_NAME",
+    "VIRTUE_SUBJECT", "VIRTUE_SEEDS", "THINKING_MODEL", "FAITH_MODEL", "FAITH_SEEDS", "FAITH_BATTERY",
+})
+# Values are EXPORTED then used inside the script (e.g. ${QAT_ADAPTER}); reject anything that could
+# break out of a quoted expansion. Allows model ids, @-urls, paths, comma/space lists, suffixes.
+_ENV_VALUE_RE = re.compile(r"^[A-Za-z0-9_./:@,+= -]{0,200}$")
+
+
+def parse_env(env_str: str) -> dict:
+    """Parse 'K=V,K2=V2' into a dict (values may contain '=' after the first; commas split pairs)."""
+    out: dict[str, str] = {}
+    for pair in (env_str or "").split(","):
+        pair = pair.strip()
+        if not pair:
+            continue
+        if "=" not in pair:
+            raise ValueError(f"env entry not K=V: {pair!r}")
+        k, v = pair.split("=", 1)
+        out[k.strip()] = v.strip()
+    return out
+
+
+def validate_env(env: dict) -> "tuple[bool, list[str]]":
+    problems: list[str] = []
+    for k, v in (env or {}).items():
+        if k not in ENV_ALLOWLIST:
+            problems.append(f"env key not allowlisted: {k!r}")
+        if not _ENV_VALUE_RE.match(v or ""):
+            problems.append(f"env value has unsafe chars or is too long: {k}={v!r}")
+    return (not problems), problems
 
 
 def validate_args(args: str) -> "tuple[bool, list[str]]":
@@ -53,9 +94,10 @@ def is_gated(args: str) -> bool:
 
 
 def build_command(command_id: str, args: str, *, created_by: str, approved_by: str = "",
-                  note: str = "", created_at: str = "") -> dict:
-    """Validate + compose a bridge command dict. Raises ValueError on an allowlist violation or on a
-    GATED command with no human ``approved_by`` (the no-self-approval rule)."""
+                  note: str = "", created_at: str = "", env: "dict | None" = None) -> dict:
+    """Validate + compose a bridge command dict. Raises ValueError on an allowlist violation, on a
+    GATED command with no human ``approved_by`` (the no-self-approval rule), or on a disallowed/
+    unsafe ``env`` entry. ``env`` (config knobs only) lets cert/train run THROUGH the bridge."""
     ok, problems = validate_args(args)
     if not ok:
         raise ValueError(f"args rejected: {problems}")
@@ -64,10 +106,17 @@ def build_command(command_id: str, args: str, *, created_by: str, approved_by: s
                          "— an AI does not self-approve a GPU job")
     if not command_id or any(c in command_id for c in "/ \t"):
         raise ValueError("id must be filesystem-safe and non-empty")
-    return {
+    env = env or {}
+    env_ok, env_problems = validate_env(env)
+    if not env_ok:
+        raise ValueError(f"env rejected: {env_problems}")
+    cmd = {
         "id": command_id, "args": args, "createdBy": created_by,
         "createdAt": created_at, "approvedBy": approved_by, "note": note,
     }
+    if env:
+        cmd["env"] = env
+    return cmd
 
 
 def gpu_is_free(status: dict) -> bool:
@@ -164,6 +213,23 @@ def offline_invariants() -> "tuple[bool, dict]":
         bad_id = True
     checks["unsafe_id_refused"] = bad_id
 
+    # env allowlist: known knob accepted, arbitrary/unsafe env refused
+    checks["env_allowlisted_ok"] = build_command(
+        "e1", "--bench-b --execute", created_by="claude", approved_by="user: go",
+        env={"KEEP_SUFFIXES": "down_proj", "QAT_ADAPTER": "training/lora/checkpoints/olmoe-qat-spark-v3"},
+    ).get("env", {}).get("KEEP_SUFFIXES") == "down_proj"
+    bad_env_key = bad_env_val = False
+    try:
+        build_command("e2", "--dry-run", created_by="claude", env={"PATH": "/evil"})
+    except ValueError:
+        bad_env_key = True
+    try:
+        build_command("e3", "--dry-run", created_by="claude", env={"QAT_ADAPTER": "x; rm -rf /"})
+    except ValueError:
+        bad_env_val = True
+    checks["env_arbitrary_key_refused"] = bad_env_key
+    checks["env_unsafe_value_refused"] = bad_env_val
+
     return all(checks.values()), {"checks": checks}
 
 
@@ -179,6 +245,9 @@ def main(argv: "list[str] | None" = None) -> int:
     pc.add_argument("--approved-by", default="")
     pc.add_argument("--note", default="")
     pc.add_argument("--created-at", default="")
+    pc.add_argument("--env", default="", help="config env to carry, 'KEY=VAL,KEY2=VAL2' "
+                    "(allowlisted run_local_benchmarks/certify knobs only) so the job runs THROUGH "
+                    "the bridge and its result lands in bridge/results/")
 
     sub.add_parser("status", help="print the live Spark STATUS.json")
     sub.add_parser("trainwatch", help="print the live training ETA/progress (mirrored TrainWatch)")
@@ -197,7 +266,8 @@ def main(argv: "list[str] | None" = None) -> int:
     if args.cmd == "compose":
         try:
             cmd = build_command(args.id, args.args, created_by=args.created_by,
-                                approved_by=args.approved_by, note=args.note, created_at=args.created_at)
+                                approved_by=args.approved_by, note=args.note, created_at=args.created_at,
+                                env=parse_env(getattr(args, "env", "")))
         except ValueError as e:
             print(f"REFUSED: {e}", file=sys.stderr)
             return 2
