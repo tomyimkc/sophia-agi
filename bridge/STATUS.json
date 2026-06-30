@@ -1,10 +1,8 @@
 {
-  "updatedAt": "2026-06-30T00:17:41Z",
+  "updatedAt": "2026-06-30T00:18:18Z",
   "host": "spark-2f2d",
-  "running": "2026-06-30-claude-web-bench-a-02",
-  "pendingCommands": [
-    "2026-06-30-claude-web-bench-a-02"
-  ],
+  "running": null,
+  "pendingCommands": [],
   "trainwatch": [
     {
       "id": "a92be4e1",
@@ -985,13 +983,13 @@
     },
     {
       "path": "agi-proof/benchmark-results/wisdom-market/m3-2family-judge/seed2-judge.json",
-      "bytes": 2334,
-      "mtime": "2026-06-30T00:03:33Z"
+      "bytes": 2335,
+      "mtime": "2026-06-30T00:17:57Z"
     },
     {
       "path": "agi-proof/benchmark-results/wisdom-market/m3-2family-judge/seed7-judge.json",
       "bytes": 2333,
-      "mtime": "2026-06-30T00:03:39Z"
+      "mtime": "2026-06-30T00:18:03Z"
     },
     {
       "path": "agi-proof/benchmark-results/wisdom-market/m3-2family-judge-70b/judge70b-seed1.json",
