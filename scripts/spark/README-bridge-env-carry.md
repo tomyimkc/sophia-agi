@@ -23,6 +23,7 @@ After this, a cert dispatched through the bridge writes its result (incl. the `V
 ```bash
 cd /home/tomyimkc/sophia-bridge
 git checkout spark-bridge && git merge --ff-only origin/spark-bridge
+git fetch origin claude/sophia-positioning-gaps-84kb0v   # REQUIRED: refresh the feature-branch ref, else `git show` reads a stale ref ("path does not exist")
 git show origin/claude/sophia-positioning-gaps-84kb0v:scripts/spark/2026-06-30-bridge-env-carry.patch | git apply --check -
 git show origin/claude/sophia-positioning-gaps-84kb0v:scripts/spark/2026-06-30-bridge-env-carry.patch | git apply -
 python -c "import ast; ast.parse(open('tools/github_bridge_poll.py').read()); print('poller parses OK')"
