@@ -220,6 +220,11 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=None,
                     help="Seed number to stamp into --raw-out (this file judges ONE seed's answers).")
     ap.add_argument("--workers", type=int, default=8)
+    ap.add_argument("--no-parallel-families", action="store_true",
+                    help="Judge the families one after another instead of concurrently. Default is "
+                         "concurrent when families resolve to DISTINCT boxes (both work at once); "
+                         "use this to force the old sequential behaviour (e.g. for clean per-box "
+                         "latency profiling).")
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--forced-choice", action="store_true",
                     help="Pre-registered variant: disallow TIE so both judges face the same forced "
@@ -234,18 +239,44 @@ def main() -> int:
     judge_specs = [j.strip() for j in args.judges.split(",") if j.strip()]
     print(f"judging {len(rows)} source-family cases with {len(judge_specs)} families ...")
 
-    per_judge = {}
-    for spec in judge_specs:
+    def _judge_spec(spec: str) -> "tuple[str, list]":
+        """Judge every row with ONE family (its own client + inner worker pool)."""
         client = default_client(spec)
         with ThreadPoolExecutor(max_workers=args.workers) as ex:
             verdicts = list(ex.map(lambda r: judge_one(client, r, forced=args.forced_choice), rows))
-        per_judge[spec] = verdicts
         ok = [v for v in verdicts if v]
         tally = {k: ok.count(k) for k in ("adapter", "base", "tie")}
         n = len(ok)
         print(f"  [{spec}] n={n} adapter={tally['adapter']} base={tally['base']} tie={tally['tie']} "
               f"adapter_winrate={round(tally['adapter']/n,3) if n else None}")
+        return spec, verdicts
 
+    # Each family targets its OWN box (Qwen on the Spark, 70B on the Mac over Cat6). Judging the
+    # families SEQUENTIALLY leaves one box idle while the other runs — wall-clock = sum(per-family).
+    # When the families resolve to DISTINCT base_urls, judge them CONCURRENTLY so both boxes work at
+    # once -> wall-clock = max(per-family). Same requests, same per-box load (one inner pool each);
+    # only the cross-box idle gap is reclaimed. We refuse to parallelize families that SHARE a box
+    # (that would just oversubscribe one endpoint, not parallelize) and honor --no-parallel-families.
+    per_judge: dict = {}
+    boxes = [(s.split("@", 1)[1] if "@" in s else s.split(":", 1)[0]) for s in judge_specs]
+    distinct_boxes = len(set(boxes)) == len(boxes)
+    parallel = (not args.no_parallel_families) and len(judge_specs) >= 2 and distinct_boxes
+    if parallel:
+        print(f"  (judging {len(judge_specs)} families CONCURRENTLY — distinct boxes, "
+              f"both work at once)")
+        with ThreadPoolExecutor(max_workers=len(judge_specs)) as ex:
+            for spec, verdicts in ex.map(_judge_spec, judge_specs):
+                per_judge[spec] = verdicts
+    else:
+        if len(judge_specs) >= 2 and not distinct_boxes and not args.no_parallel_families:
+            print("  (families share a box -> judging SEQUENTIALLY to avoid oversubscribing it)")
+        for spec in judge_specs:
+            s, verdicts = _judge_spec(spec)
+            per_judge[s] = verdicts
+
+    # Restore the judges' declared order (ThreadPoolExecutor.map preserves input order, but a dict
+    # built from concurrent completions could otherwise reorder; key everything off judge_specs).
+    per_judge = {spec: per_judge[spec] for spec in judge_specs}
     specs = list(per_judge)
     kappa = _kappa(per_judge[specs[0]], per_judge[specs[1]]) if len(specs) >= 2 else None
 
