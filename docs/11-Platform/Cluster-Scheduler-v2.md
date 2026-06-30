@@ -139,6 +139,51 @@ it does **not** yet schedule judge capacity. Judge-side admission control (a sep
 a `bridge/judges/<id>` lane, or a token bucket) is left as an OPEN concern, tracked here so a future
 session does not assume the GPU mutex also protects the judge.
 
+## Throughput simulation
+
+The Mac-judge contention flagged above is now *quantified* by a sibling planning tool,
+`tools/cluster_schedule_sim.py` (tests: `tests/test_cluster_schedule_sim.py`). It answers the
+owner's standing ROI question — **for MY actual queue, how much faster is 1 vs 2 vs 4 vs 8 vs 16
+Sparks, and where does the shared Mac judge bottleneck?**
+
+It is a **pure, offline, deterministic** planning tool, exactly like `tools/run_cluster_sim.py`, and
+makes **no capability or throughput claim about real hardware**: it schedules the owner's *own
+GPU-time ESTIMATES* (the T1-T4 queue in `docs/06-Roadmap/Spark-Theory-Test-Forecast.md`, plus a
+configurable independent N-seed × M-discipline sweep) and reports the resulting wall-clock, speedup,
+efficiency, and Mac-judge wait. The arithmetic of distribution is the only thing it does; the
+estimates are forecasts, not measurements. `canClaimAGI` stays false.
+
+What it models, and how it stays complementary to `run_cluster_sim.py`:
+
+- **Distribution reuses `assigned_node` verbatim** — each job's owner is the same deterministic
+  single-owner sha1 hash this protocol uses, so the sim's placement == the cluster's placement. It
+  does not re-implement assignment.
+- **One-GPU-job-per-node** — each node runs its assigned jobs serially (this protocol's per-node
+  invariant), so independent jobs across N nodes is the good case.
+- **The shared Mac judge as a semaphore** of size `mac_judge_concurrency` (the OPEN concern from the
+  section above, made concrete): every `needs_mac_judge` job must hold a judge lane, so with
+  concurrency=1 they serialize through the one Mac regardless of node count.
+- It deliberately carries **no network "node tax"** — that is `run_cluster_sim.py`'s job (the loss a
+  single *data-parallel* run takes to all-reduce/switch). This sim is the *independent-job*
+  throughput regime, which needs no gradient sync, so the two sims are non-overlapping.
+
+The headline finding for this repo's queue: because most judged jobs route to **one** Mac judge,
+**independent-job scaling hits a Mac-judge ceiling fast** — adding Sparks past ~2 drops efficiency
+without moving wall-clock until the judge lane count is raised. The fix the tool lets you explore is
+`--mac-concurrency K` (more judge lanes), not more Sparks. Run:
+
+```bash
+python tools/cluster_schedule_sim.py --self-test
+python tools/cluster_schedule_sim.py --jobs forecast --nodes 1,2,4,8,16
+python tools/cluster_schedule_sim.py --jobs sweep:4x3 --nodes 1,2,4,8,16 --mac-concurrency 4
+```
+
+`--self-test` asserts the invariants: assignment comes from `cluster_scheduler` (single owner per
+job), speedup is monotonic non-decreasing in node count while efficiency decreases, Mac-judge
+contention raises wall-clock when >1 judge job and concurrency=1, and a pure independent no-mac
+workload scales near-linearly until jobs < nodes (then flat). Deterministic across runs. This is
+design/infra; **no capability claim; canClaimAGI stays false.**
+
 ## Invariants checklist (machine-checked)
 
 `python tools/cluster_scheduler.py --self-test` asserts: allowlist/gating reused unchanged; single +
