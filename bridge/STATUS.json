@@ -1,11 +1,70 @@
 {
-  "updatedAt": "2026-06-30T02:22:30Z",
+  "updatedAt": "2026-06-30T02:23:08Z",
   "host": "spark-2f2d",
   "running": null,
   "pendingCommands": [],
-  "trainwatch": {
-    "error": "trainwatch unreachable: <urlopen error [Errno 111] Connection refused>"
-  },
+  "trainwatch": [
+    {
+      "id": "a92be4e1",
+      "name": "olmoe-qat-v4",
+      "description": "OLMoE NVFP4 QAT-LoRA v4 (3 epochs, lambda=0.01)",
+      "status": "completed",
+      "total_steps": 330,
+      "current_step": 300,
+      "started_at": 1782669990.0509489,
+      "finished_at": 1782685395.4615614,
+      "eta_seconds": 0.0,
+      "speed": 0.019908969735086424,
+      "ema_step_time": 50.22861621200104,
+      "latest_metrics": "{\"val_loss\": 1.5391, \"train_loss\": 0.1527}",
+      "created_at": 1782669990.0509489
+    },
+    {
+      "id": "4c81e111",
+      "name": "olmoe-qat-v4",
+      "description": "OLMoE NVFP4 QAT-LoRA v4 (3 epochs, lambda=0.01 \u2014 push top-1)",
+      "status": "completed",
+      "total_steps": 330,
+      "current_step": 300,
+      "started_at": 1782668365.4378307,
+      "finished_at": 1782685397.3181055,
+      "eta_seconds": 0.0,
+      "speed": 0.019882458093126908,
+      "ema_step_time": 50.295591989487775,
+      "latest_metrics": "{\"val_loss\": 1.5391, \"train_loss\": 0.1527}",
+      "created_at": 1782668365.4378307
+    },
+    {
+      "id": "843f0de3",
+      "name": "olmoe-qat-v3",
+      "description": "OLMoE-1B-7B NVFP4 QAT-LoRA (2 epochs, expert-co-adapt)",
+      "status": "completed",
+      "total_steps": 220,
+      "current_step": 210,
+      "started_at": 1782666757.885504,
+      "finished_at": 1782667670.5762265,
+      "eta_seconds": 0.0,
+      "speed": 0.2220724706430559,
+      "ema_step_time": 4.503034514383062,
+      "latest_metrics": "{\"loss\": 1.5427, \"lr\": 4.36e-07}",
+      "created_at": 1782666757.885504
+    },
+    {
+      "id": "b8ad5e80",
+      "name": "demo-finetune",
+      "description": "Simulated LoRA fine-tune (loss/lr/grad-norm)",
+      "status": "completed",
+      "total_steps": 200,
+      "current_step": 200,
+      "started_at": 1782665103.2233422,
+      "finished_at": 1782665139.2229486,
+      "eta_seconds": 0.0,
+      "speed": 5.568142192531602,
+      "ema_step_time": 0.17959311479891316,
+      "latest_metrics": "{\"loss\": 0.2963479789017798, \"lr\": 1.25e-05, \"grad_norm\": 0.2925770542680106}",
+      "created_at": 1782665103.2233422
+    }
+  ],
   "artifacts": [
     {
       "path": "agi-proof/benchmark-results/abstention-scoring.public-report.json",
