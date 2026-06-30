@@ -1,11 +1,11 @@
 {
   "version": "0.11.0",
-  "generated": "2026-06-29T22:47:32",
+  "generated": "2026-06-30T00:07:51",
   "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
   "failureLedgerSummary": {
-    "openCount": 99,
+    "openCount": 100,
     "byStatus": {
-      "open": 99,
+      "open": 100,
       "resolved": 45,
       "other": 23
     },
@@ -62,6 +62,7 @@
       "long-horizon-eval-harness-built-2026-06-29",
       "long-horizon-not-run",
       "m3-sft-2family-judge-not-validated-2026-06-29",
+      "m3-sft-2family-spark-judge-70b-n0-2026-06-30",
       "m3-sft-retention-underpowered-2026-06-29",
       "math-code-curriculum-preregistered-2026-06-25",
       "moe-design-only-2026-06-30",
