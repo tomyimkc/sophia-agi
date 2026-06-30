@@ -1,13 +1,25 @@
 {
-  "_comment": "TEMPLATE - the Mac OVERWRITES this every work cycle so the cloud knows what's going on. Keep it small; no secrets.",
-  "updatedAt": "",
+  "updatedAt": "2026-06-30T22:58:00+08:00",
   "device": "mac-studio",
-  "agent": "",
-  "currentTask": "",
-  "lastAction": "",
-  "lastResult": "",
-  "sparkView": { "reachable": null, "pollerAlive": null, "running": null, "judgeHold": null },
-  "blockers": [],
+  "agent": "openclaw-liufei",
+  "currentTask": "handoff channel init: read PROTOCOL + to-mac priorities; exploring repo for Spark access + OLMoE peft issue",
+  "lastAction": "git fetch origin mac-handoff && git checkout mac-handoff; cat handoff/PROTOCOL.md handoff/to-mac/STATUS.json",
+  "lastResult": "Successfully on mac-handoff. Cloud priorities loaded (P0-A: SSH Spark + pin peft/transformers for OLMoE fused-experts merge_and_unload + re-cert v5; P0-B: deploy 2026-06-30-poller-idle-backlog.patch + supervise; P1 virtues+faithfulness patches + 70B MLX judge; P2 v6 QAT needs approval). Guardrails noted (canClaimAGI=false).",
+  "sparkView": {
+    "reachable": false,
+    "pollerAlive": null,
+    "running": null,
+    "judgeHold": true
+  },
+  "blockers": [
+    "Spark host/IP and SSH key not in repo (secret rule); local ~/.ssh or direct-link config required to SSH",
+    "OLMoE training scripts / peft error details not yet located in repo; need to find training code path",
+    "No Mac-Studio-Operator-Brief.md found in docs/06-Roadmap/"
+  ],
   "hookVersion": "",
-  "needsFromCloud": []
+  "needsFromCloud": [
+    "Spark SSH target details (host, user, key path or alias) or confirm direct Ethernet link state",
+    "Path to OLMoE fine-tune script and current peft/transformers error traceback for P0-A",
+    "Confirm if poller patch file exists or needs creation at scripts/spark/2026-06-30-poller-idle-backlog.patch"
+  ]
 }
