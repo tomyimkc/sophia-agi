@@ -16,6 +16,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from tools.assemble_uplift_judgments import _content_pair, assemble  # noqa: E402
+from tools.run_lora_uplift_validation import _family_key  # noqa: E402
 
 
 def test_pairwise_encoding() -> None:
@@ -39,11 +40,28 @@ def test_assemble_drops_abstained_family_not_whole_item() -> None:
     j = assemble(raws, "allenai/OLMoE-1B-7B-0924-Instruct")
     assert j["subjectModel"] == "allenai/OLMoE-1B-7B-0924-Instruct"
     items = {it["id"]: it for it in j["seeds"][0]["items"]}
-    # item a: both families labelled
-    assert items["a"]["adapterContent"] == {"ollama:qwen": True, "vllm:mlx/Llama-70B": True}
-    # item b: 70B abstained -> only qwen present (consistent with A3 all-families drop rule)
-    assert set(items["b"]["adapterContent"]) == {"ollama:qwen"}
-    assert "vllm:mlx/Llama-70B" not in items["b"]["baseContent"]
+    # CONTENT must be keyed by the gate's family key, NOT the raw spec (the 2026-06-30 bug).
+    fq, fm = _family_key("ollama:qwen"), _family_key("vllm:mlx/Llama-70B")
+    assert fq != fm and fq == "ollama"
+    # item a: both families labelled, keyed by family
+    assert items["a"]["adapterContent"] == {fq: True, fm: True}
+    assert "ollama:qwen" not in items["a"]["adapterContent"]   # NOT the raw spec
+    # item b: 70B abstained -> only qwen family present (consistent with A3 all-families drop rule)
+    assert set(items["b"]["adapterContent"]) == {fq}
+    assert fm not in items["b"]["baseContent"]
+
+
+def test_same_family_collision_refused() -> None:
+    # two specs that map to the SAME family key must be refused (the gate would collapse them)
+    raws = [{"seed": 0, "judges": ["ollama:qwen2.5:7b", "ollama:qwen2.5:32b"], "answers": "s",
+             "items": [{"id": "a", "verdicts": {"ollama:qwen2.5:7b": "adapter",
+                                                "ollama:qwen2.5:32b": "base"}}]}]
+    try:
+        assemble(raws, "allenai/OLMoE")
+        raised = False
+    except ValueError:
+        raised = True
+    assert raised, "two specs in the same family must be refused"
 
 
 def test_refuses_mixed_judge_sets() -> None:
