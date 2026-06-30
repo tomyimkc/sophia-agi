@@ -90,9 +90,18 @@ bash scripts/run_local_benchmarks.sh --bench-b --execute     # B1 train SKIPPED,
   over-fit lambda=0.01 adapter, protected_max_kl 0.71) is the one certified — **prefer v3**.
 - If NO-GO: next lever = hold `down_proj,gate_proj` bf16, or cert a properly v5-trained adapter.
 
-**RESULT (fill after run):** _pending_
-**FORECAST vs ACTUAL divergence:** _pending — if top1 ≥ 0.97, the gap was granularity not training
-(update prior toward "cert-time mixed precision suffices"); if mean_kl regressed, wrong adapter._
+**RESULT (2026-06-30):** NVFP4 cert of the **v3** adapter with `down_proj` held bf16
+(`keep_suffixes=["down_proj"]`, mem_ratio 1.90×, n=256), dispatched through the env-carry bridge
+(cmd `cert-t1-v3`, absolute adapter path). **mean_kl = 0.0342 ✓** (≤ 0.05) but
+**top1 = 0.8945 ✗** (< 0.97); protected slice also fails (max_kl 0.409, agree 0.8945).
+**VERDICT: NO-GO.**
+**FORECAST vs ACTUAL divergence (2026-06-30):** **Direction correct, magnitude wrong.** Forecast was
+NO-GO @60% → actual NO-GO ✓. But forecast top1 **0.94–0.96**; actual **0.8945** — *below* the band. I
+overestimated the lever: holding `down_proj` bf16 improved mean_kl (prior full-quant v3 ≈ 0.045 →
+0.034) but **did not lift top1** (prior full-quant v3 ≈ 0.906 → 0.8945, flat-to-slightly-worse).
+**Prior update:** the top1 gap is NOT a single-projection granularity problem fixable at cert time —
+it's a training/quantization-depth problem. Next levers: hold MORE projections
+(`down_proj,gate_proj`) or cert a properly **v5-trained** adapter — one held projection is not enough.
 
 ---
 
@@ -204,7 +213,7 @@ When a run lands:
 
 | Test | Forecast | Actual | Inside forecast? | Prior updated |
 |---|---|---|---|---|
-| T1 | top1 0.94–0.96, NO-GO | _pending_ | _—_ | _—_ |
+| T1 | top1 0.94–0.96, NO-GO | top1 **0.8945**, NO-GO | dir ✓ / mag ✗ (below band) | down_proj-alone won't lift top1 — needs more held projections or a v5-trained adapter |
 | T2 | unfaithful 0.25–0.45 | _pending_ | _—_ | _—_ |
 | T3 | Δ>0 but κ<0.40, CANDIDATE | _pending_ | _—_ | _—_ |
 | T4 | on-disc +0.05–0.20 | _pending_ | _—_ | _—_ |
