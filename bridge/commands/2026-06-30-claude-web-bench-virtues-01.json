@@ -1,0 +1,8 @@
+{
+  "id": "2026-06-30-claude-web-bench-virtues-01",
+  "args": "--bench-virtues --execute",
+  "createdBy": "claude-web",
+  "createdAt": "",
+  "approvedBy": "user: 'perform all possible benchmarking... go' (2026-06-30)",
+  "note": "T3 virtue gate: sophrosyne (temperance) + dikaiosyne (justice) gate-improves-decisions vs a no-gate baseline, 2-family judged. Forecast: positive decision delta on explicit signals, kappa near the 0.40 line -> likely CANDIDATE."
+}
