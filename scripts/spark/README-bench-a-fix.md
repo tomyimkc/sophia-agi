@@ -30,3 +30,24 @@ git push origin spark-bridge
 
 The poller ff-syncs `spark-bridge`, so once pushed the next `--bench-a --execute` runs the fixed
 script. Verdict stays CANDIDATE/NO-GO unless ALL gate bars pass; `canClaimAGI` stays false.
+
+---
+
+## Follow-up: `2026-06-30-judge-parallel-families.patch` (apply AFTER bench-a-03 finishes)
+
+Makes `judge_pilot_answers.py` judge the two families CONCURRENTLY (Qwen on the Spark + 70B on
+the Mac at the same time) instead of sequentially — reclaims the cross-box idle gap, so wall-clock
+drops from `Qwen_time + 70B_time` toward `max(Qwen_time, 70B_time)`. Verdicts are identical
+(verified offline); only timing changes.
+
+DO NOT apply while a bench-A run is in flight. Once `bench-a-03` has a result, on the Spark:
+
+```bash
+cd /home/tomyimkc/sophia-bridge
+git checkout spark-bridge && git pull --ff-only origin spark-bridge
+git show origin/claude/sophia-positioning-gaps-84kb0v:scripts/spark/2026-06-30-judge-parallel-families.patch | git apply --check -
+git show origin/claude/sophia-positioning-gaps-84kb0v:scripts/spark/2026-06-30-judge-parallel-families.patch | git apply -
+python tests/test_judge_parallel_families.py
+git add -A && git commit -m "judge: families judged concurrently (both boxes at once)"
+git push origin spark-bridge
+```
