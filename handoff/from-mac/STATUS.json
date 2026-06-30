@@ -1,17 +1,17 @@
 {
-  "updatedAt": "2026-06-30T15:08:53Z",
+  "updatedAt": "2026-06-30T15:20:13Z",
   "device": "mac-studio",
   "agent": "openclaw-liufei",
-  "currentTask": "P0-0 re-sync: reached Spark via spark-2f2d.local, confirmed SSH + peft/transformers versions",
-  "lastAction": "git pull mac-handoff (8cb7d509); ping spark-2f2d.local; ssh diagnostic; read peft/transformers/torch from cert-lane venv; observed poller pid + bridge STATUS + JUDGE_HOLD + patch presence",
-  "lastResult": "Spark REACHABLE via mDNS spark-2f2d.local -> 169.254.26.170 (sub-ms). SSH WORKS but as user tomyimkc (NOT root: root offers the key but rejects it; tomyimkc accepts). GPU: NVIDIA GB10, 0% util, idle. v5 checkpoint present at /home/tomyimkc/sophia-bridge/training/lora/checkpoints/olmoe-qat-spark-v5. cert-lane venv = /home/tomyimkc/sophia-agi/.venv (py3.12): PEFT 0.19.1, transformers 5.12.1, torch 2.12.1+cu130 -> this is the pair throwing the WeightConverter distributed_operation TypeError. NOTE: a /home/tomyimkc/mergefix-venv exists (half-built P0-A attempt) but is BROKEN (ModuleNotFoundError: regex) and not the active env. Poller ALIVE: pid 347443 runs python3 /home/tomyimkc/sophia-agi/scripts/serve_benchmark_bridge.py (runs from the sophia-agi checkout, not sophia-bridge); bridge/STATUS.json heartbeat fresh (15:07:54Z), running:null. JUDGE_HOLD absent. Poller-idle-backlog.patch NOT yet present on the Spark. sophia-bridge checkout on branch spark-bridge @ 37a309da.",
-  "peftVersions": "peft 0.19.1 transformers 5.12.1",
+  "currentTask": "P0-A root-caused (read-only); P1 70B MLX judge lane UP + verified. Holding before any env mutation / poller restart.",
+  "lastAction": "ssh diag (tomyimkc@spark-2f2d.local); root-caused the peft WeightConverter error; probed transformers 5.0/5.6/5.10.4/5.11 WeightConverter signatures (read-only, /tmp); launched + verified the 70B MLX judge on Mac:8080",
+  "lastResult": "Spark reachable, poller alive (pid 347443), GPU idle. P0-A and P1 progress below. No env mutated on the Spark; cert venv untouched; poller NOT restarted; no GPU job launched.",
+  "peftVersions": "peft 0.19.1 transformers 5.12.1 (torch 2.12.1+cu130)",
   "sparkView": {
     "reachable": true,
-    "reachedVia": "ssh tomyimkc@spark-2f2d.local (mDNS -> 169.254.26.170); key ~/.ssh/id_ed25519_spark",
+    "reachedVia": "ssh tomyimkc@spark-2f2d.local (mDNS -> 169.254.26.170); key ~/.ssh/id_ed25519_spark. NOTE: login is tomyimkc, NOT root.",
     "pollerAlive": true,
     "pollerPid": 347443,
-    "pollerEntrypoint": "/home/tomyimkc/sophia-agi/scripts/serve_benchmark_bridge.py",
+    "pollerEntrypoint": "/home/tomyimkc/sophia-agi/scripts/serve_benchmark_bridge.py (runs from sophia-agi checkout, not sophia-bridge)",
     "running": null,
     "gpu": "NVIDIA GB10, 0% util, idle",
     "v5CheckpointPresent": true,
@@ -19,16 +19,38 @@
     "certLaneVenv": "/home/tomyimkc/sophia-agi/.venv (py3.12)",
     "sophiaBridgeBranchHead": "spark-bridge @ 37a309da"
   },
+  "P0A_diagnosis": {
+    "rootCause": "Version-skew, NOT a missing pin you can satisfy by downgrading transformers within 5.x. peft 0.19.1 is the LATEST peft (PyPI tops out at 0.19.1 — cannot upgrade out of it). Its fused-expert merge shim peft/utils/transformers_weight_conversion.py lines 267-272 and 313-318 constructs WeightConverter(source_patterns=, target_patterns=, distributed_operation=orig.distributed_operation, quantization_operation=orig.quantization_operation, operations=). But transformers 5.6.0 / 5.10.4 / 5.11.0 / 5.12.1 ALL define WeightConverter.__init__(self, source_patterns, target_patterns, operations) — distributed_operation & quantization_operation are post-construction attributes (default None, set later in core_model_loading.py), never constructor kwargs. So the TypeError reproduces across the entire released 5.x line.",
+    "implication": "Downgrading transformers within 5.x will NOT fix merge_and_unload. transformers 5.0.0 was inconclusive in my AST probe (WeightConverter may be shaped differently) but 5.0.0 is a large, risky downgrade for the QAT/NVFP4 train lane.",
+    "viableFixes": [
+      "(1) RECOMMENDED: patch peft's 2 shim sites to construct WeightConverter(source_patterns, target_patterns, operations) then set .distributed_operation/.quantization_operation as attributes (matches the released TF5 API). Do it in an ISOLATED cert venv (not the train-lane venv) or as a monkeypatch in certify_lowram.py; upstreamable to peft.",
+      "(2) Extend certify_lowram.py's existing manual_merge fallback to merge the 32 fused-MoE expert modules directly (dequant gate_up_proj/down_proj + apply LoRA), sidestepping the peft shim entirely -> reaches 96/96.",
+      "(3) Investigate transformers 5.0.0 only if (1)/(2) are undesirable; high regression risk on the train lane."
+    ],
+    "notDone": "No install, no patch, no re-cert performed. Awaiting cloud/owner pick between (1)/(2)."
+  },
+  "P1_status": {
+    "state": "UP + VERIFIED",
+    "model": "mlx-community/Llama-3.3-70B-Instruct-4bit (cached locally)",
+    "endpoint": "http://127.0.0.1:8080/v1 (mlx_lm 0.31.2, pid 27920, RSS ~32.6GB)",
+    "family": "mlx (engine-keyed -> distinct from Spark Qwen 'qwen' vendor family => >=2-family gate holds)",
+    "verified": "keyless OpenAI-compatible completion returned 'JUDGE_OK' (OPENAI_API_KEY=none transport confirmed -> avoids the earlier n=0 root cause). temp=0.",
+    "caveats": [
+      "Bound to 127.0.0.1 only. If judge orchestration runs ON the Spark, I must rebind with --host 0.0.0.0 (or the cat-link IP) so MAC_HOST:8080 is reachable. Fine as-is if the judge tool runs on the Mac control plane.",
+      "config/inference.local.mac-judge.json still pins the 8B (mlx-community/Meta-Llama-3.1-8B-Instruct-4bit). Same 'mlx' family, so the gate is unaffected, but recommend bumping mac.model -> the 70B on branch claude/sophia-positioning-gaps-84kb0v (also re-run tests/test_mac_judge_config.py). NOT changed here (tested config + wrong branch)."
+    ]
+  },
   "blockers": [],
   "alignment": {
-    "P0-A": "WILL pin peft/transformers so PeftModel merge_and_unload works on OLMoE fused experts (current pair peft 0.19.1 / TF 5.12.1 throws WeightConverter.__init__ distributed_operation TypeError), then re-cert v5 to 96/96. Will iterate the pin in a fresh venv (NOT the broken mergefix-venv), under the bridge poller, canClaimAGI=false.",
-    "P0-B": "WILL apply scripts/spark/2026-06-30-poller-idle-backlog.patch from branch claude/sophia-positioning-gaps-84kb0v onto the Spark + restart the poller. SEE needsFromCloud: the live poller runs from the sophia-agi checkout, not sophia-bridge — confirm patch target before I apply.",
-    "P1": "WILL bring up the 70B MLX judge lane on the Mac (mlx_lm.server, OPENAI_API_KEY=none for the keyless OpenAI-compatible transport, no setsid on macOS) as the second judge family."
+    "P0-A": "DIAGNOSED. Will pin/patch per P0A_diagnosis once you pick fix (1) or (2), in an isolated cert venv, then re-cert v5 to 96/96. canClaimAGI=false.",
+    "P0-B": "NOT STARTED — blocked on the patch-target question (live poller runs from the sophia-agi checkout, not sophia-bridge). Will apply 2026-06-30-poller-idle-backlog.patch + restart poller once you confirm the target checkout.",
+    "P1": "DONE for bring-up (lane up + verified). Will wire it into a judged run when there is something to judge (i.e. after P0-A cert succeeds)."
   },
-  "guardrailsAck": "canClaimAGI=false acknowledged; will run tools/lint_claims.py before any code commit; NO plaintext secrets (will rotate the Telegram token, keep it in OpenClaw local env only); push code ONLY to claude/sophia-positioning-gaps-84kb0v; --run-train needs owner approvedBy; will touch bridge/JUDGE_HOLD before judging so the GPU backlog yields. Will NOT claim AGI.",
+  "guardrailsAck": "canClaimAGI=false; lint_claims run before this commit (OK); no plaintext secrets (Telegram token stays in OpenClaw local env, will rotate); code pushed ONLY to claude/sophia-positioning-gaps-84kb0v; --run-train needs owner approvedBy; will touch bridge/JUDGE_HOLD before judging. Not claiming AGI.",
   "needsFromCloud": [
-    "CONFIRM: login user is tomyimkc, not root (your immediateNextStep said root@; root rejects the key). Update your runbook so future cycles use tomyimkc@spark-2f2d.local.",
-    "CONFIRM patch target for P0-B: the LIVE poller runs from /home/tomyimkc/sophia-agi/scripts/serve_benchmark_bridge.py (sophia-agi checkout), but your note says apply the patch to the sophia-bridge checkout. Applying to sophia-bridge would not affect the running poller. Which checkout should the patch land in, and should I git-fetch the patch onto the Spark's sophia-agi checkout instead?",
-    "FYI: a /home/tomyimkc/mergefix-venv exists (broken: missing regex) — looks like a prior P0-A attempt. OK to ignore/delete and build a clean pin venv? Any target peft/transformers combo you already know is compatible for OLMoE fused-expert merge on TF5?"
+    "P0-A: pick fix (1) peft-shim patch (recommended) or (2) manual_merge fused-expert path. Do you already have a known-good peft/TF combo? My probe says NO transformers 5.x release satisfies peft 0.19.1's shim, so 'pin transformers' alone won't work.",
+    "P0-B patch target: live poller runs /home/tomyimkc/sophia-agi/scripts/serve_benchmark_bridge.py (sophia-agi checkout). Your note said apply the patch to sophia-bridge. Confirm which checkout, and should I git-fetch the patch onto the Spark's sophia-agi checkout?",
+    "Login user is tomyimkc, not root — please update the runbook.",
+    "OK to delete the broken /home/tomyimkc/mergefix-venv (missing regex) and build a clean isolated cert venv for the P0-A fix?"
   ]
 }
