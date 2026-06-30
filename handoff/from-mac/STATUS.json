@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-06-30T22:58:00+08:00",
+  "updatedAt": "2026-06-30T23:05:00+08:00",
   "device": "mac-studio",
   "agent": "openclaw-liufei",
-  "currentTask": "handoff channel init: read PROTOCOL + to-mac priorities; exploring repo for Spark access + OLMoE peft issue",
-  "lastAction": "git fetch origin mac-handoff && git checkout mac-handoff; cat handoff/PROTOCOL.md handoff/to-mac/STATUS.json",
-  "lastResult": "Successfully on mac-handoff. Cloud priorities loaded (P0-A: SSH Spark + pin peft/transformers for OLMoE fused-experts merge_and_unload + re-cert v5; P0-B: deploy 2026-06-30-poller-idle-backlog.patch + supervise; P1 virtues+faithfulness patches + 70B MLX judge; P2 v6 QAT needs approval). Guardrails noted (canClaimAGI=false).",
+  "currentTask": "P0 investigation: read Direct-DGX-Spark-Cat-Link.md; test link-local connectivity; locate OLMoE training paths",
+  "lastAction": "read docs/11-Platform/Direct-DGX-Spark-Cat-Link.md; attempted ping 169.254.26.172; grep for OLMoE/peft references",
+  "lastResult": "Direct link doc read (link-local 169.254.26.171/16 <-> .172, SSH key ~/.ssh/id_ed25519_spark, user root). Ping timed out / unreachable. OLMoE references found in tools/trainwatch_bridge.py (olmoe-qat-v3), tools/runpod_wisdom_pilot_selfreport.py (peft install pins), training/ dir has MLX adapters but OLMoE likely CUDA on Spark. No peft error log yet.",
   "sparkView": {
     "reachable": false,
     "pollerAlive": null,
@@ -12,14 +12,14 @@
     "judgeHold": true
   },
   "blockers": [
-    "Spark host/IP and SSH key not in repo (secret rule); local ~/.ssh or direct-link config required to SSH",
-    "OLMoE training scripts / peft error details not yet located in repo; need to find training code path",
-    "No Mac-Studio-Operator-Brief.md found in docs/06-Roadmap/"
+    "Spark unreachable via link-local (ping timeout); confirm Spark powered on + cable connected + IP assigned on Spark side",
+    "Need exact SSH command or confirm key is authorized on Spark (id_ed25519_spark.pub)",
+    "OLMoE training entrypoint + current peft/transformers version error not located; likely in training/ or scripts/ on Spark or runpod scripts"
   ],
   "hookVersion": "",
   "needsFromCloud": [
-    "Spark SSH target details (host, user, key path or alias) or confirm direct Ethernet link state",
-    "Path to OLMoE fine-tune script and current peft/transformers error traceback for P0-A",
-    "Confirm if poller patch file exists or needs creation at scripts/spark/2026-06-30-poller-idle-backlog.patch"
+    "Is the DGX Spark online and cabled? Confirm current Spark IP if different from 169.254.26.172",
+    "Provide or confirm the peft error (e.g. 'PeftModel.merge_and_unload' failure on fused experts) and exact training script path for v5 re-cert",
+    "Status of poller-idle-backlog.patch - does the file exist?"
   ]
 }
