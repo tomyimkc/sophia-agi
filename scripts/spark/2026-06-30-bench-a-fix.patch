@@ -1,0 +1,391 @@
+diff --git a/scripts/run_local_benchmarks.sh b/scripts/run_local_benchmarks.sh
+index 2b96e07a..c1acb343 100755
+--- a/scripts/run_local_benchmarks.sh
++++ b/scripts/run_local_benchmarks.sh
+@@ -95,12 +95,16 @@ MAC_SSH_KEY="${MAC_SSH_KEY:-${HOME}/.ssh/id_ed25519}"
+ MAC_MLX_BIN="${MAC_MLX_BIN:-mlx_lm.server}"     # on the Mac login-shell PATH (pyenv 3.10.6)
+ JUDGE_READY_TRIES="${JUDGE_READY_TRIES:-80}"    # x3s ~= 4 min max wait for the 70B-4bit load
+ 
+-# The combined --judges flag (provider:model@base_url). ollama->family 'qwen'; openai-transport to
++# The combined --judges flag (provider:model@base_url). ollama->family 'qwen'; vllm-transport to
+ # the remote mlx server->family 'mlx' = 2 distinct families, both != subject. Override JUDGES to tune.
+ # NB both base_urls MUST end in /v1 — agent.model's per-spec @url OVERRIDES the provider preset's
+ # base_url, so omitting /v1 makes the ollama judge hit :11434/chat/completions (404) -> every
+ # verdict None -> all-TIE. (This was the 2026-06-29 bench-a-04 all-tie bug.)
+-JUDGES="${JUDGES:-ollama:${SPARK_JUDGE_MODEL}@http://${SPARK_HOST}:${SPARK_PORT}/v1,openai:${MAC_JUDGE_MODEL}@http://${MAC_HOST}:${MAC_PORT}/v1}"
++# NB2: the Mac judge uses the `vllm` provider, NOT `openai`. mlx_lm.server is keyless and the
++# `openai` preset has no api_key_default — so with OPENAI_API_KEY unset, resolved_key() returns
++# None and the OpenAI client throws on EVERY judge call (swallowed -> n=0). `vllm` carries
++# api_key_default="EMPTY", which the keyless mlx server accepts. (Root cause of the 2026-06-30 n=0.)
++JUDGES="${JUDGES:-ollama:${SPARK_JUDGE_MODEL}@http://${SPARK_HOST}:${SPARK_PORT}/v1,vllm:${MAC_JUDGE_MODEL}@http://${MAC_HOST}:${MAC_PORT}/v1}"
+ 
+ # Two-box farm config (consumed by run_local_judge_eval.py --config).
+ JUDGE_CONFIG="${JUDGE_CONFIG:-config/inference.local.mac-judge.json}"
+@@ -271,25 +275,37 @@ if [[ "${RUN_A}" -eq 1 ]]; then
+   step "A2 — Judge M3-SFT answers across seeds [${SEEDS}] with both families"
+   # judge_pilot_answers.py judges ONE answers file per call (one seed). No --seed flag exists:
+   # seeds are separate answer JSONs. We loop over seeds and write one judge report per seed.
++  RAW_SIDECARS=""
+   for s in ${SEEDS}; do
+     ans="${ANSWERS_DIR}/${ANSWERS_PREFIX}${s}.json"
+     out="${JUDGE_OUT_DIR}/seed${s}-judge.json"
+-    echo "  -- seed ${s}: answers=${ans} -> ${out}"
++    raw="${JUDGE_OUT_DIR}/seed${s}-raw.json"
++    echo "  -- seed ${s}: answers=${ans} -> ${out} (+raw ${raw})"
+     run "${PY}" tools/judge_pilot_answers.py \
+       --answers "${ans}" \
+       --judges "${JUDGES}" \
+       --forced-choice \
++      --seed "${s}" \
++      --raw-out "${raw}" \
+       --out "${out}"
++    RAW_SIDECARS="${RAW_SIDECARS} ${raw}"
+   done
+ 
++  step "A2.5 — Assemble per-seed pairwise verdicts into the A3 judgments.json"
++  # Bridges the two protocols: A2 emits pairwise (adapter/base/tie); A3 wants per-family content
++  # booleans. assemble_uplift_judgments.py maps them (tie -> at-least-as-good on both) and stamps
++  # the subject. delta == net head-to-head preference margin (documented; NOT absolute correctness).
++  run "${PY}" tools/assemble_uplift_judgments.py \
++    --subject "${QAT_BASE}" \
++    --raw ${RAW_SIDECARS} \
++    --out "${JUDGMENTS}"
++
+   step "A3 — Aggregate + apply the no-overclaim VALIDATED gate"
+-  # run_lora_uplift_validation.py consumes ONE assembled judgments JSON (subjectModel + judges[]
+-  # + per-seed per-item base/adapterContent per family). Assemble \$JUDGMENTS from the A2 outputs
+-  # first (the upstream labelling step, per the P6 preregistration). Gate bars (ALL required):
++  # run_lora_uplift_validation.py consumes the A2.5 judgments JSON (subjectModel + judges[]
++  # + per-seed per-item base/adapterContent per family). Gate bars (ALL required):
+   #   notMock; ≥2 families; judge != subject; mean κ ≥ 0.40; ≥3 seeds; 95% CI excludes zero.
+   if [[ "${DRY_RUN}" -eq 0 && ! -f "${JUDGMENTS}" ]]; then
+-    echo "  WARN: ${JUDGMENTS} not found. Assemble it from the per-seed A2 outputs first" >&2
+-    echo "        (subjectModel='allenai/OLMoE-1B-7B-0924-Instruct', judges[], seeds[].items[])." >&2
++    echo "  WARN: ${JUDGMENTS} not found — A2.5 assembly did not run or produced nothing." >&2
+   fi
+   run "${PY}" tools/run_lora_uplift_validation.py \
+     --judgments "${JUDGMENTS}" \
+diff --git a/tests/test_assemble_uplift_judgments.py b/tests/test_assemble_uplift_judgments.py
+new file mode 100644
+index 00000000..e7c9e587
+--- /dev/null
++++ b/tests/test_assemble_uplift_judgments.py
+@@ -0,0 +1,72 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: Apache-2.0
++# Copyright (c) 2026 tomyimkc
++"""A2→A3 bridge: pairwise verdicts -> content-uplift judgments schema.
++
++Deterministic, offline. Verifies the documented encoding and the abstention drop-rule
++that keeps the assembled schema consistent with run_lora_uplift_validation's family κ.
++"""
++from __future__ import annotations
++
++import sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[1]
++if str(ROOT) not in sys.path:
++    sys.path.insert(0, str(ROOT))
++
++from tools.assemble_uplift_judgments import _content_pair, assemble  # noqa: E402
++
++
++def test_pairwise_encoding() -> None:
++    assert _content_pair("adapter") == (True, False)
++    assert _content_pair("base") == (False, True)
++    assert _content_pair("tie") == (True, True)
++    assert _content_pair(None) is None
++    assert _content_pair("garbage") is None
++
++
++def test_assemble_drops_abstained_family_not_whole_item() -> None:
++    raws = [{
++        "seed": 0,
++        "judges": ["ollama:qwen", "vllm:mlx/Llama-70B"],
++        "answers": "seed0.json",
++        "items": [
++            {"id": "a", "verdicts": {"ollama:qwen": "adapter", "vllm:mlx/Llama-70B": "adapter"}},
++            {"id": "b", "verdicts": {"ollama:qwen": "base", "vllm:mlx/Llama-70B": None}},
++        ],
++    }]
++    j = assemble(raws, "allenai/OLMoE-1B-7B-0924-Instruct")
++    assert j["subjectModel"] == "allenai/OLMoE-1B-7B-0924-Instruct"
++    items = {it["id"]: it for it in j["seeds"][0]["items"]}
++    # item a: both families labelled
++    assert items["a"]["adapterContent"] == {"ollama:qwen": True, "vllm:mlx/Llama-70B": True}
++    # item b: 70B abstained -> only qwen present (consistent with A3 all-families drop rule)
++    assert set(items["b"]["adapterContent"]) == {"ollama:qwen"}
++    assert "vllm:mlx/Llama-70B" not in items["b"]["baseContent"]
++
++
++def test_refuses_mixed_judge_sets() -> None:
++    raws = [
++        {"seed": 0, "judges": ["a", "b"], "items": []},
++        {"seed": 1, "judges": ["a", "c"], "items": []},  # drift
++    ]
++    try:
++        assemble(raws, "allenai/OLMoE")
++        raised = False
++    except ValueError:
++        raised = True
++    assert raised, "a drifting judge set across seeds must be refused (would corrupt κ)"
++
++
++def main() -> int:
++    tests = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
++    for t in tests:
++        t()
++        print(f"ok {t.__name__}")
++    print(f"PASS {len(tests)} assemble_uplift_judgments tests")
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/tools/assemble_uplift_judgments.py b/tools/assemble_uplift_judgments.py
+new file mode 100644
+index 00000000..80a2ad1a
+--- /dev/null
++++ b/tools/assemble_uplift_judgments.py
+@@ -0,0 +1,195 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: Apache-2.0
++# Copyright (c) 2026 tomyimkc
++"""Assemble the A3 judgments.json from per-seed pairwise judge sidecars (the A2→A3 bridge).
++
++`judge_pilot_answers.py` (A2) emits **pairwise forced-choice** verdicts — for each item, each
++judge family says which answer is better: ``adapter`` / ``base`` / ``tie`` / null. But
++`run_lora_uplift_validation.py` (A3) consumes **independent per-family content booleans**
++(``baseContent`` / ``adapterContent``). Nothing produced that file, so A3 crashed on a missing
++path. This tool is the missing labelling-step assembler.
++
++The faithful pairwise → content encoding (documented, not hidden):
++
++  verdict  | adapterContent[fam] | baseContent[fam]   meaning
++  ---------+---------------------+-----------------   ------------------------------------------
++  adapter  | True                | False              judge preferred the adapter answer
++  base     | False               | True               judge preferred the base answer
++  tie      | True                | True               judge rated them at-least-equal
++  null     | (omitted)           | (omitted)          judge failed/abstained -> row dropped for
++                                                       that family (A3 drops rows not labelled by
++                                                       ALL families, so a half-labelled item is
++                                                       excluded consistently with mean κ)
++
++Under this encoding the per-seed delta A3 computes (adapter pass-rate − base pass-rate) equals
++the **net head-to-head preference margin** (adapter_wins − base_wins)/n, with tie counted as
++at-least-as-good on BOTH sides. So the A3 "CI excludes zero" check tests whether the adapter is
++**significantly preferred over base** — a relative-quality claim, NOT an absolute-correctness one.
++This is stated plainly so no one reads the resulting `validated` as more than it is. `canClaimAGI`
++stays False regardless.
++
++Usage:
++  python tools/assemble_uplift_judgments.py \
++      --subject allenai/OLMoE-1B-7B-0924-Instruct \
++      --raw out/seed1-raw.json out/seed2-raw.json out/seed3-raw.json \
++      --out out/judgments.json
++  python tools/assemble_uplift_judgments.py --selftest
++"""
++from __future__ import annotations
++
++import argparse
++import json
++import sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[1]
++if str(ROOT) not in sys.path:
++    sys.path.insert(0, str(ROOT))
++
++
++def _content_pair(verdict: "str | None") -> "tuple[bool, bool] | None":
++    """(adapterContent, baseContent) for one pairwise verdict, or None to drop the family."""
++    if verdict == "adapter":
++        return True, False
++    if verdict == "base":
++        return False, True
++    if verdict == "tie":
++        return True, True
++    return None  # null / unknown -> family did not label this item
++
++
++def assemble(raws: list[dict], subject: str) -> dict:
++    """Build the run_lora_uplift_validation judgments schema from per-seed raw sidecars.
++
++    Judge family set is taken from the first raw file and asserted identical across the rest
++    (the gate keys κ on a fixed family order; a drifting judge set would corrupt it)."""
++    if not raws:
++        raise ValueError("no raw sidecars provided")
++    judges = list(raws[0].get("judges", []))
++    if not judges:
++        raise ValueError("first raw sidecar has no judges[]")
++    for r in raws:
++        if list(r.get("judges", [])) != judges:
++            raise ValueError("judge set differs across seeds; refusing to assemble a mixed κ")
++
++    seeds = []
++    for idx, r in enumerate(raws):
++        seed_no = r.get("seed")
++        if seed_no is None:
++            seed_no = idx
++        items = []
++        for it in r.get("items", []):
++            base_c: dict[str, bool] = {}
++            adapter_c: dict[str, bool] = {}
++            for spec, verdict in (it.get("verdicts") or {}).items():
++                pair = _content_pair(verdict)
++                if pair is None:
++                    continue  # drop this family for this item (kept consistent with A3)
++                adapter_c[spec], base_c[spec] = pair
++            # Only emit items at least one family labelled; A3 drops not-all-families rows itself.
++            if base_c or adapter_c:
++                items.append({"id": it.get("id"),
++                              "baseContent": base_c, "adapterContent": adapter_c})
++        seeds.append({"seed": seed_no, "items": items})
++
++    return {
++        "subjectModel": subject,
++        "judges": judges,
++        "seeds": seeds,
++        "_provenance": {
++            "assembledBy": "tools/assemble_uplift_judgments.py",
++            "encoding": "pairwise forced-choice -> content booleans (adapter/base/tie); "
++                        "delta == net head-to-head preference margin, not absolute correctness",
++            "sources": [r.get("answers") for r in raws],
++        },
++    }
++
++
++# --------------------------------------------------------------------------- #
++def _selftest() -> int:
++    # Two families, 3 seeds, adapter clearly preferred -> assembled schema is well-formed and
++    # A3 can run on it. We assert the encoding, not a VALIDATED verdict.
++    raws = []
++    for s in range(3):
++        items = []
++        for i in range(8):
++            v = "adapter" if i < 6 else ("tie" if i == 6 else "base")
++            items.append({"id": f"item_{i}",
++                          "verdicts": {"ollama:qwen": v,
++                                       "vllm:mlx-community/Llama-3.3-70B": v}})
++        # one item where the 70B family abstained -> must drop that family only
++        items.append({"id": "item_abstain",
++                      "verdicts": {"ollama:qwen": "adapter",
++                                   "vllm:mlx-community/Llama-3.3-70B": None}})
++        raws.append({"seed": s, "judges": ["ollama:qwen", "vllm:mlx-community/Llama-3.3-70B"],
++                     "answers": f"seed{s}.json", "items": items})
++    j = assemble(raws, "allenai/OLMoE-1B-7B-0924-Instruct")
++    assert j["subjectModel"] == "allenai/OLMoE-1B-7B-0924-Instruct"
++    assert len(j["seeds"]) == 3
++    s0 = j["seeds"][0]["items"]
++    # item_0: adapter preferred -> adapterContent true, baseContent false on both families
++    it0 = next(x for x in s0 if x["id"] == "item_0")
++    assert it0["adapterContent"] == {"ollama:qwen": True, "vllm:mlx-community/Llama-3.3-70B": True}
++    assert it0["baseContent"] == {"ollama:qwen": False, "vllm:mlx-community/Llama-3.3-70B": False}
++    # tie item -> both true
++    it6 = next(x for x in s0 if x["id"] == "item_6")
++    assert it6["adapterContent"]["ollama:qwen"] is True and it6["baseContent"]["ollama:qwen"] is True
++    # abstain item -> only the qwen family present
++    ita = next(x for x in s0 if x["id"] == "item_abstain")
++    assert set(ita["adapterContent"]) == {"ollama:qwen"}
++    assert "vllm:mlx-community/Llama-3.3-70B" not in ita["baseContent"]
++    # null verdict maps to None pair
++    assert _content_pair(None) is None and _content_pair("tie") == (True, True)
++    # End-to-end: feed it to the real aggregator and confirm it runs + computes a delta.
++    # The aggregator's bootstrap CI needs numpy (present on the Spark, maybe not in CI); the
++    # encoding assertions above stand on their own, so degrade gracefully if numpy is absent.
++    try:
++        import numpy  # noqa: F401
++    except ModuleNotFoundError:
++        print("ok assemble_uplift_judgments selftest (encoding verified; "
++              "skipped end-to-end aggregate — numpy not installed)")
++        return 0
++    from tools.run_lora_uplift_validation import aggregate
++    rep = aggregate(j)
++    assert rep["subjectFamily"] == "allenai"
++    assert rep["judgeFamilies"] == 2
++    assert rep["meanDelta"] > 0  # adapter preferred in the synthetic data
++    assert rep["canClaimAGI"] is False
++    print("ok assemble_uplift_judgments selftest "
++          f"(meanDelta={rep['meanDelta']} κ={rep['meanPairwiseKappa']} "
++          f"families={rep['judgeFamilies']})")
++    return 0
++
++
++def main() -> int:
++    ap = argparse.ArgumentParser(description=__doc__,
++                                 formatter_class=argparse.RawDescriptionHelpFormatter)
++    ap.add_argument("--raw", type=Path, nargs="+",
++                    help="per-seed raw verdict sidecars from judge_pilot_answers.py --raw-out")
++    ap.add_argument("--subject", default="allenai/OLMoE-1B-7B-0924-Instruct",
++                    help="subject model id (its family must differ from every judge family)")
++    ap.add_argument("--out", type=Path, default=None)
++    ap.add_argument("--selftest", action="store_true", help="offline self-test of the encoding")
++    args = ap.parse_args()
++
++    if args.selftest:
++        return _selftest()
++    if not args.raw:
++        ap.error("provide --raw FILE... or --selftest")
++        return 2
++
++    raws = [json.loads(p.read_text(encoding="utf-8")) for p in args.raw]
++    judgments = assemble(raws, args.subject)
++    text = json.dumps(judgments, ensure_ascii=False, indent=2) + "\n"
++    if args.out:
++        args.out.parent.mkdir(parents=True, exist_ok=True)
++        args.out.write_text(text, encoding="utf-8")
++        print(f"wrote {sum(len(s['items']) for s in judgments['seeds'])} items across "
++              f"{len(judgments['seeds'])} seeds -> {args.out}")
++    else:
++        print(text)
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/tools/judge_pilot_answers.py b/tools/judge_pilot_answers.py
+index 80c8c575..803a38ca 100644
+--- a/tools/judge_pilot_answers.py
++++ b/tools/judge_pilot_answers.py
+@@ -213,6 +213,12 @@ def main() -> int:
+     ap.add_argument("--answers", type=Path, required=True)
+     ap.add_argument("--judges", default="openrouter:deepseek/deepseek-chat,openrouter:meta-llama/llama-3.3-70b-instruct")
+     ap.add_argument("--out", type=Path, default=ROOT / "agi-proof" / "benchmark-results" / "wisdom-market" / "M3-pilot-judge.json")
++    ap.add_argument("--raw-out", type=Path, default=None,
++                    help="Also write per-item per-judge raw verdicts (adapter/base/tie/null) here. "
++                         "This is the labelling-step artifact tools/assemble_uplift_judgments.py "
++                         "consumes to build the A3 judgments.json (the summary --out drops them).")
++    ap.add_argument("--seed", type=int, default=None,
++                    help="Seed number to stamp into --raw-out (this file judges ONE seed's answers).")
+     ap.add_argument("--workers", type=int, default=8)
+     ap.add_argument("--limit", type=int, default=None)
+     ap.add_argument("--forced-choice", action="store_true",
+@@ -290,6 +296,27 @@ def main() -> int:
+     }
+     args.out.parent.mkdir(parents=True, exist_ok=True)
+     args.out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
++
++    # Persist per-item per-judge raw verdicts (the labelling artifact A3 needs). The summary
++    # report above keeps only aggregates; assemble_uplift_judgments.py maps these pairwise
++    # verdicts -> the content-uplift schema run_lora_uplift_validation.py consumes.
++    if args.raw_out:
++        raw = {
++            "answers": report["answers"],
++            "seed": args.seed,
++            "judges": judge_specs,
++            "protocol": "forced-choice" if args.forced_choice else "tie-allowed",
++            "subjectHint": "allenai/OLMoE-1B-7B-0924-Instruct",
++            "items": [
++                {"id": rows[i].get("id", f"item_{i}"),
++                 "task_family": rows[i].get("task_family"),
++                 "verdicts": {s: per_judge[s][i] for s in specs}}
++                for i in range(len(rows))
++            ],
++        }
++        args.raw_out.parent.mkdir(parents=True, exist_ok=True)
++        args.raw_out.write_text(json.dumps(raw, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
++        print(f"wrote raw verdicts -> {args.raw_out}")
+     print(f"\nκ(3-cat)={kappa}  consensus adapter-better={consensus_adapter} base-better={consensus_base}")
+     for s in specs:
+         w = winrate[s]
