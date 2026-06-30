@@ -28,14 +28,24 @@ single-owner sha1 hash) — the assignment is NOT re-implemented here. Each node
 jobs SERIALLY (the one-GPU-job-per-node invariant), and jobs that need the Mac judge contend on a
 shared judge modeled as a semaphore of size `mac_judge_concurrency`.
 
+The single Mac judge is generalized by the JUDGE POOL (`tools/judge_pool.py`): the
+`mac_judge_concurrency` scalar IS the number of LANES (endpoint replicas) serving the mac-bound
+judge family. Pass `--mac-lanes N` or `--judge-pool config/inference.local.judge-pool.json` to set
+it from a real pool, so the sim reports the true ROI of adding judge replicas (e.g. 1 lane ~1.36x
+vs 4 lanes ~2.81x at 8 nodes for the forecast queue). `--mac-concurrency` is kept as a back-compat
+alias. design/infra; no capability claim; canClaimAGI stays false.
+
 CLI:
     python tools/cluster_schedule_sim.py --self-test
     python tools/cluster_schedule_sim.py --jobs forecast --nodes 1,2,4,8,16
+    python tools/cluster_schedule_sim.py --jobs forecast --nodes 1,2,4,8,16 --mac-lanes 4
+    python tools/cluster_schedule_sim.py --jobs forecast --judge-pool config/inference.local.judge-pool.json
     python tools/cluster_schedule_sim.py --jobs sweep:4x3 --nodes 1,2,4,8,16 --mac-concurrency 1
 """
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -46,6 +56,11 @@ if str(ROOT) not in sys.path:
 
 # Reuse the deterministic single-owner assignment verbatim — do NOT fork it.
 from tools.cluster_scheduler import assigned_node  # noqa: E402
+# Reuse the judge-pool lane accounting — the sim's `mac_judge_concurrency` scalar IS, semantically,
+# the number of LANES serving the mac-bound judge family. With a judge pool, that scalar becomes the
+# real lane count for that family (Mac + spare-Spark replicas), so the sim reports the true speedup
+# of adding judge replicas. Do NOT fork judge_pool — import its accounting.
+from tools.judge_pool import load_pool, families as _pool_families, lanes_for_family  # noqa: E402
 
 # The node-count set the cluster docs / run_cluster_sim.py reason about (1..16 Sparks).
 DEFAULT_NODE_COUNTS: "tuple[int, ...]" = (1, 2, 4, 8, 16)
@@ -300,6 +315,17 @@ def offline_invariants() -> "tuple[bool, dict]":
     # no judge wait anywhere in a no-mac workload
     checks["independent_no_judge_wait"] = all(r["macJudgeWaitMinutes"] == 0.0 for r in irows.values())
 
+    # 6) judge-pool lane generalization: the mac-bound family's lane count is what the sim uses, and
+    #    more lanes raise the forecast speedup at 8 nodes (the whole point of the pool). The example
+    #    pool has a 3-lane mac-bound family; 4 lanes must beat 1 lane.
+    example_pool = {"qwen": ["vllm:Qwen/Qwen2.5-7B-Instruct@http://h0:8000/v1"],
+                    "mlx-community": [f"vllm:mlx-community/m@http://h{i}:8001/v1" for i in (1, 2, 3)]}
+    checks["pool_lane_count"] = (mac_lanes_from_pool(example_pool) == 3)
+    fc = forecast_jobs()
+    s1 = {r["nNodes"]: r for r in scaling_table(fc, (8,), mac_judge_concurrency=1)}[8]["speedupVs1"]
+    s4 = {r["nNodes"]: r for r in scaling_table(fc, (8,), mac_judge_concurrency=4)}[8]["speedupVs1"]
+    checks["more_lanes_raise_speedup"] = (s4 > s1 + 1e-9)
+
     return all(checks.values()), {"checks": checks}
 
 
@@ -318,6 +344,21 @@ def _parse_jobs_arg(spec: str) -> "list[Job]":
     raise ValueError(f"unknown --jobs {spec!r}; use 'forecast' or 'sweep:NxM'")
 
 
+def mac_lanes_from_pool(pool: "dict[str, list[str]]") -> int:
+    """The number of LANES serving the mac-bound judge family in a judge pool. The mac-bound family
+    is the bottleneck family — the one the pool scales out — taken here as the family with the MOST
+    lanes (ties broken by family name for determinism). This is exactly the scalar the sim has been
+    calling `mac_judge_concurrency`: how many replicas can serve the serialized judge demand at once.
+    A 1-lane pool reproduces the old fully-serialized Mac judge; a 3-lane pool is the worked example
+    (Mac + 2 spare Sparks)."""
+    fams = _pool_families(pool)
+    if not fams:
+        raise ValueError("judge pool has no families")
+    # most-lanes family wins; deterministic tie-break by family name (no random)
+    best = max(fams, key=lambda f: (lanes_for_family(pool, f), f))
+    return lanes_for_family(pool, best)
+
+
 def main(argv: "list[str] | None" = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -325,7 +366,16 @@ def main(argv: "list[str] | None" = None) -> int:
                     help="workload: 'forecast' (the T1-T4 queue + a sweep) or 'sweep:NxM'")
     ap.add_argument("--nodes", default="1,2,4,8,16", help="comma-separated node counts")
     ap.add_argument("--mac-concurrency", type=int, default=1,
-                    help="shared Mac-judge lanes (semaphore size); 1 = fully serialized judge")
+                    help="shared Mac-judge lanes (semaphore size); 1 = fully serialized judge. "
+                         "Back-compat alias kept; --mac-lanes / --judge-pool are the generalized form.")
+    ap.add_argument("--mac-lanes", type=int, default=None,
+                    help="number of LANES (replicas) serving the mac-bound judge family — the "
+                         "judge-pool generalization of --mac-concurrency. e.g. --mac-lanes 4 = the "
+                         "Mac + 3 spare-Spark 70B replicas. Overrides --mac-concurrency when set.")
+    ap.add_argument("--judge-pool", type=Path, default=None,
+                    help="judge-pool config (config/inference.local.judge-pool.json); the sim uses "
+                         "that pool's lane count for the mac-bound family as the judge concurrency, "
+                         "so it reports the REAL speedup of adding judge replicas.")
     ap.add_argument("--self-test", action="store_true")
     args = ap.parse_args(argv)
 
@@ -341,11 +391,21 @@ def main(argv: "list[str] | None" = None) -> int:
         counts = tuple(int(c) for c in args.nodes.split(",") if c.strip())
         if not counts:
             raise ValueError("--nodes produced no node counts")
-    except ValueError as e:
+        # Resolve the judge concurrency (lanes). Precedence: --judge-pool > --mac-lanes >
+        # --mac-concurrency (back-compat). All three feed the SAME semaphore-size scalar.
+        lanes = args.mac_concurrency
+        if args.judge_pool is not None:
+            pool = load_pool(json.loads(args.judge_pool.read_text(encoding="utf-8")))
+            lanes = mac_lanes_from_pool(pool)
+        elif args.mac_lanes is not None:
+            lanes = args.mac_lanes
+        if lanes <= 0:
+            raise ValueError("judge lanes (--mac-lanes/--mac-concurrency) must be positive")
+    except (ValueError, json.JSONDecodeError, OSError) as e:
         print(f"REFUSED: {e}", file=sys.stderr)
         return 2
 
-    print(report(jobs, counts, args.mac_concurrency))
+    print(report(jobs, counts, lanes))
     return 0
 
 

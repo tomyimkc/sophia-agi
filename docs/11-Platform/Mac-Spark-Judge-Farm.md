@@ -3,6 +3,11 @@
 **Status:** config + wiring doc. Config: `config/inference.local.mac-judge.json`. Test:
 `tests/test_mac_judge_config.py`. No capability claim.
 
+> **Scaling out a family:** to serve ONE family (e.g. the 70B) by MULTIPLE replica lanes (the Mac +
+> spare Sparks) so judge requests distribute instead of queueing on one box, see
+> [Judge-Pool.md](Judge-Pool.md) — it stays a 2-family gate; adding lanes never adds a family or
+> changes a verdict.
+
 > The no-overclaim gate (`RESULTS.md`) needs **≥2 independent judge families** (κ ≥ 0.40,
 > ≥3 seeds, 95% CIs excluding zero). This wires two **local** judges — a Qwen judge on the
 > **DGX Spark** (vLLM/CUDA) and a Llama judge on the **Mac Studio** (MLX/Metal) — so you clear
