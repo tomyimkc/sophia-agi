@@ -1,0 +1,1 @@
+{"id":"2026-06-30-claude-web-bench-a-02","args":"--bench-a --execute","createdBy":"tomyimkc (ssh)","approvedBy":"user: full approval (2026-06-30)","note":"Retry after confirming the Mac 70B answers on :8081. 2-family judge eval M3-SFT seeds 1/2/7 + VALIDATED gate."}
