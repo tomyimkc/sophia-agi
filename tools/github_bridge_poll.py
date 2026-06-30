@@ -26,6 +26,8 @@ from __future__ import annotations
 import argparse
 import datetime as _dt
 import json
+import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -37,6 +39,32 @@ ALLOWLIST = {"--dry-run", "--bench-a", "--bench-b", "--bench-virtues", "--all", 
 GATED = {"--execute", "--run-train"}  # require approvedBy
 RUNNER = "scripts/run_local_benchmarks.sh"
 MAX_TAIL = 64 * 1024  # cap stdout stored in the result
+
+# A command may carry config env (so cert/train run THROUGH the bridge and their result lands in
+# bridge/results/). Defense-in-depth: the poller RE-validates against its OWN allowlist + value
+# regex and silently drops anything else — it never trusts the command file to set arbitrary env
+# (no PATH/LD_*). Mirrors tools/spark_bridge.ENV_ALLOWLIST.
+ENV_ALLOWLIST = {
+    "SEEDS", "ANSWERS_DIR", "ANSWERS_PREFIX", "JUDGE_OUT_DIR", "JUDGMENTS", "UPLIFT_OUT",
+    "JUDGES", "JUDGE_CONFIG", "AUTO_START_JUDGES", "PYTHON",
+    "QAT_BASE", "QAT_ADAPTER", "QAT_DATA", "QAT_EPOCHS", "QAT_LAMBDA",
+    "KEEP_SUFFIXES", "CERT_NEVAL", "CERT_CALIB", "CERT_OUT",
+    "SPARK_HOST", "MAC_HOST", "SPARK_PORT", "MAC_PORT", "SPARK_JUDGE_MODEL", "MAC_JUDGE_MODEL",
+    "VIRTUE_JUDGE_A", "VIRTUE_JUDGE_B", "VIRTUE_JUDGE_A_NAME", "VIRTUE_JUDGE_B_NAME",
+    "VIRTUE_SUBJECT", "VIRTUE_SEEDS", "THINKING_MODEL", "FAITH_MODEL", "FAITH_SEEDS", "FAITH_BATTERY",
+}
+_ENV_VALUE_RE = re.compile(r"^[A-Za-z0-9_./:@,+= -]{0,200}$")
+
+
+def _safe_env(cmd):
+    """os.environ overlaid with the command's ALLOWLISTED, value-sanitized env (config knobs only)."""
+    env = dict(os.environ)
+    for k, v in (cmd.get("env") or {}).items():
+        if k in ENV_ALLOWLIST and isinstance(v, str) and _ENV_VALUE_RE.match(v):
+            env[k] = v
+        else:
+            sys.stderr.write(f"[bridge] dropping disallowed/unsafe env {k!r} from cmd {cmd.get('id')}\n")
+    return env
 
 # In-memory record of the single in-flight job (non-blocking mode). Lost on restart (the
 # subprocess dies with the poller's process group), so its command simply has no result and
@@ -137,7 +165,7 @@ def _start(root, cmd):
     fd, outpath = tempfile.mkstemp(prefix=f"bridge-{cmd.get('id','job')}-", suffix=".out")
     fh = open(fd, "w")
     proc = subprocess.Popen(["bash", RUNNER, *toks], cwd=str(root), stdout=fh,
-                            stderr=subprocess.STDOUT, text=True)
+                            stderr=subprocess.STDOUT, text=True, env=_safe_env(cmd))
     return {"id": cmd["id"], "proc": proc, "cmd": cmd, "started": _now(),
             "outfile": outpath, "before": {a["path"]: a["mtime"] for a in _artifact_index(root)},
             "_fh": fh}
@@ -242,7 +270,7 @@ def tick_blocking(root, branch, trainwatch_url):
             continue
         before = {a["path"]: a["mtime"] for a in _artifact_index(root)}
         proc = subprocess.run(["bash", RUNNER, *toks], cwd=str(root),
-                              capture_output=True, text=True)
+                              capture_output=True, text=True, env=_safe_env(cmd))
         after = _artifact_index(root)
         _write_result(root, {"id": cid, "args": cmd.get("args", ""),
                              "status": "ok" if proc.returncode == 0 else "error",
