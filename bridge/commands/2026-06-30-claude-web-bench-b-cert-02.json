@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-30-claude-web-bench-b-cert-02",
+  "args": "--bench-b --execute",
+  "createdBy": "claude-web",
+  "createdAt": "",
+  "approvedBy": "user: 'perform all possible benchmarking... go' (2026-06-30)",
+  "note": "T1 follow-up NVFP4 cert of v3 holding TWO projections bf16 (down_proj+gate_proj). T1 (down_proj only) was NO-GO at top1 0.8945; testing whether a second held projection lifts top1 toward the 0.97 floor.",
+  "env": {
+    "KEEP_SUFFIXES": "down_proj,gate_proj",
+    "QAT_ADAPTER": "/home/tomyimkc/sophia-agi/training/lora/checkpoints/olmoe-qat-spark-v3",
+    "CERT_NEVAL": "256"
+  }
+}
