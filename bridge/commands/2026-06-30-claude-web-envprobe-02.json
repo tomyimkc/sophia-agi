@@ -1,0 +1,1 @@
+{"id":"2026-06-30-claude-web-envprobe-02","args":"--dry-run --bench-b","createdBy":"claude (cloud)","createdAt":"2026-06-30T04:52:00Z","approvedBy":"","note":"Fresh env-carry probe to detect a poller restart. v3 in the planned adapter => reloaded; v5 => still stale. No GPU.","env":{"KEEP_SUFFIXES":"down_proj","QAT_ADAPTER":"training/lora/checkpoints/olmoe-qat-spark-v3"}}
