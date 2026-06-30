@@ -1,0 +1,13 @@
+{
+  "_comment": "TEMPLATE - the Mac OVERWRITES this every work cycle so the cloud knows what's going on. Keep it small; no secrets.",
+  "updatedAt": "",
+  "device": "mac-studio",
+  "agent": "",
+  "currentTask": "",
+  "lastAction": "",
+  "lastResult": "",
+  "sparkView": { "reachable": null, "pollerAlive": null, "running": null, "judgeHold": null },
+  "blockers": [],
+  "hookVersion": "",
+  "needsFromCloud": []
+}
