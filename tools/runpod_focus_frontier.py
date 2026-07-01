@@ -134,7 +134,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                     help="the 3-arm eval tool run on the pod (--write emits the gated artifact)")
     ap.add_argument("--model", default="",
                     help="(live) real subject model spec passed to the eval entrypoint for the measured run")
-    ap.add_argument("--api-key-env", default="RUNPOD_API_KEY")
+    # dest names the ENV-VAR NAME (public, e.g. "RUNPOD_API_KEY"), not the key value —
+    # `key_env_name` (not `api_key_env`) so logging it isn't flagged as a secret leak.
+    ap.add_argument("--api-key-env", dest="key_env_name", default="RUNPOD_API_KEY")
     ap.add_argument("--name", default=f"sophia-focus-frontier-{ts}")
     ap.add_argument("--branch", default="", help="git branch/tag to run (the pod clones the repo)")
     ap.add_argument("--gpu-type", default="NVIDIA A100 80GB PCIe,NVIDIA A100-SXM4-80GB,NVIDIA H100 80GB HBM3,NVIDIA H100 PCIe")
@@ -161,7 +163,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.local:
         return _run_local(args)
 
-    api_key = os.environ.get(args.api_key_env, "")
+    api_key = os.environ.get(args.key_env_name, "")
     if args.dry_run:
         # Build the payload with a placeholder key/pubkey — no network, no pod.
         payload = _build_create_payload(args, public_key="ssh-ed25519 AAAA...DRYRUN", api_key="")
@@ -182,7 +184,7 @@ def main(argv: list[str] | None = None) -> int:
               file=sys.stderr)
         return 2
     if not api_key:
-        print(f"::error:: {args.api_key_env} is empty; add a valid RunPod key. Aborting (no pod created).",
+        print(f"::error:: {args.key_env_name} is empty; add a valid RunPod key. Aborting (no pod created).",
               file=sys.stderr)
         return 2
 

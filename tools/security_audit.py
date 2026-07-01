@@ -95,25 +95,23 @@ def _value_allowlisted(line: str) -> bool:
 def scan_text(text: str) -> list[dict]:
     """Heuristic secret scan over a string. Returns a list of findings; empty == clean.
 
-    A finding is {"pattern": <name>, "match": "[redacted]...", "length": <len>}.
-    The ``match`` is a FIXED redaction marker — no bytes of the secret-shaped token
-    (not even a prefix) are ever included, so results can be logged/printed safely;
-    identify a finding by ``pattern`` + ``length``. Placeholder values (per the
-    gitleaks allowlist regexes) are not reported.
+    A finding is {"pattern": <name>, "match": "[redacted]..."}. The ``match`` is a
+    FIXED redaction marker — nothing derived from the secret-shaped token (not its
+    bytes, not even its length) is ever included, so results can be logged/printed
+    safely; identify a finding by ``pattern``. Placeholder values (per the gitleaks
+    allowlist regexes) are not reported.
     """
     findings: list[dict] = []
     for line in text.splitlines():
         if _value_allowlisted(line):
             continue
         for rx, name in _SECRET_RE:
-            m = rx.search(line)
-            if m:
-                raw = m.group(0)
-                # Redact: `match` is a fixed marker (NO bytes of the secret-shaped
-                # token — not even a prefix, which CodeQL flags as clear-text
-                # logging); identify the finding by `pattern` + `length` only, so
-                # the result is safe to log/print.
-                findings.append({"pattern": name, "match": "[redacted]...", "length": len(raw)})
+            if rx.search(line):
+                # Redact fully: the matched token is never read (not even its
+                # length) — only the pattern name + a fixed marker are emitted, so
+                # nothing derived from the secret can flow into a printed/logged
+                # result (CodeQL py/clear-text-logging-sensitive-data).
+                findings.append({"pattern": name, "match": "[redacted]..."})
     return findings
 
 
