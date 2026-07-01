@@ -10,6 +10,7 @@ as route_after_verify() routes it — so the picture can never lie about the cod
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -38,6 +39,21 @@ def test_routes_are_code_derived():
     for verdict, _ in vwd.VERDICTS:
         assert routes[verdict] == route_after_verify({"verdict": verdict})
         assert routes[verdict] in vwd.ROUTE_LABEL
+
+
+def test_mermaid_edge_labels_are_render_safe():
+    """Edge labels between pipes must not carry unquoted shape/grammar characters.
+
+    GitHub's Mermaid parser reads an unquoted ``(`` / ``[`` / ``{`` / ``:`` / ``/``
+    inside a ``|label|`` as node-shape syntax and errors out (the exact break that
+    slipped through once). Any such label must be double-quoted (``|"..."|``).
+    """
+    note = vwd.render()
+    for block in re.findall(r"```mermaid\n(.*?)```", note, re.S):
+        for label in re.findall(r"-->\|([^|]*)\|", block):
+            if any(c in label for c in "()[]{}:/→"):
+                assert label.startswith('"') and label.endswith('"'), \
+                    f"unquoted special char in Mermaid edge label: |{label}|"
 
 
 def test_note_contains_mermaid_and_key_nodes():
