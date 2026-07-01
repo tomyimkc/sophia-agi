@@ -1,0 +1,4 @@
+# Runtime belief store + reports written by tools/run_realtime_grounding.py.
+# Memory is regenerated at run time and must never be committed.
+*
+!.gitignore

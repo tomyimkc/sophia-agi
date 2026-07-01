@@ -1,0 +1,9 @@
+{
+  "_comment": "Offline FixtureFactBackend for the real-time grounding demo. Neutral domains only (arithmetic + URL existence); no religion/history/attribution. Mirrors eval/fact_check/fixtures_v1.json shape.",
+  "doiExists": {},
+  "urlExists": {
+    "https://example.org/spec-8": true,
+    "https://example.org/spec-9": true
+  },
+  "claims": {}
+}
