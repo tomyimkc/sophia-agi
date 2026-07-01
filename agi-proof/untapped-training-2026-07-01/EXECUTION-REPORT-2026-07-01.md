@@ -85,6 +85,16 @@ PYTHONPATH=. venv312/bin/python tools/adversarial_gate_selfplay.py \
 
 ### W5 — `tools/probe_representation_training.py` (probe-as-loss not attempted, Goodhart unproven)
 
+> **UPDATE 2026-07-01 (same day): W5 methodology taken LIVE on real hidden states (coupling
+> deliberately not rushed).** Reused the implemented MLX featurizer and ran the disjoint
+> loss/audit/test Goodhart methodology over real honest/deceptive DPO text: the base model
+> separates them **perfectly on real residual streams (1.0/1.0, goodhartGap 0.0)** — honesty
+> is linearly decodable (the probe-as-loss precondition). The actual probe-as-loss LM coupling
+> (a custom gradient-through-probe fine-tune) is **left as a careful next step**, not rushed —
+> a gamed probe-as-loss that looks honest is the exact invisible failure this tool guards
+> against. **Gate not met, w5 row stays Open.** Detail + checksums:
+> `agi-proof/benchmark-results/w5-probe-as-loss/`.
+
 **Wired/run (offline, exact command):**
 ```
 PYTHONPATH=. venv312/bin/python tools/probe_representation_training.py \
