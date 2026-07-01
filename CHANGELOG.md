@@ -4,6 +4,26 @@ All notable changes to Sophia AGI are documented here.
 
 ## [Unreleased]
 
+### Fixed — CodeQL security tab cleared to 0 + git-crypt hook lock-primitive
+
+- Both HIGH `py/clear-text-logging-sensitive-data` alerts (#327): `security_audit.scan_text` no
+  longer reads the matched secret token at all (not its bytes, not its length); `runpod_focus_frontier`
+  logged the env-var *name* (not the key) — renamed the arg dest so it isn't mis-flagged.
+- The 17 remaining CodeQL notes (#328): unused imports/locals, implicit string-concat made explicit
+  with `+`, documented an intentional `except`, `64 % 8 == 0` → literal `True`, and un-quoted a real
+  `Callable` annotation so its use is visible. Behavior-preserving; pyflakes clean.
+- `.claude/hooks/session_start.sh`: the git-crypt "already-unlocked" probe used `grep -q GITCRYPT`,
+  which misreads a genuinely LOCKED clone (ciphertext leads with a NUL byte) as unlocked and never
+  auto-unlocks; replaced with a deterministic 10-byte hex compare (`00474954435259505400`).
+
+### Added — OLMoE NVFP4 v6 QAT: fused-expert co-adaptation (honest NO-GO)
+
+- Fixed the blind spot where `training/qat.attach_qat` co-adapted **0/32** fused MoE experts; v6 now
+  trains all 32 against the NVFP4 grid. Cert: top1 0.8828 → **0.9609** (still < 0.97 → NO-GO), mean_kl
+  0.0506 → **0.0341** (passes the KL bar). Shippable via conformal abstention (~93% coverage @
+  answered_top1 0.983). Two perf fixes made it trainable: `_torch_nvfp4` bucketize (69h → 2.7h/550
+  steps, bit-identical) and skipping gradient-checkpointing under QAT. canClaimAGI false. (#319)
+
 ### Added — always-available RunPod connection + stalled-pod checker
 
 Makes reaching RunPod reliable even when `RUNPOD_API_KEY` is absent from the current
