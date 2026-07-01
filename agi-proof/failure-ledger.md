@@ -2599,3 +2599,28 @@ touch-point; no FP model). Confident step -> emit argmax; low-margin step -> emi
 flag/route). Tracks live coverage + a `stop_on_coverage_below` circuit-breaker so a mostly-abstained
 answer fails loud instead of shipping. `tests/test_abstention_serve.py` now 8/8 (adds decoder invariants
 + the breaker guard). This is the deployable shape of v5+abstention: measured in the cert, enforced in the loop.
+
+
+### v6 bridge deploy — bidirectional runner drift + inline-replace risk (2026-07-01)
+
+Attempting the v6 code deploy to spark-bridge from the cloud surfaced TWO drift footguns that a blind
+clobber would have turned into a crashed hours-long GPU run:
+
+1. **train_lora.py** — spark-bridge had Spark-only hardening the work branch lacked: pin the bf16 model
+   to `device_map={"":0}` (cuda:0) else "auto", so accelerate never meta/CPU-offloads it (which breaks
+   the manual QAT penalty AND the v6 reference forward with "Tensor on device meta ... expected cuda:0").
+   Fixed by CONVERGING it onto the work branch (commit d9c1e435) so work-branch train_lora.py is now the
+   single v6+hardened source.
+2. **run_local_benchmarks.sh** — BIDIRECTIONAL divergence: the work branch has the v6 flags + virtue/
+   thinking/faith lanes; spark-bridge has operational fixes the work branch LACKS — critically
+   `--target-modules "${QAT_TARGET_MODULES:-attn-mlp}"` (+ `--lora-dropout 0`), the fix for the PEFT
+   "all-linear" char-split → "Target modules not found" crash (2026-06-29), plus the judge base_url `/v1`
+   fix and the M3-pilot SEEDS `1 2 7`. Deploying EITHER direction regresses the other's fixes. The runner
+   needs a SURGICAL merge (add the 4 v6 flags to spark-bridge's B1, keep its --target-modules), not a clobber.
+
+**Transport lesson:** the cloud's `create_or_update_file` REPLACES the whole file (inline content), so
+byte-exact movement of 360–1191-line files — and any surgical edit to the allowlisted runner/poller — is
+a transcription-risk that can break the bridge or crash the run. The correct tool is `git` on a box that
+holds both trees (the Mac): `git checkout <workbranch> -- training/qat.py tools/train_lora.py` is byte-exact
+and instant. Cloud should do the small NEW-file deploys + bridge commands; the Mac does the file merges +
+dry-run before --execute. (Candidate addition to the spark-bridge-ops skill.)
