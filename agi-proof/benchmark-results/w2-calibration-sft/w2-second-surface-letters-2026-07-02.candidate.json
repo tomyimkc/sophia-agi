@@ -1,0 +1,57 @@
+{
+  "schema": "sophia.w2_second_surface.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "createdAt": "2026-07-02",
+  "pinnedCommit": "deca83570ad579b9e1a4de848cbdf46441ccae74",
+  "baseModel": "Qwen/Qwen2.5-3B-Instruct",
+  "surface": "NON-MATH: letter-counting ('how many letters in W?'), verifier-checkable (len), decontaminated (54 train / 30 eval word-disjoint), per-INSTANCE confidence target (empirical accuracy as a continuous function of word length)",
+  "purpose": "rule out the 'math-taxonomy-specific' concern for the W2 calibration-SFT result",
+  "base": {
+    "ece": 0.5333,
+    "accCov": 0.4
+  },
+  "seeds": {
+    "seed0": {
+      "ece": 0.4307,
+      "acc": 0.8,
+      "accCov": 1.0,
+      "ci": [
+        -0.1014,
+        0.314
+      ],
+      "excl": false
+    },
+    "seed1": {
+      "ece": 0.4583,
+      "acc": 0.833,
+      "accCov": 1.0,
+      "ci": [
+        -0.1177,
+        0.2757
+      ],
+      "excl": false
+    },
+    "seed2": {
+      "ece": 0.4583,
+      "acc": 0.833,
+      "accCov": 1.0,
+      "ci": [
+        -0.1177,
+        0.2757
+      ],
+      "excl": false
+    }
+  },
+  "allSeedsPass": false,
+  "verdict": "DIRECTIONALLY SUPPORTIVE, NOT A CLEAN PROMOTION -> w2 stays OPEN. On letter-counting the calibration-SFT lowers held-out ECE (base 0.533 -> 0.43/0.458/0.458) and improves accuracy-at-coverage (0.40 -> 1.0 all seeds). BUT: (1) the per-seed \u0394ECE 95% CIs INCLUDE 0 (N=30 held-out is underpowered); (2) a CAPABILITY CONFOUND -- the SFT taught the correct answers so accuracy JUMPED 0.467 -> 0.80/0.83/0.83, so the ECE change mixes calibration with a capability gain (unlike the math surface where base accuracy was already high and only confidence changed). So the non-math surface supports the DIRECTION but does not cleanly replicate the math-surface result. The strongest W2 evidence remains the math surface (3 seeds, all \u0394ECE CIs exclude 0).",
+  "nextToClose": "A larger non-math held-out (N>=150) AND an accuracy-controlled design (SFT that changes only stated confidence, not the answer, on a surface where base accuracy is already moderate) so ECE reduction is isolated from capability gain.",
+  "artifacts": {
+    "lc_base_eval.jsonl": "9edd40f8b01710f2facb17c9eb8c511cd7b94afa7bd60739744b36d0a2ad0b6b",
+    "lc_adapter_eval_s0.jsonl": "9ac1e1cd12bc8cf50562dec36ae4a89cf3bc1f4563f793ed2282b8d4a741f6f4",
+    "lc_adapter_eval_s1.jsonl": "2a894d712493969b91a67869e697899e02d4273db5a809515768a5c3fbd7c14f",
+    "lc_adapter_eval_s2.jsonl": "2a894d712493969b91a67869e697899e02d4273db5a809515768a5c3fbd7c14f",
+    "w2_surface2_letters.py": "717a4138d3d5bcf64e6864cfc448cd5c1d29f52a878f1a11ff0a94ced6144b64"
+  }
+}

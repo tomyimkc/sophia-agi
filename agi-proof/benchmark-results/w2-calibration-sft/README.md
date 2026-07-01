@@ -60,3 +60,15 @@ per-difficulty accuracy.
 Larger held-out N (tighten each seed's CI to exclude 0), a ≥3rd seed, and a broader
 non-math verifier-checkable surface (open-domain factual QA with a real answer-verifier and
 a per-instance — not per-type — confidence signal).
+
+## Second surface (2026-07-02) — letter-counting: directional support, not a clean promotion
+
+To rule out a math-taxonomy-specific effect, the calibration-SFT was re-run on a **non-math**
+verifier-checkable surface (letter-counting, per-instance confidence target). Result
+(`w2-second-surface-letters-2026-07-02.candidate.json`): ECE drops (base 0.533 → 0.43/0.458/0.458)
+and accuracy-at-coverage rises (0.40 → 1.0 all 3 seeds) — **directionally the same as math**. But
+this is **not a clean promotion**: the per-seed ΔECE 95% CIs **include 0** (N=30 held-out
+underpowered), and there is a **capability confound** (the SFT taught the correct answers, so
+accuracy jumped 0.467 → 0.83, mixing calibration with a capability gain — unlike the math surface
+where base accuracy was already high). The strongest W2 evidence remains the **math** surface
+(3 seeds, all ΔECE CIs exclude 0). Row stays **Open**.
