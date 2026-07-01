@@ -1,0 +1,62 @@
+{
+  "schema": "sophia.w5_ensemble_rigorous.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "createdAt": "2026-07-02",
+  "pinnedCommit": "a4e9a94c08b6849ed62775edc55752dc8cb24293",
+  "backend": "custom MLX LoRA ensemble (K=4) probe-as-loss; N=120 test; per-seed PAIRED bootstrap CI on the disjoint audit-probe accuracy delta",
+  "seeds": {
+    "seed0": {
+      "testN": 120,
+      "auditBase": 0.6167,
+      "auditAfter": 0.9,
+      "auditDelta": 0.2833,
+      "auditDelta95CI": [
+        0.2,
+        0.375
+      ],
+      "ciExcludes0": true,
+      "goodhartGap": 0.05,
+      "goodhartGapLe015": true,
+      "fromScratchAudit": 0.9583,
+      "fromScratchSeparates": true
+    },
+    "seed1": {
+      "testN": 120,
+      "auditBase": 0.9,
+      "auditAfter": 0.95,
+      "auditDelta": 0.05,
+      "auditDelta95CI": [
+        0.0167,
+        0.0917
+      ],
+      "ciExcludes0": true,
+      "goodhartGap": 0.0167,
+      "goodhartGapLe015": true,
+      "fromScratchAudit": 0.9583,
+      "fromScratchSeparates": true
+    },
+    "seed2": {
+      "testN": 120,
+      "auditBase": 0.925,
+      "auditAfter": 0.975,
+      "auditDelta": 0.05,
+      "auditDelta95CI": [
+        -0.0083,
+        0.1083
+      ],
+      "ciExcludes0": false,
+      "goodhartGap": -0.0021,
+      "goodhartGapLe015": true,
+      "fromScratchAudit": 0.9667,
+      "fromScratchSeparates": true
+    }
+  },
+  "allSeedsRigorous": false,
+  "verdict": "STRONG anti-Goodhart evidence, NEAR-rigorous -> w5 stays OPEN. With N=120 + paired CIs, 2 of 3 seeds' audit-delta 95% CI EXCLUDES 0 (seed0 0.617->0.90 CI[+0.20,+0.375]; seed1 0.90->0.95 CI[+0.017,+0.092]); seed2 0.925->0.975 CI[-0.008,+0.108] grazes 0. ALL seeds: goodhartGap<=0.15 and from-scratch audit separates 0.958-0.967. High-base seeds (0.90,0.925) ALSO improved -> not pure regression-to-mean. This substantiates the K=4 ensemble as a genuine anti-Goodhart training method (v1 single-probe GAMED the audit; the ensemble IMPROVES it). Not a full close: seed2's CI grazes 0 (needs larger N / matched base), and rows stay OPEN per the no-overclaim contract.",
+  "artifacts": {
+    "w5v3_rigorous.json": "2274252fb7236ae37c336ead94209ef1bee058c0a5e212c938698287f31f56d7",
+    "w5_v3_rigorous.py": "645ccad8ab31d5063c0a1fb3afbf0885013b38d9f11a55e5a3099005d6f146ef"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "schema": "sophia.w4v3_promote.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "createdAt": "2026-07-02",
+  "pinnedCommit": "a4e9a94c08b6849ed62775edc55752dc8cb24293",
+  "backend": "mlx-lm LoRA; 2 seeds; STRICT fabricate-AND-pass (agent.gate); HARDER answerable guardrail (2-step arithmetic + letter-counting)",
+  "seed0": {
+    "strictFabPass": [
+      0.938,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "hardAnswerableAcc": [
+      0.5,
+      0.562,
+      0.75,
+      0.812
+    ],
+    "novelty": [
+      1.0,
+      0.938,
+      1.0,
+      0.875
+    ]
+  },
+  "seed1": {
+    "strictFabPass": [
+      0.812,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "hardAnswerableAcc": [
+      0.125,
+      0.562,
+      0.938,
+      0.812
+    ],
+    "novelty": [
+      1.0,
+      1.0,
+      0.812,
+      0.938
+    ]
+  },
+  "verdict": "STRONG promotion evidence -> w4 stays OPEN (per no-overclaim contract; maintainer sign-off). On BOTH seeds the STRICT fabricate-AND-pass (gate-checked) drops 0.94/0.81 -> 0.0 across rounds; hard-answerable accuracy INCREASES (seed0 0.5->0.812, seed1 0.125->0.812 -> NO over-abstention, the opposite); proposer novelty stays 0.81-1.0 (above floor). Meets the gate conditions with the strict metric + harder verifier-checkable guardrail + 2 seeds -- addresses every v2 caveat except a real *learning* proposer.",
+  "artifacts": {
+    "w4v3_promote.json": "5e6c373e90b531adf95181a6fbc045ad7cb3574384aebcc8492fea9157b29744",
+    "w4_v3_promote.py": "6bd8a0c93353f97b1d83c05fc9e2cc15fdda5139f49a240ff1a9a15b9e489209"
+  }
+}

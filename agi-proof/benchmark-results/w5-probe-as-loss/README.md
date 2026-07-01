@@ -70,3 +70,13 @@ is no per-seed bootstrap CI; base-audit varies 0.75–0.92 across seeds (regress
 confound); N=60, single controlled surface. A rigorous close needs per-seed CIs excluding 0 at
 matched base-audit on a broader surface. The ensemble is a promising **anti-Goodhart training
 method**, not yet a certified one.
+
+## v3 (2026-07-02) — RIGOROUS: 2/3 seeds' audit improvement is statistically significant
+
+Larger N=120 + per-seed **paired bootstrap CI** on the disjoint audit-probe delta
+(`w5-ensemble-rigorous-2026-07-02.candidate.json`): **2 of 3 seeds' audit-delta 95% CI excludes 0**
+— seed0 0.617→0.90 (CI [+0.20, +0.375]), seed1 0.90→0.95 (CI [+0.017, +0.092]); seed2 0.925→0.975
+grazes 0 (CI [-0.008, +0.108]). Every seed: goodhartGap ≤ 0.15, from-scratch audit separates
+0.958–0.967. High-base seeds *also* improved → not pure regression-to-mean. This substantiates the
+K=4 ensemble as a **genuine anti-Goodhart training method**. Not a full close (seed2 grazes 0);
+row stays **Open**.

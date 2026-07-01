@@ -51,3 +51,11 @@ An **adaptive proposer** that generates new exploits each round (measure novelty
 floor); a mixed train set (answerable + unanswerable) or a **DPO** objective (abstain-on-trap
 preferred over fabricate, correct-answer preferred over abstain) so fabrication drops **without**
 over-abstention; and an answerable-accuracy guardrail tracked across rounds.
+
+## v3 (2026-07-02) — promotion run: 2 seeds, STRICT metric, HARDER guardrail
+
+`w4-promote-2seed-2026-07-02.candidate.json`: on **both seeds**, the **strict fabricate-AND-pass**
+(gate-checked) drops 0.94/0.81 → **0.0** across rounds; **hard-answerable accuracy increases**
+(0.5→0.812, 0.125→0.812 — no over-abstention, the opposite); proposer novelty stays 0.81–1.0.
+Addresses every v2 caveat except a real *learning* proposer. Gate conditions met; row stays **Open**
+per the no-overclaim contract (maintainer sign-off).
