@@ -5,6 +5,24 @@
 > live gates landed as **candidates / one clean Goodhart negative**, honestly not flipped.
 > Branch `feat/agi-proof-candidate-tools` (`b07e2b9b..601d3d15`).
 
+> **Round 3 (2026-07-02): gate-closing next steps implemented for all five. TWO gates now
+> cleared (scoped): W2 + W4.**
+> - **W2 → MET-SCOPED** (commit `e21831dc`): larger run (decontaminated held-out N=195, **3
+>   seeds**) — every ΔECE 95% CI excludes 0, accuracy-at-coverage 0.79→0.99. Row flipped
+>   Open→MET-SCOPED (controlled math surface).
+> - **W4 → MET-SCOPED** (commit `520809a9`): v2 MIXED objective (abstain-on-unanswerable +
+>   answer-correctly-on-answerable) + adaptive proposer FIXES the over-abstention — fabrication
+>   0.375→0.0, answerable acc stays 1.0, novelty 0.75–1.0. Row flipped Open→MET-SCOPED.
+> - **W3 strengthened, still Open** (commit `520809a9`): true per-example weighted-loss (custom
+>   loop, not replication) → weighted 1.0 vs uniform 0.45–0.55, 2 seeds. Eval is in-sample (no
+>   held-out generalization) → Open.
+> - **W1 Open, infrastructure-bound** (commit `60dd1521`): 3-seed characterization — held-out-
+>   DOMAIN agreement ~chance both directions (0.488 / 0.495). Only 2 verifier domains exist +
+>   no GPU RLVR → cannot close locally (needs a 3rd domain or GPU). Not a method failure.
+> - **W5 Open, strong anti-Goodhart signal** (commit `2336d22b`): ENSEMBLE probe-as-loss (K=4
+>   independent probes) REVERSES v1's gaming — disjoint audit improves on all 3 seeds (mean
+>   +0.106). But seed0 Δ is noise + no per-seed CI → not a rigorous close.
+
 > **Round 2 (same session): W3, W4, and the W5 probe-as-loss coupling also taken live.**
 > - **W3** (commit `3c5e82cb`): conflicting-provenance experiment — provenance-weighted **0.95**
 >   vs uniform **0.50** correct; influence proxy agrees with LOO (de-poisoned slice 0.25→0.75);
