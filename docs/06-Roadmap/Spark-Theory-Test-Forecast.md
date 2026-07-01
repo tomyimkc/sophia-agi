@@ -1,0 +1,369 @@
+# Spark Theory-Test Forecast — pre-registered, fastest-first GPU queue
+
+**Status:** design-intent forecast registry (no capability claim; `canClaimAGI` stays `false`).
+**Purpose:** before spending Spark GPU time, *pre-register* each theory test with an explicit
+**forecast** (predicted outcome + confidence), ordered fastest-first. After each run we paste the
+**actual** result and **analyse the divergence**. The point is not just to measure — it is to
+measure *how well we predicted*, and to update our design priors when we are wrong. This file is
+the living scoreboard for that loop.
+
+> Why forecast at all? A pre-registered prediction turns every run into two results: the
+> measurement, and the calibration of our own model of the system. A test that confirms the
+> forecast costs little surprise; a test that *violates* it is where the repo learns something.
+> (Same discipline as `docs/06-Roadmap/*Preregistration*.md` and the failure ledger — extended to
+> forecasting, not just gating.)
+
+## The loop (the workflow this file drives)
+
+```
+pick fastest unrun test  ─▶  pre-register hypothesis + FORECAST (here)
+        ▲                              │
+        │                              ▼
+  update priors  ◀── analyse ◀──  run on Spark ──▶ paste ACTUAL result (here)
+   (next forecast)   divergence
+```
+
+Each test below has four blocks: **Hypothesis**, **Gate & bar**, **FORECAST** (filled now),
+**RESULT + DIVERGENCE** (filled after the run). Fastest GPU job first, so we get the most
+forecast-vs-actual signal per hour.
+
+---
+
+## The verification gates these tests answer to
+
+So the forecasts are grounded, here is what "pass" means for each gate the queue touches:
+
+| Gate | Where | Pass bar | Notes |
+|---|---|---|---|
+| **VALIDATED judge gate** | `tools/run_lora_uplift_validation.py` | notMock · ≥2 judge families · judge≠subject · mean pairwise **κ≥0.40** · ≥3 seeds · 95% CI excludes 0 | the bench-A gate; κ is the recurring fail (bench-a-03: κ=0.394) |
+| **LowRamGate (NVFP4 cert)** | `tools/certify_lowram.py` | **mean_kl ≤ 0.05 AND top1 ≥ 0.97**; protected slice KL ≤ 0.10 AND agree ≥ 0.95 | deterministic bars, **no judge / no κ** — the cleanest path to a real GO |
+| **Virtue 2-family gate** | `tools/run_{sophrosyne,dikaiosyne}_eval.py` + labelers | 2-family consensus labels (κ≥0.40) → paired Δ vs a real no-gate baseline, bootstrap CI | same κ exposure as bench-A |
+| **Faithfulness measurement** | `tools/run_faithfulness_battery.py` | *measurement, not a GO* — reports intrinsic flip-rate + cued/uncued split with bootstrap CIs | a number to characterise, never a claim |
+| **No-overclaim meta-gate** | `make claim-check`, `tools/lint_claims.py`, `tools/claim_gate.py` | every number carries CI + N/seeds + ≥2 families OR CI-excludes-0, else labelled candidate | enforced in CI on every push |
+
+**Design read:** judge-based gates (bench-A, virtues) keep landing CANDIDATE because κ sits on the
+0.40 line. The **NVFP4 cert is the only queued test whose bar is deterministic** — so it is both the
+fastest *and* the likeliest to yield a genuine GO. That is why it is first.
+
+---
+
+## The queue (fastest GPU job first)
+
+| # | Test | Gate | Est. GPU time | One-line forecast | Confidence |
+|---|---|---|---|---|---|
+| **T1** | NVFP4 mixed-precision cert on an **existing** adapter (`KEEP_SUFFIXES=down_proj`) | LowRamGate | **~10–20 min** (eval-only, no train) | down_proj-bf16 lifts top1 but **still lands ~0.94–0.96 < 0.97** on the v3/v4 adapter → NO-GO, closer | 60% |
+| **T2** | CoT **faithfulness** battery, real local model (`FAITH_MODEL=ollama:qwen2.5:7b`) | measurement | **~20–45 min** | local instruct model shows **unfaithfulCueUse ≈ 0.25–0.45**; intrinsic flip-rate moderate | 55% |
+| **T3** | **Sophrosyne** temperance gate-improves-decisions (`--bench-virtues`, sophrosyne only) | virtue 2-family | **~45–70 min** (judge farm) | positive decision Δ on explicit signals, but **κ < 0.40** again → CANDIDATE | 65% |
+| **T4** | **Council-vs-generalist** on one real trained discipline adapter | council eval + VALIDATED | **hours** (LoRA train + eval) | per-discipline adapter beats monolith **on-discipline** (+small Δ), risks **off-discipline regression** | 50% |
+| **T5** (parked) | **MegaTrain memory-fit + overlap** — real Spark streamed train validates the offline planner's byte accounting | planner-vs-hardware (`training/layer_stream_train.py`) | **hours** (real train) | planner is **right**: 3B adam-fp32 streamed train **fits 128 GB** (peak device ≪ whole model); 8B fits **only with recompute** (host ~119 GiB, headroom ~2 GiB) | 70% |
+| **T6** (parked) | **OKF traceable-memory vs pure-weight** — does memory/trace-augmented training buy auditability + cheap correction? | OKF A/B harness (`tools/eval_okf_vs_pureweight.py`) | **hours** (two trains + eval) | Arm A (OKF-integrated) **wins traceability + editability + correction-cost**; **ties or slightly loses on raw accuracy** vs the weight-only control | 65% |
+
+Rationale for the order: T1 is eval-only and deterministic (no κ, no judge farm) → fastest + a real
+GO is achievable. T2 is a measurement (no flaky gate) and high research value (CoT faithfulness is a
+frontier question) but needs many generations. T3 reuses the bench-A judge farm (slow) and inherits
+the κ risk. T4 needs training, so it is last among the *gate* tests despite being the highest-thesis-
+value one. **T5 is parked** behind the whole T1–T4 queue: it is the first *training-systems* test (it
+validates a planner prediction, not a gate), and per the owner it runs only **after the benchmark
+task in hand**. Its forecast is pre-registered now (from the shipped offline planner) so the real run
+is a clean falsification test, not a fit-after-the-fact.
+
+---
+
+## T1 — NVFP4 mixed-precision cert (down_proj held bf16)
+
+**Hypothesis.** The v5 lever — holding the most KL-sensitive served projection (`down_proj`) in
+bf16 while NVFP4-quantizing the rest — lifts top-1 agreement over the 0.97 floor without breaking
+mean_kl, *on an already-trained adapter* (no retrain needed). Tests whether the top-1 gap is a
+**quantization-granularity** problem (fixable at cert time) vs a **training** problem (needs v5).
+
+**Gate & bar.** LowRamGate: mean_kl ≤ 0.05 **AND** top1 ≥ 0.97; protected KL ≤ 0.10, agree ≥ 0.95.
+
+**Command (Spark; eval-only, points at an EXISTING adapter — no `--run-train`):**
+```bash
+# pick an adapter that already exists on the Spark (v4 completed per trainwatch; v3 also)
+KEEP_SUFFIXES=down_proj \
+QAT_ADAPTER=training/lora/checkpoints/olmoe-qat-spark-v4 \
+CERT_NEVAL=256 \
+bash scripts/run_local_benchmarks.sh --bench-b --execute     # B1 train SKIPPED, B2 certs the adapter
+```
+
+**FORECAST (2026-06-30).**
+- mean_kl: **0.03–0.05** (✓ likely passes — v3 already hit 0.045 served-only).
+- top1: **0.94–0.96** — improves over v3's 0.906 (holding down_proj removes its quant error) but
+  **likely still short of 0.97**. Closing 0.906→0.97 by freezing *one* projection is a big ask.
+- Verdict prediction: **NO-GO on top1, by a small margin.** Protected slice passes.
+- Confidence: **60%** it stays NO-GO; ~30% it squeaks ≥0.97; ~10% mean_kl regresses if v4 (the
+  over-fit lambda=0.01 adapter, protected_max_kl 0.71) is the one certified — **prefer v3**.
+- If NO-GO: next lever = hold `down_proj,gate_proj` bf16, or cert a properly v5-trained adapter.
+
+**RESULT (2026-06-30):** NVFP4 cert of the **v3** adapter with `down_proj` held bf16
+(`keep_suffixes=["down_proj"]`, mem_ratio 1.90×, n=256), dispatched through the env-carry bridge
+(cmd `cert-t1-v3`, absolute adapter path). **mean_kl = 0.0342 ✓** (≤ 0.05) but
+**top1 = 0.8945 ✗** (< 0.97); protected slice also fails (max_kl 0.409, agree 0.8945).
+**VERDICT: NO-GO.**
+**FORECAST vs ACTUAL divergence (2026-06-30):** **Direction correct, magnitude wrong.** Forecast was
+NO-GO @60% → actual NO-GO ✓. But forecast top1 **0.94–0.96**; actual **0.8945** — *below* the band. I
+overestimated the lever: holding `down_proj` bf16 improved mean_kl (prior full-quant v3 ≈ 0.045 →
+0.034) but **did not lift top1** (prior full-quant v3 ≈ 0.906 → 0.8945, flat-to-slightly-worse).
+**Prior update:** the top1 gap is NOT a single-projection granularity problem fixable at cert time —
+it's a training/quantization-depth problem. Next levers: hold MORE projections
+(`down_proj,gate_proj`) or cert a properly **v5-trained** adapter — one held projection is not enough.
+
+---
+
+## T2 — CoT faithfulness battery (real local model)
+
+**Hypothesis.** A local instruct model's chain-of-thought is **partly unfaithful**: when an answer
+is swayed by an injected cue, the written reasoning often hides the cue (rationalises a post-hoc
+justification). The battery's cued/uncued split exposes the `unfaithfulCueUseRate`.
+
+**Gate & bar.** None — this is a **measurement** (reports rates + bootstrap CIs over `FAITH_SEEDS`).
+The honest output is a characterised number, never a GO.
+
+**Command (Spark; real local model via ollama):**
+```bash
+FAITH_MODEL=ollama:qwen2.5:7b-instruct@http://127.0.0.1:11434/v1 \
+FAITH_SEEDS=3 \
+FAITH_BATTERY=benchmark/faithfulness_cot_battery_v2.json \
+SOPHIA_CAPTURE_THINKING=1 \
+bash scripts/run_local_benchmarks.sh --bench-faithfulness --execute
+```
+
+**FORECAST (2026-06-30).**
+- `unfaithfulCueUseRate`: **0.25–0.45** (cue-influenced answers whose reasoning hid the cue).
+- cue-follow rate (answer changes with the cue): **0.30–0.55** (7B models are quite cue-suggestible).
+- intrinsic flip-rate (answer flips when a load-bearing reasoning step is perturbed): **0.15–0.35**.
+- Confidence **55%** the unfaithful rate lands in [0.25, 0.45]; wider tails are plausible because
+  small instruct models can be *either* very cue-suggestible *or* near-random on the harder items.
+- Design read if confirmed: motivates a **faithfulness verifier** in the gate stack (the repo
+  currently gates *provenance*, not *reasoning faithfulness* — a candidate new seat).
+
+**RESULT (fill after run):** _pending_
+**FORECAST vs ACTUAL divergence:** _pending — a much-lower unfaithful rate than forecast would mean
+the v2 battery isn't discriminating on this model (revisit battery design); much higher would
+strengthen the case for a faithfulness gate._
+
+---
+
+## T3 — Sophrosyne temperance gate improves decisions
+
+**Hypothesis.** The temperance gate (`agent/sophrosyne.py`, MQ = ε − δ over expenditure-vs-demand)
+catches both **excess** (verbosity, over-hedging, over-retrieval, runaway loops) and **deficiency**
+(premature stop, under-answer). With the gate on, decisions score better than a real no-gate
+baseline, judged by 2 independent families.
+
+**Gate & bar.** Virtue 2-family gate: consensus labels (κ≥0.40) → paired Δ (gate vs baseline) with a
+bootstrap CI excluding zero.
+
+**Command (Spark; reuses the bench-A judge farm — apply the parallel-families patch first):**
+```bash
+bash scripts/run_local_benchmarks.sh --bench-virtues --execute   # sophrosyne + dikaiosyne; ~judge-farm cost
+```
+
+**FORECAST (2026-06-30).**
+- Decision-quality Δ (gate − baseline): **+0.05 to +0.15**, CI likely excludes zero on the explicit-
+  signal arm.
+- Inter-judge **κ ≈ 0.30–0.42** — **on the 0.40 line again** (the repo's recurring reliability wall);
+  forecast leans **CANDIDATE, not VALIDATED** (65%).
+- The "derived-signal-weak-on-raw-text" ledger pattern predicts the *derived* temperance signal
+  underperforms an *explicit* anchor — so the gate helps most when handed an explicit budget signal.
+
+**RESULT (fill after run):** _pending_
+**FORECAST vs ACTUAL divergence:** _pending — a κ≥0.40 here would be the first judge-based VALIDATED;
+analyse whether forced-choice + a stronger 2nd family is what tipped it._
+
+---
+
+## T4 — Council vs generalist on a real trained adapter
+
+**Hypothesis.** A discipline-routed council (per-seat 3B LoRA + per-seat verifier) catches more
+errors *on its discipline* than one monolithic gate (Branch-Train-MiX / S-LoRA premise). The risk is
+**off-discipline regression** and that the tiny seed corpora make each adapter weak.
+
+**Gate & bar.** `tools/eval_council_vs_monolith.py` (error-catch Δ) then the VALIDATED judge gate on
+the on-discipline uplift.
+
+**Command (Spark; LoRA-train ONE cheap discipline first, then eval — hours):**
+```bash
+# train one seat from its seed pack, then eval council vs monolith with the real adapter as answer source
+python tools/train_lora.py --model Qwen/Qwen2.5-3B-Instruct \
+  --train training/council_seeds/mathematics.jsonl --output training/lora/checkpoints/council-math
+python tools/eval_council_vs_monolith.py --emit agi-proof/benchmark-results/council-vs-monolith.json
+```
+
+**FORECAST (2026-06-30).**
+- On-discipline error-catch Δ (council − monolith): **+0.05 to +0.20** (positive but modest — small
+  corpus caps the gain).
+- Off-discipline: **flat to −0.05** (mild regression risk from over-specialisation).
+- Confidence **50%** — genuinely uncertain; the seed packs are LIMA-scale (~3–4 traces/seat), which
+  could be too thin to move a 3B meaningfully. This is the test most likely to **surprise**.
+
+**RESULT (fill after run):** _pending_
+**FORECAST vs ACTUAL divergence:** _pending — if the tiny corpus still moves on-discipline catch,
+update strongly toward "verifier-routing > corpus size"; if flat, the council needs bigger seats._
+
+---
+
+## T5 (parked) — MegaTrain memory-fit + overlap (the planner meets the hardware)
+
+**Hypothesis.** A memory-centric streamed train (params + optimizer resident in unified memory, the
+GPU a transient compute engine streaming `double_buffer_depth` layers at a time — the training mirror
+of `serving/layer_stream.py`, after MegaTrain arXiv:2604.05091) makes the **peak device working set
+≪ the whole model**, so a model far larger than naive "fits-in-VRAM" trains on one Spark. The
+**offline planner `training/layer_stream_train.py` already predicts the numbers**; this test asks
+whether real hardware agrees. It is **the first test that validates a training-systems prediction
+rather than a gate** — the planner is the falsifiable artifact, the Spark is the referee.
+
+**Gate & bar.** Planner-vs-hardware, not a GO gate. Two pre-registered, falsifiable predictions:
+1. **Memory-fit:** a real streamed train of the forecast model **does not OOM** on the box the
+   planner says it fits, and **does OOM** (or thrash to host) on the one it says it doesn't.
+2. **Peak ≪ model:** measured peak device residency is within a small factor of the planner's
+   `peak_device_bytes` (the double-buffer window), **not** the full-model host figure — i.e. the
+   streaming actually bounds device memory to the buffer depth.
+   A measured **overlap efficiency** (compute vs stall) is reported and compared to
+   `overlap_efficiency` (no GO bar — a characterised number, like T2's faithfulness rates).
+
+**Command (Spark; real train — PARKED until the T1–T4 bench queue completes; a human approves
+`--run-train`):** _to be composed when unparked. The offline planner is run GPU-free first:_
+```bash
+python training/layer_stream_train.py --report        # the pre-registered prediction table
+python training/layer_stream_train.py --self-test      # 16/16 invariants must pass before any GPU time
+```
+
+**FORECAST (2026-06-30, straight from the shipped planner — verified: 16/16 invariants, 11/11 unit
+tests, lint clean):**
+- **3B adam-fp32** streamed train on **1 Spark (128 GB): FITS** — host ~44.7 GiB, peak device
+  ~15.6 GiB, headroom ~67.7 GiB. High confidence (comfortable margin).
+- **8B adam-fp32** on **1 Spark: FITS ONLY WITH activation recomputation** — params+optimizer host
+  residency ~119.2 GiB leaves only ~2.1 GiB; the seq=4096 activation working set tips it over 128 GB
+  *without* recompute (−10.9 GiB). The planner's `8B_no_recompute_is_tight` invariant pins this.
+- **Ceilings (adam-fp32-equiv):** Spark ~**8.6B**, Mac (512 GB) ~**34.4B**, 8-Spark (~1 TB) ~**68.7B**.
+- **512k context:** activations (~384 GiB) **dominate** the ~3.7 GiB param window → long-context is an
+  *activation*-bound regime, not a param-bound one (motivates the recompute / ring-attention arm).
+- Verdict prediction: **planner CORRECT on memory-fit** (3B fits, 8B-no-recompute tight) at **70%**;
+  the ~30% tail is real-world overhead the byte model omits (allocator fragmentation, framework
+  resident buffers, NCCL/driver reserve) pushing the true 8B-with-recompute case over 128 GB too.
+- If the planner is wrong (8B fails even *with* recompute, or peak ≫ buffer window): update toward
+  "unified-memory overhead is a first-class term the byte model must add," and lower every ceiling.
+
+**RESULT (fill after the real Spark train):** _pending — parked behind T1–T4._
+**FORECAST vs ACTUAL divergence:** _pending — if real peak device residency tracks the buffer-window
+prediction, the streaming property is confirmed and the §3 ceilings earn a (still candidate-only)
+hardware receipt; if peak tracks the whole model instead, the stream isn't actually evicting layers
+and the design needs the eviction path audited._
+
+---
+
+## T6 (parked) — OKF traceable-memory vs pure-weight (auditability + cheap correction)
+
+**Hypothesis.** Training with an external, content-addressed **OKF** memory + a *process*-level
+verifier reward (Arm A) buys **auditability** (you can locate the exact wrong reasoning step) and
+**cheap correction** (a wrong belief is a single addressable node edit, not a retrain) — at little or
+no cost to raw accuracy vs a weight-only, outcome-only control (Arm B). The training mirror of the
+repo's verifier-gating, made step-traceable. Design: `docs/06-Roadmap/OKF-Traceable-Memory-Training.md`.
+
+**Gate & bar.** Not a single GO — a 5-metric A/B (`tools/eval_okf_vs_pureweight.py`): traceability
+(locate-the-wrong-step coverage), editability/correction-cost, forgetting, path-efficiency, and
+κ-gated answer quality. The honest framing: **a win on traceability/editability is the result**, even
+if raw accuracy ties.
+
+**Offline status (shipped this iteration — GPU-free, deterministic, CI-clean):**
+- `agent/okf_schema.py` + `agent/okf_trace.py` — the OKF node format (content-addressed, provenance
+  frontmatter mirroring `wiki/`), the decision **DAG**, an append-only retrace log, and
+  `locate_wrong_step` (the *Let's Verify Step by Step* exact-error-location primitive). Self-test 7/7.
+- `tools/eval_okf_vs_pureweight.py` + `eval/okf/fixture_v1.jsonl` — the A/B harness + a seeded
+  wrong-step fixture. Self-test 6/6; `--report` prints the A/B table using the **real** locator.
+- Built by a verified parallel workflow; an independent verify pass caught a real package-import +
+  trace-shape integration bug (fixed) before commit — units alone would have missed it.
+
+**FORECAST (2026-06-30, from the offline harness on the fixture).**
+- Traceability: Arm A **≈ 1.0** (every seeded wrong step is an addressable node) vs Arm B **≈ 0**
+  (a weight-only model exposes no per-step address).
+- Correction-cost ratio: Arm A **≪ 1** (O(1) node edit) vs Arm B **1.0** (retrain baseline).
+- Raw-accuracy/quality: **tie or slight loss** for Arm A (the control can match or exceed).
+- Confidence **65%** that a *real* two-train A/B reproduces the auditability/correction win; the ~35%
+  tail is that the process reward proves too noisy to train Arm A to parity accuracy, widening the
+  raw-accuracy gap beyond "slight."
+- If Arm A loses accuracy badly: update toward "process-memory needs the dual-write to be cheap AND
+  the verifier to be high-κ, or the auditability win isn't worth the accuracy tax."
+
+**RESULT (fill after the real two-train A/B):** _pending — parked behind the live bench queue (T1–T4)._
+**FORECAST vs ACTUAL divergence:** _pending — if Arm A holds accuracy AND wins traceability, the
+verifier-gated process-memory thesis is supported; if it tanks accuracy, the dual-write / reward
+design needs rework before any capability framing._
+
+---
+
+## Filling in a result (protocol)
+
+When a run lands:
+1. Paste the receipt numbers into that test's **RESULT** block (point estimate + CI + N/seeds).
+2. Write the **DIVERGENCE** block: was the forecast inside/outside the CI? Which direction? *Why* —
+   model wrong, gate quirk, underpowered, adapter mismatch?
+3. If the forecast was wrong, state the **prior update** in one line (what we now believe).
+4. Log the GO/NO-GO (or measurement) in `agi-proof/failure-ledger.md` as usual — this file is the
+   forecast scoreboard; the ledger stays the authoritative outcome record.
+5. Pick the next fastest unrun test; pre-register its forecast before running.
+
+**Calibration tally (update as results land):**
+
+| Test | Forecast | Actual | Inside forecast? | Prior updated |
+|---|---|---|---|---|
+| T1 | top1 0.94–0.96, NO-GO | top1 **0.8945**, NO-GO | dir ✓ / mag ✗ (below band) | down_proj-alone won't lift top1 — needs more held projections or a v5-trained adapter |
+| T2 | unfaithful 0.25–0.45 | _pending_ | _—_ | _—_ |
+| T3 | Δ>0 but κ<0.40, CANDIDATE | _pending_ | _—_ | _—_ |
+| T4 | on-disc +0.05–0.20 | _pending_ | _—_ | _—_ |
+| T5 | 3B fits / 8B recompute-only | _pending_ | _—_ | _—_ |
+| T6 | A wins trace/edit, ties acc | _pending_ | _—_ | _—_ |
+| T7 | v6 (KD+top1) top1 0.95–0.98, GO ~45% | top1 **0.9336** (n=1024; n=256 0.9609), **NO-GO** | dir ✓ / mag ✗ (n=1024 below band) | fused-expert co-adapt lifts top1 0.88→0.93 but not to band at the firm N; abstention is the ship path |
+| T8 | abstention-serve adopt: robust cov ≥0.60 on ≥2 adapters | **MET → ADOPTED** — v5 0.6426, v6 0.7188 (n=1024) | inside ✓ | conformal-abstention-serve adopted (owner sign-off 2026-07-01); measured hedge, canClaimAGI false |
+
+## T7 — v6 output-space QAT (pre-registered 2026-07-01, BEFORE the run)
+**Hypothesis:** training the QAT objective on the cert's own metrics (output-space KD +
+CE-to-FP-argmax; `training/qat.py::kd_top1_margin_loss`) lifts NVFP4 top1 past the 0.97 floor where
+the v5 weight-space penalty could not. **Conditions:** OLMoE-1B-7B, LoRA r16 all-linear, env
+`QAT_KD_WEIGHT=1.0 QAT_TOP1_WEIGHT=0.5 QAT_TEMP=2.0 QAT_LAMBDA=0.0005 QAT_EPOCHS=5`; cert n=256;
+gate mean_kl ≤ 0.05 AND top1 ≥ 0.97. **Forecast:** top1 **0.95–0.98** (from the honest fully-merged
+v5 baseline top1 0.922), mean_kl stays ≤ 0.05; **GO probability ~45%** (the loss now targets top1
+directly, but a single 4-bit MoE may still flip a few argmaxes — a NO-GO here would point to
+depth-mixed precision or a less-aggressive scheme, not another recipe knob). **Decided before the
+run; measures the prediction, not a fit-after.** `canClaimAGI` false.
+
+**RESULT (2026-07-01):** the fused-expert QAT reach fix (co-adapt all 32 `OlmoeExperts`, was 0) was the
+real enabler — top1 **0.8828 → 0.9609** (n=256) and mean_kl 0.0506 → 0.0341 (passes). But the firmer
+**n=1024** re-cert reads **top1 0.9336** (the n=256 was optimistic), mean_kl 0.0454 — **NO-GO** (miss 0.97
+by 0.066). Direction ✓ (NO-GO as ~55% expected); magnitude ✗ (0.9336 sits *below* the 0.95–0.98 band at
+the firm N). **Prior update:** output-space KD+top1 genuinely lifts NVFP4 top1 and *confirms the
+fused-expert co-adaptation hypothesis*, but a single 4-bit MoE still won't clear the never-flip bar → the
+ship path is v6 **+ abstention** (adopted, T8) and the next lever is `--keep-top-experts` mixed precision,
+exactly as the pre-registration's NO-GO branch predicted. `canClaimAGI` false.
+
+## T8 — conformal-abstention-serve ADOPTION bar (pre-registered 2026-07-01, BEFORE the 2nd condition)
+**Decision being pre-registered:** when may `recipe_spec.conformal-abstention-serve` flip
+`candidate/validated → adopted`? The claim-promotion gate blocked a v5-only adopt: one model + one run
+is *necessary, not sufficient*, and adopting on it would be fit-after-the-fact (no pre-registered bar).
+So the bar is set HERE, before the second condition lands, to avoid moving the goalposts to the result.
+**Adoption bar (all required):** the frontier's **95%-robust** shippable operating point
+(`abstention_serve.policy_from_cert(..., confidence=0.95)`) must show **coverage ≥ 0.60 AND answered-top1
+lower-bound ≥ 0.97** on **≥ 2 INDEPENDENT adapters** (independent = different QAT objective and/or base
+model, not just a bigger-N re-run of the same one), **AND** the owner signs off on the flip.
+**Condition 1 — MET:** v5 full-NVFP4 @ n=1024 → robust coverage **0.6426**, floor **0.9831** (≥0.60, ≥0.97).
+**Condition 2 — PENDING:** the v6 cert (T7) at the same n=1024 is the decisive second, independent adapter
+(new KD+top1 objective). down_proj-bf16 on v5 does NOT count as independent (same adapter, precision knob).
+**Forecast:** ~55% that v6 also clears robust coverage ≥0.60 (it should serve at least as well as v5, and
+likely better) → adoption becomes honest; a v6 that fails the *raw* 0.97 but still serves ≥0.60 robust
+coverage STILL satisfies T8 (the hedge is a serving claim, not a never-flip claim). **Held at `validated`
+until Condition 2 + owner sign-off.** Decided before the run; `canClaimAGI` false.
+
+**RESULT (2026-07-01): MET → ADOPTED.** Condition 2 = the v6 cert at n=1024 (independent adapter: KD+top1
+output-space objective, distinct from v5's weight-space penalty). Its 95%-Wilson-LCB operating point is
+**coverage 0.7188 @ answered 0.9918, floor 0.9762** — clears cov ≥ 0.60 AND floor ≥ 0.97, and *dominates*
+v5's 0.6426/0.9831 by +8pts coverage (the fused-expert co-adaptation improved the shippable point even
+though it missed the raw bar). Both independent adapters clear the bar out-of-sample at n=1024; owner
+signed off 2026-07-01. `recipe_spec.conformal-abstention-serve` flipped `validated → adopted` (commit
+e9ff56bc; ledger 101919c7). As forecast (~55% adopt), the exemplar case where a raw NO-GO still yields an
+honest shippable serving hedge. `canClaimAGI` stays false — it is a measured selective-accuracy hedge, not
+a capability claim.
+
+`canClaimAGI` stays **false** throughout; forecasts are predictions, not results, and every landed
+number goes through `make claim-check` before it is called anything but candidate.

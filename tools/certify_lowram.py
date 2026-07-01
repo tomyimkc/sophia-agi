@@ -202,15 +202,52 @@ def _manual_merge_lora(model: Any, adapter_dir: Path) -> "tuple[int, dict]":
         targets.setdefault(mod, {})[ab] = tensor
 
     name_to_module = dict(model.named_modules())
+    name_to_param = dict(model.named_parameters())
+
+    def _shape(t: Any) -> "list | None":
+        try:
+            return list(t.shape)
+        except Exception:  # noqa: BLE001 - diagnostic only, never fail the merge
+            return None
+
+    def _record_skip(mod: str, ab: dict, reason: str) -> dict:
+        """Capture why a LoRA target was skipped + the shapes needed to write the fused-expert
+        merge fix from real data (instrument bug nvfp4-v5-cert-recovered-contaminated-2026-06-30:
+        fused-MoE expert Parameters have no `.weight` child, so they are dropped here). Pure
+        diagnostic — does not change merge behavior."""
+        # A fused expert target like "...mlp.experts.down_proj" may exist as a Parameter under its
+        # parent module (e.g. parent ".experts" holds a 3-D `down_proj` Parameter) rather than as a
+        # `.weight`-bearing nn.Linear. Probe both the exact name and "<mod>.weight".
+        param = name_to_param.get(mod) or name_to_param.get(f"{mod}.weight")
+        parent = mod.rsplit(".", 1)[0] if "." in mod else ""
+        leaf = mod.rsplit(".", 1)[-1]
+        parent_mod = name_to_module.get(parent)
+        param_via_parent = getattr(parent_mod, leaf, None) if parent_mod is not None else None
+        return {
+            "module": mod,
+            "reason": reason,
+            "lora_A_shape": _shape(ab.get("A")),
+            "lora_B_shape": _shape(ab.get("B")),
+            "matched_param_shape": _shape(param) if param is not None else None,
+            "parent_attr_param_shape": (
+                _shape(param_via_parent) if param_via_parent is not None else None),
+            "fused_expert_candidate": (".experts." in mod or mod.endswith(".experts")
+                                       or "expert" in leaf or param_via_parent is not None),
+        }
+
     merged = 0
     skipped: list[str] = []
+    skipped_detail: list[dict] = []
     for mod, ab in targets.items():
         if "A" not in ab or "B" not in ab:
             skipped.append(mod)
+            skipped_detail.append(_record_skip(mod, ab, "missing_A_or_B"))
             continue
         module = name_to_module.get(mod)
         if module is None or not hasattr(module, "weight"):
             skipped.append(mod)
+            skipped_detail.append(_record_skip(
+                mod, ab, "no_module" if module is None else "no_weight_attr"))
             continue
         # Per-module rank/alpha (rank_pattern/alpha_pattern keys are the module suffix).
         r_eff = r_default
@@ -228,9 +265,53 @@ def _manual_merge_lora(model: Any, adapter_dir: Path) -> "tuple[int, dict]":
             delta = (B @ A) * scaling                       # (out, in)
             module.weight.add_(delta.to(module.weight.dtype))
         merged += 1
-    info = {"merged": merged, "skipped": skipped, "scaling_rslora": use_rslora,
-            "r": r_default, "alpha": alpha_default}
+    info = {"merged": merged, "skipped": skipped, "skipped_detail": skipped_detail,
+            "scaling_rslora": use_rslora, "r": r_default, "alpha": alpha_default}
     return merged, info
+
+
+def _ensure_peft_weightconverter_compat() -> "str | None":
+    """Make peft's fused-MoE-expert merge shim work on transformers>=5.6 (the P0-A skew).
+
+    peft 0.19.1 (the latest release) constructs
+    ``WeightConverter(..., distributed_operation=, quantization_operation=)`` inside
+    ``peft.utils.transformers_weight_conversion`` when merging a fused-expert (mixtral/OLMoE-style)
+    LoRA. transformers>=5.6 dropped those two names from ``WeightConverter.__init__`` — they are now
+    plain attributes set after construction — so the call raises
+    ``TypeError: WeightConverter.__init__() got an unexpected keyword argument 'distributed_operation'``
+    and the 32 fused-expert modules never merge (the peft path dies; the manual fallback below can
+    only reach the non-fused 64/96). We wrap ``__init__`` to absorb the two kwargs back into
+    attributes, restoring peft's own tested fused-expert merge so all 96/96 experts apply.
+
+    Idempotent and process-local: it patches nothing on disk and no-ops when the running transformers
+    still accepts the kwargs (or exposes no such class). Returns a short status string for load_info,
+    or ``None`` when there is nothing to patch (caller then keeps the manual-merge fallback)."""
+    try:
+        import inspect
+
+        from transformers.core_model_loading import WeightConverter
+    except Exception:  # noqa: BLE001 - older transformers has no core_model_loading.WeightConverter
+        return None
+    init = WeightConverter.__init__
+    if getattr(init, "_peft_compat", False):
+        return "already-patched"
+    try:
+        params = inspect.signature(init).parameters
+    except (TypeError, ValueError):
+        return None
+    if "distributed_operation" in params:
+        return None  # this transformers still takes the kwargs in __init__ — nothing to do
+
+    def __init__(self, *args, distributed_operation=None, quantization_operation=None, **kwargs):
+        init(self, *args, **kwargs)
+        # transformers>=5.6 sets these post-construction; peft passes them in. Restore as attributes
+        # so downstream ``getattr(mapping, "distributed_operation", None)`` sees the intended value.
+        self.distributed_operation = distributed_operation
+        self.quantization_operation = quantization_operation
+
+    __init__._peft_compat = True  # type: ignore[attr-defined]
+    WeightConverter.__init__ = __init__  # type: ignore[method-assign]
+    return "patched WeightConverter.__init__ (peft fused-expert kwargs -> attrs)"
 
 
 def load_merged_model(base_model: str, adapter_dir: Path, *, dtype_str: str,
@@ -261,6 +342,9 @@ def load_merged_model(base_model: str, adapter_dir: Path, *, dtype_str: str,
     try:
         import warnings as _warnings
 
+        # P0-A: absorb peft 0.19.1's dropped WeightConverter kwargs so the fused-expert merge path
+        # (all 96/96 experts) works on transformers>=5.6 instead of dying into the partial manual merge.
+        info["peft_compat"] = _ensure_peft_weightconverter_compat()
         from peft import PeftModel
         # Capture peft's load/merge warnings — notably "target_parameters=[...] were set but no
         # parameter was matched", which means part of the adapter (e.g. fused-name expert LoRA on a
@@ -445,6 +529,27 @@ def run_certify(args: argparse.Namespace) -> dict:
     from serving.lowram_eval import LowRamGate
 
     adapter_dir = Path(args.adapter)
+    # Fail FAST with an actionable error if the adapter isn't where we're looking. The deep
+    # Peft/manual-merge FileNotFoundError is cryptic, and the #1 real cause is a RELATIVE --adapter
+    # path resolved under the wrong cwd — e.g. dispatched through the bridge (cwd = the BRIDGE
+    # checkout) while the trained adapters live in the FULL checkout. Name the path, the cwd, and
+    # the fix BEFORE loading the (expensive) base model. (2026-06-30 T1 footgun.)
+    _cfg_ok = (adapter_dir / "adapter_config.json").exists()
+    _wt_ok = ((adapter_dir / "adapter_model.safetensors").exists()
+              or (adapter_dir / "adapter_model.bin").exists())
+    if not (adapter_dir.exists() and _cfg_ok and _wt_ok):
+        import os as _os
+        if not adapter_dir.exists():
+            _why = "directory does not exist"
+        else:
+            _why = "missing " + ", ".join(
+                f for f, ok in (("adapter_config.json", _cfg_ok),
+                                ("adapter_model.safetensors|.bin", _wt_ok)) if not ok)
+        raise FileNotFoundError(
+            f"adapter not usable at {adapter_dir} ({_why}; resolved from cwd={_os.getcwd()}). "
+            f"If you dispatched this through the bridge, the cwd is the BRIDGE checkout but trained "
+            f"adapters live in the FULL checkout — pass an ABSOLUTE --adapter path "
+            f"(e.g. /home/<user>/sophia-agi/training/lora/checkpoints/<name>).")
     calib = Path(args.calib)
     rows = _load_calib_rows(calib)
     protected_ids = set(args.protected_ids.split(",")) if args.protected_ids else None
@@ -463,6 +568,14 @@ def run_certify(args: argparse.Namespace) -> dict:
         # can't accept. The "full" path is then missing that adaptation — surface it.
         print(f"[warn] {skipped_n} adapter modules could not be merged (e.g. "
               f"{mm.get('skipped', [])[:3]}); the full path may be missing expert LoRA.", flush=True)
+        # Per-module shapes for the SKIPPED targets — the data needed to write the fused-expert
+        # merge fix (ledger: nvfp4-v5-cert-recovered-contaminated-2026-06-30). Pure diagnostic.
+        for d in (mm.get("skipped_detail") or [])[:8]:
+            print(f"[skip-diag] {d.get('module')} reason={d.get('reason')} "
+                  f"A{d.get('lora_A_shape')} B{d.get('lora_B_shape')} "
+                  f"param={d.get('matched_param_shape')} "
+                  f"parent_attr_param={d.get('parent_attr_param_shape')} "
+                  f"fused_candidate={d.get('fused_expert_candidate')}", flush=True)
     if load_info.get("incomplete_merge"):
         # Native peft merged, but part of the adapter silently did not match (e.g. fused-name
         # expert LoRA on a split-expert model). The full path is then missing that adaptation.
@@ -477,7 +590,18 @@ def run_certify(args: argparse.Namespace) -> dict:
 
     # 2) quantize the served weights (incl. fused experts) in place → low-RAM distributions.
     served_suffixes = resolve_served_suffixes(getattr(args, "keep_suffixes", ""))
-    qinfo = quantize_served_params(model, scheme=args.scheme, suffixes=served_suffixes)
+    _ktop = int(getattr(args, "keep_top_experts", 0) or 0)
+    if _ktop > 0:
+        # opt-in no-train mixed-precision: hold the top-N most-routed experts/layer bf16.
+        from tools.expert_protection import top_routed_experts, protected_quantize_served
+        _keep = top_routed_experts(model, tok, rows, k=_ktop, n_eval=args.n_eval,
+                                   max_seq_len=args.max_seq_len, device=args.device)
+        qinfo = protected_quantize_served(model, scheme=args.scheme, suffixes=served_suffixes,
+                                          keep_experts=_keep)
+        print(f"[keep-top-experts] held top-{_ktop} routed experts/layer bf16 "
+              f"({qinfo.get('protected_experts')} expert-slices kept)", flush=True)
+    else:
+        qinfo = quantize_served_params(model, scheme=args.scheme, suffixes=served_suffixes)
     per_tensor_ratio, eff_ratio = effective_mem_ratio(
         qinfo["quantized_params"], qinfo["kept_params"], scheme=args.scheme)
     q_frac = qinfo["quantized_params"] / max(qinfo["total_params"], 1)
@@ -508,13 +632,38 @@ def run_certify(args: argparse.Namespace) -> dict:
     out = report.as_dict()
     out["device"] = args.device
     out["scheme"] = args.scheme
+    out["keep_top_experts"] = _ktop
     out["base_model"] = args.base_model
     out["adapter"] = str(adapter_dir)
     out["lora_load"] = load_info.get("lora_load")
     out["lora_modules_merged"] = merged_n
     out["lora_modules_skipped"] = skipped_n
+    out["lora_skipped_detail"] = (mm.get("skipped_detail") or []) if mm else []
     out["incomplete_merge"] = bool(load_info.get("incomplete_merge"))
     out["merge_warnings"] = load_info.get("merge_warnings", [])
+    # Honest hedge: even when the raw NVFP4 top1 FAILS the 0.97 floor, report the conformal-abstention
+    # trade-off (serving/quant_abstention) — "top1 on the tokens it ANSWERS" at a measured coverage.
+    # Rides the FP+quant distributions already collected; no extra forward pass. Never blocks the cert.
+    try:
+        from serving.quant_abstention import quant_abstention_frontier, quant_abstention_report
+        out["abstention"] = quant_abstention_report(full_probs, low_probs, alpha=0.02)
+        # The frontier is the DECISIVE read: is there ANY operating point where answered-top1 clears
+        # the floor at usable coverage? A single alpha can answer ~100% and look un-shippable.
+        out["abstention_frontier"] = quant_abstention_frontier(full_probs, low_probs, target_answered=0.97)
+        _a = out["abstention"]
+        _f = out["abstention_frontier"]
+        if _a.get("n_test"):
+            print(f"[abstain] raw top1 {_a['raw_top1']} -> answered top1 {_a['answered_top1']} "
+                  f"@ coverage {_a['coverage']} (abstain {_a['abstained']}, target {_a['target_answered_agreement']})",
+                  flush=True)
+        if isinstance(_f, dict) and "shippable" in _f:
+            bp = _f.get("shippable_operating_point")
+            print(f"[abstain-frontier] shippable={_f['shippable']} "
+                  + (f"best: answered {bp['answered_top1']} @ coverage {bp['coverage']} (target 0.97)"
+                     if bp else "no point reaches answered-top1 0.97 -> abstention cannot rescue; v6 is the path"),
+                  flush=True)
+    except Exception as _exc:  # noqa: BLE001 - diagnostic hedge, never fail the cert
+        out["abstention"] = {"error": f"{type(_exc).__name__}: {_exc}"}
     out["per_tensor_mem_ratio"] = round(per_tensor_ratio, 4)
     out["quantized_modules"] = qinfo["quantized_modules"]
     out["quantized_params"] = qinfo["quantized_params"]
@@ -583,6 +732,10 @@ def main(argv: "list[str] | None" = None) -> int:
                     help="comma-separated served-linear suffixes to KEEP in bf16 (mixed precision, "
                          "e.g. 'down_proj') — the NVFP4 v5 top-1 lever; default quantizes the full "
                          "served set (v3/v4 behaviour)")
+    ap.add_argument("--keep-top-experts", type=int, default=0,
+                    help="hold the top-N MOST-ROUTED experts/layer in bf16 (no-train mixed-precision "
+                         "coverage lever; 0=off). Measured on v5: top-8 -> +7pt shippable "
+                         "abstention coverage (0.86->0.93). See tools/expert_protection.py.")
     ap.add_argument("--dtype", choices=("bf16", "fp16", "fp32"), default="bf16")
     ap.add_argument("--attn", choices=("auto", "sdpa", "eager", "flash_attention_2"), default="sdpa")
     ap.add_argument("--device", default="cuda", help="cuda / cpu")

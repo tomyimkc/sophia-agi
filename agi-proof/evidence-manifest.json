@@ -1,13 +1,13 @@
 {
   "version": "0.11.0",
-  "generated": "2026-06-30T05:31:36",
+  "generated": "2026-07-01T02:41:18",
   "claimBoundary": "Sophia is an AGI-candidate proof package and provenance-aware reasoning system. This repository does not prove true AGI.",
   "failureLedgerSummary": {
-    "openCount": 98,
+    "openCount": 102,
     "byStatus": {
-      "open": 98,
-      "resolved": 46,
-      "other": 23
+      "open": 102,
+      "resolved": 51,
+      "other": 24
     },
     "structurallyValid": true,
     "openItems": [
@@ -24,6 +24,7 @@
       "coding-novelty-oracle-missing-2026-06-29",
       "conformal-gate-wired-synthetic-only-2026-06-26",
       "cot-faithfulness-bench-synthetic-only-2026-06-26",
+      "council-vs-generalist-not-run-on-real-adapters-2026-06-30",
       "debunk-detector-fixed-verification-now-binds-2026-06-28",
       "debunk-gate-live-detector-gap-2026-06-28",
       "debunk-preservation-gate-built-2026-06-28",
@@ -61,11 +62,13 @@
       "long-horizon-eval-harness-built-2026-06-29",
       "long-horizon-not-run",
       "m3-sft-2family-judge-not-validated-2026-06-29",
+      "m3-sft-2family-spark-judge-bencha03-2026-06-30",
       "m3-sft-retention-underpowered-2026-06-29",
       "math-code-curriculum-preregistered-2026-06-25",
       "moe-design-only-2026-06-30",
       "multi-turn-trajectory-rlvr-sweep-open-2026-06-30",
       "nvfp4-v5-mixed-precision-lever-built-2026-06-29",
+      "okf-traceable-memory-offline-substrate-2026-06-30",
       "open-judge-non-proprietary-validation-2026-06-29",
       "path-a-world-model-not-promoted-2026-06-26",
       "path-b-lean-proof-search-blocked-2026-06-26",
@@ -108,6 +111,7 @@
       "visual-encoder-probe-real-weights-not-run-2026-06-26",
       "visual-rlvr-live-run-not-yet-gated-2026-06-26",
       "w2-judge-claude-llmhub-2026-06-26",
+      "world-model-prototypes-error-centric-2026-07-01",
       "world-model-retrieval-baselines-built-2026-06-28"
     ]
   },

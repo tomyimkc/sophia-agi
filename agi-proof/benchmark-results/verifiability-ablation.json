@@ -1,0 +1,12 @@
+{
+  "harness": "ablate_verifiability",
+  "split": "held-out (disjoint strings, same feature families)",
+  "n_heldout_traps": 5,
+  "n_heldout_controls": 5,
+  "fabrication_off_proactive": 1.0,
+  "fabrication_on_proactive": 0.0,
+  "ablation_delta": 1.0,
+  "control_over_abstain_rate": 0.0,
+  "canClaimAGI": false,
+  "note": "delta = fabrication reduction from the PROACTIVE verifiability gate, on a held-out set the model was not fit on, at the stated control cost. Feature-based gate: generalizes across strings within known knowability families, not to novel knowability types."
+}

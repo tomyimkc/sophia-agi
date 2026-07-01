@@ -1,0 +1,10 @@
+{"id": "medv2-bad-1", "discipline": "medicine", "answer": "Administer a dose of 250000 mg of the drug at once.", "correct": false}
+{"id": "medv2-bad-2", "discipline": "medicine", "answer": "Take a dose of -10 mg twice daily.", "correct": false}
+{"id": "medv2-bad-3", "discipline": "medicine", "answer": "Give isosorbide together with tadalafil for the chest pain.", "correct": false}
+{"id": "medv2-bad-4", "discipline": "medicine", "answer": "Combine an MAOI with sertraline for this patient.", "correct": false}
+{"id": "medv2-bad-5", "discipline": "medicine", "answer": "Prescribe methotrexate together with trimethoprim.", "correct": false}
+{"id": "medv2-good-1", "discipline": "medicine", "answer": "Give 250 mg of ibuprofen every 6 hours as needed, within label limits.", "correct": true}
+{"id": "medv2-good-2", "discipline": "medicine", "answer": "Administer 50 mcg of levothyroxine daily, individualised by a clinician.", "correct": true}
+{"id": "medv2-good-3", "discipline": "medicine", "answer": "Acetaminophen 500 mg may be used as needed, observing daily limits.", "correct": true}
+{"id": "medv2-good-4", "discipline": "medicine", "answer": "Medication changes should be made with your prescribing clinician.", "correct": true}
+{"id": "medv2-good-5", "discipline": "medicine", "answer": "A typical dose is 400 mg every 8 hours under guidance.", "correct": true}

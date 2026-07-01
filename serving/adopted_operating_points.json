@@ -1,0 +1,51 @@
+{
+  "schema": "sophia.abstention.adopted_operating_points.v1",
+  "ingredient": "conformal-abstention-serve",
+  "adopted": true,
+  "adoptedAt": "2026-07-01",
+  "recipeRef": "docs/06-Roadmap/recipe_spec.json#conformal-abstention-serve",
+  "forecastRef": "docs/06-Roadmap/Spark-Theory-Test-Forecast.md#T8",
+  "selection": "wilson_lcb@0.95",
+  "target_answered": 0.97,
+  "min_coverage": 0.6,
+  "_comment": "The 95%-Wilson-lower-bound serve-time operating points for the ADOPTED conformal abstention hedge, one per certified adapter. Each is the max-coverage frontier point whose out-of-sample answered-top1 lower bound clears target_answered on the n=1024 cert. At serve time, abstain when the quant top1-top2-margin nonconformity exceeds `threshold` (no FP model needed). These are MEASURED selective accuracy on a held-out split, NOT per-token guarantees; canClaimAGI=false. Regenerate from a fresh cert via serving/abstention_serve.policy_from_cert(cert, confidence=0.95) if the adapter or serve distribution changes.",
+  "default": "v6",
+  "operating_points": {
+    "v5": {
+      "adapter": "olmoe-qat-spark-v5",
+      "objective": "weight-space QAT penalty",
+      "cert": "agi-proof/benchmark-results/nvfp4-v5-frontier-1k.json",
+      "n_eval": 1024,
+      "raw_top1": 0.8975,
+      "threshold": 0.653,
+      "coverage": 0.6426,
+      "answered_top1": 0.997,
+      "answered_top1_lcb95": 0.9831
+    },
+    "v6": {
+      "adapter": "olmoe-qat-spark-v6",
+      "objective": "KD + top1-margin output-space QAT (fused-expert co-adapted)",
+      "cert": "agi-proof/benchmark-results/nvfp4-v6-frontier-1k.json",
+      "n_eval": 1024,
+      "raw_top1": 0.9336,
+      "threshold": 0.8072,
+      "coverage": 0.7188,
+      "answered_top1": 0.9918,
+      "answered_top1_lcb95": 0.9762
+    },
+    "v6_downproj16": {
+      "adapter": "olmoe-qat-spark-v6",
+      "objective": "KD + top1-margin output-space QAT + down_proj held bf16 (mixed precision)",
+      "cert": "agi-proof/benchmark-results/nvfp4-v6-downproj-frontier-1k.json",
+      "n_eval": 1024,
+      "raw_top1": 0.9365,
+      "mem_ratio": 1.9013,
+      "threshold": 0.8806,
+      "coverage": 0.8438,
+      "answered_top1": 0.9884,
+      "answered_top1_lcb95": 0.9732,
+      "regime": "higher-coverage / higher-memory: +12.5pts coverage over v6 full-NVFP4 (0.7188->0.8438) at a memory cost (mem_ratio 3.30x->1.90x, ~42% less compression). Choose when memory budget allows; v6 (3.30x) stays the byte-efficient default."
+    }
+  },
+  "note": "v6 is the default (dominates v5: +8pts robust coverage). Both adapters raw-FAIL the 0.97 never-flip bar; the hedge serves the confident tokens and abstains on the low-margin argmax-flips. The `--keep-top-experts` mixed-precision lever (tools/expert_protection.py) is expected to raise coverage further (point-estimate ~0.93+) once cert-confirmed at n=1024. v6_downproj16 added (2026-07-01): down_proj-bf16 mixed precision lifts robust coverage to 0.8438 @ floor 0.9732 at mem 1.90x \u2014 a higher-coverage/higher-memory regime, NOT the default. keep-top-experts (Mac) may beat it on the coverage/memory trade."
+}

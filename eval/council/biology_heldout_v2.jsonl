@@ -1,0 +1,9 @@
+{"id": "biov2-bad-1", "discipline": "biology", "answer": "The DNA sequence ACGTB encodes the gene.", "correct": false}
+{"id": "biov2-bad-2", "discipline": "biology", "answer": "The reverse complement of AACG is AACG.", "correct": false}
+{"id": "biov2-bad-3", "discipline": "biology", "answer": "The coding sequence ACGTACGT is translated.", "correct": false}
+{"id": "biov2-bad-4", "discipline": "biology", "answer": "The RNA sequence ACGT is processed.", "correct": false}
+{"id": "biov2-good-1", "discipline": "biology", "answer": "The DNA sequence ACGTACGTACGT encodes the gene.", "correct": true}
+{"id": "biov2-good-2", "discipline": "biology", "answer": "The reverse complement of AACG is CGTT.", "correct": true}
+{"id": "biov2-good-3", "discipline": "biology", "answer": "The coding sequence ACGACGACG is translated.", "correct": true}
+{"id": "biov2-good-4", "discipline": "biology", "answer": "The RNA sequence ACGU is processed.", "correct": true}
+{"id": "biov2-good-5", "discipline": "biology", "answer": "Ribosomes synthesise proteins from mRNA.", "correct": true}

@@ -1,0 +1,268 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
+"""Serve-time ABSTENTION gate — enforce the cert's measured operating point on the live quant model.
+
+``serving/quant_abstention.py`` MEASURES (offline, with the FP reference) whether a raw-failing quant
+model becomes honestly shippable by abstaining on its low-margin tokens, and traces the
+coverage/answered-top1 FRONTIER to pick the max-coverage operating point that clears the cert bar.
+That is a diagnostic: it needs the FP model, which low-RAM deployment does NOT have.
+
+This module is the DEPLOYABLE half. It reads the chosen operating point (a single nonconformity
+THRESHOLD) from a cert artifact, then at serve time decides answer-vs-abstain for each next token using
+the QUANT MODEL ALONE — the top1-vs-top2 probability margin, exactly the signal the frontier calibrated
+on. No FP model, no labels, no network: one comparison per token. This closes the loop from "the cert
+measured v5+abstention is shippable at coverage ~0.86 / answered-top1 ~0.98" to "the server actually
+abstains on those tokens." Pure/offline/deterministic; numerics proven in ``offline_invariants``.
+
+The threshold is a CALIBRATED constant, not a live guarantee: it was picked out-of-sample on the cert's
+test split. Answered accuracy at serve time will track the cert's measured number only insofar as the
+serve distribution matches the calibration distribution — we do NOT claim a per-token guarantee, and
+``canClaimAGI`` stays false. Ship this as a hedge that refuses to fabricate on the tokens most likely to
+be wrong, never as a capability claim.
+"""
+from __future__ import annotations
+
+import json
+import sys
+from dataclasses import dataclass, asdict
+from pathlib import Path
+from typing import Any
+
+_ROOT = Path(__file__).resolve().parents[1]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+from serving.quant_abstention import quant_nonconformity  # noqa: E402
+
+ANSWER = "answer"
+ABSTAIN = "abstain"
+
+
+def _wilson_lcb(p: float, n: float, z: float = 1.96) -> float:
+    """Wilson score lower bound for a binomial proportion — the honest floor on answered accuracy.
+
+    A point estimate answered_top1=0.9737 on ~380 tokens can have a lower bound BELOW the 0.97 bar;
+    shipping the max-coverage point on the point estimate alone would ship a policy that is really under
+    the target. We select the operating point by this floor, not the point estimate, when asked."""
+    if n <= 0:
+        return 0.0
+    denom = 1.0 + z * z / n
+    centre = p + z * z / (2 * n)
+    margin = z * ((p * (1 - p) / n + z * z / (4 * n * n)) ** 0.5)
+    return max(0.0, (centre - margin) / denom)
+
+
+@dataclass(frozen=True)
+class AbstentionPolicy:
+    """A calibrated serve-time abstention policy: abstain when quant nonconformity EXCEEDS ``threshold``.
+
+    ``threshold`` is the top1-top2-margin nonconformity cut chosen on the cert's frontier (the
+    max-coverage point whose out-of-sample answered_top1 — or its confidence lower bound — clears
+    ``target_answered``). ``measured_coverage`` and ``measured_answered_top1`` are the cert's out-of-sample
+    numbers AT that point — provenance, not a guarantee. ``n_test`` records the sample size, and
+    ``answered_lcb`` / ``selection`` record whether a point estimate or a confidence floor was used, so a
+    thin or razor-thin read is visible, not hidden."""
+    threshold: float
+    target_answered: float
+    measured_coverage: float
+    measured_answered_top1: float
+    raw_top1: float
+    n_test: int
+    source: str = "unknown"
+    selection: str = "point_estimate"
+    answered_lcb: "float | None" = None
+
+    def decide(self, low_probs) -> "list[str]":
+        """ANSWER / ABSTAIN per row of a quant next-token distribution (probabilities or logits;
+        argmax + top1-top2 margin are scale-monotone so unnormalized logits are fine for the ordering,
+        but pass probabilities if you want the threshold to mean what the cert calibrated)."""
+        nc = quant_nonconformity(low_probs)
+        return [ANSWER if float(v) <= self.threshold else ABSTAIN for v in nc]
+
+    def decide_one(self, low_prob_row) -> str:
+        import numpy as np
+        return self.decide(np.asarray(low_prob_row, dtype=float).reshape(1, -1))[0]
+
+    def coverage_on(self, low_probs) -> float:
+        d = self.decide(low_probs)
+        return sum(x == ANSWER for x in d) / len(d) if d else 0.0
+
+    def as_dict(self) -> "dict[str, Any]":
+        return asdict(self)
+
+
+def policy_from_cert(cert_path: "str | Path", *, confidence: "float | None" = None) -> "AbstentionPolicy":
+    """Load the shippable operating point from a certify_lowram.py artifact (``out['abstention_frontier']``).
+
+    ``confidence=None`` (default) trusts the cert's ``shippable_operating_point`` — the max-coverage point
+    whose out-of-sample answered_top1 POINT ESTIMATE clears the target. ``confidence=0.95`` instead selects
+    the max-coverage frontier point whose Wilson lower bound at that confidence clears the target — the
+    HONEST serving choice, because a point estimate on a few hundred answered tokens can sit above the bar
+    while its lower bound is below it (v5 @ n=1024: max-cov point 0.9737 has a 95% floor of ~0.958 < 0.97).
+
+    Raises if NO point qualifies — abstention cannot honestly reach the target and the caller must NOT
+    silently fall back to answering everything (that re-introduces the fabrication risk the hedge removes)."""
+    data = json.loads(Path(cert_path).read_text())
+    fr = data.get("abstention_frontier")
+    if not fr:
+        raise ValueError(f"{cert_path}: no abstention_frontier block (old cert or frontier errored)")
+    target = float(fr.get("target_answered", 0.97))
+    n_test = int(fr.get("n_test", 0))
+
+    if confidence is None:
+        best = fr.get("shippable_operating_point")
+        if not best:
+            raise ValueError(
+                f"{cert_path}: shippable_operating_point is None — abstention cannot reach "
+                f"target_answered={target} on this model; do NOT ship an answer-everything fallback. "
+                f"The recipe fix (v6 QAT) is the path.")
+        return AbstentionPolicy(
+            threshold=float(best["threshold"]), target_answered=target,
+            measured_coverage=float(best["coverage"]), measured_answered_top1=float(best["answered_top1"]),
+            raw_top1=float(fr.get("raw_top1", 0.0)), n_test=n_test, source=str(cert_path),
+            selection="point_estimate", answered_lcb=None)
+
+    z = {0.9: 1.645, 0.95: 1.96, 0.99: 2.576}.get(round(float(confidence), 2), 1.96)
+    chosen = None  # max-coverage frontier point whose Wilson LCB clears the target
+    for pt in fr.get("frontier", []):
+        cov = float(pt["coverage"])
+        n_ans = cov * n_test
+        lcb = _wilson_lcb(float(pt["answered_top1"]), n_ans, z=z)
+        if lcb >= target and cov > 0 and (chosen is None or cov > chosen[0]):
+            chosen = (cov, pt, lcb)
+    if chosen is None:
+        raise ValueError(
+            f"{cert_path}: no frontier point clears target_answered={target} at its {confidence:.0%} "
+            f"lower bound (n_test={n_test}). The point-estimate operating point is not robust; do NOT ship "
+            f"an answer-everything fallback. Confirm at larger n or fix the recipe (v6 QAT).")
+    cov, pt, lcb = chosen
+    return AbstentionPolicy(
+        threshold=float(pt["threshold"]), target_answered=target,
+        measured_coverage=cov, measured_answered_top1=float(pt["answered_top1"]),
+        raw_top1=float(fr.get("raw_top1", 0.0)), n_test=n_test, source=str(cert_path),
+        selection=f"wilson_lcb@{confidence:.2f}", answered_lcb=round(lcb, 4))
+
+
+ADOPTED_OPERATING_POINTS = _ROOT / "serving" / "adopted_operating_points.json"
+
+
+def adopted_policy(adapter: "str | None" = None,
+                   path: "str | Path" = ADOPTED_OPERATING_POINTS) -> "AbstentionPolicy":
+    """Load a pinned, ADOPTED serve-time abstention policy without re-running a cert.
+
+    ``serving/adopted_operating_points.json`` records the 95%-LCB operating point that cleared the
+    pre-registered T8 adoption bar for each certified adapter. ``adapter=None`` uses the config's
+    ``default``. This is the deployment entry point — a server loads the adopted operating point (one
+    small JSON) rather than shipping/parsing a full cert. The numbers are MEASURED selective accuracy,
+    not per-token guarantees; ``canClaimAGI`` stays false. Re-derive with ``policy_from_cert(cert,
+    confidence=0.95)`` if the adapter or serve distribution changes."""
+    data = json.loads(Path(path).read_text())
+    if not data.get("adopted"):
+        raise ValueError(f"{path}: ingredient is not adopted — do not serve a non-adopted operating point")
+    key = adapter or data["default"]
+    pts = data["operating_points"]
+    if key not in pts:
+        raise ValueError(f"{path}: no adopted operating point for adapter {key!r} (have {sorted(pts)})")
+    op = pts[key]
+    return AbstentionPolicy(
+        threshold=float(op["threshold"]), target_answered=float(data.get("target_answered", 0.97)),
+        measured_coverage=float(op["coverage"]), measured_answered_top1=float(op["answered_top1"]),
+        raw_top1=float(op.get("raw_top1", 0.0)), n_test=int(op.get("n_eval", 0)), source=f"{path}#{key}",
+        selection=str(data.get("selection", "wilson_lcb@0.95")),
+        answered_lcb=float(op["answered_top1_lcb95"]))
+
+
+# --------------------------------------------------------------------------- #
+# Offline invariants — GPU-free, prove the serve gate matches the cert's frontier decision.
+# --------------------------------------------------------------------------- #
+def offline_invariants() -> "tuple[bool, dict]":
+    try:
+        import numpy as np
+    except Exception:  # pragma: no cover
+        return False, {"checks": {"numpy_available": False}}
+
+    from serving.quant_abstention import quant_abstention_frontier
+
+    checks: dict[str, bool] = {}
+    detail: dict = {}
+    rng = np.random.default_rng(0)
+    N, V = 400, 20
+
+    # Same separable regime as quant_abstention: confident tokens keep the FP argmax, near-ties flip.
+    fp = rng.standard_normal((N, V))
+    fp_soft = np.exp(fp) / np.exp(fp).sum(1, keepdims=True)
+    fp_arg = fp_soft.argmax(1)
+    low = fp.copy()
+    for i in range(N):
+        if rng.random() < 0.30:
+            j = (fp_arg[i] + 1) % V
+            low[i, fp_arg[i]] = fp[i, j] + 0.01
+            low[i, j] = fp[i, fp_arg[i]]
+        else:
+            low[i, fp_arg[i]] += 3.0
+    low_soft = np.exp(low) / np.exp(low).sum(1, keepdims=True)
+
+    fr = quant_abstention_frontier(fp_soft, low_soft, target_answered=0.97)
+    best = fr["shippable_operating_point"]
+    pol = AbstentionPolicy(threshold=best["threshold"], target_answered=0.97,
+                           measured_coverage=best["coverage"], measured_answered_top1=best["answered_top1"],
+                           raw_top1=fr["raw_top1"], n_test=fr["n_test"], source="selftest")
+
+    # 1. The serve gate reproduces the frontier's coverage at the SAME threshold on the SAME test split
+    #    (the frontier chose the point on test_idx = second half; check the gate matches there).
+    ncal = fr["n_calib"]
+    test = low_soft[ncal:]
+    cov = pol.coverage_on(test)
+    checks["gate_coverage_matches_frontier"] = abs(cov - best["coverage"]) < 1e-9
+
+    # 2. Answered accuracy of the gate on the test split clears the target (this is the whole point).
+    agree = (fp_soft.argmax(1) == low_soft.argmax(1))[ncal:]
+    d = np.array(pol.decide(test))
+    answered = d == ANSWER
+    ans_top1 = float(agree[answered].mean()) if answered.any() else 0.0
+    checks["gate_answered_clears_target"] = ans_top1 >= 0.97 - 1e-9
+    checks["gate_answered_matches_measured"] = abs(ans_top1 - best["answered_top1"]) < 1e-9
+
+    # 3. Abstaining strictly raises answered accuracy over answering everything (the hedge earns its cost).
+    raw_all = float(agree.mean())
+    checks["hedge_beats_answer_all"] = ans_top1 > raw_all
+
+    # 4. Confident row -> ANSWER, near-tie row -> ABSTAIN (per-token behaviour).
+    conf_row = np.zeros(V); conf_row[0] = 10.0
+    conf_row = np.exp(conf_row) / np.exp(conf_row).sum()
+    tie_row = np.zeros(V); tie_row[0] = 0.51; tie_row[1] = 0.49  # not softmax but valid prob-ish margin
+    tie_row = tie_row / tie_row.sum()
+    checks["confident_answers"] = pol.decide_one(conf_row) == ANSWER
+    checks["near_tie_abstains"] = pol.decide_one(tie_row) == ABSTAIN
+
+    # 5. A None operating point must RAISE, never silently answer-everything.
+    raised = False
+    try:
+        bad = {"abstention_frontier": {"shippable_operating_point": None, "target_answered": 0.99,
+                                       "raw_top1": 0.5, "n_test": 10}}
+        import tempfile, os
+        fd, p = tempfile.mkstemp(suffix=".json"); os.close(fd)
+        Path(p).write_text(json.dumps(bad))
+        try:
+            policy_from_cert(p)
+        finally:
+            os.unlink(p)
+    except ValueError:
+        raised = True
+    checks["none_operating_point_raises"] = raised
+
+    detail["gate_coverage"] = round(cov, 4)
+    detail["gate_answered_top1"] = round(ans_top1, 4)
+    detail["answer_all_top1"] = round(raw_all, 4)
+    detail["threshold"] = best["threshold"]
+    ok = all(checks.values())
+    return ok, {"checks": checks, **detail}
+
+
+if __name__ == "__main__":
+    ok, detail = offline_invariants()
+    print("abstention_serve offline invariants:", "PASS" if ok else "FAIL")
+    for k, v in detail["checks"].items():
+        print(f"  [{'ok' if v else 'XX'}] {k}")
+    print(f"  gate: answered_top1={detail['gate_answered_top1']} @ coverage={detail['gate_coverage']} "
+          f"(answer-all would be {detail['answer_all_top1']}); threshold={detail['threshold']}")

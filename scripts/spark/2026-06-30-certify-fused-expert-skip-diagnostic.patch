@@ -1,0 +1,91 @@
+diff --git a/tools/certify_lowram.py b/tools/certify_lowram.py
+index 3942434d..c2ac9a9f 100644
+--- a/tools/certify_lowram.py
++++ b/tools/certify_lowram.py
+@@ -202,15 +202,52 @@ def _manual_merge_lora(model: Any, adapter_dir: Path) -> "tuple[int, dict]":
+         targets.setdefault(mod, {})[ab] = tensor
+ 
+     name_to_module = dict(model.named_modules())
++    name_to_param = dict(model.named_parameters())
++
++    def _shape(t: Any) -> "list | None":
++        try:
++            return list(t.shape)
++        except Exception:  # noqa: BLE001 - diagnostic only, never fail the merge
++            return None
++
++    def _record_skip(mod: str, ab: dict, reason: str) -> dict:
++        """Capture why a LoRA target was skipped + the shapes needed to write the fused-expert
++        merge fix from real data (instrument bug nvfp4-v5-cert-recovered-contaminated-2026-06-30:
++        fused-MoE expert Parameters have no `.weight` child, so they are dropped here). Pure
++        diagnostic — does not change merge behavior."""
++        # A fused expert target like "...mlp.experts.down_proj" may exist as a Parameter under its
++        # parent module (e.g. parent ".experts" holds a 3-D `down_proj` Parameter) rather than as a
++        # `.weight`-bearing nn.Linear. Probe both the exact name and "<mod>.weight".
++        param = name_to_param.get(mod) or name_to_param.get(f"{mod}.weight")
++        parent = mod.rsplit(".", 1)[0] if "." in mod else ""
++        leaf = mod.rsplit(".", 1)[-1]
++        parent_mod = name_to_module.get(parent)
++        param_via_parent = getattr(parent_mod, leaf, None) if parent_mod is not None else None
++        return {
++            "module": mod,
++            "reason": reason,
++            "lora_A_shape": _shape(ab.get("A")),
++            "lora_B_shape": _shape(ab.get("B")),
++            "matched_param_shape": _shape(param) if param is not None else None,
++            "parent_attr_param_shape": (
++                _shape(param_via_parent) if param_via_parent is not None else None),
++            "fused_expert_candidate": (".experts." in mod or mod.endswith(".experts")
++                                       or "expert" in leaf or param_via_parent is not None),
++        }
++
+     merged = 0
+     skipped: list[str] = []
++    skipped_detail: list[dict] = []
+     for mod, ab in targets.items():
+         if "A" not in ab or "B" not in ab:
+             skipped.append(mod)
++            skipped_detail.append(_record_skip(mod, ab, "missing_A_or_B"))
+             continue
+         module = name_to_module.get(mod)
+         if module is None or not hasattr(module, "weight"):
+             skipped.append(mod)
++            skipped_detail.append(_record_skip(
++                mod, ab, "no_module" if module is None else "no_weight_attr"))
+             continue
+         # Per-module rank/alpha (rank_pattern/alpha_pattern keys are the module suffix).
+         r_eff = r_default
+@@ -228,8 +265,8 @@ def _manual_merge_lora(model: Any, adapter_dir: Path) -> "tuple[int, dict]":
+             delta = (B @ A) * scaling                       # (out, in)
+             module.weight.add_(delta.to(module.weight.dtype))
+         merged += 1
+-    info = {"merged": merged, "skipped": skipped, "scaling_rslora": use_rslora,
+-            "r": r_default, "alpha": alpha_default}
++    info = {"merged": merged, "skipped": skipped, "skipped_detail": skipped_detail,
++            "scaling_rslora": use_rslora, "r": r_default, "alpha": alpha_default}
+     return merged, info
+ 
+ 
+@@ -484,6 +521,14 @@ def run_certify(args: argparse.Namespace) -> dict:
+         # can't accept. The "full" path is then missing that adaptation — surface it.
+         print(f"[warn] {skipped_n} adapter modules could not be merged (e.g. "
+               f"{mm.get('skipped', [])[:3]}); the full path may be missing expert LoRA.", flush=True)
++        # Per-module shapes for the SKIPPED targets — the data needed to write the fused-expert
++        # merge fix (ledger: nvfp4-v5-cert-recovered-contaminated-2026-06-30). Pure diagnostic.
++        for d in (mm.get("skipped_detail") or [])[:8]:
++            print(f"[skip-diag] {d.get('module')} reason={d.get('reason')} "
++                  f"A{d.get('lora_A_shape')} B{d.get('lora_B_shape')} "
++                  f"param={d.get('matched_param_shape')} "
++                  f"parent_attr_param={d.get('parent_attr_param_shape')} "
++                  f"fused_candidate={d.get('fused_expert_candidate')}", flush=True)
+     if load_info.get("incomplete_merge"):
+         # Native peft merged, but part of the adapter silently did not match (e.g. fused-name
+         # expert LoRA on a split-expert model). The full path is then missing that adaptation.
+@@ -534,6 +579,7 @@ def run_certify(args: argparse.Namespace) -> dict:
+     out["lora_load"] = load_info.get("lora_load")
+     out["lora_modules_merged"] = merged_n
+     out["lora_modules_skipped"] = skipped_n
++    out["lora_skipped_detail"] = (mm.get("skipped_detail") or []) if mm else []
+     out["incomplete_merge"] = bool(load_info.get("incomplete_merge"))
+     out["merge_warnings"] = load_info.get("merge_warnings", [])
+     out["per_tensor_mem_ratio"] = round(per_tensor_ratio, 4)

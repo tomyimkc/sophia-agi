@@ -1,0 +1,263 @@
+{
+  "version": "0.1.0",
+  "canClaimAGI": false,
+  "claimBoundary": "The master training recipe for a wisdom-gated on-device model. Ingredients are folded in ONLY when proven (validated + a measured ablation delta + a passing gate). This spec is the single source of truth for what the trained model adopts; the failure ledger holds what is NOT yet proven. This is an AGI-candidate recipe, not proof of AGI.",
+  "generated": "2026-07-01",
+  "layers": [
+    "target-base",
+    "data",
+    "objective",
+    "verification-in-loop",
+    "quant-serve",
+    "eval-promotion"
+  ],
+  "adoptionRule": "adopted:true REQUIRES proofStatus=='validated' AND ablationDelta is a number AND a gate is named. No measured on/off delta or no passing gate => must stay adopted:false (candidate/auxiliary). Enforced by tools/lint_recipe.py.",
+  "buildMethod": [
+    "1. inventory+gate: sort every idea into validated/candidate/open (audit the failure ledger)",
+    "2. ablate each: measure the on/off delta before folding anything in (no delta => decoration)",
+    "3. compose in dependency order 0->5, gating each layer before the next builds on it",
+    "4. pre-register each addition's expected effect (Spark-Theory-Test-Forecast.md)",
+    "5. keep ONE lintable spec (this file) as the single source of truth",
+    "6. iterate with the verifier as the fitness function (sophia_autoresearch, firewall intact)"
+  ],
+  "ingredients": [
+    {
+      "id": "on-device-nvfp4-target",
+      "layer": "target-base",
+      "module": "tools/certify_lowram.py",
+      "description": "The deploy constraint that drives the whole recipe: an NVFP4 low-RAM model for Apple/MLX on-device. Cert bar mean_kl<=0.05 AND top1>=0.97.",
+      "proofStatus": "open",
+      "gate": "certify_lowram (LowRamGate)",
+      "ablationDelta": null,
+      "adopted": false,
+      "openItem": "nvfp4-v5-cert-recovered-contaminated-2026-06-30 (v5 fully merged top1 0.922 < 0.97; v6 pending)"
+    },
+    {
+      "id": "olmoe-1b-7b-base",
+      "layer": "target-base",
+      "module": "tools/train_lora.py",
+      "description": "Base model: allenai/OLMoE-1B-7B (MoE, ~1.3B active) \u2014 small-active, on-device-plausible, LoRA-adaptable.",
+      "proofStatus": "candidate",
+      "gate": "training runs end-to-end (v1-v5)",
+      "ablationDelta": null,
+      "adopted": false
+    },
+    {
+      "id": "wisdom-uplift-sft",
+      "layer": "data",
+      "module": "training/council_seeds + run_lora_uplift_validation.py",
+      "description": "Source-discipline SFT that lifts wisdom/provenance behaviour. The ONE validated capability result.",
+      "proofStatus": "validated",
+      "gate": "run_lora_uplift_validation (bench-a-06): 2 judge families, pre-registered seeds {1,2,10}, meanPairwise kappa 0.41 >= 0.40, 95% CI excludes 0",
+      "ablationDelta": 0.4534,
+      "adopted": true,
+      "note": "adapter vs base meanDelta +0.4534; candidate-scope, NOT an AGI claim; canClaimAGI false."
+    },
+    {
+      "id": "verifier-gated-sft-distill",
+      "layer": "data",
+      "module": "tools/gen_reasoning_distill.py",
+      "description": "SFT rows ONLY for teacher traces whose answer clears the gate (drops reasoning that reaches a hallucination).",
+      "proofStatus": "candidate",
+      "gate": "tests/test_gen_reasoning_distill.py (tool CI-tested)",
+      "ablationDelta": null,
+      "adopted": false,
+      "openItem": "trained-model uplift from gate-clean distill not yet measured vs raw distill"
+    },
+    {
+      "id": "verifier-labeled-dpo",
+      "layer": "data",
+      "module": "tools/gen_verifier_dpo.py",
+      "description": "Preference pairs labelled by MACHINE verifiers (no LLM judge), fail-closed.",
+      "proofStatus": "candidate",
+      "gate": "gen_verifier_dpo test suite",
+      "ablationDelta": null,
+      "adopted": false
+    },
+    {
+      "id": "decontam-guard",
+      "layer": "data",
+      "module": "tools/assert_decontam.py",
+      "description": "Content-shingle decontamination + never-touched private split \u2014 a HYGIENE guard on the data, not signal.",
+      "proofStatus": "validated",
+      "gate": "assert_decontam (enforced in make claim-check)",
+      "ablationDelta": null,
+      "adopted": false,
+      "note": "a guard, not an ingredient with an uplift delta \u2014 kept adopted:false by design."
+    },
+    {
+      "id": "v6-output-space-qat",
+      "layer": "objective",
+      "module": "training/qat.py::kd_top1_margin_loss",
+      "description": "Train the CERT's own metrics: T^2*KL(FP||quant) drives mean_kl + CE(quant, argmax FP) drives top1. The v5->v6 fix (train the metric you gate).",
+      "proofStatus": "candidate",
+      "gate": "qat offline_invariants (loss math, 4 checks PASS) + pre-registered T7 forecast",
+      "ablationDelta": null,
+      "adopted": false,
+      "openItem": "v6 train RESULT pending owner-approved run; forecast top1 0.95-0.98, GO ~45%"
+    },
+    {
+      "id": "abstention-objective",
+      "layer": "objective",
+      "module": "agent/abstention_scoring.py",
+      "description": "Abstain-when-warranted as a first-class objective (reward-positive abstention graded by temptation), not blanket refusal.",
+      "proofStatus": "candidate",
+      "gate": "abstention_scoring tests",
+      "ablationDelta": null,
+      "adopted": false
+    },
+    {
+      "id": "process-supervision",
+      "layer": "objective",
+      "module": "provenance_bench/step_reward.py",
+      "description": "Step-level (process) reward, not just outcome \u2014 reward the derivation, not only the final answer.",
+      "proofStatus": "candidate",
+      "gate": "test_step_reward / test_step_verifier",
+      "ablationDelta": null,
+      "adopted": false
+    },
+    {
+      "id": "deterministic-verifier-reward",
+      "layer": "objective",
+      "module": "agent/{chemistry,finance,biology,medicine}_verifier.py",
+      "description": "RLVR reward = deterministic verifiers as EXTERNAL ORACLES (mass-balance, A=L+E, reference) \u2014 the A1 oracle-escape, not LLM self-judge.",
+      "proofStatus": "validated",
+      "gate": "each verifier's reference tests (exact checks, correct by construction)",
+      "ablationDelta": null,
+      "adopted": false,
+      "note": "the verifier is a correct oracle (validated); whether training ON it helps the model is an unmeasured ablation, so it stays adopted:false until that delta exists."
+    },
+    {
+      "id": "verifier-gated-trust-boundary",
+      "layer": "verification-in-loop",
+      "module": "agent/swarm_trust_boundary.py + tools/measure_trust_boundary.py",
+      "description": "Sub-agent output reaches siblings ONLY if it clears the gate; measured on-vs-off contamination.",
+      "proofStatus": "validated",
+      "gate": "measure_trust_boundary (re-run 2026-07-01: contaminationBlockedRate 1.0, OFF 1.0 -> ON 0.0; artifact agi-proof/benchmark-results/trust-boundary-ablation.json)",
+      "ablationDelta": 1.0,
+      "adopted": true,
+      "note": "ADOPTED as a training-env signal gate: only gate-clean sub-agent output becomes training signal. SCOPE: blocks 100% of verifier-DETECTABLE contamination (admittedPoisonResidual counts poison with no detectable violation \u2014 the gate is a filter, not a truth oracle). canClaimAGI false."
+    },
+    {
+      "id": "gate-bounded-test-time-thinking",
+      "layer": "verification-in-loop",
+      "module": "agent/test_time_thinking.py",
+      "description": "Budget-forced thinking with the VERIFIER as the stop criterion; the model never sees the verdict (cannot game the gate).",
+      "proofStatus": "candidate",
+      "gate": "test_time_thinking tests",
+      "ablationDelta": null,
+      "adopted": false
+    },
+    {
+      "id": "autoresearch-firewall",
+      "layer": "verification-in-loop",
+      "module": "tools/sophia_autoresearch.py",
+      "description": "Self-improvement loop where the agent may edit policy/data/hparams but NEVER the verifier/gate/eval (anti-reward-hacking firewall).",
+      "proofStatus": "candidate",
+      "gate": "sophia_autoresearch tests (firewall + power-gated keep)",
+      "ablationDelta": null,
+      "adopted": false
+    },
+    {
+      "id": "conformal-abstention-serve",
+      "layer": "quant-serve",
+      "module": "serving/quant_abstention.py + serving/abstention_serve.py + serving/abstaining_decoder.py",
+      "description": "Serve the sub-0.97 quant model + ABSTAIN on the low-margin flip tokens (nonconformity from the quant model alone) => answered-top1 clears the bar at reduced coverage. Frontier picks the max-coverage operating point whose confidence lower bound clears the target; the decoder enforces it in the token loop with a coverage circuit-breaker. Ships a sub-0.97 model honestly.",
+      "proofStatus": "validated",
+      "gate": "test_abstention_serve 8 PASS + REAL n=1024 certs on 2 INDEPENDENT adapters (v5 nvfp4-v5-frontier-1k; v6 nvfp4-v6-frontier-1k) each clearing the 95%-Wilson-LCB operating point coverage>=0.60 AND floor>=0.97",
+      "ablationDelta": 0.0995,
+      "adopted": true,
+      "openItem": "ADOPTED 2026-07-01. Both adapters raw-FAIL the 0.97 bar (v5 0.8975, v6 0.9336) \u2014 this is a MEASURED serving HEDGE (abstain on low-margin flips, serve the rest >=0.97 out-of-sample), NOT a raw-bar pass and NOT a capability claim. canClaimAGI stays false. answered_top1 is selective accuracy on a held-out split, not a per-token guarantee.",
+      "evidence": [
+        "agi-proof/benchmark-results/nvfp4-v5-frontier-1k.json",
+        "agi-proof/benchmark-results/nvfp4-v6-frontier-1k.json",
+        "docs/06-Roadmap/Spark-Theory-Test-Forecast.md#T8",
+        "agi-proof/failure-ledger.md#v5-nvfp4-raw-fail-but-honestly-shippable-via-abstention"
+      ],
+      "adoptionSignoff": "T8 (Spark-Theory-Test-Forecast.md) MET + owner sign-off 2026-07-01. 2 independent adapters at n=1024, 95%-robust: v5 (weight-space penalty) cov 0.6426 / floor 0.9831; v6 (KD+top1 output-space objective) cov 0.7188 / floor 0.9762. v6+abstention robustly dominates v5 (+8pts coverage). Pre-registered BEFORE the v6 n=1024 run."
+    },
+    {
+      "id": "iec-8pillar-promotion-gate",
+      "layer": "eval-promotion",
+      "module": "tools/claim_gate.py",
+      "description": "The promotion gate: >=2 independent families, pre-registration, CIs, anytime-valid, decontam, item-discrimination. Nothing is claimed without a GO.",
+      "proofStatus": "validated",
+      "gate": "claim_gate (enforced in make claim-check)",
+      "ablationDelta": null,
+      "adopted": false,
+      "note": "the meta-gate itself; a guard on claims, not model signal."
+    },
+    {
+      "id": "failure-ledger-falsifiability",
+      "layer": "eval-promotion",
+      "module": "agi-proof/failure-ledger.md",
+      "description": "The public list of what is NOT proven \u2014 the falsifiability mechanism. A claim shipped with its own refutation list.",
+      "proofStatus": "validated",
+      "gate": "tools/validate_failure_ledger.py (structural validity, enforced)",
+      "ablationDelta": null,
+      "adopted": false
+    },
+    {
+      "id": "verifiability-world-model",
+      "layer": "verification-in-loop",
+      "module": "agent/verifiability_model.py",
+      "description": "World-model #1: predict P(verifier passes) from knowability features -> abstain PROACTIVELY (anticipate the consequence) instead of reactively. Nature ability-2 (representation).",
+      "proofStatus": "candidate",
+      "gate": "verifiability_model offline_invariants + tools/ablate_verifiability.py (held-out mechanism ablation)",
+      "ablationDelta": 1.0,
+      "adopted": false,
+      "note": "OFFLINE held-out mechanism ablation: proactive gate cut fabrication 1.0->0.0 at 0 control cost on disjoint strings in KNOWN feature families (artifact agi-proof/benchmark-results/verifiability-ablation.json). Deliberately NOT adopted: feature-based gate on a small synthetic held-out is weaker than a judged capability result; adoption waits for a REAL-MODEL ablation (Mac) + generalization to novel knowability types.",
+      "openItem": "real-model proactive-vs-reactive ablation (Mac) + novel-knowability-type generalization"
+    },
+    {
+      "id": "interventional-causal-ablation",
+      "layer": "eval-promotion",
+      "module": "tools/causal_ablation.py",
+      "description": "World-model #2: inject/remove a knowability feature, rank each by its CAUSAL effect on abstention (intervention, not observation). Error-centric intelligence: causal discovery.",
+      "proofStatus": "candidate",
+      "gate": "causal_ablation offline_invariants (real drivers > 0.8, null padding ~0, ranking correct)",
+      "ablationDelta": null,
+      "adopted": false
+    },
+    {
+      "id": "counterfactual-traps",
+      "layer": "eval-promotion",
+      "module": "tools/counterfactual_traps.py",
+      "description": "World-model #3: minimal knowable<->unknowable counterfactuals; intervention_consistency tests whether abstention FLIPS with the edit (world model) or not (surface). Strengthens A4.",
+      "proofStatus": "candidate",
+      "gate": "counterfactual_traps offline_invariants (world-model gate 1.0 vs surface 0.0, discriminates)",
+      "ablationDelta": null,
+      "adopted": false
+    },
+    {
+      "id": "verifier-constrained-world-model",
+      "layer": "objective",
+      "module": "agent/constrained_world_model.py",
+      "description": "World-model #4: forward-simulate under a verified law (A=L+E); derive the determined value, ABSTAIN when under-determined, flag violations. A physics-informed world model using a verifier as the law.",
+      "proofStatus": "candidate",
+      "gate": "constrained_world_model offline_invariants (derives, abstains under-determined, predictions on-law)",
+      "ablationDelta": null,
+      "adopted": false
+    },
+    {
+      "id": "active-query-selection",
+      "layer": "verification-in-loop",
+      "module": "agent/active_query.py",
+      "description": "World-model #5: turn abstention into a TARGETED request for the specific missing evidence (name the source it lacks). Nature ability-3 (selection) + verification-by-query.",
+      "proofStatus": "candidate",
+      "gate": "active_query offline_invariants (specific resolving query per feature; controls answer)",
+      "ablationDelta": null,
+      "adopted": false
+    },
+    {
+      "id": "process-world-model",
+      "layer": "verification-in-loop",
+      "module": "agent/process_world_model.py",
+      "description": "World-model #6: running validity confidence over reasoning steps; flag the first wrong step BEFORE the final verifier (early abstain/re-route). Predictive extension of okf_trace.locate_wrong_step.",
+      "proofStatus": "candidate",
+      "gate": "process_world_model offline_invariants (flags first wrong step early, clean not flagged)",
+      "ablationDelta": null,
+      "adopted": false
+    }
+  ]
+}

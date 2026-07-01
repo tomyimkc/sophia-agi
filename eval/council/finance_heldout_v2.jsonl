@@ -1,0 +1,10 @@
+{"id": "finv2-bad-1", "discipline": "finance", "answer": "Assets 500 with liabilities 200 and equity 250 on the sheet.", "correct": false}
+{"id": "finv2-bad-2", "discipline": "finance", "answer": "Assets 1,000 = liabilities 700 + equity 250 in the filing.", "correct": false}
+{"id": "finv2-bad-3", "discipline": "finance", "answer": "Our revenue share is 120% of the market this year.", "correct": false}
+{"id": "finv2-bad-4", "discipline": "finance", "answer": "The probability of default is estimated at 150%.", "correct": false}
+{"id": "finv2-bad-5", "discipline": "finance", "answer": "Assets 80 with liabilities 50 and equity 40.", "correct": false}
+{"id": "finv2-good-1", "discipline": "finance", "answer": "Assets 500 = liabilities 200 + equity 300, per the audited statement.", "correct": true}
+{"id": "finv2-good-2", "discipline": "finance", "answer": "Assets 1,000 = liabilities 700 + equity 300 in the filing.", "correct": true}
+{"id": "finv2-good-3", "discipline": "finance", "answer": "Market share is 22% of the total addressable market.", "correct": true}
+{"id": "finv2-good-4", "discipline": "finance", "answer": "The probability of default is about 3% under the model.", "correct": true}
+{"id": "finv2-good-5", "discipline": "finance", "answer": "The weighted average cost of capital is 9%.", "correct": true}

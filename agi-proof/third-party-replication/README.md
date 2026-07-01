@@ -49,3 +49,25 @@ Commit:
 Environment:
 
 Signature:
+
+---
+
+## Claim-replication pack (reproduce the effect on YOUR model)
+
+The checklist above replicates the **process** (clean clone builds + tests + reviewer independence).
+`tools/replication_pack.py` replicates the **capability claim** — that a filter + abstention gate turns
+*fabrication on unknown-answer traps* into *refusal* at low false-positive cost — **on a model of your
+choosing**, with no Sophia infrastructure (stdlib-only; ships its own decontaminated traps + controls).
+
+```bash
+python tools/replication_pack.py --selftest                                        # offline sanity
+python tools/replication_pack.py --endpoint http://HOST:PORT --model M --out raw-run.json          # raw
+python tools/replication_pack.py --endpoint http://HOST:PORT --model M-gated --out gated-run.json  # gated
+# replicable number = raw.fabrication_rate - gated.fabrication_rate, at matched control_over_abstain_rate
+```
+
+**Supports** the claim if gated `fabrication_rate` is materially below raw without a large rise in
+`control_over_abstain_rate`. **Falsifies** it if the delta vanishes or is bought only by over-abstaining
+on knowable controls — **a null is a valid, publishable result.** Pre-registration:
+[`PRE-REGISTRATION.md`](./PRE-REGISTRATION.md). File your result (supporting or refuting) as an issue;
+refutations update the failure ledger. `canClaimAGI` false.

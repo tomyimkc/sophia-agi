@@ -1,0 +1,106 @@
+diff --git a/tests/test_assemble_uplift_judgments.py b/tests/test_assemble_uplift_judgments.py
+index e7c9e587..c581bc3c 100644
+--- a/tests/test_assemble_uplift_judgments.py
++++ b/tests/test_assemble_uplift_judgments.py
+@@ -16,6 +16,7 @@ if str(ROOT) not in sys.path:
+     sys.path.insert(0, str(ROOT))
+ 
+ from tools.assemble_uplift_judgments import _content_pair, assemble  # noqa: E402
++from tools.run_lora_uplift_validation import _family_key  # noqa: E402
+ 
+ 
+ def test_pairwise_encoding() -> None:
+@@ -39,11 +40,28 @@ def test_assemble_drops_abstained_family_not_whole_item() -> None:
+     j = assemble(raws, "allenai/OLMoE-1B-7B-0924-Instruct")
+     assert j["subjectModel"] == "allenai/OLMoE-1B-7B-0924-Instruct"
+     items = {it["id"]: it for it in j["seeds"][0]["items"]}
+-    # item a: both families labelled
+-    assert items["a"]["adapterContent"] == {"ollama:qwen": True, "vllm:mlx/Llama-70B": True}
+-    # item b: 70B abstained -> only qwen present (consistent with A3 all-families drop rule)
+-    assert set(items["b"]["adapterContent"]) == {"ollama:qwen"}
+-    assert "vllm:mlx/Llama-70B" not in items["b"]["baseContent"]
++    # CONTENT must be keyed by the gate's family key, NOT the raw spec (the 2026-06-30 bug).
++    fq, fm = _family_key("ollama:qwen"), _family_key("vllm:mlx/Llama-70B")
++    assert fq != fm and fq == "ollama"
++    # item a: both families labelled, keyed by family
++    assert items["a"]["adapterContent"] == {fq: True, fm: True}
++    assert "ollama:qwen" not in items["a"]["adapterContent"]   # NOT the raw spec
++    # item b: 70B abstained -> only qwen family present (consistent with A3 all-families drop rule)
++    assert set(items["b"]["adapterContent"]) == {fq}
++    assert fm not in items["b"]["baseContent"]
++
++
++def test_same_family_collision_refused() -> None:
++    # two specs that map to the SAME family key must be refused (the gate would collapse them)
++    raws = [{"seed": 0, "judges": ["ollama:qwen2.5:7b", "ollama:qwen2.5:32b"], "answers": "s",
++             "items": [{"id": "a", "verdicts": {"ollama:qwen2.5:7b": "adapter",
++                                                "ollama:qwen2.5:32b": "base"}}]}]
++    try:
++        assemble(raws, "allenai/OLMoE")
++        raised = False
++    except ValueError:
++        raised = True
++    assert raised, "two specs in the same family must be refused"
+ 
+ 
+ def test_refuses_mixed_judge_sets() -> None:
+diff --git a/tools/assemble_uplift_judgments.py b/tools/assemble_uplift_judgments.py
+index 80a2ad1a..308f3d68 100644
+--- a/tools/assemble_uplift_judgments.py
++++ b/tools/assemble_uplift_judgments.py
+@@ -46,6 +46,12 @@ ROOT = Path(__file__).resolve().parents[1]
+ if str(ROOT) not in sys.path:
+     sys.path.insert(0, str(ROOT))
+ 
++# Key content booleans by the SAME family key the gate uses (run_lora_uplift_validation derives
++# fams = [_family_key(j) for j in judges] and looks up content[fam]). Keying by the raw spec
++# string instead silently drops EVERY row -> meanDelta 0.0, κ undefined, spurious NO-GO. Import
++# the gate's own function so the two can never diverge (the whole point of _family_key's docstring).
++from tools.run_lora_uplift_validation import _family_key  # noqa: E402
++
+ 
+ def _content_pair(verdict: "str | None") -> "tuple[bool, bool] | None":
+     """(adapterContent, baseContent) for one pairwise verdict, or None to drop the family."""
+@@ -85,7 +91,11 @@ def assemble(raws: list[dict], subject: str) -> dict:
+                 pair = _content_pair(verdict)
+                 if pair is None:
+                     continue  # drop this family for this item (kept consistent with A3)
+-                adapter_c[spec], base_c[spec] = pair
++                fam = _family_key(spec)  # MUST match the gate's per-judge key, not the raw spec
++                if fam in adapter_c:
++                    raise ValueError(f"two judge specs map to the same family {fam!r}; the gate "
++                                     f"would collapse them — use distinct judge families")
++                adapter_c[fam], base_c[fam] = pair
+             # Only emit items at least one family labelled; A3 drops not-all-families rows itself.
+             if base_c or adapter_c:
+                 items.append({"id": it.get("id"),
+@@ -126,18 +136,23 @@ def _selftest() -> int:
+     j = assemble(raws, "allenai/OLMoE-1B-7B-0924-Instruct")
+     assert j["subjectModel"] == "allenai/OLMoE-1B-7B-0924-Instruct"
+     assert len(j["seeds"]) == 3
++    # CONTENT MUST be keyed by the gate's _family_key, NOT the raw spec — else A3 drops every
++    # row (meanDelta 0.0, spurious NO-GO). This is the assertion that catches the 2026-06-30 bug
++    # and it needs no numpy, so it runs in CI too.
++    fams = {_family_key(spec) for spec in ["ollama:qwen", "vllm:mlx-community/Llama-3.3-70B"]}
++    assert fams == {"ollama", "mlx-community"}, fams
+     s0 = j["seeds"][0]["items"]
+-    # item_0: adapter preferred -> adapterContent true, baseContent false on both families
+     it0 = next(x for x in s0 if x["id"] == "item_0")
+-    assert it0["adapterContent"] == {"ollama:qwen": True, "vllm:mlx-community/Llama-3.3-70B": True}
+-    assert it0["baseContent"] == {"ollama:qwen": False, "vllm:mlx-community/Llama-3.3-70B": False}
++    assert set(it0["adapterContent"]) == fams, it0["adapterContent"]
++    assert it0["adapterContent"] == {"ollama": True, "mlx-community": True}
++    assert it0["baseContent"] == {"ollama": False, "mlx-community": False}
+     # tie item -> both true
+     it6 = next(x for x in s0 if x["id"] == "item_6")
+-    assert it6["adapterContent"]["ollama:qwen"] is True and it6["baseContent"]["ollama:qwen"] is True
++    assert it6["adapterContent"]["ollama"] is True and it6["baseContent"]["ollama"] is True
+     # abstain item -> only the qwen family present
+     ita = next(x for x in s0 if x["id"] == "item_abstain")
+-    assert set(ita["adapterContent"]) == {"ollama:qwen"}
+-    assert "vllm:mlx-community/Llama-3.3-70B" not in ita["baseContent"]
++    assert set(ita["adapterContent"]) == {"ollama"}
++    assert "mlx-community" not in ita["baseContent"]
+     # null verdict maps to None pair
+     assert _content_pair(None) is None and _content_pair("tie") == (True, True)
+     # End-to-end: feed it to the real aggregator and confirm it runs + computes a delta.

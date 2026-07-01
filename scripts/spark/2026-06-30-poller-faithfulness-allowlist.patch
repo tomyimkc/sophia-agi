@@ -1,0 +1,13 @@
+diff --git a/tools/github_bridge_poll.py b/tools/github_bridge_poll.py
+index 6033f8b..94cd444 100644
+--- a/tools/github_bridge_poll.py
++++ b/tools/github_bridge_poll.py
+@@ -35,7 +35,7 @@ import time
+ import urllib.request
+ from pathlib import Path
+ 
+-ALLOWLIST = {"--dry-run", "--bench-a", "--bench-b", "--bench-virtues", "--all", "--execute", "--run-train"}
++ALLOWLIST = {"--dry-run", "--bench-a", "--bench-b", "--bench-virtues", "--bench-faithfulness", "--all", "--execute", "--run-train"}
+ GATED = {"--execute", "--run-train"}  # require approvedBy
+ RUNNER = "scripts/run_local_benchmarks.sh"
+ MAX_TAIL = 64 * 1024  # cap stdout stored in the result

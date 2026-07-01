@@ -1,0 +1,4 @@
+{"discipline": "mathematics", "caseId": "math-div", "prompt": "How many months of runway is $100,000 at $5,000/month?", "question": "Compute 100000 / 5000 in months.", "thinking": "Runway = cash / burn = 100000 / 5000. 5000 * 20 = 100000, so the quotient is 20.", "answer": "100000 / 5000 = 20 months of runway."}
+{"discipline": "mathematics", "caseId": "math-mul", "prompt": "What is 12 times 13?", "question": "Compute 12 * 13.", "thinking": "12 * 13 = 12 * 10 + 12 * 3 = 120 + 36 = 156.", "answer": "12 * 13 = 156."}
+{"discipline": "mathematics", "caseId": "math-pct", "prompt": "What is 25% of 80?", "question": "Compute 25% of 80.", "thinking": "25% is one quarter; 80 / 4 = 20.", "answer": "25% of 80 = 20."}
+{"discipline": "mathematics", "caseId": "math-sum", "prompt": "Sum the first four positive integers.", "question": "Compute 1 + 2 + 3 + 4.", "thinking": "1 + 2 + 3 + 4 = 10 (n(n+1)/2 with n=4 gives 10).", "answer": "Adding 1, 2, 3, and 4 gives a total of 10."}

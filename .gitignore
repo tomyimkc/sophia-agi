@@ -161,3 +161,9 @@ training/rlvr/
 secret/**
 !secret/.gitkeep
 
+# === Personal skills (user-designated) — keep out of future commits ===
+# NOTE: these are ALREADY tracked + pushed (public). Ignoring them does NOT retract public history;
+# to STOP future tracking run `git rm --cached <path>` (a public removal commit; history remains).
+.claude/skills/
+skills/portable/
+.grok/skills/

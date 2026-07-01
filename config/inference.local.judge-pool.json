@@ -1,0 +1,30 @@
+{
+  "schema": "sophia.judge_pool.local.v1",
+  "_comment": "JUDGE POOL: multiple endpoint REPLICAS (lanes) per judge FAMILY, the fix for the #1 cluster bottleneck (tools/cluster_schedule_sim.py: the judged-sweep queue plateaus at ~1.36x because ~7/10 jobs funnel through ONE serialized Mac judge). Consumed by tools/judge_pool.py (load_pool/validate_pool) and, opt-in, by tools/judge_pilot_answers.py --judge-pool. Each replica spec is the EXISTING 'provider:model@http://host:port/v1' string agent.model.default_client already builds an endpoint client from.",
+  "_invariant": "This changes HOW MANY lanes serve each family, NEVER WHICH families judge. Replicas of the SAME model are the SAME family; adding lanes does NOT add families and MUST NOT change any verdict. This stays a 2-family gate (qwen + mlx-community) => kappa>=0.40, >=2 DISTINCT families, judge!=subject, all untouched. validate_pool ENFORCES >=2 distinct families and that a family's replicas all key to the SAME family.",
+  "_family_key_subtlety": "tools/run_lora_uplift_validation._family_key keys an AGGREGATOR provider (vllm/sglang/llamacpp/openai/openrouter) by the model VENDOR prefix, but a non-aggregator engine (mlx/ollama) by the ENGINE. So 'vllm:mlx-community/Llama-3.3-70B-Instruct-4bit' -> family 'mlx-community', whereas 'mlx:mlx-community/Llama-3.3-70B-Instruct-4bit' -> family 'mlx'. The SAME weights on two different engines key to two DIFFERENT families and would silently inflate the family count. So ALL lanes of one family MUST use the same provider+vendor. Here every 70B lane is served via vllm (keyless) so all three key to vendor family 'mlx-community'.",
+  "families": {
+    "qwen": {
+      "_role": "judge family A (7B). 1 lane is enough — it is not the bottleneck.",
+      "replicas": [
+        "vllm:Qwen/Qwen2.5-7B-Instruct@http://169.254.10.1:8000/v1"
+      ]
+    },
+    "mlx-community": {
+      "_role": "judge family B (the 70B, the bottleneck). 3 LANES: the Mac AND a 70B running on 2 spare Sparks, so the ~7/10 judge jobs distribute across lanes instead of queueing on one box.",
+      "_deploy": "Serve mlx-community/Llama-3.3-70B-Instruct-4bit on EACH spare Spark via vllm with NO api key (the keyless vllm preset; api_key_default=EMPTY): 'vllm serve mlx-community/Llama-3.3-70B-Instruct-4bit --port 8001'. Point the lane at that box's http://HOST:8001/v1. The Mac lane (169.254.26.171:8081) must ALSO be a vllm-compatible /v1 endpoint serving the SAME vendor so it keys to 'mlx-community' too (NOT the mlx engine, which would key to 'mlx' and become a 2nd family).",
+      "replicas": [
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.26.171:8081/v1",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.10.2:8001/v1",
+        "vllm:mlx-community/Llama-3.3-70B-Instruct-4bit@http://169.254.10.3:8001/v1"
+      ]
+    }
+  },
+  "expected": {
+    "distinct_families": 2,
+    "families": ["mlx-community", "qwen"],
+    "total_lanes": 4,
+    "lanes_per_family": {"qwen": 1, "mlx-community": 3},
+    "_note": "Still a 2-family gate. The 3 mlx-community lanes are ONE family on 3 lanes (throughput only), not 3 families. design/infra; no capability claim; canClaimAGI stays false."
+  }
+}

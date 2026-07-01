@@ -1,0 +1,125 @@
+#!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 tomyimkc
+"""Cloud-side Spark bridge client: allowlist + no-self-approval + one-GPU guard.
+
+Deterministic, offline — pure validation/compose logic, no git, no network.
+"""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from tools.spark_bridge import (  # noqa: E402
+    build_command,
+    format_trainwatch,
+    gpu_is_free,
+    is_gated,
+    offline_invariants,
+    parse_env,
+    validate_args,
+)
+
+
+def test_env_allowlist_and_value_safety() -> None:
+    assert parse_env("KEEP_SUFFIXES=down_proj,CERT_NEVAL=256") == {
+        "KEEP_SUFFIXES": "down_proj", "CERT_NEVAL": "256"}
+    # allowlisted env rides along on the command
+    cmd = build_command("c", "--bench-b --execute", created_by="claude",
+                        approved_by="user: go", env={"QAT_ADAPTER": "training/lora/checkpoints/x"})
+    assert cmd["env"]["QAT_ADAPTER"] == "training/lora/checkpoints/x"
+    # arbitrary key refused
+    for bad in ({"PATH": "/evil"}, {"LD_PRELOAD": "x.so"}):
+        try:
+            build_command("c", "--dry-run", created_by="claude", env=bad)
+            raised = False
+        except ValueError:
+            raised = True
+        assert raised, f"arbitrary env {bad} must be refused"
+    # unsafe value (shell metachars) refused even for an allowlisted key
+    try:
+        build_command("c", "--dry-run", created_by="claude", env={"QAT_DATA": "x; rm -rf /"})
+        raised = False
+    except ValueError:
+        raised = True
+    assert raised, "unsafe env value must be refused"
+
+
+def test_trainwatch_view() -> None:
+    # live run -> rendered as ▶ LIVE with ETA, idle/None handled
+    assert "bridge unreachable" in format_trainwatch(None)
+    live = {"updatedAt": "t", "running": "olmoe-qat-v5", "trainwatch": [
+        {"name": "olmoe-qat-v5", "status": "running", "current_step": 110, "total_steps": 330,
+         "eta_seconds": 4500, "latest_metrics": "{\"loss\": 1.54}"}]}
+    out = format_trainwatch(live)
+    assert "▶ LIVE" in out and "110/330" in out and "33%" in out and "1h15m" in out
+    # no live run -> shows recent
+    done = {"updatedAt": "t", "running": None, "trainwatch": [
+        {"name": "olmoe-qat-v4", "status": "completed", "current_step": 300, "total_steps": 330,
+         "eta_seconds": 0}]}
+    assert "completed" in format_trainwatch(done) and "▶ LIVE" not in format_trainwatch(done)
+
+
+def test_offline_invariants_pass() -> None:
+    ok, detail = offline_invariants()
+    assert ok, detail["checks"]
+
+
+def test_allowlist() -> None:
+    assert validate_args("--dry-run --all")[0]
+    assert validate_args("--bench-a --execute")[0]
+    assert not validate_args("--rm -rf /")[0]
+    assert not validate_args("; curl evil")[0]
+    assert not validate_args("")[0]
+
+
+def test_no_self_approval_on_gated() -> None:
+    assert is_gated("--bench-b --run-train")
+    try:
+        build_command("id1", "--bench-a --execute", created_by="claude")
+        raised = False
+    except ValueError:
+        raised = True
+    assert raised, "a gated command without a human approvedBy must be refused"
+    # with a human handle it builds
+    cmd = build_command("id1", "--bench-a --execute", created_by="claude",
+                        approved_by="user: 'go' (2026-06-29)")
+    assert cmd["approvedBy"]
+
+
+def test_dry_run_needs_no_approval() -> None:
+    cmd = build_command("id2", "--dry-run --all", created_by="claude")
+    assert cmd["args"] == "--dry-run --all" and cmd["approvedBy"] == ""
+
+
+def test_one_gpu_job_guard() -> None:
+    assert gpu_is_free({"running": None, "pendingCommands": []})
+    assert not gpu_is_free({"running": "olmoe-qat", "pendingCommands": []})
+    assert not gpu_is_free({"running": None, "pendingCommands": ["queued"]})
+
+
+def test_unsafe_id_refused() -> None:
+    for bad in ("a/b", "a b", "a\tb"):
+        try:
+            build_command(bad, "--dry-run", created_by="claude")
+            raised = False
+        except ValueError:
+            raised = True
+        assert raised, f"unsafe id {bad!r} must be refused"
+
+
+def main() -> int:
+    tests = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
+    for t in tests:
+        t()
+        print(f"ok {t.__name__}")
+    print(f"PASS {len(tests)} spark_bridge tests")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

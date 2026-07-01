@@ -343,6 +343,7 @@ def build_model_and_tokenizer(
     attn_impl: str | None = None,
     resume_adapter: Path | None = None,
     lora_rank_alloc: bool = False,
+    qat: bool = False,
 ) -> tuple[Any, Any]:
     from peft import LoraConfig, PeftModel, get_peft_model, prepare_model_for_kbit_training
     from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
@@ -351,10 +352,11 @@ def build_model_and_tokenizer(
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    load_kwargs: dict[str, Any] = {"trust_remote_code": True, "device_map": "auto"}
+    load_kwargs: dict[str, Any] = {"trust_remote_code": True}
     if attn_impl:
         load_kwargs["attn_implementation"] = attn_impl  # e.g. flash_attention_2 / sdpa
     if four_bit:
+        load_kwargs["device_map"] = "auto"
         load_kwargs["quantization_config"] = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type="nf4",
@@ -363,13 +365,29 @@ def build_model_and_tokenizer(
         )
     else:
         load_kwargs["torch_dtype"] = dtype
+        # Full-GPU placement (no accelerate CPU/meta offload). A bf16 model left partially on the
+        # meta/CPU device breaks the manual QAT penalty (and the v6 reference forward) with
+        # "Tensor on device meta is not on the expected device cuda:0". A 7B fits the Spark, so pin
+        # the whole model to cuda:0 when available; fall back to auto only off-GPU.
+        try:
+            import torch as _t
+            load_kwargs["device_map"] = {"": 0} if _t.cuda.is_available() else "auto"
+        except Exception:
+            load_kwargs["device_map"] = "auto"
 
     model = AutoModelForCausalLM.from_pretrained(model_id, **load_kwargs)
     if four_bit:
         model = prepare_model_for_kbit_training(model)
 
     model.config.use_cache = False
-    model.gradient_checkpointing_enable()
+    # Gradient checkpointing re-runs the forward during backward. The fused-expert QAT wrapper
+    # (training/qat._attach_qat_fused_experts) swaps each 3-D expert Parameter in/out of its module
+    # during forward; under checkpointing that swap runs AGAIN inside the backward recompute and
+    # progressively accumulates the 32 x ~0.5 GB merged expert tensors — fine for ~10 steps then a
+    # hard 99%-CPU / ~34 W-GPU stall. A 7B QAT run peaks ~37 GB, far under the Spark's 128 GB, so
+    # checkpointing is unnecessary here — skip it under QAT (co-adapting experts needs the live wrap).
+    if not qat:
+        model.gradient_checkpointing_enable()
 
     if resume_adapter and resume_adapter.exists():
         model = PeftModel.from_pretrained(model, str(resume_adapter), is_trainable=True)
@@ -642,6 +660,10 @@ def run_manual_train(
     qat: bool = False,
     qat_scheme: str = "int8",
     qat_lambda: float = 1e-3,
+    qat_kd_weight: float = 0.0,
+    qat_top1_weight: float = 0.0,
+    qat_temp: float = 2.0,
+    qat_margin: float = 0.0,
 ) -> dict:
     import math
 
@@ -657,6 +679,13 @@ def run_manual_train(
 
         def qat_penalty_fn() -> Any:
             return _qat_penalty(model, scheme=qat_scheme, lam=qat_lambda)
+
+    # v6: output-space objective — train the CERT's own metrics (mean_kl + top1), not just the
+    # weight-space penalty. Off by default (all weights 0) => v5 loss is byte-identical. When ON, an
+    # extra DETACHED full-precision reference forward (qat_bypass) provides the KD/top1 teacher.
+    v6_on = qat and (qat_kd_weight > 0.0 or qat_top1_weight > 0.0 or qat_margin > 0.0)
+    if v6_on:
+        from training.qat import kd_top1_margin_loss as _kd_top1, qat_bypass as _qat_bypass
 
     device = model.get_input_embeddings().weight.device
     # Packing concatenates short rows into one flat sequence (no padding) and relies on
@@ -710,6 +739,17 @@ def run_manual_train(
             loss = outputs.loss / grad_accum
             if qat_penalty_fn is not None:
                 loss = loss + qat_penalty_fn() / grad_accum
+            if v6_on:
+                # DETACHED full-precision reference forward = the KD/top1 teacher; the fake-quant
+                # forward (outputs.logits) is the student. Only supervised (labels != -100) positions
+                # are scored, mirroring what the cert measures.
+                with torch.no_grad(), _qat_bypass(model):
+                    fp_logits = model(**batch).logits
+                v6 = _kd_top1(fp_logits, outputs.logits,
+                              valid_mask=(batch["labels"] != -100),
+                              temperature=qat_temp, kd_weight=qat_kd_weight,
+                              top1_weight=qat_top1_weight, margin=qat_margin)
+                loss = loss + v6 / grad_accum
             loss.backward()
             if (step + 1) % grad_accum == 0:
                 torch.nn.utils.clip_grad_norm_(trainable, max_grad_norm)
@@ -842,6 +882,18 @@ def main() -> int:
                         help="Deployment quantization grid the model co-adapts to (default: int8).")
     parser.add_argument("--qat-lambda", type=float, default=1e-3,
                         help="Weight on the quant-pushing penalty term (default: 1e-3).")
+    # v6 output-space objective (train the cert's own metrics). All default 0 => v5 loss unchanged.
+    parser.add_argument("--qat-kd-weight", type=float, default=0.0,
+                        help="v6: weight on the output-space KD term KL(FP||quant)@T (drives mean_kl). "
+                             "Recommended v6: 1.0. Default 0 keeps the v5 objective.")
+    parser.add_argument("--qat-top1-weight", type=float, default=0.0,
+                        help="v6: weight on the top1 term CE(quant, argmax(FP)) (drives top1). "
+                             "Recommended v6: 0.5. Default 0 keeps the v5 objective.")
+    parser.add_argument("--qat-temp", type=float, default=2.0,
+                        help="v6: KD temperature T (default 2.0).")
+    parser.add_argument("--qat-margin", type=float, default=0.0,
+                        help="v6: optional hinge wanting the FP-top token to win the quant logits by "
+                             "this margin (default 0 = off; the KD+top1 terms are the core).")
     parser.add_argument("--shard", choices=("none", "fsdp"), default="none",
                         help="Multi-GPU param sharding for high/top-tier MoE bases (training/sharding.py). "
                              "'fsdp' shards the frozen base across torch.distributed ranks; launch with torchrun.")
@@ -989,6 +1041,7 @@ def main() -> int:
             attn_impl=attn_impl,
             resume_adapter=args.resume_adapter,
             lora_rank_alloc=args.lora_rank_alloc,
+            qat=args.qat,
         )
 
     if args.backend != "mlx":
@@ -1016,13 +1069,24 @@ def main() -> int:
             print(f"QAT enabled (scheme={args.qat_scheme}, lambda={args.qat_lambda}, "
                   f"fake-quant on {wrapped} module(s): attn={cov.get('attn', '?')} "
                   f"expert={cov.get('expert', '?')} other={cov.get('other', '?')})", flush=True)
-            # The blind spot that cost four certify rounds: if QAT reaches 0 experts on an MoE, the
-            # experts can't co-adapt to low-bit serving. Surface it at train time, loudly.
+            # The blind spot that cost four certify rounds AND a wasted v6 fire (2026-07-01): if QAT
+            # reaches 0 experts on an MoE, the experts co-adapt to bf16 (not the serving grid), so a
+            # long train is doomed to ~= the un-co-adapted baseline (v6~v5). The offline qat
+            # invariants (15/15) do NOT catch this — it is a RUNTIME wrapping gap (fused 3-D
+            # OlmoeExperts gate_up_proj/down_proj Parameters + peft ParamWrapper, unreached by the
+            # per-nn.Linear STE). ABORT before burning GPU hours rather than warn-and-waste.
             if cov.get("model_has_expert_params") and cov.get("expert", 0) == 0:
-                print("WARNING: QAT covered 0 EXPERT modules though the model has experts — the "
-                      "MoE experts will NOT be co-adapted to the serving grid and will degrade when "
-                      "served quantized. Check that experts load as per-expert nn.Linear and that "
-                      "--target-modules reaches them (see LoRA target summary above).", flush=True)
+                import os as _os
+                _msg = ("--qat covered 0 EXPERT modules but the model HAS fused experts: they would "
+                        "co-adapt to bf16, NOT the serving grid -> the run is doomed to ~= baseline "
+                        "(v6~v5), wasting GPU hours. Fix the fused-expert QAT reach first (failure "
+                        "ledger 'fused-expert QAT-compose': STE-fake-quant the OlmoeExperts "
+                        "gate_up_proj/down_proj 3-D Parameters inside the peft ParamWrapper forward; "
+                        "verify via THIS coverage line showing expert>0, not the offline invariants). "
+                        "Set QAT_ALLOW_UNCOVERED_EXPERTS=1 to train attn-only QAT deliberately.")
+                if _os.environ.get("QAT_ALLOW_UNCOVERED_EXPERTS") != "1":
+                    raise SystemExit("FATAL: " + _msg)
+                print("WARNING (QAT_ALLOW_UNCOVERED_EXPERTS override): " + _msg, flush=True)
 
     if args.shard == "fsdp":
         # High/top-tier multi-GPU path: shard the frozen base across torch.distributed ranks.
@@ -1116,6 +1180,10 @@ def main() -> int:
         qat=args.qat and args.backend != "mlx",
         qat_scheme=args.qat_scheme,
         qat_lambda=args.qat_lambda,
+        qat_kd_weight=args.qat_kd_weight,
+        qat_top1_weight=args.qat_top1_weight,
+        qat_temp=args.qat_temp,
+        qat_margin=args.qat_margin,
     )
 
     # Remove the NEFTune noise hook before persisting so inference is noise-free.

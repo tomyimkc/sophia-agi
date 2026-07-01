@@ -1,0 +1,151 @@
+diff --git a/tests/test_judge_parallel_families.py b/tests/test_judge_parallel_families.py
+new file mode 100644
+index 00000000..0255b2e6
+--- /dev/null
++++ b/tests/test_judge_parallel_families.py
+@@ -0,0 +1,80 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: Apache-2.0
++# Copyright (c) 2026 tomyimkc
++"""Cross-family judge concurrency must change ONLY wall-clock, never the verdicts.
++
++judge_pilot_answers.py judges each family on its own box; running families concurrently
++(distinct boxes) instead of sequentially reclaims the cross-box idle gap. This test pins the
++invariant that matters: concurrent and sequential produce IDENTICAL per-item verdicts, and the
++concurrency is correctly suppressed when two families share a box (which would only oversubscribe
++one endpoint). Offline — uses the `mock` provider, no network, no GPU.
++"""
++from __future__ import annotations
++
++import json
++import subprocess
++import sys
++import tempfile
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[1]
++TOOL = ROOT / "tools" / "judge_pilot_answers.py"
++
++
++def _fixture(d: Path) -> Path:
++    rows = [{"id": f"source_discipline/{i}", "task_family": "source_discipline",
++             "base_answer": f"Base answer {i}", "adapter_answer": f"Adapter answer {i}",
++             "reference": "gold", "prompt": "q"} for i in range(16)]
++    p = d / "answers.json"
++    p.write_text(json.dumps(rows), encoding="utf-8")
++    return p
++
++
++def _run(answers: Path, judges: str, raw: Path, out: Path, *extra: str) -> str:
++    r = subprocess.run([sys.executable, str(TOOL), "--answers", str(answers),
++                        "--judges", judges, "--forced-choice", "--seed", "1",
++                        "--raw-out", str(raw), "--out", str(out), *extra],
++                       capture_output=True, text=True, cwd=str(ROOT))
++    assert r.returncode == 0, r.stderr
++    return r.stdout
++
++
++def _verdicts(raw: Path) -> list:
++    d = json.loads(raw.read_text(encoding="utf-8"))
++    return [(it["id"], it["verdicts"]) for it in d["items"]]
++
++
++def test_concurrent_equals_sequential() -> None:
++    with tempfile.TemporaryDirectory() as td:
++        d = Path(td)
++        ans = _fixture(d)
++        judges = "mock:a@http://box1:1/v1,mock:b@http://box2:2/v1"
++        log_par = _run(ans, judges, d / "par-raw.json", d / "par.json")
++        log_seq = _run(ans, judges, d / "seq-raw.json", d / "seq.json", "--no-parallel-families")
++        assert "CONCURRENTLY" in log_par, "distinct boxes should judge concurrently by default"
++        assert "CONCURRENTLY" not in log_seq, "--no-parallel-families must force sequential"
++        assert _verdicts(d / "par-raw.json") == _verdicts(d / "seq-raw.json"), \
++            "concurrency must not change any verdict"
++
++
++def test_shared_box_suppresses_concurrency() -> None:
++    with tempfile.TemporaryDirectory() as td:
++        d = Path(td)
++        ans = _fixture(d)
++        judges = "mock:a@http://samebox:9/v1,mock:b@http://samebox:9/v1"
++        log = _run(ans, judges, d / "raw.json", d / "out.json")
++        assert "CONCURRENTLY" not in log, "families on the same box must NOT be parallelized"
++        assert "share a box" in log
++
++
++def main() -> int:
++    tests = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
++    for t in tests:
++        t()
++        print(f"ok {t.__name__}")
++    print(f"PASS {len(tests)} judge_parallel_families tests")
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/tools/judge_pilot_answers.py b/tools/judge_pilot_answers.py
+index 803a38ca..058d5a69 100644
+--- a/tools/judge_pilot_answers.py
++++ b/tools/judge_pilot_answers.py
+@@ -220,6 +220,11 @@ def main() -> int:
+     ap.add_argument("--seed", type=int, default=None,
+                     help="Seed number to stamp into --raw-out (this file judges ONE seed's answers).")
+     ap.add_argument("--workers", type=int, default=8)
++    ap.add_argument("--no-parallel-families", action="store_true",
++                    help="Judge the families one after another instead of concurrently. Default is "
++                         "concurrent when families resolve to DISTINCT boxes (both work at once); "
++                         "use this to force the old sequential behaviour (e.g. for clean per-box "
++                         "latency profiling).")
+     ap.add_argument("--limit", type=int, default=None)
+     ap.add_argument("--forced-choice", action="store_true",
+                     help="Pre-registered variant: disallow TIE so both judges face the same forced "
+@@ -234,18 +239,44 @@ def main() -> int:
+     judge_specs = [j.strip() for j in args.judges.split(",") if j.strip()]
+     print(f"judging {len(rows)} source-family cases with {len(judge_specs)} families ...")
+ 
+-    per_judge = {}
+-    for spec in judge_specs:
++    def _judge_spec(spec: str) -> "tuple[str, list]":
++        """Judge every row with ONE family (its own client + inner worker pool)."""
+         client = default_client(spec)
+         with ThreadPoolExecutor(max_workers=args.workers) as ex:
+             verdicts = list(ex.map(lambda r: judge_one(client, r, forced=args.forced_choice), rows))
+-        per_judge[spec] = verdicts
+         ok = [v for v in verdicts if v]
+         tally = {k: ok.count(k) for k in ("adapter", "base", "tie")}
+         n = len(ok)
+         print(f"  [{spec}] n={n} adapter={tally['adapter']} base={tally['base']} tie={tally['tie']} "
+               f"adapter_winrate={round(tally['adapter']/n,3) if n else None}")
+-
++        return spec, verdicts
++
++    # Each family targets its OWN box (Qwen on the Spark, 70B on the Mac over Cat6). Judging the
++    # families SEQUENTIALLY leaves one box idle while the other runs — wall-clock = sum(per-family).
++    # When the families resolve to DISTINCT base_urls, judge them CONCURRENTLY so both boxes work at
++    # once -> wall-clock = max(per-family). Same requests, same per-box load (one inner pool each);
++    # only the cross-box idle gap is reclaimed. We refuse to parallelize families that SHARE a box
++    # (that would just oversubscribe one endpoint, not parallelize) and honor --no-parallel-families.
++    per_judge: dict = {}
++    boxes = [(s.split("@", 1)[1] if "@" in s else s.split(":", 1)[0]) for s in judge_specs]
++    distinct_boxes = len(set(boxes)) == len(boxes)
++    parallel = (not args.no_parallel_families) and len(judge_specs) >= 2 and distinct_boxes
++    if parallel:
++        print(f"  (judging {len(judge_specs)} families CONCURRENTLY — distinct boxes, "
++              f"both work at once)")
++        with ThreadPoolExecutor(max_workers=len(judge_specs)) as ex:
++            for spec, verdicts in ex.map(_judge_spec, judge_specs):
++                per_judge[spec] = verdicts
++    else:
++        if len(judge_specs) >= 2 and not distinct_boxes and not args.no_parallel_families:
++            print("  (families share a box -> judging SEQUENTIALLY to avoid oversubscribing it)")
++        for spec in judge_specs:
++            s, verdicts = _judge_spec(spec)
++            per_judge[s] = verdicts
++
++    # Restore the judges' declared order (ThreadPoolExecutor.map preserves input order, but a dict
++    # built from concurrent completions could otherwise reorder; key everything off judge_specs).
++    per_judge = {spec: per_judge[spec] for spec in judge_specs}
+     specs = list(per_judge)
+     kappa = _kappa(per_judge[specs[0]], per_judge[specs[1]]) if len(specs) >= 2 else None
+ 

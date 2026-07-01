@@ -25,12 +25,20 @@ import math
 import random
 import re
 import sys
+import threading
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from agent.model import default_client  # noqa: E402
+# Judge-pool routing (opt-in, --judge-pool): multiple endpoint REPLICAS (lanes) per family. Pure
+# least-loaded routing reused from tools/judge_pool.py; it changes WHICH lane serves a request,
+# never the request or its verdict (same model => same verdict; only the serving endpoint differs).
+from tools.judge_pool import (  # noqa: E402
+    load_pool, endpoints_for, next_endpoint, validate_pool,
+)
+from tools.run_lora_uplift_validation import _family_key  # noqa: E402
 
 # Source/provenance families the pilot's claims rest on (skip retention/tool axes).
 SOURCE_FAMILIES = {
@@ -84,6 +92,49 @@ def _parse(verdict: str, *, forced: bool = False) -> "str | None":
 def _ab_order(case_id: str) -> bool:
     """Deterministic per-case A/B assignment (reproducible, no global RNG): True => A=adapter."""
     return (int(__import__("hashlib").sha1((case_id or "").encode()).hexdigest(), 16) % 2) == 0
+
+
+class _PoolRouter:
+    """Routes a family's per-item judge requests across that family's REPLICA lanes (least-loaded,
+    deterministic tie-break via judge_pool.next_endpoint). Each lane gets its OWN default_client
+    (cached). Verdict-identity: the verdict depends only on the model + prompt, NOT the base_url, so
+    spreading requests over replicas of the SAME model is timing/routing ONLY — never a verdict
+    change. The in-flight counter only load-BALANCES; it never alters a request."""
+
+    def __init__(self, pool: "dict[str, list[str]]", family: str):
+        self._lanes = endpoints_for(pool, family)
+        if not self._lanes:
+            raise ValueError(f"judge-pool has no lanes for family {family!r}")
+        self._family = family
+        self._clients: "dict[str, object]" = {}
+        self._in_flight: "dict[str, int]" = {s: 0 for s in self._lanes}
+        self._lock = threading.Lock()
+
+    def _client_for(self, spec: str):
+        c = self._clients.get(spec)
+        if c is None:
+            c = default_client(spec)
+            self._clients[spec] = c
+        return c
+
+    def pick(self) -> str:
+        """Claim the least-loaded lane (increments its in-flight); pair with release()."""
+        with self._lock:
+            spec = next_endpoint({self._family: self._lanes}, self._family, self._in_flight)
+            self._in_flight[spec] += 1
+            return spec
+
+    def release(self, spec: str) -> None:
+        with self._lock:
+            self._in_flight[spec] = max(0, self._in_flight[spec] - 1)
+
+    def generate(self, system: str, user: str):
+        """Drop-in for client.generate, but routed to a lane. Used by judge_one transparently."""
+        spec = self.pick()
+        try:
+            return self._client_for(spec).generate(system, user)
+        finally:
+            self.release(spec)
 
 
 def judge_one(client, case: dict, *, forced: bool = False) -> "str | None":
@@ -213,7 +264,25 @@ def main() -> int:
     ap.add_argument("--answers", type=Path, required=True)
     ap.add_argument("--judges", default="openrouter:deepseek/deepseek-chat,openrouter:meta-llama/llama-3.3-70b-instruct")
     ap.add_argument("--out", type=Path, default=ROOT / "agi-proof" / "benchmark-results" / "wisdom-market" / "M3-pilot-judge.json")
+    ap.add_argument("--raw-out", type=Path, default=None,
+                    help="Also write per-item per-judge raw verdicts (adapter/base/tie/null) here. "
+                         "This is the labelling-step artifact tools/assemble_uplift_judgments.py "
+                         "consumes to build the A3 judgments.json (the summary --out drops them).")
+    ap.add_argument("--seed", type=int, default=None,
+                    help="Seed number to stamp into --raw-out (this file judges ONE seed's answers).")
     ap.add_argument("--workers", type=int, default=8)
+    ap.add_argument("--no-parallel-families", action="store_true",
+                    help="Judge the families one after another instead of concurrently. Default is "
+                         "concurrent when families resolve to DISTINCT boxes (both work at once); "
+                         "use this to force the old sequential behaviour (e.g. for clean per-box "
+                         "latency profiling).")
+    ap.add_argument("--judge-pool", type=Path, default=None,
+                    help="OPT-IN judge-pool config (config/inference.local.judge-pool.json). When "
+                         "given, each judge family's per-item requests ROUND-ROBIN across that "
+                         "family's REPLICA lanes (least-loaded) instead of a single endpoint, so "
+                         "judge load distributes instead of queueing on one box. VERDICT-IDENTICAL "
+                         "to the single-endpoint path (same model => same verdict; only the serving "
+                         "endpoint differs). Absent => unchanged single-endpoint behaviour.")
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--forced-choice", action="store_true",
                     help="Pre-registered variant: disallow TIE so both judges face the same forced "
@@ -228,18 +297,77 @@ def main() -> int:
     judge_specs = [j.strip() for j in args.judges.split(",") if j.strip()]
     print(f"judging {len(rows)} source-family cases with {len(judge_specs)} families ...")
 
-    per_judge = {}
-    for spec in judge_specs:
-        client = default_client(spec)
+    # OPT-IN judge pool: load + validate (keeps the 2-family gate; refuses a misconfig) once.
+    pool = None
+    if args.judge_pool is not None:
+        pool = load_pool(json.loads(args.judge_pool.read_text(encoding="utf-8")))
+        validate_pool(pool)  # raises on <2 families or a family whose replicas mix families
+        print(f"  (judge-pool ON: routing each family across its replica lanes from "
+              f"{args.judge_pool}; verdict-identical, timing/routing only)")
+
+    def _client_for_spec(spec: str):
+        """The serving client for one judge family. With a pool, a least-loaded ROUTER over that
+        family's replica lanes; without, the single endpoint (unchanged default). Either way the
+        verdict depends only on the model + prompt, so the two are verdict-identical."""
+        if pool is None:
+            return default_client(spec)
+        fam = _family_key(spec)
+        lanes = endpoints_for(pool, fam)
+        if not lanes:
+            raise ValueError(f"judge spec {spec!r} (family {fam!r}) has no lanes in the judge pool")
+        return _PoolRouter(pool, fam)
+
+    def _judge_spec(spec: str) -> "tuple[str, list]":
+        """Judge every row with ONE family (its own client/router + inner worker pool)."""
+        client = _client_for_spec(spec)
         with ThreadPoolExecutor(max_workers=args.workers) as ex:
             verdicts = list(ex.map(lambda r: judge_one(client, r, forced=args.forced_choice), rows))
-        per_judge[spec] = verdicts
         ok = [v for v in verdicts if v]
         tally = {k: ok.count(k) for k in ("adapter", "base", "tie")}
         n = len(ok)
         print(f"  [{spec}] n={n} adapter={tally['adapter']} base={tally['base']} tie={tally['tie']} "
               f"adapter_winrate={round(tally['adapter']/n,3) if n else None}")
+        return spec, verdicts
 
+    # Each family targets its OWN box (Qwen on the Spark, 70B on the Mac over Cat6). Judging the
+    # families SEQUENTIALLY leaves one box idle while the other runs — wall-clock = sum(per-family).
+    # When the families resolve to DISTINCT base_urls, judge them CONCURRENTLY so both boxes work at
+    # once -> wall-clock = max(per-family). Same requests, same per-box load (one inner pool each);
+    # only the cross-box idle gap is reclaimed. We refuse to parallelize families that SHARE a box
+    # (that would just oversubscribe one endpoint, not parallelize) and honor --no-parallel-families.
+    per_judge: dict = {}
+    def _box_key(spec: str) -> str:
+        # The physical box a family targets: the base_url after '@', else the host before ':'.
+        raw = spec.split("@", 1)[1] if "@" in spec else spec.split(":", 1)[0]
+        # Normalize cosmetically-different-but-same endpoints so they count as ONE box:
+        # strip trailing '/', and lowercase the scheme+host (case-insensitive per RFC 3986)
+        # while preserving any case-sensitive path.
+        raw = raw.rstrip("/")
+        if "://" in raw:
+            scheme, rest = raw.split("://", 1)
+            netloc, sep, path = rest.partition("/")
+            return f"{scheme.lower()}://{netloc.lower()}{sep}{path}"
+        host, sep, path = raw.partition("/")
+        return f"{host.lower()}{sep}{path}"
+    boxes = [_box_key(s) for s in judge_specs]
+    distinct_boxes = len(set(boxes)) == len(boxes)
+    parallel = (not args.no_parallel_families) and len(judge_specs) >= 2 and distinct_boxes
+    if parallel:
+        print(f"  (judging {len(judge_specs)} families CONCURRENTLY — distinct boxes, "
+              f"both work at once)")
+        with ThreadPoolExecutor(max_workers=len(judge_specs)) as ex:
+            for spec, verdicts in ex.map(_judge_spec, judge_specs):
+                per_judge[spec] = verdicts
+    else:
+        if len(judge_specs) >= 2 and not distinct_boxes and not args.no_parallel_families:
+            print("  (families share a box -> judging SEQUENTIALLY to avoid oversubscribing it)")
+        for spec in judge_specs:
+            s, verdicts = _judge_spec(spec)
+            per_judge[s] = verdicts
+
+    # Restore the judges' declared order (ThreadPoolExecutor.map preserves input order, but a dict
+    # built from concurrent completions could otherwise reorder; key everything off judge_specs).
+    per_judge = {spec: per_judge[spec] for spec in judge_specs}
     specs = list(per_judge)
     kappa = _kappa(per_judge[specs[0]], per_judge[specs[1]]) if len(specs) >= 2 else None
 
@@ -290,6 +418,27 @@ def main() -> int:
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    # Persist per-item per-judge raw verdicts (the labelling artifact A3 needs). The summary
+    # report above keeps only aggregates; assemble_uplift_judgments.py maps these pairwise
+    # verdicts -> the content-uplift schema run_lora_uplift_validation.py consumes.
+    if args.raw_out:
+        raw = {
+            "answers": report["answers"],
+            "seed": args.seed,
+            "judges": judge_specs,
+            "protocol": "forced-choice" if args.forced_choice else "tie-allowed",
+            "subjectHint": "allenai/OLMoE-1B-7B-0924-Instruct",
+            "items": [
+                {"id": rows[i].get("id", f"item_{i}"),
+                 "task_family": rows[i].get("task_family"),
+                 "verdicts": {s: per_judge[s][i] for s in specs}}
+                for i in range(len(rows))
+            ],
+        }
+        args.raw_out.parent.mkdir(parents=True, exist_ok=True)
+        args.raw_out.write_text(json.dumps(raw, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        print(f"wrote raw verdicts -> {args.raw_out}")
     print(f"\nκ(3-cat)={kappa}  consensus adapter-better={consensus_adapter} base-better={consensus_base}")
     for s in specs:
         w = winrate[s]

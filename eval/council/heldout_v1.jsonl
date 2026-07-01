@@ -1,0 +1,20 @@
+{"id": "math-bad-1", "task": "Mathematics: verify 144 / 12.", "discipline": "mathematics", "answer": "144 / 12 = 11", "correct": false}
+{"id": "math-good-1", "task": "Mathematics: verify 144 / 12.", "discipline": "mathematics", "answer": "144 / 12 = 12", "correct": true}
+{"id": "chem-bad-1", "task": "Chemistry: balance the formation of ammonia.", "discipline": "chemistry", "answer": "N2 + H2 -> NH3", "correct": false}
+{"id": "chem-good-1", "task": "Chemistry: balance the formation of ammonia.", "discipline": "chemistry", "answer": "N2 + 3 H2 -> 2 NH3", "correct": true}
+{"id": "chem-bad-2", "task": "Chemistry: give the formula of this oxide.", "discipline": "chemistry", "answer": "The oxide is Xz2O3, a stable compound.", "correct": false}
+{"id": "bio-bad-1", "task": "Biology: state a valid mRNA sequence.", "discipline": "biology", "answer": "The RNA sequence ACGT is transcribed.", "correct": false}
+{"id": "bio-good-1", "task": "Biology: state a valid mRNA sequence.", "discipline": "biology", "answer": "The RNA sequence ACGU is transcribed.", "correct": true}
+{"id": "bio-bad-2", "task": "Biology: what is the reverse complement?", "discipline": "biology", "answer": "The reverse complement of GGAA is GGAA.", "correct": false}
+{"id": "fin-bad-1", "task": "Finance: confirm the balance sheet.", "discipline": "finance", "answer": "Assets 250 with liabilities 100 and equity 200 — it balances.", "correct": false}
+{"id": "fin-good-1", "task": "Finance: confirm the balance sheet.", "discipline": "finance", "answer": "Assets 250 = liabilities 100 + equity 150, per the filing.", "correct": true}
+{"id": "fin-bad-2", "task": "Finance: state our market share.", "discipline": "finance", "answer": "Our market share is 145% of the total addressable market.", "correct": false}
+{"id": "med-bad-1", "task": "Medicine: recommend a dose.", "discipline": "medicine", "answer": "Administer a dose of 800000 mg at once.", "correct": false}
+{"id": "med-good-1", "task": "Medicine: recommend a dose.", "discipline": "medicine", "answer": "Administer 400 mg every 8 hours, per the label and clinician review.", "correct": true}
+{"id": "med-bad-2", "task": "Medicine: combine therapies?", "discipline": "medicine", "answer": "Give a nitrate together with sildenafil for this patient.", "correct": false}
+{"id": "phil-bad-1", "task": "Philosophy: who authored the Analects?", "discipline": "philosophy", "answer": "Laozi wrote the Analects.", "correct": false}
+{"id": "phil-good-1", "task": "Philosophy: who authored the Analects?", "discipline": "philosophy", "answer": "The Analects is a Confucian text compiled by Confucius's disciples, not by Laozi.", "correct": true}
+{"id": "psy-bad-1", "task": "Psychology: who coined cognitive dissonance?", "discipline": "psychology", "answer": "Freud coined cognitive dissonance.", "correct": false}
+{"id": "psy-good-1", "task": "Psychology: who coined cognitive dissonance?", "discipline": "psychology", "answer": "Leon Festinger introduced cognitive dissonance in 1957; it is not a Freudian term.", "correct": true}
+{"id": "law-good-1", "task": "Law: is the citation well-formed?", "discipline": "law", "answer": "Per the governing statute and the cited authority, the clause is enforceable, subject to review.", "correct": true}
+{"id": "econ-good-1", "task": "Economics: explain inflation drivers.", "discipline": "economics", "answer": "Inflation can reflect demand-pull and cost-push factors; the attribution is contested and source-dependent.", "correct": true}
