@@ -164,15 +164,17 @@
       "module": "serving/quant_abstention.py + serving/abstention_serve.py + serving/abstaining_decoder.py",
       "description": "Serve the sub-0.97 quant model + ABSTAIN on the low-margin flip tokens (nonconformity from the quant model alone) => answered-top1 clears the bar at reduced coverage. Frontier picks the max-coverage operating point whose confidence lower bound clears the target; the decoder enforces it in the token loop with a coverage circuit-breaker. Ships a sub-0.97 model honestly.",
       "proofStatus": "validated",
-      "gate": "test_abstention_serve 8 PASS (quant_abstention frontier + abstention_serve LCB-selection + abstaining_decoder circuit-breaker) + REAL v5 NVFP4 cert @ n=1024 (nvfp4-v5-frontier-1k)",
+      "gate": "test_abstention_serve 8 PASS + REAL n=1024 certs on 2 INDEPENDENT adapters (v5 nvfp4-v5-frontier-1k; v6 nvfp4-v6-frontier-1k) each clearing the 95%-Wilson-LCB operating point coverage>=0.60 AND floor>=0.97",
       "ablationDelta": 0.0995,
-      "adopted": false,
-      "openItem": "HELD at validated (NOT adopted) by the claim-promotion gate: v5-only is necessary-not-sufficient. Adoption bar pre-registered as T8 in Spark-Theory-Test-Forecast.md \u2014 needs the 95%-robust operating point (coverage>=0.60 AND floor>=0.97) on >=2 INDEPENDENT adapters + owner sign-off. Condition 1 MET (v5 n=1024: cov 0.6426, floor 0.9831). Condition 2 = the v6 cert (T7). down_proj-bf16 does NOT count (same adapter, precision knob).",
+      "adopted": true,
+      "openItem": "ADOPTED 2026-07-01. Both adapters raw-FAIL the 0.97 bar (v5 0.8975, v6 0.9336) \u2014 this is a MEASURED serving HEDGE (abstain on low-margin flips, serve the rest >=0.97 out-of-sample), NOT a raw-bar pass and NOT a capability claim. canClaimAGI stays false. answered_top1 is selective accuracy on a held-out split, not a per-token guarantee.",
       "evidence": [
         "agi-proof/benchmark-results/nvfp4-v5-frontier-1k.json",
-        "agi-proof/benchmark-results/nvfp4-v5-downproj-frontier.json",
+        "agi-proof/benchmark-results/nvfp4-v6-frontier-1k.json",
+        "docs/06-Roadmap/Spark-Theory-Test-Forecast.md#T8",
         "agi-proof/failure-ledger.md#v5-nvfp4-raw-fail-but-honestly-shippable-via-abstention"
-      ]
+      ],
+      "adoptionSignoff": "T8 (Spark-Theory-Test-Forecast.md) MET + owner sign-off 2026-07-01. 2 independent adapters at n=1024, 95%-robust: v5 (weight-space penalty) cov 0.6426 / floor 0.9831; v6 (KD+top1 output-space objective) cov 0.7188 / floor 0.9762. v6+abstention robustly dominates v5 (+8pts coverage). Pre-registered BEFORE the v6 n=1024 run."
     },
     {
       "id": "iec-8pillar-promotion-gate",
