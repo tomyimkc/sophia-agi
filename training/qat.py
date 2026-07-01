@@ -212,10 +212,17 @@ def _torch_nvfp4(w):  # pragma: no cover - torch-only
     blocks = flat.reshape(-1, 16)
     amax = blocks.abs().amax(dim=1, keepdim=True).clamp_min(1e-12)
     scale = amax / 6.0
-    scaled = (blocks / scale).abs().unsqueeze(-1)
-    idx = (scaled - levels).abs().argmin(dim=-1)
-    mag = levels[idx]
-    dq = torch.sign(blocks) * mag * scale
+    # Snap |scaled| to the nearest E2M1 level. Equivalent to
+    # ``argmin_k |scaled - levels[k]|`` but via ``bucketize`` on the level
+    # MIDPOINTS — the argmin form materialised a ``[..., 16, 8]`` broadcast that
+    # was ~3x slower per call AND memory-thrashed the fused 64-expert weights
+    # (268M-elem tensors), making the v6 fused-expert QAT step ~69h. bucketize is
+    # bit-identical (verified max|Δ|=0 on real OLMoE experts) and cuts the v6 step
+    # to ~18s (~2.7h/550, in line with v5). Helps every QAT target, not just experts.
+    bounds = torch.tensor([0.25, 0.75, 1.25, 1.75, 2.5, 3.5, 5.0],
+                          device=w.device, dtype=w.dtype)
+    idx = torch.bucketize((blocks / scale).abs(), bounds)
+    dq = torch.sign(blocks) * levels[idx] * scale
     return dq.reshape(-1)[: w.numel()].reshape(w.shape)
 
 
