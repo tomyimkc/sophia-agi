@@ -1,0 +1,240 @@
+{"claim": {"kind": "interval", "value": 1, "lo": -6, "hi": 1, "expected": true}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 5], "z": [0, 4]}, "constraints": [[{"y": 2}, "!=", -2], [{"y": -2}, "<", 8], [{"x": 1}, "==", 0]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 3], "z": [0, 3]}, "constraints": [[{"x": 3, "y": 2, "z": 3}, ">=", 0], [{"y": -2, "x": 2}, "!=", 4], [{"z": 3, "y": 3, "x": 2}, ">=", 9]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 5, "lo": 3, "hi": 12, "expected": false}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 0, "lo": -8, "hi": -1, "expected": true}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 4], "z": [0, 3]}, "constraints": [[{"y": 2}, ">", 1]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 4], "z": [0, 4]}, "constraints": [[{"z": 2, "y": -2, "x": -2}, "==", 6], [{"x": -1, "y": -1}, "<", 2]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "interval", "value": -7, "lo": -7, "hi": 3, "expected": false}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 3], "z": [0, 3]}, "constraints": [[{"x": 1}, "<", 4]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"s": 2}, "rhs": {"s": 2}}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 3], "z": [0, 4]}, "constraints": [[{"z": 2, "y": 2}, "<=", 8]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"A": -1, "m": -1}, "rhs": {"A": -1, "m": -1}}, "label": "pass"}
+{"claim": {"kind": "interval", "value": -3, "lo": 1, "hi": 9, "expected": false}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 1, "lo": 4, "hi": 5, "expected": false}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 3], "z": [0, 5]}, "constraints": [[{"x": 1}, "<", 5], [{"x": -1, "z": 3, "y": 3}, "<", 6], [{"x": 3, "y": 3}, ">", -3]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"cd": 3, "s": 1, "A": 2}, "rhs": {"cd": 3, "s": 1, "A": 2, "mol": -1}}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"K": -1}, "rhs": {"K": -1}}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 2, "lo": 0, "hi": 4, "expected": true}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"mol": 3, "K": 2}, "rhs": {"mol": 3, "K": 2}}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 3], "z": [0, 4]}, "constraints": [[{"z": 1, "y": 3, "x": -1}, "==", 2], [{"x": -1}, ">", 2]], "expected": "sat"}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 5]}, "constraints": [[{"y": 1}, ">=", 9], [{"y": -2, "x": -1}, "!=", -1], [{"y": 3}, ">=", -3]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"A": 2, "m": 3, "mol": -2}, "rhs": {"A": 2, "m": 3, "mol": -2, "kg": -2}}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 9, "lo": 0, "hi": 7, "expected": true}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 5], "z": [0, 3]}, "constraints": [[{"y": 2}, "<=", 6], [{"x": 1}, "==", 4]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 4]}, "constraints": [[{"y": 2}, "<", 6], [{"y": 1, "x": 1}, "==", -1]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "interval", "value": -8, "lo": -5, "hi": 1, "expected": true}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 4, "lo": -4, "hi": 4, "expected": true}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"K": -3}, "rhs": {"K": -3, "mol": 2}}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"A": -3, "cd": -1, "s": 1}, "rhs": {"A": -3, "cd": -1, "s": 1}}, "label": "pass"}
+{"claim": {"kind": "interval", "value": -3, "lo": 1, "hi": 3, "expected": false}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 1, "lo": -6, "hi": 4, "expected": true}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 5]}, "constraints": [[{"x": -1}, "==", -3], [{"x": -2, "y": 3}, ">", 7]], "expected": "sat"}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"mol": 2, "s": 2, "A": 3, "K": -2}, "rhs": {"mol": 2, "s": 2, "A": 3, "K": -2}}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 9, "lo": -5, "hi": 6, "expected": true}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"mol": -2}, "rhs": {"mol": -2, "s": -1}}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 5]}, "constraints": [[{"x": 1}, ">=", 9], [{"x": 2}, ">=", 5]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 4], "z": [0, 4]}, "constraints": [[{"z": 3, "x": 3}, "<", 9]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 3}, "rhs": {"m": 2}}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 12, "lo": 2, "hi": 8, "expected": false}, "label": "pass"}
+{"claim": {"kind": "interval", "value": -9, "lo": -9, "hi": -6, "expected": true}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 17, "lo": 5, "hi": 15, "expected": true}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"K": 1}, "rhs": {"K": -1}}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 4], "z": [0, 4]}, "constraints": [[{"z": 1}, ">=", -3]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 0, "lo": -7, "hi": -3, "expected": false}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 5, "lo": 2, "hi": 4, "expected": false}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 2}, "rhs": {"m": 2, "cd": 2}}, "label": "fail"}
+{"claim": {"kind": "interval", "value": -2, "lo": 2, "hi": 14, "expected": false}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"s": -1}, "rhs": {"s": -1, "mol": -1}}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 0, "lo": -5, "hi": 4, "expected": true}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"cd": 3, "K": 1, "kg": 1}, "rhs": {"cd": 3, "K": 1, "kg": 1}}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"kg": 2, "m": -1}, "rhs": {"kg": 2, "m": -1}}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 5]}, "constraints": [[{"y": -1, "x": 3}, ">", 9], [{"x": 2}, "<", 9]], "expected": "sat"}, "label": "pass"}
+{"claim": {"kind": "interval", "value": -8, "lo": -6, "hi": 1, "expected": false}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"s": -3, "A": 1}, "rhs": {"s": -3, "A": 2}}, "label": "fail"}
+{"claim": {"kind": "interval", "value": -1, "lo": -2, "hi": 0, "expected": false}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 5, "lo": 3, "hi": 3, "expected": false}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"A": 2}, "rhs": {"A": 2}}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 2}, "rhs": {"m": 2, "s": -2}}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 4], "z": [0, 3]}, "constraints": [[{"y": 1, "x": -2}, ">=", -2]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"kg": 2, "mol": 3, "s": -3}, "rhs": {"kg": 1, "mol": 3, "s": -3}}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 5], "z": [0, 3]}, "constraints": [[{"x": 1}, "==", -3]], "expected": "sat"}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 3]}, "constraints": [[{"x": -2}, ">", 10], [{"y": 2, "x": 2}, "!=", 0], [{"y": 3}, "==", 3]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 4], "z": [0, 5]}, "constraints": [[{"z": 3}, "!=", -1]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 2}, "rhs": {"m": 2}}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"A": 3, "K": -1}, "rhs": {"A": 3, "K": -2}}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"s": 2}, "rhs": {"s": 2}}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 5], "z": [0, 5]}, "constraints": [[{"y": 2, "x": 1}, "!=", 6], [{"x": 1}, "==", -1]], "expected": "sat"}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 1, "lo": -9, "hi": -3, "expected": true}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"cd": 1, "mol": 3, "K": -2, "s": 3}, "rhs": {"cd": 1, "mol": 3, "K": -2, "s": 3, "kg": 2}}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 5]}, "constraints": [[{"y": 1, "x": 2}, "<", -3], [{"x": 1}, "<=", 0]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 3, "A": 2, "K": 2, "mol": -3}, "rhs": {"m": 3, "A": 2, "K": 2, "mol": -3, "kg": 2}}, "label": "fail"}
+{"claim": {"kind": "interval", "value": -4, "lo": -2, "hi": -2, "expected": true}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"s": 2}, "rhs": {"s": 2}}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 5], "z": [0, 3]}, "constraints": [[{"y": -2, "z": 2}, "<=", 7]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"s": -1, "K": -3}, "rhs": {"s": -1, "K": -3}}, "label": "pass"}
+{"claim": {"kind": "interval", "value": -1, "lo": -6, "hi": -5, "expected": true}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 4], "z": [0, 3]}, "constraints": [[{"x": 1}, "<", 7]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 3]}, "constraints": [[{"y": -1}, "<", -1], [{"y": 2, "x": -1}, ">", 6], [{"x": 2}, "<=", 7]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 3]}, "constraints": [[{"x": -1, "y": -1}, ">=", 10]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "interval", "value": -2, "lo": -6, "hi": -1, "expected": false}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"kg": -1, "K": -1}, "rhs": {"kg": -1, "K": -1}}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 5, "lo": 1, "hi": 10, "expected": false}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 4]}, "constraints": [[{"y": 1}, "<=", 6], [{"y": -2}, ">", -3], [{"y": 3}, "==", 10]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 4]}, "constraints": [[{"y": -2, "x": -2}, ">", 9]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 5]}, "constraints": [[{"x": 1, "y": 3}, "==", 2], [{"y": -1}, "!=", 4]], "expected": "sat"}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 4], "z": [0, 3]}, "constraints": [[{"x": 1}, "<=", 1]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 8, "lo": 3, "hi": 9, "expected": false}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 7, "lo": 4, "hi": 4, "expected": false}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 3, "cd": 3, "s": -3}, "rhs": {"m": 3, "cd": 4, "s": -3}}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 3], "z": [0, 5]}, "constraints": [[{"y": 3}, ">=", 4]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"K": 3}, "rhs": {"K": 3}}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 3], "z": [0, 5]}, "constraints": [[{"z": 3, "x": 1, "y": -2}, "!=", 4], [{"z": 1}, ">=", 7]], "expected": "sat"}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 5]}, "constraints": [[{"y": -2, "x": -1}, ">", 7]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 3], "z": [0, 5]}, "constraints": [[{"y": 1, "x": 3, "z": -2}, ">", 2], [{"z": 3}, "<=", 1], [{"z": 2, "y": 2}, ">", 10]], "expected": "sat"}, "label": "fail"}
+{"claim": {"kind": "interval", "value": -6, "lo": -7, "hi": -2, "expected": false}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"cd": 3, "kg": 1}, "rhs": {"cd": 3, "kg": 1}}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 4]}, "constraints": [[{"x": 1}, "<=", 0]], "expected": "sat"}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 6, "lo": -8, "hi": 2, "expected": false}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 2, "s": 2}, "rhs": {"m": 2, "s": 3}}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 4]}, "constraints": [[{"y": 3, "x": 3}, "==", 7], [{"x": 3}, ">", 0]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"mol": 3}, "rhs": {"mol": 3}}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 3], "z": [0, 5]}, "constraints": [[{"y": 3}, "<", 4]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": -3, "A": -3}, "rhs": {"m": -3, "A": -3}}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"cd": 2}, "rhs": {"cd": 2}}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 5, "lo": -1, "hi": 10, "expected": false}, "label": "fail"}
+{"claim": {"kind": "interval", "value": -12, "lo": -9, "hi": -9, "expected": false}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 2, "kg": -1, "cd": -1}, "rhs": {"m": 2, "kg": -1, "cd": -1, "A": -1}}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"K": -2, "mol": -1, "cd": -3}, "rhs": {"K": -2, "mol": -3, "cd": -3}}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"A": -1}, "rhs": {"A": -1}}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 3], "z": [0, 5]}, "constraints": [[{"y": -2, "z": 1}, ">=", 8]], "expected": "sat"}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 4], "z": [0, 5]}, "constraints": [[{"x": 2}, ">", 1], [{"z": -1}, "<=", 7], [{"x": 1}, ">=", -3]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 3, "lo": 0, "hi": 1, "expected": false}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 1, "lo": 2, "hi": 7, "expected": true}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"A": 3, "m": -2, "mol": 3}, "rhs": {"A": 3, "m": -2, "mol": 3}}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"cd": 1, "mol": -2, "m": 2, "K": -1}, "rhs": {"cd": 1, "mol": -2, "m": 2, "K": -1, "kg": -1}}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 0, "lo": -5, "hi": -1, "expected": true}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"K": -3}, "rhs": {"K": -3, "m": 1}}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 2, "lo": -2, "hi": 2, "expected": false}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": -3, "cd": -1, "s": 1, "A": -1}, "rhs": {"m": -3, "cd": -1, "s": 1, "A": -1, "mol": -2}}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"s": -3, "kg": 3}, "rhs": {"s": -3, "kg": 3}}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"A": 3}, "rhs": {"A": 3, "K": 1}}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 3], "z": [0, 5]}, "constraints": [[{"x": -1, "z": 3}, "<=", 7], [{"y": -2, "z": 1}, "<", 9]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 3, "lo": -7, "hi": 4, "expected": false}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"cd": 1}, "rhs": {"cd": 1}}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 3, "kg": -3, "s": -3}, "rhs": {"m": 2, "kg": -3, "s": -3}}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 12, "lo": 1, "hi": 12, "expected": false}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 4], "z": [0, 4]}, "constraints": [[{"z": -1, "x": -2}, "!=", -2], [{"y": -1, "z": 2}, "!=", 1]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 5], "z": [0, 5]}, "constraints": [[{"z": 2}, "<=", 10], [{"y": 2, "x": -2}, "<=", 5], [{"y": -1}, ">=", 2]], "expected": "sat"}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 4]}, "constraints": [[{"x": 2, "y": 1}, "<=", 0]], "expected": "sat"}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 5], "z": [0, 5]}, "constraints": [[{"z": 1}, "<", 1], [{"z": 1, "y": 2, "x": 2}, "<", 10], [{"z": -2}, "!=", -1]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "interval", "value": -7, "lo": -9, "hi": -7, "expected": true}, "label": "pass"}
+{"claim": {"kind": "interval", "value": -5, "lo": -9, "hi": -5, "expected": false}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"cd": 1, "s": 3}, "rhs": {"cd": 1, "s": 3}}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 5]}, "constraints": [[{"x": 1}, "!=", 8]], "expected": "sat"}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 3]}, "constraints": [[{"x": -1}, "<", -3], [{"y": -1}, "<", 10], [{"y": 2, "x": 2}, "<=", 6]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "interval", "value": -5, "lo": -7, "hi": 4, "expected": false}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 3]}, "constraints": [[{"x": -1}, ">", 6], [{"x": 3}, "<", 10], [{"x": 1}, "==", 6]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 4, "lo": -3, "hi": 5, "expected": true}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 6, "lo": 3, "hi": 6, "expected": false}, "label": "fail"}
+{"claim": {"kind": "interval", "value": -12, "lo": -9, "hi": -9, "expected": false}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"K": 1, "s": 3, "mol": -3}, "rhs": {"K": 1, "s": 3, "mol": -3}}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 4, "lo": 1, "hi": 7, "expected": false}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 3], "z": [0, 3]}, "constraints": [[{"z": 1, "x": 2, "y": -2}, "==", 7]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 4]}, "constraints": [[{"x": 1}, "==", -2], [{"y": 1}, "!=", 4], [{"y": 1}, ">", 4]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 4], "z": [0, 3]}, "constraints": [[{"x": 1}, "!=", 7]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 2, "lo": -7, "hi": 5, "expected": true}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 1, "lo": 3, "hi": 11, "expected": false}, "label": "pass"}
+{"claim": {"kind": "interval", "value": -6, "lo": -8, "hi": -6, "expected": false}, "label": "fail"}
+{"claim": {"kind": "interval", "value": -6, "lo": -5, "hi": -3, "expected": false}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 4]}, "constraints": [[{"x": -2}, ">", 4], [{"y": 3}, "<=", -3]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"cd": 3, "A": 3, "m": 3}, "rhs": {"cd": 3, "A": 2, "m": 3}}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 0}, "rhs": {"m": 0}}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 1, "lo": -2, "hi": 5, "expected": false}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"kg": -1, "A": 1}, "rhs": {"kg": -1, "A": 1, "s": 1}}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 3]}, "constraints": [[{"y": 3}, "<", 6]], "expected": "sat"}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 0, "lo": 2, "hi": 11, "expected": false}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 0}, "rhs": {"m": 0}}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 5]}, "constraints": [[{"x": 1, "y": 3}, ">=", -2], [{"x": -1, "y": 3}, "<", -2], [{"x": 3}, ">", 1]], "expected": "sat"}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 1}, "rhs": {"m": 1}}, "label": "pass"}
+{"claim": {"kind": "interval", "value": -2, "lo": -6, "hi": -6, "expected": false}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 8, "lo": -3, "hi": 7, "expected": true}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 3, "lo": 0, "hi": 11, "expected": true}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"s": -3, "m": 3}, "rhs": {"s": -3, "m": 3, "cd": -2}}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 4]}, "constraints": [[{"x": 1, "y": -1}, "==", 8], [{"y": -2}, "<", 7]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 1, "lo": 2, "hi": 12, "expected": true}, "label": "fail"}
+{"claim": {"kind": "interval", "value": -6, "lo": -6, "hi": 6, "expected": false}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 3], "z": [0, 5]}, "constraints": [[{"x": -1, "z": 1}, ">=", 5]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "interval", "value": -9, "lo": -5, "hi": -2, "expected": true}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 3]}, "constraints": [[{"x": -1, "y": 1}, "<", -1], [{"y": 1, "x": -2}, "==", 1]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 3]}, "constraints": [[{"y": -2}, "<=", 2]], "expected": "sat"}, "label": "pass"}
+{"claim": {"kind": "interval", "value": -6, "lo": -4, "hi": 1, "expected": false}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 3]}, "constraints": [[{"x": 1}, ">", 5], [{"y": 3}, ">=", 1]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 0}, "rhs": {"m": 0}}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"mol": -2, "cd": 3}, "rhs": {"mol": -2, "cd": 3, "m": -1}}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 5]}, "constraints": [[{"x": 1}, "<=", 4]], "expected": "sat"}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 4]}, "constraints": [[{"x": -2}, "<=", 5], [{"y": 1}, "<", 9]], "expected": "sat"}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"kg": -1, "m": -2}, "rhs": {"kg": -1, "m": -2}}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 3], "z": [0, 3]}, "constraints": [[{"z": 3}, "!=", -2]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "interval", "value": -3, "lo": -7, "hi": -3, "expected": false}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 3], "z": [0, 3]}, "constraints": [[{"z": 2, "y": 3, "x": -2}, "<", 3]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"kg": -3}, "rhs": {"kg": -3, "K": -1}}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"cd": -2}, "rhs": {"cd": -2, "K": -1}}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"mol": 3, "m": 1, "s": -3}, "rhs": {"mol": 3, "m": 2, "s": -3}}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"A": 2}, "rhs": {"A": 2, "m": 1}}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 5], "z": [0, 5]}, "constraints": [[{"y": 1, "x": 3}, ">=", 4]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 3]}, "constraints": [[{"x": 1}, ">", 7]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 11, "lo": 3, "hi": 12, "expected": false}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 5]}, "constraints": [[{"x": -2, "y": -2}, "==", -3], [{"y": -1, "x": 2}, ">=", 0], [{"y": 1}, "!=", 2]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 4]}, "constraints": [[{"x": 1}, ">=", 5], [{"x": -1}, "<", 4]], "expected": "sat"}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"K": -2}, "rhs": {"K": -2}}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"A": 1}, "rhs": {"A": 1, "mol": 1}}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 2, "K": 1}, "rhs": {"m": 2, "K": -1}}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 0, "lo": 0, "hi": 8, "expected": true}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 5]}, "constraints": [[{"y": 1}, "==", 5], [{"x": 1, "y": 1}, "<", -3], [{"x": -2}, ">=", 0]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 3]}, "constraints": [[{"x": 1}, "!=", -3], [{"y": -2, "x": -1}, ">=", -2]], "expected": "sat"}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 3]}, "constraints": [[{"y": 3, "x": -2}, ">=", -1], [{"y": 1}, "<=", 0], [{"y": 3}, "!=", 0]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"K": 3}, "rhs": {"K": 3}}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"mol": -1, "cd": 3, "A": 1, "K": -2}, "rhs": {"mol": -1, "cd": 3, "A": 1, "K": -2, "kg": 2}}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 1, "s": 3, "kg": -2}, "rhs": {"m": 1, "s": 3, "kg": -2}}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"K": 1, "kg": -1, "A": 2}, "rhs": {"K": 1, "kg": -1, "A": 2, "mol": 2}}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 4], "z": [0, 5]}, "constraints": [[{"x": 3, "y": -1}, ">=", -3], [{"z": 3, "x": 3}, "<", 2], [{"y": 3}, "<=", -3]], "expected": "sat"}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": -1, "kg": -1, "mol": -1}, "rhs": {"m": -1, "kg": -1, "mol": -1}}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"kg": 2, "s": -2, "m": -3}, "rhs": {"kg": 2, "s": -3, "m": -3}}, "label": "fail"}
+{"claim": {"kind": "interval", "value": -7, "lo": -5, "hi": -5, "expected": false}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 5, "lo": 5, "hi": 8, "expected": false}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 3, "lo": 5, "hi": 9, "expected": true}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 4], "z": [0, 4]}, "constraints": [[{"z": -2, "x": 3, "y": 2}, "!=", 5]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 3, "lo": 3, "hi": 11, "expected": false}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 5]}, "constraints": [[{"x": 1}, "==", 3], [{"x": 1}, "<=", -2]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 12, "lo": 4, "hi": 15, "expected": true}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 5], "z": [0, 3]}, "constraints": [[{"y": 2, "z": 3}, ">=", 1], [{"x": -2}, "==", 9], [{"x": -1, "z": -1}, "!=", 7]], "expected": "sat"}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"kg": -2}, "rhs": {"kg": -2, "mol": -2}}, "label": "fail"}
+{"claim": {"kind": "interval", "value": -3, "lo": -9, "hi": 0, "expected": true}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 2, "lo": 4, "hi": 6, "expected": false}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 5], "z": [0, 4]}, "constraints": [[{"x": 1, "z": -2}, "<", 5]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 3]}, "constraints": [[{"x": 1}, "==", 8], [{"y": 1}, "==", 8]], "expected": "unsat"}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 5, "lo": -2, "hi": 4, "expected": true}, "label": "fail"}
+{"claim": {"kind": "interval", "value": -1, "lo": -10, "hi": 2, "expected": false}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 3]}, "constraints": [[{"y": 3, "x": 3}, "<", 6], [{"y": -1}, ">", -2], [{"x": 2, "y": 3}, "<=", 0]], "expected": "sat"}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 3], "z": [0, 5]}, "constraints": [[{"x": 1}, ">=", 5]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 8, "lo": 5, "hi": 17, "expected": true}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 0}, "rhs": {"m": 0}}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"A": -2, "s": 1, "K": -2}, "rhs": {"A": -2, "K": -2}}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 3, "mol": -3}, "rhs": {"m": 3, "mol": -3}}, "label": "pass"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 3], "y": [0, 4], "z": [0, 3]}, "constraints": [[{"y": 1, "x": 2}, ">=", -2], [{"x": -2}, "<", 9]], "expected": "unsat"}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 4], "y": [0, 5]}, "constraints": [[{"y": -2}, "<=", -2]], "expected": "sat"}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 13, "lo": 5, "hi": 13, "expected": true}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 4, "lo": 2, "hi": 5, "expected": true}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 1, "lo": -1, "hi": 5, "expected": true}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"kg": -3, "cd": 1, "mol": 2}, "rhs": {"kg": -3, "cd": 1, "mol": 2}}, "label": "pass"}
+{"claim": {"kind": "interval", "value": -7, "lo": -5, "hi": 3, "expected": true}, "label": "fail"}
+{"claim": {"kind": "interval", "value": 3, "lo": 1, "hi": 2, "expected": false}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"mol": 2, "m": 1, "A": 3}, "rhs": {"mol": 2, "m": 1, "A": 3, "K": 1}}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"m": 2}, "rhs": {"m": 2}}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 15, "lo": 2, "hi": 13, "expected": true}, "label": "fail"}
+{"claim": {"kind": "bounded_int", "vars": {"x": [0, 5], "y": [0, 3]}, "constraints": [[{"x": -1, "y": -1}, ">", -2], [{"y": -1, "x": -2}, "<", 2]], "expected": "sat"}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"A": -2, "mol": 1, "s": 2}, "rhs": {"A": -2, "mol": 1, "s": 2}}, "label": "pass"}
+{"claim": {"kind": "unit_consistency", "lhs": {"s": 1, "kg": -2, "m": 1}, "rhs": {"s": 1, "kg": -2, "m": 1, "A": 2}}, "label": "fail"}
+{"claim": {"kind": "unit_consistency", "lhs": {"kg": 1, "m": 1, "K": -3}, "rhs": {"kg": 1, "m": 1, "K": -3}}, "label": "pass"}
+{"claim": {"kind": "interval", "value": 1, "lo": -1, "hi": 2, "expected": true}, "label": "pass"}

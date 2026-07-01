@@ -1,0 +1,31 @@
+{
+  "_comment": "PRE-REGISTERED gate compute budget. The critic's point: the honesty machinery (gates) must not starve the training loop. Each gate declares its expected wall-clock seconds, whether it needs a GPU, and which CI LANE it belongs to. The 'fast' lane is the per-PR blocking lane and must stay under fastLaneCeilingSeconds; NO GPU gate may run in the fast lane (GPU gates belong to the 'heavy' lane, run on merge / nightly). These declared seconds are conservative placeholders, NOT measured timings — recalibrate from real CI logs before treating the ceiling as tight.",
+  "schema_version": 1,
+  "status": "preregistration_only",
+  "canClaimAGI": false,
+  "unit": "seconds",
+  "lanes": {
+    "fast": {
+      "description": "Per-PR blocking lane. Must be quick so it does not starve iteration.",
+      "ceilingSeconds": 300,
+      "gpuAllowed": false
+    },
+    "heavy": {
+      "description": "On-merge / nightly lane. GPU gates and long audits live here.",
+      "ceilingSeconds": 5400,
+      "gpuAllowed": true
+    }
+  },
+  "gates": {
+    "lint_claims": {"lane": "fast", "declaredSeconds": 8, "gpu": false},
+    "assert_decontam": {"lane": "fast", "declaredSeconds": 12, "gpu": false},
+    "wiki_health": {"lane": "fast", "declaredSeconds": 15, "gpu": false},
+    "fact_recency_gate": {"lane": "fast", "declaredSeconds": 5, "gpu": false},
+    "gate_cost_budget": {"lane": "fast", "declaredSeconds": 3, "gpu": false},
+    "label_budget_ledger": {"lane": "fast", "declaredSeconds": 3, "gpu": false},
+    "claim_gate": {"lane": "fast", "declaredSeconds": 20, "gpu": false},
+    "eval_stats_selfcheck": {"lane": "fast", "declaredSeconds": 10, "gpu": false},
+    "verifier_gate_gpu": {"lane": "heavy", "declaredSeconds": 1800, "gpu": true},
+    "retention_probe_gpu": {"lane": "heavy", "declaredSeconds": 2400, "gpu": true}
+  }
+}

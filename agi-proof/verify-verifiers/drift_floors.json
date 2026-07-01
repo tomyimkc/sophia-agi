@@ -1,0 +1,42 @@
+{
+  "_comment": "PRE-REGISTERED demotion floors for tools/verify_verifiers.py. Committed BEFORE any live re-scoring run so a demotion is a mechanical rule, not a post-hoc judgment call. A verifier whose MEASURED precision on a fresh oracle split drops below its floor (with the drop resolvable at the reported N per eval_stats.mde_at_n) is AUTO-DEMOTED. If ablationGap.floor is violated (the WITH/WITHOUT-meta gap has collapsed) the whole monitor HALTS fail-closed, because meta-verification is the trust root: if we can no longer show that meta-verify adds signal, no downstream verifier verdict can be trusted.",
+  "version": "0.1.0",
+  "committedBefore": "any live oracle-split re-scoring run (see measurement_spec.json, status preregistration_only)",
+  "defaults": {
+    "precisionFloor": 0.90,
+    "recallFloor": 0.70,
+    "minN": 30,
+    "driftTolerance": 0.05,
+    "requirePowered": true
+  },
+  "floorRationale": {
+    "precisionFloor": "A deployed verifier that VOUCHES for an answer (says passed=true) must almost never be wrong: a false pass silently admits an unverified claim, which is the exact failure the no-overclaim law forbids. 0.90 is the standing bar; a verifier below it is not trustworthy as a gate and is demoted to advisory.",
+    "recallFloor": "Recall (catching the true violations) is important but a miss is fail-safe-ish for the gate (it under-passes), so the floor is looser than precision.",
+    "minN": "Below minN fresh-oracle labels the split cannot resolve a floor-sized drop; per eval_stats a low-N measurement is UNDERPOWERED and MUST NOT trigger a (de)promotion. Fail-safe: an underpowered split is reported as held/abstain, never a silent trust.",
+    "driftTolerance": "A precision decline strictly greater than this vs the verifier's own pre-registered floor is 'drift'; used only for reporting the magnitude — the demotion trigger is precision < floor, not delta-based, so it is not a moving target.",
+    "requirePowered": "If true, a floor breach on an UNDERPOWERED split (mde_at_n > drop magnitude) does NOT demote — it is reported as 'held (underpowered)'. A gate that fires on noise is worse than no gate; a gate that never fires on a real breach is worse still, so powered breaches ALWAYS demote."
+  },
+  "ablationGap": {
+    "floor": 0.05,
+    "metric": "with_meta_precision - without_meta_precision",
+    "rationale": "meta-verification (verifying the verifiers) is the TRUST ROOT. The WITH-meta vs WITHOUT-meta precision gap is the standing evidence that meta-verify actually adds signal. If that gap collapses below the floor, we can no longer demonstrate the trust root earns its keep -> HALT fail-closed (exit 1) and demote NOTHING silently; a human must re-establish the ablation before the monitor is trusted again.",
+    "haltOnCollapse": true
+  },
+  "perVerifierOverrides": {
+    "provenance_faithful": {
+      "precisionFloor": 0.95,
+      "recallFloor": 0.75,
+      "note": "PROTECTED-domain gate (religion/history don't-merge-lineages). Higher precision floor: a false pass here can ship a forbidden cross-lineage attribution."
+    },
+    "no_secret_leak": {
+      "precisionFloor": 0.99,
+      "recallFloor": 0.90,
+      "note": "Confidentiality tripwire; a missed leak is a hard security failure, so both floors are near-ceiling."
+    },
+    "legal_citation_exists": {
+      "precisionFloor": 0.95,
+      "recallFloor": 0.80,
+      "note": "Fabricated-citation gate (Mata v. Avianca). A false pass ships a hallucinated authority."
+    }
+  }
+}

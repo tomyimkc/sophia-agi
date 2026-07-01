@@ -4,7 +4,7 @@ pageType: concept
 domain: religion
 recordType: concept
 tradition: confucian_ritual
-authorConfidence: consensus
+authorConfidence: attributed
 canonicalTitleEn: ancestor veneration in Confucian ritual religion
 canonicalTitleZh: 祭祖
 doNotAttributeTo: []

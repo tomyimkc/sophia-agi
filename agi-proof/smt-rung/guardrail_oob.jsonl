@@ -1,0 +1,5 @@
+{"kind": "free_text", "text": "Newton discovered gravity"}
+{"kind": "unit_consistency", "lhs": {"parsec": 1}, "rhs": {"m": 1}}
+{"kind": "bounded_int", "vars": {"x": [0, 3]}, "constraints": [[{"x": 1.5}, "<=", 2]], "expected": "sat"}
+{"kind": "interval", "value": "not-a-number", "lo": 0, "hi": 1, "expected": true}
+{"kind": "modal_logic", "formula": "box(p -> q)"}
