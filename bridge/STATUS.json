@@ -1,10 +1,8 @@
 {
-  "updatedAt": "2026-07-01T00:55:38Z",
+  "updatedAt": "2026-07-01T00:56:15Z",
   "host": "spark-2f2d",
-  "running": "backlog-0002",
-  "pendingCommands": [
-    "backlog-0002"
-  ],
+  "running": null,
+  "pendingCommands": [],
   "trainwatch": [
     {
       "id": "2026-06-30-claude-web-bench-a-04",
@@ -1107,6 +1105,11 @@
       "path": "agi-proof/benchmark-results/nvfp4-v5-keep-downproj.json",
       "bytes": 1112,
       "mtime": "2026-07-01T00:54:16Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/nvfp4-v5-keep-oproj.json",
+      "bytes": 1111,
+      "mtime": "2026-07-01T00:56:11Z"
     },
     {
       "path": "agi-proof/benchmark-results/nvfp4-v5-skipdiag.json",
