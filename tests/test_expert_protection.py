@@ -10,7 +10,7 @@ import pytest
 torch = pytest.importorskip("torch")  # torch-only test; skip cleanly on a torch-less CI runner
 import torch.nn as nn
 
-from tools.expert_protection import protected_quantize_served, layer_of
+from tools.expert_protection import protected_quantize_served, layer_of, layers_to_hold
 
 
 def test_layer_of():
@@ -64,3 +64,38 @@ def test_no_keep_quantizes_all_slices():
 
     assert info["protected_experts"] == 0
     assert not torch.equal(experts, before)  # every slice quantized
+
+
+def test_layers_to_hold_returns_last_n():
+    m = _FakeModel([(f"model.layers.{L}.mlp.down_proj", nn.Parameter(torch.zeros(2, 2)))
+                    for L in range(4)] + [("model.embed_tokens.weight", nn.Parameter(torch.zeros(2, 2)))])
+    assert layers_to_hold(m, 2) == {2, 3}
+    assert layers_to_hold(m, 1) == {3}
+    assert layers_to_hold(m, 0) == set()
+    assert layers_to_hold(m, 10) == {0, 1, 2, 3}   # clamps to the layers present
+
+    # robust to NON-CONTIGUOUS indices: the last n PRESENT, not top-n arithmetic
+    gappy = _FakeModel([(f"model.layers.{L}.mlp.down_proj", nn.Parameter(torch.zeros(2, 2)))
+                        for L in (0, 2, 4, 6)])
+    assert layers_to_hold(gappy, 2) == {4, 6}
+    assert layers_to_hold(gappy, 3) == {2, 4, 6}
+
+
+def test_protected_keep_layers_holds_last_blocks_bf16():
+    """Depth-based hold (QAT-v7 Lever D): a served param in a kept layer stays bf16, others quantize."""
+    torch.manual_seed(2)
+    p0 = nn.Parameter(torch.randn(5, 5))   # layer 0 served -> quantized
+    p2 = nn.Parameter(torch.randn(5, 5))   # layer 2 served -> HELD bf16 (in keep_layers)
+    m = _FakeModel([("model.layers.0.mlp.down_proj", p0),
+                    ("model.layers.2.mlp.down_proj", p2)])
+    served = lambda name, suffixes=(): name.endswith("down_proj")
+    b0, b2 = p0.detach().clone(), p2.detach().clone()
+
+    info = protected_quantize_served(m, scheme="nvfp4", suffixes=("down_proj",),
+                                     keep_experts={}, keep_layers={2}, is_served=served)
+
+    assert not torch.equal(p0, b0)         # layer 0 quantized
+    assert torch.equal(p2, b2)             # layer 2 held bf16 (byte-identical)
+    assert info["protected_layer_params"] == 1
+    assert info["quantized_modules"] == 1  # only layer 0 was quantized
+    assert info["kept_params"] >= p2.numel()
