@@ -369,12 +369,18 @@ if [[ "${RUN_B}" -eq 1 ]]; then
     cost_guard_reminder
     # train_lora default --model is Qwen/Qwen2.5-3B-Instruct and default --qat-scheme is int8,
     # so OLMoE + nvfp4 + the output dir are ALL passed explicitly.
+    # v6 output-space objective is env-carried; defaults 0 => v5 loss byte-identical.
+    # v6 recipe: QAT_KD_WEIGHT=1.0 QAT_TOP1_WEIGHT=0.5 QAT_TEMP=2.0 QAT_LAMBDA=0.0005 QAT_EPOCHS=5.
     run "${PY}" tools/train_lora.py \
       --model "${QAT_BASE}" \
       --train "${QAT_DATA}" \
       --output "${QAT_ADAPTER}" \
       --qat --qat-scheme nvfp4 \
       --qat-lambda "${QAT_LAMBDA}" \
+      --qat-kd-weight "${QAT_KD_WEIGHT:-0}" \
+      --qat-top1-weight "${QAT_TOP1_WEIGHT:-0}" \
+      --qat-temp "${QAT_TEMP:-2.0}" \
+      --qat-margin "${QAT_MARGIN:-0}" \
       --epochs "${QAT_EPOCHS}"
   else
     step "B1 — QAT train SKIPPED (no --run-train); will certify existing adapter at ${QAT_ADAPTER}"
