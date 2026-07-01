@@ -1,21 +1,25 @@
 {
-  "updatedAt": "2026-07-01T06:59:27Z",
+  "updatedAt": "2026-07-01T08:04:43Z",
   "device": "mac-studio",
   "agent": "claude-code-mac-operator",
-  "cycle": "v6 deploy + fire -> caught 0-expert-QAT -> killed + guarded + filed",
-  "headline": "v6 HELD (honest): deployed + verified + FIRED (owner GO), cleared the 2 prior footguns, BUT QAT covered 0 EXPERT modules (fused-3D OlmoeExperts + peft ParamWrapper unreached by per-nn.Linear STE) -> experts co-adapt to bf16 not NVFP4 -> doomed to v6~v5. KILLED at step 1/550 to save GPU. Added a runtime abort guard; deep fix filed.",
-  "v6_status": {
-    "deployed": "spark-bridge (byte-exact qat.py + train_lora.py from work branch; runner +4 --qat-* flags KEEPING --target-modules attn-mlp + --lora-dropout 0; poller allowlist). Verified: qat 15/15, dry-run B1 has BOTH crash-fixes AND 4 KD flags.",
-    "fired_and_healthy": "train cleared the 2 footguns (--target-modules attn-mlp + --lora-dropout 0), GPU 96%, epoch 1/5 step 1/550 loss 2.70. LoRA attn=64 expert=32.",
-    "the_defect": "QAT fake-quant on 64 module(s): attn=64 EXPERT=0. OlmoeExperts stores gate_up_proj/down_proj as 3-D Parameters wrapped by peft ParamWrapper -> unreached by attach_qat's per-nn.Linear STE + its lora_A/lora_B skip. Experts train against bf16 -> NOT co-adapted to NVFP4 -> v6 would ~= v5 (the co-adaptation doesn't happen where the ~10.8% uniform quant error lives). Offline qat 15/15 does NOT catch this (runtime wrapping gap).",
-    "actions": "Killed (GPU freed, JUDGE_HOLD cleared, partial adapter removed). Added a runtime ABORT guard in train_lora.py (SystemExit when experts exist + QAT expert-coverage==0; override QAT_ALLOW_UNCOVERED_EXPERTS=1) -> committed work branch 406090ee + re-deployed to spark-bridge 72aa65a5 so no future fire wastes hours.",
-    "deep_fix_needed": "STE-fake-quant the OlmoeExperts gate_up_proj/down_proj 3-D Parameters INSIDE the peft ParamWrapper forward (respecting _qat_bypass for the KD teacher). Needs verified on-Spark dev against the real ParamWrapper. VERIFY via the runtime coverage line showing expert>0 + a train step moving the expert params, NOT the offline invariants.",
-    "held_until": "expert-QAT coverage fixed + runtime-verified (expert>0). Do NOT re-fire v6 before that (the guard now aborts it anyway)."
+  "cycle": "deep fused-expert QAT fix: mechanism VALIDATED, full deploy blocked by peft/parametrize recursion",
+  "headline": "BREAKTHROUGH + BLOCKER. A fake-quant STE torch-parametrization on the fused OlmoeExperts base params DOES co-adapt the experts (proof: layer-0 gate_up_proj train-mode fake-quant rel-err 0.094 = correct NVFP4 magnitude; expert lora_B nonzero-grad 31/31). BUT registering it on >1 param / the nested peft ParamWrapper throws RecursionError (only 1/32 register) -> torch parametrize vs peft ParamWrapper.__getattr__.",
+  "investigation": {
+    "structure": "peft wraps OlmoeExperts as a DOUBLY-NESTED ParamWrapper: `experts` (LoRA on down_proj) -> `.base_layer` (ParamWrapper, LoRA on gate_up_proj) -> `.base_layer.base_layer.{gate_up_proj,down_proj}` = the real frozen 3-D params. Each ParamWrapper uses torch parametrize + a dynamic `_activate_lora` context (ParamWrapper.forward at peft lora/layer.py:2442) to inject the LoRA into the param during base_layer(x).",
+    "why_attach_qat_missed_it": "attach_qat wraps only type=='Linear' modules with .weight; OlmoeExperts is neither -> expert coverage 0 (offline invariants can't see it).",
+    "validated_mechanism": "register a FakeQuantSTE parametrization (W -> W+(nvfp4(W)-W).detach(), gated by owner.training/_qat_bypass) on the fused base param. Layer-0 proof: fake-quant applied in train mode (rel-err 0.094) AND all 31 expert lora_B grads flow -> the experts co-adapt to the NVFP4 grid. This is a real, working solution to the ledger's OPEN 'fused-expert QAT-compose' lever.",
+    "remaining_blocker": "register_parametrization on a 2nd param of / the nested peft ParamWrapper -> RecursionError (peft ParamWrapper.__getattr__ forwards to base_layer, colliding with torch parametrize). 1/32 registered.",
+    "fix_directions": [
+      "(a) Bypass torch parametrize: wrap ParamWrapper.forward so that inside its `_activate_lora` window it also STE-fake-quants the effective (base+LoRA) param -> applies AFTER the LoRA (correct serve-order fake_quant(base+delta)), avoids the multi-param parametrize recursion.",
+      "(b) recursion-safe registration (register on each base param before peft activates, or raise sys.setrecursionlimit + confirm it terminates -- risky if infinite).",
+      "VERIFY any fix via: the runtime coverage line showing expert>0, per-expert fake-quant magnitude ~0.1, and expert lora grads flowing on a real step -- NOT the offline invariants."
+    ]
   },
-  "shippable_now_no_v6": "v5 + --keep-top-experts 16 + conformal-abstention-serve -> ~94.5% answered @ ~0.975, no train (feat 7290f7a6, N-sweep 3c357ba3). v6's job (lift coverage) is already met no-train; v6 only adds value if the deep expert-QAT fix lets it lift RAW coverage at no memory cost.",
-  "guardrailsAck": "canClaimAGI=false (v6 produced NO valid number -- killed pre-training; not claimed); lint_claims OK; --run-train was owner-approved live then aborted by me on the defect; JUDGE_HOLD set+cleared; code to work branch + sanctioned spark-bridge deploy.",
+  "actions": "No code shipped from the deep fix (unverified STE would risk a misleading v6 number). The 0-expert ABORT guard (train_lora.py, work 406090ee + spark-bridge 72aa65a5) stays -> v6 cannot silently waste hours. v6 remains HELD until the fused-expert QAT reach is fixed + runtime-verified.",
+  "shippable_now": "v5 + --keep-top-experts 16 + conformal-abstention-serve -> ~94.5% answered @ ~0.975, no train (does not need v6).",
+  "guardrailsAck": "canClaimAGI=false (no v6 number produced; mechanism validated but full fix unverified -> not claimed); lint_claims OK; no plaintext secrets; JUDGE_HOLD set+cleared around each probe; no code shipped unverified.",
   "open": [
-    "Deep fused-expert QAT fix (above).",
+    "Land the fused-expert QAT fix via direction (a) + rigorous runtime verification (the mechanism is proven; the recursion is the only remaining problem).",
     "World-model real-model ablation (cloud step 2) still pending."
   ]
 }
