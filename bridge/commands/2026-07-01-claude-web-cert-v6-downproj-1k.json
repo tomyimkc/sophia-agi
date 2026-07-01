@@ -1,0 +1,14 @@
+{
+  "id": "2026-07-01-claude-web-cert-v6-downproj-1k",
+  "args": "--bench-b --execute",
+  "createdBy": "claude (cloud, wheel)",
+  "createdAt": "2026-07-01T14:00:00Z",
+  "approvedBy": "user: standing \"act, don't ask / perform all benchmarking; run the GPU 24/7 when not judging\" (2026-06-30) + \"implement all\" (2026-07-01). Cert-only (--bench-b, NO --run-train) on the EXISTING v6 adapter. Not a --run-train escalation.",
+  "note": "Idle-Spark lever: hold down_proj in bf16 (KEEP_SUFFIXES=down_proj) and re-measure the v6 NVFP4 cert + abstention frontier at n=1024. v6 full-NVFP4 (n=1024) raw top1 0.9336, 95%-robust abstention op point cov 0.7188 / floor 0.9762 (adopted). down_proj is the documented mixed-precision lever (bridge-supported, unlike --keep-top-experts). If holding it bf16 lifts raw top1 / shifts the frontier up, the v6 shippable coverage rises further at a memory cost (down_proj on v5 gave +6pts cov but -42% compression, mem 3.30x->1.90x). Read out[abstention_frontier] with serving/abstention_serve.policy_from_cert(confidence=0.95); if it clears cov>=0.60 AND floor>=0.97 at HIGHER coverage than 0.7188, it becomes a candidate variant operating point (add to serving/adopted_operating_points.json; ingredient already adopted). Cert/diagnostic only; canClaimAGI stays false. NOTE the keep-top-experts lever (Mac, tools/expert_protection.py) is expected to beat down_proj on the coverage/memory trade — this is the bridge-doable complement while the Mac runs that.",
+  "env": {
+    "KEEP_SUFFIXES": "down_proj",
+    "QAT_ADAPTER": "training/lora/checkpoints/olmoe-qat-spark-v6",
+    "CERT_NEVAL": "1024",
+    "CERT_OUT": "agi-proof/benchmark-results/nvfp4-v6-downproj-frontier-1k.json"
+  }
+}
