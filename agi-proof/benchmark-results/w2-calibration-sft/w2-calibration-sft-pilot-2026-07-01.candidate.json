@@ -1,0 +1,74 @@
+{
+  "schema": "sophia.w2_calibration_sft_pilot.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "createdAt": "2026-07-01",
+  "pinnedCommit": "1c3fb8b3d3b2b960eadf5d786c239b732a8012e9",
+  "backend": "mlx-lm 0.31.3 (LoRA SFT; no DPO trainer in this version \u2014 binding fact)",
+  "baseModel": "Qwen/Qwen2.5-3B-Instruct",
+  "surface": "freshly-generated sympy-checkable arithmetic/linear math; train seed1&3, held-out seed2; exact-overlap=0",
+  "objective": "W2 proper-scoring calibration wired as calibration-SFT: target Confidence = verifier-measured per-kind train accuracy (difficulty-adaptive); measured by agent.calibration.expected_calibration_error",
+  "base": {
+    "n": 80,
+    "ece": 0.2,
+    "accuracy": 0.8,
+    "meanConf": 1.0,
+    "selectiveRisk@cov0.5": 0.25,
+    "accAtCov0.5": 0.75,
+    "baseRisk": 0.2
+  },
+  "seeds": {
+    "seed0": {
+      "trainDataSeed": 1,
+      "mlxSeed": 0,
+      "heldout": {
+        "n": 80,
+        "ece": 0.0581,
+        "accuracy": 0.7875,
+        "meanConf": 0.8034,
+        "selectiveRisk@cov0.5": 0.0,
+        "accAtCov0.5": 1.0,
+        "baseRisk": 0.2125
+      },
+      "deltaEce": 0.1419,
+      "deltaEce95CI": [
+        0.0356,
+        0.2021
+      ],
+      "ciExcludesZero": true
+    },
+    "seed1": {
+      "trainDataSeed": 3,
+      "mlxSeed": 1,
+      "heldout": {
+        "n": 80,
+        "ece": 0.0866,
+        "accuracy": 0.85,
+        "meanConf": 0.8094,
+        "selectiveRisk@cov0.5": 0.0,
+        "accAtCov0.5": 1.0,
+        "baseRisk": 0.15
+      },
+      "deltaEce": 0.1134,
+      "deltaEce95CI": [
+        -0.0045,
+        0.2141
+      ],
+      "ciExcludesZero": false
+    }
+  },
+  "gate": "ECE down on held-out verifier-checkable eval at matched-or-better accuracy-at-coverage (no hedging collapse), reproduced across >=2 seeds on one pinned commit.",
+  "gateMet": false,
+  "gateVerdict": "CANDIDATE / NOT-CLEARED. Both seeds lower held-out ECE (0.200 -> 0.058/0.087) at matched-or-better accuracy AND accuracy@coverage improves 0.75 -> 1.00 (no hedging collapse). BUT seed1's per-seed ECE-reduction 95% CI includes 0 (N=80 underpowered) and the surface is a narrow type-level-confidence math generator, not general calibration. w2 ledger row STAYS OPEN.",
+  "artifacts": {
+    "base_eval.jsonl": "52a3350430ebda6392c1bb8b7d7c56b92b6dc12e722244e52d29a81cf580971b",
+    "adapter_eval_seed0.jsonl": "0b297841b8cf14f737e08e41eeed003bad78c82c258500e5db194e638a6c553e",
+    "adapter_eval_seed1.jsonl": "d2dbb524f023c43606ba2c2cebd4327bcc901863e4b4bc3906b919322abaa906",
+    "base_train.jsonl": "e7e08b3560c71628caba8bae6461b7d17af892500c713866b47cde65f6d7ccd5",
+    "base_train_s3.jsonl": "dc6673a1552fd32a7723236fea1c9b5e12414b1cc2f05881abda514ded076a9d",
+    "platt.json": "022f984973a543df08a18d0d41b2ab32f9df44dab677188873b356c30e625beb",
+    "w2_calib_pilot.py": "372c699fa3cce6759059ad76e8acb6dba685433b40b0cc6c6c4e092af123eac5"
+  },
+  "nextToClose": "Larger held-out N (tighten CI so each seed excludes 0), a >=3rd seed, and a broader non-math verifier-checkable surface (open-domain factual QA with a real answer-verifier) to show calibration beyond a controlled difficulty taxonomy."
+}

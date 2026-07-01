@@ -17,6 +17,15 @@
 
 ### W2 — `tools/train_calibration_objective.py` (calibration objective not in LM training)
 
+> **UPDATE 2026-07-01 (same day): W2 taken LIVE locally.** After this offline pass, the
+> objective was wired into a real `mlx_lm lora` SFT fine-tune of Qwen2.5-3B and evaluated on
+> a held-out, sympy-checkable eval: **ECE 0.200 → 0.058 / 0.087 across 2 seeds** at
+> matched-or-better accuracy, **accuracy@coverage 0.75 → 1.00** (no hedging collapse).
+> Strong candidate, but seed 1's ΔECE 95% CI includes 0 and the surface is narrow — **gate
+> not cleanly cleared, w2 row stays Open.** Full pilot + checksums:
+> `agi-proof/benchmark-results/w2-calibration-sft/`. Binding fact found: **mlx_lm 0.31.3 has
+> no DPO trainer**, so the local wiring is calibration-SFT, not DPO.
+
 **Wired/run (offline, exact command):**
 ```
 PYTHONPATH=. venv312/bin/python tools/train_calibration_objective.py \
