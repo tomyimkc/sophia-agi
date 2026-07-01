@@ -49,3 +49,36 @@ met. All artifacts carry `candidateOnly:true`, `level3Evidence:false`, `canClaim
 - **Acceptance gate:** contingent on O2. Any hardware/energy claim requires a real OIM (or
   equivalent) mapping and a measured energy comparison — explicitly out of scope for a software
   repo; this row exists to keep the bet honest, not to be closed here.
+
+---
+
+## RUN LOG — 2026-07-02 (live benchmark against real data)
+
+All five instruments taken live (real backends + real datasets + semantic embedder), every
+number adversarially re-derived. **All five rows STAY OPEN — none met its acceptance gate.**
+Backends: DeepSeek subject + grok grader (non-mock asserted); embedder all-MiniLM-L6-v2 (offline);
+hidden states Qwen2.5-3B via MLX. Full report + artifacts:
+`agi-proof/benchmark-results/oscillatory-crosspollination/`.
+
+- **O1** `consensus-gate` — **NOT MET.** Regenerated SimpleQA (n=129, 26 correct). Kuramoto r
+  TIES self-consistency: paired-AURC delta CI contains 0 on seeds 0/1/7 (hash + semantic);
+  `consensusWins=false`. r shows no separation direction (mean r|correct 0.976 < r|wrong 0.985).
+- **O2** `energy-verifier` — **NOT MET.** `build_hidden_state_featurizer` now genuinely implemented
+  (Qwen2.5-3B MLX, no stub — also unlocks W1/W5). But energy is uncalibrated to correctness
+  out-of-domain: LODO OOF AUROC 0.489; ECE 0.76; goodhartGap 0.26 (n=69, accepted⊂correct).
+  Deepening: a proper L2 logistic probe + combined data (n=122, more domains) + both labels
+  still fails to clear chance OOF (AUROC 0.38–0.43) — robust negative. Named source
+  `verified_traces.jsonl` is empty (needs an RLVR run).
+- **O3** `fixedpoint-stability` — **NOT MET.** Real C1 claim+evidence (n=20). Residual separates
+  in the right direction but weakly (AUROC ~0.75) and largely via a `[ENTAILS]`/`[CONTRADICTS]`
+  label-token leak (gap collapses to +0.016 on marker-free rows). Full gate blocked:
+  realtime_benchmark needs py3.11+ and the coverage-matched-F1 arm is unimplemented.
+- **O4** `adaptive-compute` — **NOT MET.** 60% raw sample savings but a 2-oscillator k=2 saturation
+  artifact (r≈1.0 for any two short strings); "no quality loss" vacuous (both AURCs at the 0.798
+  no-skill floor). Full gate blocked: `agent/long_horizon.py` has no self-consistency sampler /
+  `deadline_monotonic` (run_long_horizon_timed.py:164 passes a kwarg that TypeErrors).
+- **O5** `oscillator-substrate` — **stays OPEN by design.** Confirmed simulationOnly:true,
+  hardwareClaim:false; no hardware/energy claim; gate correctly un-closeable in a software repo.
+
+**Verdict for the theory:** on the real data tested, the Kuramoto coherence readout does not add a
+verification/abstention signal beyond sophia's existing gates. Clean honest negative.

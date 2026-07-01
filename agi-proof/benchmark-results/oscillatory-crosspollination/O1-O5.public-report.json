@@ -1,0 +1,343 @@
+{
+  "schema": "sophia.oscillatory_crosspollination.public_report.v1",
+  "title": "O1-O5 oscillatory / dynamical-systems cross-pollination \u2014 live benchmark against real data",
+  "date": "2026-07-02",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "runBy": "Claude Code (Opus 4.8), Mac Studio; standing benchmarking authorization",
+  "honestyContract": "A run is not a result; negative results are results. Every gate row stays Open unless its pre-registered acceptance gate is met. All figures reproduced and adversarially verified (independent re-derivation, refutation attempts).",
+  "backends": {
+    "generation": {
+      "subject": "deepseek-chat (api.deepseek.com)",
+      "grader": "grok (agent.model, spec=grok, independent family)",
+      "mockGuard": "assert cfg.kind!='mock'; DEEPSEEK_API_KEY present; grader resolve_config('grok').provider=='grok'"
+    },
+    "embedder": {
+      "semantic": "sentence-transformers/all-MiniLM-L6-v2 (384-d, offline HF cache)",
+      "wiring": "oscillator_core.hash_embed delegates under OSC_EMBED_BACKEND=minilm; active_embed_backend() surfaces it; invariants preserved (unit-norm text / zero-vector empty)",
+      "contrastBaseline": "blake2b lexical hash (default)"
+    },
+    "hiddenStates": "Qwen/Qwen2.5-3B-Instruct via mlx_lm.load + build_hidden_state_featurizer (real MLX residual stream, 2048-d)"
+  },
+  "headline": "On the real datasets tested, NONE of the five oscillatory-coherence gates are met. The Kuramoto convergence/coherence readout does not add a verification/abstention signal beyond sophia's existing gates: consensus-r ties (does not beat) self-consistency and shows no correctness-separation direction (O1/O4); the hidden-state energy head does not transfer out-of-domain (O2); the fixed-point residual only separates via a label-token artifact (O3); O5 stays a simulation. All rows remain Open.",
+  "results": {
+    "O1_consensus_gate": {
+      "gate": "verdict==consensus_beats_baseline with paired-AURC 95% CI lower bound >0, reproduced across >=2 seeds",
+      "verdict": "NOT_MET (consensus ties self-consistency baseline)",
+      "dataset": "google/simpleqa-verified re-generated: 150 questions x 6 deepseek samples, grok-graded; attempted slice n=129 (26 correct). Decontam: SimpleQA is eval-only, never trained in this repo.",
+      "numbers": {
+        "hash": {
+          "embedBackend": "hash:blake2b-lexical",
+          "seeds": {
+            "0": {
+              "baselineAurc": 0.7201,
+              "consensusAurc": 0.7205,
+              "delta": -0.0004,
+              "ci95": [
+                -0.0758,
+                0.0654
+              ],
+              "verdict": "inconclusive",
+              "consensusWins": false
+            },
+            "1": {
+              "baselineAurc": 0.7492,
+              "consensusAurc": 0.7513,
+              "delta": -0.0021,
+              "ci95": [
+                -0.0817,
+                0.0588
+              ],
+              "verdict": "inconclusive",
+              "consensusWins": false
+            },
+            "7": {
+              "baselineAurc": 0.7392,
+              "consensusAurc": 0.7427,
+              "delta": -0.0035,
+              "ci95": [
+                -0.0712,
+                0.063
+              ],
+              "verdict": "inconclusive",
+              "consensusWins": false
+            }
+          }
+        },
+        "minilm": {
+          "embedBackend": "minilm:sentence-transformers/all-MiniLM-L6-v2",
+          "seeds": {
+            "0": {
+              "baselineAurc": 0.7201,
+              "consensusAurc": 0.7389,
+              "delta": -0.0188,
+              "ci95": [
+                -0.0669,
+                0.0443
+              ],
+              "verdict": "inconclusive",
+              "consensusWins": false
+            },
+            "1": {
+              "baselineAurc": 0.7492,
+              "consensusAurc": 0.7397,
+              "delta": 0.0096,
+              "ci95": [
+                -0.069,
+                0.0428
+              ],
+              "verdict": "inconclusive",
+              "consensusWins": false
+            },
+            "7": {
+              "baselineAurc": 0.7392,
+              "consensusAurc": 0.7364,
+              "delta": 0.0028,
+              "ci95": [
+                -0.0612,
+                0.0468
+              ],
+              "verdict": "inconclusive",
+              "consensusWins": false
+            }
+          }
+        }
+      },
+      "adversarialCheck": "HOLDS (severity none). Reproduced to 6 decimals; semantic embedder genuinely active. Kuramoto r shows NO separation direction: mean r|correct=0.976 < r|wrong=0.985 (higher for WRONG); baseline majority-agreement separates correctly (0.590 vs 0.461). Hyperparameter sweep (gain, steps) finds no winning config.",
+      "reproduce": "OSC_EMBED_BACKEND=minilm HF_HUB_OFFLINE=1 PYTHONPATH=. python3 tools/consensus_gate_oscillator.py --records o1_attempted.jsonl --seed {0,1,7} --n-boot 5000"
+    },
+    "O2_energy_verifier": {
+      "gate": "implement build_hidden_state_featurizer; train energy head on verifier-labelled (answer,evidence); calibrated energy (AUROC/ECE, paired-bootstrap CI excluding 0) AND held-out-domain goodhartGap<=0.15",
+      "verdict": "NOT_MET (featurizer implemented; energy not calibrated to correctness out-of-domain)",
+      "featurizerImplemented": true,
+      "dataset": "agi-proof/external-eval/factcheck-full-r1.json: 69 verifier-labelled (claim,evidence,verdict,correct) across 4 domains. Brief's named source (verified_traces.jsonl) absent -> factcheck substitute (recorded).",
+      "numbers": {
+        "hiddenAUROCvsChance": {
+          "auroc": 0.4887,
+          "ci95": [
+            0.4167,
+            0.5408
+          ]
+        },
+        "linearStubAUROCvsChance": {
+          "auroc": 0.5356,
+          "ci95": [
+            0.3844,
+            0.6841
+          ]
+        },
+        "pairedHiddenMinusLinear": {
+          "aurocA": 0.4887,
+          "aurocB": 0.5356,
+          "delta": -0.0469,
+          "ci95": [
+            -0.1997,
+            0.1111
+          ]
+        },
+        "eceHidden": 0.7634,
+        "goodhartGap": 0.2607,
+        "gates": {
+          "hiddenBeatsChance(CI>0.5)": false,
+          "hiddenBeatsLinearStub(deltaCI>0)": false,
+          "goodhartGap<=0.15": false
+        },
+        "evaluation": "leave-one-domain-out out-of-fold (no in-sample optimism)",
+        "n": 69,
+        "nAccepted": 12,
+        "nCorrect": 52
+      },
+      "adversarialCheck": "HOLDS (severity none). Real Qwen2.5-3B hidden states confirmed (not stub). Decisive cross-check: supervising on ground-truth 'correct' directly still yields LODO OOF AUROC=0.500. Two harness artifacts (full-set z-score, energy saturation) both favor the hidden head, so neither masks a pass. Label confound: all 12 accepted are correct (accepted subset of correct); n=69 underpowered.",
+      "reproduce": "HF_HUB_OFFLINE=1 PYTHONPATH=. python3 tools/eval_o2_energy_hidden.py --seed 0 --n-boot 5000",
+      "deepening": {
+        "question": "Does a proper regularized probe + more data/domains + both labels recover the hidden-state signal?",
+        "protocol": "L2 logistic (sklearn, class_weight=balanced) over the SAME real Qwen MLX hidden states; combined factcheck-full-r1 + fact-check-live (n=122, deduped, more domains); leave-one-domain-out OOF; supervised on both `accepted` and `correct`.",
+        "result": {
+          "logistic(C=0.1) supervised_on=accepted": {
+            "oofAUROC": 0.3605,
+            "ci95": [
+              0.253,
+              0.475
+            ],
+            "beatsChance(CI>0.5)": false,
+            "nOOF": 122
+          },
+          "logistic(C=1.0) supervised_on=accepted": {
+            "oofAUROC": 0.381,
+            "ci95": [
+              0.2713,
+              0.4981
+            ],
+            "beatsChance(CI>0.5)": false,
+            "nOOF": 122
+          },
+          "logistic(C=0.1) supervised_on=correct": {
+            "oofAUROC": 0.4298,
+            "ci95": [
+              0.3034,
+              0.5661
+            ],
+            "beatsChance(CI>0.5)": false,
+            "nOOF": 122
+          },
+          "logistic(C=1.0) supervised_on=correct": {
+            "oofAUROC": 0.4273,
+            "ci95": [
+              0.2956,
+              0.5667
+            ],
+            "beatsChance(CI>0.5)": false,
+            "nOOF": 122
+          }
+        },
+        "verdict": "gate_not_met_robust \u2014 proper probe + more data/domains still does not clear chance out-of-fold",
+        "takeaway": "Robust negative: even the fairest head+data+label still fails to clear chance out-of-fold (several arms BELOW 0.5 = anti-correlated across unseen domains). O2's hidden-state energy does not generalize on this task."
+      },
+      "verifiedTraceSource": "agent/memory/contract/verified_traces.jsonl is EMPTY (module supports an evidence field, but no traces emitted). O2's named source would require a full RLVR run to populate (--run-train lane; escalates to human)."
+    },
+    "O3_fixedpoint_stability": {
+      "gate": "residual/non-convergence gate rejects unsupported live claims with F1 beating the current admission arm at matched coverage on the real C1 fact pack",
+      "verdict": "NOT_MET (weak, partly artifactual separation; full gate blocked)",
+      "dataset": "eval/fact_check/heldout_v1.jsonl (C1) x fixtures_v1.json evidence: 20 claim+evidence rows (11 supported).",
+      "numbers": {
+        "semantic": {
+          "separation": {
+            "nLabelled": 20,
+            "aurcByResidual": 0.268058,
+            "meanResidualSupported": 0.7666,
+            "meanResidualUnsupported": 0.8837,
+            "suggestedThreshold": 0.8251,
+            "atSuggested": {
+              "supportedAccepted": "5/11",
+              "unsupportedAccepted": "2/9"
+            }
+          },
+          "abstainRate": 0.85,
+          "embedBackend": "minilm:sentence-transformers/all-MiniLM-L6-v2"
+        },
+        "hash": {
+          "separation": {
+            "nLabelled": 20,
+            "aurcByResidual": 0.277045,
+            "meanResidualSupported": 0.9017,
+            "meanResidualUnsupported": 1.0367,
+            "suggestedThreshold": 0.9692,
+            "atSuggested": {
+              "supportedAccepted": "7/11",
+              "unsupportedAccepted": "3/9"
+            }
+          },
+          "abstainRate": 0.95,
+          "embedBackend": "hash:blake2b-lexical"
+        }
+      },
+      "adversarialCheck": "HOLDS but would-change-numbers. Direction real (supported residual 0.767 < unsupported 0.884, AUROC~0.75) BUT largely a LABEL-TOKEN LEAK: evidence snippets contain [ENTAILS]/[CONTRADICTS] restating the claim; on marker-free rows the gap collapses to +0.016. Full gate genuinely blocked: agent/realtime_benchmark.py needs py3.11+ (fact_check_gate.py:149 regex) and the coverage-matched-F1 arm is unimplemented (no selective_risk import).",
+      "reproduce": "OSC_EMBED_BACKEND=minilm HF_HUB_OFFLINE=1 PYTHONPATH=. python3 tools/fixedpoint_stability_gate.py --records o3_claim_evidence.jsonl"
+    },
+    "O4_adaptive_compute": {
+      "gate": "wire stopping rule into agent/long_horizon.py bounded by deadline_monotonic; adaptive-k matches fixed-k selective accuracy (paired CI contains 0) while cutting mean samples >=25%",
+      "verdict": "NOT_MET (raw savings real but degenerate; no selective skill; live-integration seam absent)",
+      "dataset": "same regenerated SimpleQA pack as O1 (n=129).",
+      "numbers": {
+        "hash": {
+          "embedBackend": "hash:blake2b-lexical",
+          "seeds": {
+            "0": {
+              "samplesSavedFrac": 0.4599,
+              "meanSamplesAdaptive": 3.24,
+              "nonConvergedAbstainRate": 0.2946,
+              "aurcDeltaCi95": [
+                -0.0999,
+                0.0498
+              ],
+              "noQualityLoss": true
+            },
+            "1": {
+              "samplesSavedFrac": 0.4186,
+              "meanSamplesAdaptive": 3.488,
+              "nonConvergedAbstainRate": 0.3333,
+              "aurcDeltaCi95": [
+                -0.1016,
+                0.0429
+              ],
+              "noQualityLoss": true
+            },
+            "7": {
+              "samplesSavedFrac": 0.4948,
+              "meanSamplesAdaptive": 3.031,
+              "nonConvergedAbstainRate": 0.2558,
+              "aurcDeltaCi95": [
+                -0.0835,
+                0.0649
+              ],
+              "noQualityLoss": true
+            }
+          }
+        },
+        "minilm": {
+          "embedBackend": "minilm:sentence-transformers/all-MiniLM-L6-v2",
+          "seeds": {
+            "0": {
+              "samplesSavedFrac": 0.5982,
+              "meanSamplesAdaptive": 2.411,
+              "nonConvergedAbstainRate": 0.0698,
+              "aurcDeltaCi95": [
+                -0.0658,
+                0.0874
+              ],
+              "noQualityLoss": true
+            },
+            "1": {
+              "samplesSavedFrac": 0.5633,
+              "meanSamplesAdaptive": 2.62,
+              "nonConvergedAbstainRate": 0.093,
+              "aurcDeltaCi95": [
+                -0.0915,
+                0.062
+              ],
+              "noQualityLoss": true
+            },
+            "7": {
+              "samplesSavedFrac": 0.6576,
+              "meanSamplesAdaptive": 2.054,
+              "nonConvergedAbstainRate": 0.0078,
+              "aurcDeltaCi95": [
+                -0.0485,
+                0.1148
+              ],
+              "noQualityLoss": true
+            }
+          }
+        }
+      },
+      "stepsMatchedCheck": "both arms @steps=40: saved 60-66%, noQualityLoss=true all seeds (asymmetry non-decisive)",
+      "adversarialCheck": "HOLDS but would-change-numbers. 89% of rows stop at k=2 because Kuramoto r over 2 points locks to ~1.0 for ANY two short strings (even 'yes'/'no'->0.9997) \u2014 coherence-metric saturation, not adaptive compute. 'noQualityLoss' is VACUOUS: both AURCs sit at the 0.798 no-skill floor (ties O1's null). Full gate blocked: long_horizon.py has no self-consistency sampler / no deadline_monotonic; run_long_horizon_timed.py:164 passes a kwarg that raises TypeError.",
+      "reproduce": "OSC_EMBED_BACKEND=minilm HF_HUB_OFFLINE=1 PYTHONPATH=. python3 tools/adaptive_compute_convergence.py --records o1_attempted.jsonl --k-max 6 --seed {0,1,7}"
+    },
+    "O5_oscillator_substrate": {
+      "gate": "contingent on O2; any hardware/energy claim needs a real OIM mapping + measured energy \u2014 out of scope for a software repo",
+      "verdict": "CONFIRMED_SIMULATION_ONLY (gate correctly stays Open)",
+      "numbers": {
+        "simulationOnly": true,
+        "hardwareClaim": false,
+        "canClaimAGI": false,
+        "substrateMatchesDigital": true,
+        "annealingGap": 2.0
+      },
+      "adversarialCheck": "simulationOnly:true, hardwareClaim:false hardcoded at all emission sites; no watt/joule/hardware claim; energies are INPUTS never measured.",
+      "reproduce": "PYTHONPATH=. python3 tools/oscillator_substrate_sim.py --candidates o5_cands.jsonl"
+    }
+  },
+  "ledgerImpact": "All five failure-ledger rows stay Open. None met its acceptance gate. O2's build_hidden_state_featurizer seam is now genuinely implemented (unlocks W1/W5), but the O2 gate itself is not met.",
+  "artifactHashes": {
+    "o1_o4_results.json": "9bdddc8b30af9826",
+    "o2_energy_hidden.report.json": "acae983ce9cab5ea",
+    "o3_minilm.report.json": "be221c66891d502d",
+    "o5.report.json": "f32e1c3e7990c6bb"
+  },
+  "unlocked_followons": {
+    "featurizer": "build_hidden_state_featurizer is now genuinely implemented (Qwen2.5-3B MLX). The handover names it as the shared seam that also unlocks W1 (process-reward model) and W5 (probe-as-loss) \u2014 these remain runnable follow-ons, not executed here.",
+    "o2_real_dataset": "Populate verified_traces.jsonl via an RLVR run to obtain the gate's named (answer,evidence,accept/reject) source; or assemble a larger balanced verifier-labelled multi-domain pack (current n underpowered, accepted subset of correct)."
+  }
+}
