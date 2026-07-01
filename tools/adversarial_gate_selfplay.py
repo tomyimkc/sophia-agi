@@ -119,10 +119,18 @@ def selfplay_round(
         "nNewNegatives": len(new_negatives),
         "slipPastGateRate": (round(slipped / len(novel), 4) if (trained and novel) else None),
         "newNegatives": new_negatives,
-        "note": ("DRY mode: no model/gate backend, so temptation+novelty+realism filters ran "
-                 "but no fabricate-and-pass mining occurred (trained:false). Wire a live "
-                 "model+gate and append newNegatives to the DPO file across rounds — the "
-                 "maintainer seam. Novelty+realism floors are the anti-collapse guards."),
+        "note": (
+            ("DRY mode: no model/gate backend, so temptation+novelty+realism filters ran "
+             "but no fabricate-and-pass mining occurred (trained:false). Wire a live "
+             "model+gate and append newNegatives to the DPO file across rounds — the "
+             "maintainer seam. Novelty+realism floors are the anti-collapse guards.")
+            if not trained else
+            (f"LIVE mode: model+gate supplied (trained:true). Ran temptation+novelty+realism "
+             f"filters then fabricate-and-pass mining over {len(novel)} novel prompt(s); "
+             f"mined {len(new_negatives)} DPO negative(s). Append newNegatives to the DPO file "
+             "and repeat across rounds — the maintainer seam. Novelty+realism floors are the "
+             "anti-collapse guards.")
+        ),
         "candidateOnly": True, "level3Evidence": False, "canClaimAGI": False,
     }
 
