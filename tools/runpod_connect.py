@@ -41,7 +41,6 @@ import argparse
 import json
 import os
 import sys
-import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -102,6 +101,16 @@ def resolve_api_key(explicit: str | None = None,
     if key:
         return key, "env"
     return None, "missing"
+
+
+def _safe_source_tag(source: str) -> str:
+    """Return a non-sensitive provenance tag for logging.
+
+    ``source`` is only ever one of a small fixed set of labels, never the key
+    itself; mapping through an allowlist makes that explicit (and keeps any
+    secret value out of logs).
+    """
+    return {"arg": "arg", "env": "env", "missing": "missing"}.get(source, "unknown")
 
 
 def classify_pod(pod: "dict[str, Any]", *, now_epoch: "float | None" = None,
@@ -286,7 +295,7 @@ def main(argv: "list[str] | None" = None) -> int:
         out = {
             "route": "direct" if key else "github-mediated",
             "key_present": bool(key),
-            "key_source": source,
+            "key_source": _safe_source_tag(source),
             "github_workflow": DISPATCH_WORKFLOW,
             "hint": ("RUNPOD_API_KEY present — direct REST connection available."
                      if key else GITHUB_FALLBACK_HINT),
@@ -354,8 +363,9 @@ def main(argv: "list[str] | None" = None) -> int:
         return 0 if (args.yes or not result["leaked_count"]) else 3
 
     if not args.check:
-        msg = f"[runpod] key resolved from {source}; pass --check to query pods."
-        print(json.dumps({"connected": True, "key_source": source}) if args.json else msg)
+        safe_source = _safe_source_tag(source)
+        msg = f"[runpod] key resolved from {safe_source}; pass --check to query pods."
+        print(json.dumps({"connected": True, "key_source": safe_source}) if args.json else msg)
         return 0
 
     try:

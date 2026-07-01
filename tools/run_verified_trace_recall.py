@@ -96,6 +96,9 @@ def run(*, graphs: int = 400, seed: int = 2026, contradiction_frac: float = 0.5,
     inv3_chain_intact = axis.get("chainIntact") is True
     # INV-4: every trace must carry the no-overclaim triad.
     from sophia_contract.stores import _read_jsonl
+    # Fail-closed default: absent a successful triad re-check, treat as REFUTED.
+    triad_ok = False
+    refuted = True
     # re-read the log to check the triad (it was deleted with the tempdir, so we
     # re-run a tiny version into a fresh temp to validate the triad on real lines)
     with tempfile.TemporaryDirectory() as td2:

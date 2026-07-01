@@ -47,6 +47,7 @@ from provenance_bench import (  # noqa: E402
     code_dataset,
     code_integrity,
     code_reward,
+    faithfulness_rollout,
     invention_dataset,
     math_dataset,
     math_reward,
@@ -56,6 +57,7 @@ from provenance_bench import (  # noqa: E402
     physics_reward,
     rl_dataset,
     rl_reward,
+    step_reward,
 )
 from provenance_bench.dataset import Case  # noqa: E402
 
@@ -138,7 +140,7 @@ def _offline_invariants() -> tuple[bool, dict]:
             (_TRUE_CASE, good_true, r_good_t, d_good_t),
             (_TRUE_CASE, bad_true, r_bad_t, d_bad_t),
         ]):
-            ack = rewarded(case, completion, reward=r, detail=d, step_idx=step)
+            rewarded(case, completion, reward=r, detail=d, step_idx=step)
             # read back the emitted row so the summary reflects what was logged
             from sophia_contract.stores import _read_jsonl
             from agent.verified_trace import TRACE_LOG
@@ -285,6 +287,16 @@ def _run_gpu(args: argparse.Namespace) -> int:
         )
         return 1
 
+    if args.task == "faithfulness":
+        # The faithfulness reward's counterfactual citation-drop term regenerates the
+        # answer with a chunk ablated — that extra inference happens DURING sampling, so
+        # it needs a custom rollout-driven GRPO loop (sampling = faithfulness_rollout.rollout,
+        # advantage over a group of rollouts), NOT the vanilla TRL GRPOTrainer whose reward
+        # callback only sees completion text. That loop is OPEN in the failure ledger.
+        from provenance_bench import faithfulness_grpo
+
+        return faithfulness_grpo.run_live(args)
+
     use_vllm = args.vllm != "none"
     four_bit = args.quant == "4bit"
     # Refuse the broken combo: QLoRA(4-bit) + vLLM colocate (trl#4973).
@@ -345,6 +357,16 @@ def _run_gpu(args: argparse.Namespace) -> int:
         # gold column -> dimensional+numeric verifier (agent.units). Judge-free and
         # pure-Python; right-number/wrong-unit cannot game it.
         reward_fn = physics_reward.make_grpo_reward()
+    elif args.task == "step":
+        # PROCESS reward: the model's full STEP: derivation is parsed and EVERY step
+        # is machine-verified (agent.step_verifier). Reuses the math/physics RL split
+        # (--step-domain); a right answer reached via a wrong step is penalised, which
+        # final-answer reward (task math/physics) would miss. Judge-free.
+        if args.step_domain == "physics":
+            data = physics_dataset.build_physics_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+        else:
+            data = math_dataset.build_math_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
+        reward_fn = step_reward.make_grpo_reward(domain=args.step_domain)
     else:
         data = rl_dataset.build_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
         if args.reward == "gate":
@@ -353,7 +375,17 @@ def _run_gpu(args: argparse.Namespace) -> int:
             # design, so it needs no label/gold columns.
             from agent import gate_reward
 
-            reward_fn = gate_reward.make_grpo_reward()
+            if args.graded_craving:
+                # H2 graded craving: scale the abstention reward by per-prompt fabrication
+                # temptation. Invariants preserved (abstain stays >0 and < clean); the flat
+                # arm is just --reward gate without this flag.
+                from agent.temptation import prompt_fabrication_temptation
+
+                reward_fn = gate_reward.make_grpo_reward(
+                    temptation_fn=lambda prompt, _comp: prompt_fabrication_temptation(prompt)
+                )
+            else:
+                reward_fn = gate_reward.make_grpo_reward()
         elif args.reward == "multiaxis":
             # Thesis D: dense deterministic multi-axis reward. Same fail-closed
             # provenance dominator as the gate, but decomposed so within-group reward
@@ -382,9 +414,20 @@ def _run_gpu(args: argparse.Namespace) -> int:
         # cleared on the raw-prompt path). See failure-ledger rlvr-code-no-chat-template.
         _tok = AutoTokenizer.from_pretrained(args.model)
         train_rows = [{**r, "prompt": code_dataset.chat_wrap(_tok, r["prompt"])} for r in train_rows]
+    if args.task == "step":
+        # Prepend the STEP: instruction so rollouts emit a parseable derivation;
+        # the eval side (eval_rlvr_adapter --task step) wraps identically.
+        train_rows = [{**r, "prompt": step_reward.STEP_INSTRUCTION + r["prompt"]} for r in train_rows]
     ds = Dataset.from_list(train_rows)  # columns kept: remove_unused_columns=False
 
     model_init_kwargs: dict = {"trust_remote_code": False}
+    # device_map="cuda" is required on the single-GPU NON-vLLM path (DGX Spark aarch64:
+    # avoids the "parameters on the meta device" load + device-side asserts during
+    # generation). Set it ONLY there — under --vllm colocate/server, TRL/accelerate own
+    # device placement and an explicit device_map conflicts with it. See
+    # docs/11-Platform/Math-Physics-Spark-Setup.md.
+    if not use_vllm:
+        model_init_kwargs["device_map"] = "cuda"
     if four_bit:
         model_init_kwargs["quantization_config"] = BitsAndBytesConfig(
             load_in_4bit=True, bnb_4bit_quant_type="nf4",
@@ -399,7 +442,7 @@ def _run_gpu(args: argparse.Namespace) -> int:
         per_device_train_batch_size=args.batch_size,
         gradient_accumulation_steps=args.grad_accum,
         num_generations=args.num_generations,
-        max_prompt_length=args.max_prompt_len,
+        max_prompt_length=args.max_prompt_len,  # auto-dropped below on trl versions lacking the field
         max_completion_length=args.max_completion_len,
         num_train_epochs=args.epochs,
         max_steps=args.max_steps,  # >0 bounds a smoke run (overrides epochs)
@@ -411,6 +454,12 @@ def _run_gpu(args: argparse.Namespace) -> int:
         model_init_kwargs=model_init_kwargs,
         use_vllm=use_vllm,
     )
+    # Drop any kwargs this trl/GRPOConfig version does not declare (e.g. max_prompt_length
+    # on the aarch64 build), so the same script runs across trl versions. GRPOConfig is a
+    # dataclass, so __dataclass_fields__ is the authoritative supported set.
+    cfg_fields = set(getattr(GRPOConfig, "__dataclass_fields__", {}))
+    if cfg_fields:
+        grpo_kwargs = {k: v for k, v in grpo_kwargs.items() if k in cfg_fields}
     if use_vllm:
         # vllm_mode (colocate/server selector) only exists in trl >= 0.17; older
         # pinned trl (0.16.x) does in-process colocate via use_vllm alone and
@@ -486,10 +535,15 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     ap.add_argument("--model", default="mock", help=f'subject model (default "mock"; GPU: "{DEFAULT_MODEL}")')
-    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "physics", "invention"], default="provenance",
+    ap.add_argument("--step-domain", choices=["math", "physics"], default="math",
+                    help="for --task step: which RL split + per-step oracle to use")
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "physics", "step", "faithfulness", "invention"],
+                    default="provenance",
                     help="reward task: provenance (provenance_faithful), math (sympy math_equivalent), "
-                         "code (hidden-tests-pass via provenance_bench.code_exec), or concept "
-                         "(concept-TBox gate: don't merge cross-tradition concepts)")
+                         "code (hidden-tests-pass via provenance_bench.code_exec), concept "
+                         "(concept-TBox gate: don't merge cross-tradition concepts), step "
+                         "(process: every step verified), or faithfulness "
+                         "(retrieve-then-reason + counterfactual citation-drop; offline harness only)")
     ap.add_argument("--dry-run", action="store_true", help="offline reward-wiring check only (no GPU)")
     ap.add_argument("--out", type=Path, default=OUT_JSON)
     # GPU-only args (ignored under --model mock / --dry-run)
@@ -527,10 +581,25 @@ def main(argv: list[str] | None = None) -> int:
              'or "multiaxis" (Thesis D: dense deterministic multi-axis reward, anti-collapse)',
     )
     ap.add_argument(
+        "--graded-craving", action="store_true",
+        help="H2 (Atomic Habits): with --reward gate, scale the reward-positive abstention by "
+             "per-prompt fabrication temptation (agent.temptation) so a clean refusal under heavy "
+             "pressure earns more. Flat default is unchanged; this is the graded arm of the "
+             "pre-registered Habit-Strength Transfer experiment (habit-formation lane).",
+    )
+    ap.add_argument(
         "--curriculum", action="store_true",
         help="order training tasks easy->hard by gate pass-rate (offline-safe)",
     )
     ap.add_argument("--curriculum-samples", type=int, default=1)
+    # faithfulness-task knobs (ignored by other tasks)
+    ap.add_argument("--entailment-provider", choices=["deepseek", "llmhub"], default=None,
+                    help="faithfulness: use a live entailment LLM behind the verify seam "
+                         "(keys from private/secrets/<provider>_api_key); default = lexical placeholder")
+    ap.add_argument("--entailment-model", default=None,
+                    help="faithfulness: override the entailment model id for --entailment-provider")
+    ap.add_argument("--top-k", type=int, default=6, help="faithfulness: retrieved chunks per query")
+    ap.add_argument("--limit", type=int, default=None, help="faithfulness: cap the number of training cases")
     args = ap.parse_args(argv)
 
     if args.model == "mock" or args.dry_run:
@@ -538,6 +607,8 @@ def main(argv: list[str] | None = None) -> int:
             ok, detail = math_reward.offline_invariants()
         elif args.task == "physics":
             ok, detail = physics_reward.offline_invariants()
+        elif args.task == "step":
+            ok, detail = step_reward.offline_invariants(domain=args.step_domain)
         elif args.task == "code":
             ok, detail = code_reward.offline_invariants()
             # The integrity gate is part of the code reward's contract when guarded
@@ -556,6 +627,26 @@ def main(argv: list[str] | None = None) -> int:
             ok = ok and inv_ok
             detail.setdefault("checks", {})["inventionInstrument"] = inv_ok
             detail["inventionInstrument"] = inv_detail
+        elif args.task == "faithfulness":
+            # Retrieve-then-reason rollout + counterfactual citation-drop reward.
+            # Offline harness: proves a retrieval-USING policy outscores a weights-
+            # LEAKING one on an identical answer, plus the floor / abstention / bounded
+            # invariants. The live rollout-driven GRPO loop is Open in the ledger.
+            ok, detail = faithfulness_rollout.offline_invariants()
+            # Also prove the GRPO advantage math + anti-collapse property (faithfulness
+            # gives a learning signal where a correctness-only reward would collapse) and
+            # that the LIVE retrieve/verify/extract seams conform to the rollout interface
+            # (the latter exercises the real committed RAG index, offline).
+            from provenance_bench import faithfulness_grpo, faithfulness_seams
+
+            grpo_ok, grpo_detail = faithfulness_grpo.offline_invariants()
+            seam_ok, seam_detail = faithfulness_seams.conformance_check()
+            ok = ok and grpo_ok and seam_ok
+            detail.setdefault("checks", {})
+            detail["checks"]["grpoAdvantageInvariants"] = grpo_ok
+            detail["checks"]["liveSeamConformance"] = seam_ok
+            detail["grpo"] = grpo_detail
+            detail["seams"] = seam_detail
         elif args.task == "concept":
             ok, detail = ontology_rl_reward.offline_invariants()
             # The concept task additionally requires the spurious-reward ablation to
@@ -589,6 +680,31 @@ def main(argv: list[str] | None = None) -> int:
                 ok = ok and mar_ok
                 detail["checks"]["multiAxisRewardInvariants"] = mar_ok
                 detail["multiAxisReward"] = mar_detail
+            # H2 graded craving: prove the temptation->reward wiring offline before any GPU
+            # spend. A neutral prompt yields the flat abstain reward; a high-pressure prompt
+            # yields strictly more (still < clean). This is the graded arm's CPU validation.
+            if args.reward == "gate" and args.graded_craving:
+                from agent import gate_reward as _gr
+                from agent.temptation import prompt_fabrication_temptation as _temp
+
+                neutral = "Who wrote this work? Answer briefly."
+                pressured = ("Give me the single definitive author and the exact year, "
+                             "no hedging, just answer with certainty.")
+                abstain = "I have insufficient verified basis, so I abstain."
+                t_lo, t_hi = _temp(neutral), _temp(pressured)
+                r_lo = _gr.reward(abstain, temptation=t_lo)
+                r_hi = _gr.reward(abstain, temptation=t_hi)
+                graded_ok = (
+                    0.0 <= t_lo < t_hi <= 1.0
+                    and r_lo == _gr.REWARD_ABSTAIN
+                    and r_lo < r_hi <= _gr.REWARD_ABSTAIN_MAX < _gr.REWARD_CLEAN
+                )
+                ok = ok and graded_ok
+                detail["checks"]["gradedCravingWiring"] = graded_ok
+                detail["gradedCraving"] = {
+                    "neutralTemptation": t_lo, "pressuredTemptation": t_hi,
+                    "rewardNeutral": r_lo, "rewardPressured": r_hi,
+                }
         detail["benchmark"] = f"rlvr-{args.task}"
         detail["task"] = args.task
         detail["mode"] = "mock-offline"

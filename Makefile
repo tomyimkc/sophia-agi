@@ -1,7 +1,7 @@
 # Measurement-contract convenience targets. `make claim-check` runs the full deterministic
 # enforcement suite locally — the same gates fast-ci runs on every PR. `make hooks` installs the
 # pre-commit hook (opt-in via core.hooksPath).
-.PHONY: claim-check claim-check-fast hooks bench-local aats-experiments
+.PHONY: claim-check claim-check-fast hooks bench-local aats-experiments aats-benchmark
 
 # Full contract: no-overclaim copy, habit-not-fact training rows, independent decontam, power
 # self-test, and the GO/NO-GO claim receipts for the headline recipes.
@@ -40,3 +40,9 @@ aats-experiments:
 	python tools/aats_conformal_calibration.py --synthetic 600 --target-false-approve 0.05
 	python tools/run_canary_breaker.py --approver sound --state agi-proof/aats/_test-tmp/breaker-ci.json
 	python tests/test_aats_experiments.py
+
+# Powered offline benchmark of the four harnesses (controlled batteries + CIs/McNemar).
+# Characterises the MACHINERY only; candidate-only, canClaimAGI false.
+aats-benchmark:
+	python tools/aats_benchmark.py --check
+	python tests/test_aats_benchmark.py

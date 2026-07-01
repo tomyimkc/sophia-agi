@@ -91,9 +91,16 @@ def test_corpus_discrimination_invariant() -> None:
     report = run()
     assert report["weakSources"]["downgradeRate"] == 1.0
     assert report["strongSources"]["keepRate"] >= 0.5
-    # monotonic-ish: consensus mean confidence exceeds legendary mean confidence
+    # monotonic-ish: the strongest provenance tier PRESENT outranks legendary in mean confidence.
+    # Don't hard-code 'consensus': evidence_spec licenses that rank only with >=3 independent
+    # origins, so the corpus may honestly contain zero consensus-tier pages. The invariant under
+    # test is strong-tier > weak-tier, not the presence of any single label — assert it on
+    # whichever strong tier actually exists (consensus if present, else attributed/compiled/...).
     tiers = report["perTier"]
-    assert tiers["consensus"]["meanConfidence"] > tiers["legendary"]["meanConfidence"]
+    strong_tier = next((t for t in ("consensus", "attributed", "compiled", "layered")
+                        if t in tiers), None)
+    assert strong_tier is not None, "expected at least one strong-tier page in the corpus"
+    assert tiers[strong_tier]["meanConfidence"] > tiers["legendary"]["meanConfidence"]
 
 
 if __name__ == "__main__":

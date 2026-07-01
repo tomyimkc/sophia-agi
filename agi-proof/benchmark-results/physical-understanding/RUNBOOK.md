@@ -13,7 +13,7 @@ here has executed; the failure-ledger entry
 
 ## What is already built (offline, in `main`)
 
-- The **physical trap split** — 15 rows across depth ordering, occlusion,
+- The **physical trap split** — 34 rows across depth ordering, occlusion,
   real-vs-apparent size, and 3D distance (+ controls + numeric `measure`), every
   gold re-derived by a judge-free verifier (`multimodal_bench/verifiers.py`).
 - The **answer eval** with a multi-family consensus judge + no-overclaim

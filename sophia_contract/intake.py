@@ -17,7 +17,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from sophia_contract import blp
-from sophia_contract.models import HELD_REASONS, SOURCE_STATUSES, build_claim, claim_id_for
+from sophia_contract.models import SOURCE_STATUSES, build_claim, claim_id_for
 from sophia_contract.scopes import OPS, Scope
 
 INTAKE_CONTRACT_VERSION = "1.0.0"

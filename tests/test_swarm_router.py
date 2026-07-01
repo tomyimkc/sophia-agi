@@ -176,6 +176,30 @@ def test_reward_bounded() -> None:
     assert srl.REWARD_FLOOR <= worst <= srl.REWARD_CEIL
 
 
+# --- multi-turn trajectory reward (KL control + length normalisation) -------
+def test_trajectory_offline_invariants() -> None:
+    ok, detail = srl.trajectory_invariants()
+    assert ok, detail["checks"]
+
+
+def test_trajectory_kl_control_penalises_drift() -> None:
+    r = sr.SwarmRouter()
+    step = r.decide("Compare the disputed authorship of the Dao De Jing citing sources")
+    turns = [srl.SwarmOutcome(step, verified_success=1.0) for _ in range(3)]
+    calm = srl.trajectory_reward(srl.TrajectoryOutcome(turns, 1.0, kl_per_turn=(0.0, 0.0, 0.0)))
+    drift = srl.trajectory_reward(srl.TrajectoryOutcome(turns, 1.0, kl_per_turn=(3.0, 3.0, 3.0)))
+    assert calm > drift
+
+
+def test_trajectory_length_normalisation_reduces_cost() -> None:
+    r = sr.SwarmRouter()
+    step = r.decide("Compare the disputed authorship of the Dao De Jing citing sources")
+    turns = [srl.SwarmOutcome(step, verified_success=1.0) for _ in range(4)]
+    normed = srl.trajectory_reward(srl.TrajectoryOutcome(turns, 1.0), length_normalize=True)
+    raw = srl.trajectory_reward(srl.TrajectoryOutcome(turns, 1.0), length_normalize=False)
+    assert normed > raw
+
+
 if __name__ == "__main__":
     import traceback
 

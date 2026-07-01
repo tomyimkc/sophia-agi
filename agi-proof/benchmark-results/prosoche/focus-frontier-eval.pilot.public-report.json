@@ -1,0 +1,77 @@
+{
+  "arms": {
+    "priority-packed": {
+      "arm": "priority-packed",
+      "goalShiftSolvedRate": 0.0,
+      "n": 9,
+      "safetyPrunedCount": 0,
+      "solvedRate": 0.0,
+      "tokensPerSolved": null,
+      "totalTokens": 369
+    },
+    "prosoche-anchored": {
+      "arm": "prosoche-anchored",
+      "goalShiftSolvedRate": 0.5,
+      "n": 9,
+      "safetyPrunedCount": 0,
+      "solvedRate": 0.4444,
+      "tokensPerSolved": 73.5,
+      "totalTokens": 294
+    },
+    "recency-chop": {
+      "arm": "recency-chop",
+      "goalShiftSolvedRate": 0.0,
+      "n": 9,
+      "safetyPrunedCount": 0,
+      "solvedRate": 0.0,
+      "tokensPerSolved": null,
+      "totalTokens": 386
+    }
+  },
+  "boundary": "REAL pilot: a live subject model + >= 2 independent judge families, but on a small, non-decontaminated author battery -> UNDERPOWERED. Candidate signal only; the gate stays NO-GO until a decontaminated, powered (N >= 100), >= 3-seed run clears every guardrail with a delta CI excluding 0. canClaimAGI:false.",
+  "canClaimAGI": false,
+  "criticalFailures": [
+    "underpowered: N=9 < 100 items (MDE >> 0.10); this is a PILOT, not a powered result",
+    "insufficient_seeds: 1 < 3 seeds",
+    "no_decontam_no_private_split: this author battery is not decontaminated against the anchor corpus and has no held-out private split"
+  ],
+  "go": false,
+  "guardrails": {
+    "antiFixationHeld": true,
+    "safetyPruned": 0,
+    "successNonInferior": true
+  },
+  "interJudge": {
+    "gwetAC1": 1.0,
+    "minPairwiseCohenKappa": 0.5714285714285714,
+    "n": 9,
+    "note": "pairwise across all judge families on the anchored arm; gate uses the min",
+    "pairwiseCohenKappa": {
+      "llmhub:anthropic|llmhub:qwen": 1.0,
+      "llmhub:anthropic|openrouter:mistral": 0.5714285714285714,
+      "llmhub:qwen|openrouter:mistral": 0.5714285714285714
+    }
+  },
+  "judgeFamilies": 3,
+  "judges": [
+    "llmhub:anthropic",
+    "llmhub:qwen",
+    "openrouter:mistral"
+  ],
+  "mode": "real",
+  "primaryDelta": {
+    "anchoredTokensPerSolved": 73.5,
+    "baselineTokensPerSolved": null,
+    "deltaEfficiencyCost": -52.78,
+    "deltaTokensCI95": [
+      -87.2222,
+      -18.1111
+    ],
+    "mdeAtN": 0.6603,
+    "pairedTasks": 9
+  },
+  "seeds": 1,
+  "status": "pilot",
+  "subject": "deepseek:deepseek-chat",
+  "verdict": "NO-GO"
+}

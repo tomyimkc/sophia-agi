@@ -46,7 +46,15 @@ def test_no_results_abstains() -> None:
 
 
 def test_ungrounded_query_hedges() -> None:
-    r = gs.grounded_search("qwerty nonsense zzxx plooop")
+    # The ungrounded path = results retrieved but none backed by a provenance source.
+    # A nonsense query now retrieves nothing (better recall) → that is the *abstain*
+    # path; to exercise *ungrounded → hedge* deterministically we supply chunks whose
+    # query does not entity-link to any OKF page, so the target stays None.
+    from agent.retrieval import SourceChunk
+
+    chunks = [SourceChunk(path="x.md", title="x", excerpt="qwerty plooop", score=0.1)]
+    sr = SearchResult(query=analyze("qwerty nonsense zzxx plooop"), chunks=chunks)
+    r = gs.grounded_search("qwerty nonsense zzxx plooop", search_result=sr)
     assert r.grounded is False
     assert r.action == "hedge"
     assert r.policy == "grounded_search_ungrounded"

@@ -857,6 +857,30 @@ def sophrosyne_benchmark_tool() -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# Prosoche — attention/focus gate (the allocation regulator). Decides whether the
+# agent's effort tracks the active goal (focused) or has wandered (drifting), and
+# NEVER prunes a safety-relevant step as off-goal (attention is not blindness).
+# Orthogonal to conscience; deterministic candidate infrastructure. Read-only.
+# --------------------------------------------------------------------------- #
+
+def attention_assess_tool(text: str, *, anchor=None, context=None) -> dict:
+    from agent.prosoche import assess_attention
+    if not (text or "").strip():
+        return {"error": "text is required"}
+    return assess_attention(text, anchor, context=context or {}).to_dict()
+
+
+def distraction_check_tool(text: str, *, anchor=None, context=None) -> dict:
+    from agent.distraction_signals import detect_distraction
+    return detect_distraction(text or "", anchor, context=context or {}).to_dict()
+
+
+def prosoche_benchmark_tool() -> dict:
+    from agent.prosoche import run_prosoche_benchmark
+    return run_prosoche_benchmark()
+
+
+# --------------------------------------------------------------------------- #
 # Dikaiosyne — justice gate. Role A: the impartiality/consistency auditor (treat
 # like cases alike; never endorse false balance). Role B: the inter-virtue arbiter
 # (the Republic harmony of the four virtues). Orthogonal to conscience; candidate infra.

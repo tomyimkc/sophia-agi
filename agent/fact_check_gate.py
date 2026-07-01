@@ -31,7 +31,6 @@ import hashlib
 import math
 import re
 from dataclasses import dataclass, field
-from datetime import datetime
 from typing import Any, Callable, Iterable
 from urllib.parse import urlparse
 
@@ -119,8 +118,8 @@ _DOI_RE = re.compile(r"\b10\.\d{4,9}/[-._;()/:A-Z0-9]+\b", re.I)
 _URL_RE = re.compile(r"https?://[^\s)\]>\"']+", re.I)
 _YEAR_RE = re.compile(r"\b(1[5-9]\d{2}|20\d{2}|2100)\b")
 _DATE_ORDER_RE = re.compile(r"\b(before|after|since|by|from|until)\b", re.I)
-_ARITH_RE = re.compile(r"(-?\d+(?:\.\d+)?)\s*([+\-*/])\s*(-?\d+(?:\.\d+)?)\s*=\s*(-?\d+(?:\.\d+)?)")
-_CODE_RE = re.compile(r"```(?:python|py)\s*\n(.*?)```", re.I | re.S)
+_ARITH_RE = re.compile(r"(-?\d{1,15}(?:\.\d{1,15})?)\s*([+\-*/])\s*(-?\d{1,15}(?:\.\d{1,15})?)\s*=\s*(-?\d{1,15}(?:\.\d{1,15})?)")
+_CODE_RE = re.compile(r"```(?:python|py)[^\S\n]*\n(.*?)```", re.I | re.S)
 _ECON_RE = re.compile(
     r"\b(?:gdp|inflation|cpi|interest rate|central bank|unemployment|tariff|subsidy|"
     r"rent[- ]seeking|regulatory capture|monopoly|productivit\w*|wages?|median income|"
@@ -147,7 +146,7 @@ _SUBJECTIVE_RE = re.compile(
 )
 # A code-fence artifact line (``` or ```lang) left over after fenced blocks are
 # extracted; must never be treated as an open factual claim.
-_FENCE_ARTIFACT_RE = re.compile(r"^\s*`{3,}\s*[a-z0-9_+-]*\s*$", re.I)
+_FENCE_ARTIFACT_RE = re.compile(r"^\s*+`{3,}\s*+[a-z0-9_+-]*+\s*+$", re.I)
 _AUTHORSHIP_VERB_RE = re.compile(r"\b(?:wrote|authored|penned|composed|author of|written by)\b", re.I)
 # Interrogative opener (sentence splitting strips the trailing '?', so detect the
 # leading question word instead). A question asserts nothing factual.

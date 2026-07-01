@@ -49,6 +49,7 @@ def _read_jsonl(path: Path) -> list[dict]:
             try:
                 rows.append(json.loads(line))
             except json.JSONDecodeError:
+                # tolerate malformed/partial JSONL lines; skip and keep reading
                 pass
     return rows
 
@@ -250,7 +251,6 @@ def build(
     }
 
     if not check_only:
-        _write_jsonl  # noqa
         out.mkdir(parents=True, exist_ok=True)
         (out / "manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
                                            encoding="utf-8")

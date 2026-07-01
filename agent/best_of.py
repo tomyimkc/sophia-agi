@@ -51,7 +51,7 @@ def best_of(
     query: str,
     *,
     n: int = 4,
-    generate: "GenerateFn | None" = None,
+    generate: GenerateFn | None = None,
     system: str = DEFAULT_SYSTEM,
     records: "dict | None" = None,
     early_exit: bool = True,

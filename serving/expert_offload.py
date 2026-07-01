@@ -30,9 +30,8 @@ no-overclaim gate — this module is the *mechanism*, not the *measurement*.
 from __future__ import annotations
 
 from collections import OrderedDict
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import IntEnum
-from typing import Optional
 
 
 class ExpertTier(IntEnum):
@@ -233,7 +232,7 @@ def offline_invariants() -> "tuple[bool, dict]":
     # 4. Promotion crosses tiers in order (DISK→CPU→GPU), counting each step.
     s2 = TieredExpertStore(gpu_budget_bytes=1000)
     s2.register(0, size_bytes=100, tier=ExpertTier.DISK)
-    rep = s2.route_select([0])
+    s2.route_select([0])
     checks["promoted_from_disk"] = s2.tier_of(0) == ExpertTier.GPU
     # DISK→CPU→GPU is 2 promotes + 1 disk_load
     checks["disk_load_counted"] = s2.stats.disk_loads == 1

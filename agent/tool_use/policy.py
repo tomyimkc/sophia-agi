@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Any
 from provenance_bench.judge import judge_answer
 from provenance_bench.local_agent import TOOL_SCHEMAS, _confident
 def registry_for_case(case):

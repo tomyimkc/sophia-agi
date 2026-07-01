@@ -36,11 +36,12 @@ def z_quantile(p: float) -> float:
     if not 0 < p < 1:
         raise ValueError("p must be in (0,1)")
     pl = 0.02425
+    phigh = 1 - pl
     if p < pl:
         q = math.sqrt(-2 * math.log(p))
         return (((((_C[0] * q + _C[1]) * q + _C[2]) * q + _C[3]) * q + _C[4]) * q + _C[5]) / \
                ((((_D[0] * q + _D[1]) * q + _D[2]) * q + _D[3]) * q + 1)
-    if p <= 1 - pl:
+    if p <= phigh:
         q = p - 0.5
         r = q * q
         return (((((_A[0] * r + _A[1]) * r + _A[2]) * r + _A[3]) * r + _A[4]) * r + _A[5]) * q / \

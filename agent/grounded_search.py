@@ -110,6 +110,7 @@ def _resolve_target(query: str, chunks: list[SourceChunk], pages) -> "tuple[str 
         if linked:
             return linked, "query_link"
     except Exception:
+        # optional lexical-link path; any import/route failure falls back to ("none")
         pass
     return None, "none"
 
@@ -123,7 +124,7 @@ def grounded_search(
     thresholds: "dict | None" = None,
     client: Any | None = None,
     gap_log_path: Any | None = None,
-    search_result: "SearchResult | None" = None,
+    search_result: SearchResult | None = None,
 ) -> GroundedSearchResult:
     """Run the search pipeline and overlay grounding + calibrated abstention.
 
@@ -176,8 +177,12 @@ def _decide_serve(*, chunks, target, confidence, belief_view, thresholds):
 
     # Grounded in a real source. Calibrate with the graded router.
     if confidence is None:
-        # Grounded but no usable provenance signal → serve (no downgrade evidence).
-        return "answer", True, "grounded_search_answer", "grounded source, no downgrade signal"
+        # Grounded but NO usable provenance/confidence signal → fail-closed: an
+        # uncalibratable source may not be served as a clean answer (that would make a
+        # missing signal LESS conservative, violating the downgrade-only contract).
+        # Hedge: surface it, flagged, never authoritative.
+        return ("hedge", True, "grounded_search_hedge",
+                "grounded source but no usable confidence signal — hedged (fail-closed)")
 
     d = decide(gate_passed=True, confidence=confidence, thresholds=thresholds)
     action = d["action"]

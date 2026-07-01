@@ -1,0 +1,54 @@
+{
+  "experimentId": "topology-truth-axiom",
+  "question": "Does a confidence value derived ONLY from the STRUCTURE of evidence around a claim (independent-source count, source-type diversity, replication, consensus endorsement, recency, contradiction count) predict whether the claim is actually TRUE? This is a CONTRARIAN test of the identity axiom implicit in the OKF stack: topology_confidence == truth.",
+  "status": "preregistration_only",
+  "canClaimAGI": false,
+  "go": false,
+  "claimCeiling": "candidate_only; canClaimAGI:false; the committed seed run is ILLUSTRATIVE (underpowered), never a validated result",
+  "primaryMetric": "spearman_rho(topology_confidence, revealed_truth)",
+  "direction": "axiom predicts rho > 0 (more/stronger/less-contradicted evidence => higher truth)",
+  "alpha": 0.05,
+  "mde": 0.30,
+  "requiredN": null,
+  "requiredNComputed": "tools/eval_stats.required_n_for_mde(0.30) at 80% power, alpha 0.05 (computed at run time and echoed into the receipt as requiredN); the seed set below is deliberately smaller than this",
+  "noGoRule": {
+    "rule": "rho <= 0 (at power) FALSIFIES the identity axiom",
+    "consequence": "if falsified, DO NOT assume topology == truth; SHIP AN EMPIRICAL topology->truth CALIBRATION LAYER (learn the mapping from evidence structure to truth-probability from an externally-labeled corpus) instead of assuming identity",
+    "use": "GO/NO-GO"
+  },
+  "uncertaintyRule": "the association carries a deterministic seeded PERMUTATION p-value (tools/stats_ext.permutation_pvalue, alternative='greater'); at this tiny binary-outcome N the asymptotic Spearman t-approximation is untrustworthy, so no parametric p is claimed",
+  "magnitudeRule": "GO requires BOTH rho > 0 AND p <= alpha in the axiom's predicted direction AND n >= requiredN; a positive but non-significant, or underpowered, rho is NOT a GO",
+  "powerRule": {
+    "rule": "the probe refuses to emit a directional axiom verdict unless n >= requiredN (measurement-thesis Pillar 2); underpowered => verdict 'UNDERPOWERED' (exit 3), which neither confirms nor falsifies the axiom",
+    "use": "GO/NO-GO"
+  },
+  "underpowered": true,
+  "underpoweredNote": "The committed seed set (agi-proof/topology-truth-axiom/labeled_set.jsonl, ~25 claims) is SMALL, ILLUSTRATIVE, and UNDERPOWERED. It exercises the REAL harness end-to-end and shows the plumbing works, but it CANNOT validate or falsify the axiom. A powered test needs a larger EXTERNALLY-labeled set (>= requiredN) drawn beyond the handful of myths/facts the wiki already catalogs, with truth values fixed by sources outside this probe and evidence features assigned blind to the truth label.",
+  "decontamRule": "the topology_confidence formula (tools/run_topology_truth_probe._WEIGHTS) is a FIXED, label-free monotone prior — it is NOT fit to the truth labels; fitting to labels would make the probe circular and is a hard NO-GO",
+  "groundTruth": {
+    "rule": "each claim's truth value must be EXTERNALLY fixed (a cataloged wiki myth/fact page, or standing scientific/historical consensus) and recorded per-row in truthProvenance; author-only truth judgements do NOT satisfy this",
+    "use": "GO/NO-GO"
+  },
+  "guardrails": {
+    "noCircularFit": {
+      "rule": "the evidence-structure -> confidence map must be pre-committed and label-free; deriving weights from the truth labels voids the run",
+      "use": "GO/NO-GO"
+    },
+    "noSeedSetClaim": {
+      "rule": "the underpowered seed-set rho may NEVER be presented as a validated confirmation OR falsification of the axiom; it is illustrative harness output only",
+      "use": "GO/NO-GO"
+    },
+    "protectedDomains": {
+      "rule": "religion and history claims may appear as labeled items but the probe proposes NO merges / same-lineage / impersonation edges; doNotMergeWith and doNotAttributeTo remain hard constraints",
+      "use": "GO/NO-GO"
+    }
+  },
+  "arms": {
+    "topology": {
+      "tool": "tools/run_topology_truth_probe.py --labeled agi-proof/topology-truth-axiom/labeled_set.jsonl",
+      "primaryMetric": "spearman_rho(topology_confidence, revealed_truth) with seeded permutation p"
+    }
+  },
+  "preRegistrationProof": "This spec fixes the rho<=0 NO-GO, the alpha, the MDE, the power gate, and the no-circular-fit / no-seed-set-claim guardrails BEFORE any powered externally-labeled run exists, so the criteria cannot be tuned to the result. tools/claim_gate.py --assert-prereg can verify this spec's commit predates any future powered result.",
+  "honestBound": "Pre-registration only. NO powered run has executed. The committed seed run is REAL harness output on a small illustrative set and is UNDERPOWERED by construction (n < requiredN). A powered NO-GO (rho <= 0) is a valid, publishable outcome and would redirect the OKF stack from an assumed identity to an empirically-calibrated topology->truth layer."
+}

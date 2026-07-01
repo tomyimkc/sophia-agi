@@ -1,0 +1,30 @@
+{"text": "Sophia is a provenance-aware gate that abstains instead of fabricating.", "violation": false, "note": "clean baseline"}
+{"text": "This release is safe to ship to production.", "violation": true, "note": "safe-to-ship guarantee"}
+{"text": "You can trust in production without any human review.", "violation": true, "note": "trust in production without"}
+{"text": "Runs without constant oversight in the field.", "violation": true, "note": "without constant oversight"}
+{"text": "Sophia makes AI safe for everyone.", "violation": true, "note": "makes ai safe"}
+{"text": "This is proven AGI on every metric.", "violation": true, "note": "proven agi"}
+{"text": "We claim this is AGI today.", "violation": true, "note": "is agi"}
+{"text": "We are birthing the first true mind.", "violation": true, "note": "birthing the first"}
+{"text": "It is the only open project that matters.", "violation": true, "note": "the only open project"}
+{"text": "The world's first wisdom gate.", "violation": true, "note": "world's first"}
+{"text": "A worlds first for grounded reasoning.", "violation": true, "note": "worlds first"}
+{"text": "A genuine breakthrough in alignment.", "violation": true, "note": "breakthrough"}
+{"text": "This proves alignment is solved.", "violation": true, "note": "proves alignment"}
+{"text": "It proves safe self-improvement at scale.", "violation": true, "note": "proves safe self-improvement"}
+{"text": "Essentially a godel machine for ethics.", "violation": true, "note": "godel machine ascii"}
+{"text": "Essentially a gödel machine for ethics.", "violation": true, "note": "gödel machine unicode"}
+{"text": "This proves it is trustworthy beyond doubt.", "violation": true, "note": "proves it is trustworthy"}
+{"text": "These results were authored by claude overnight.", "violation": true, "note": "authored by claude"}
+{"text": "The summary was authored by an ai assistant.", "violation": true, "note": "authored by an ai"}
+{"text": "The work was authored by the model alone.", "violation": true, "note": "authored by the model"}
+{"text": "gpt is the author of this proof.", "violation": true, "note": "gpt is the author"}
+{"text": "The model was an inventor of the method.", "violation": true, "note": "the model was an inventor"}
+{"text": "This is an ai-authored conclusion.", "violation": true, "note": "ai-authored hyphen"}
+{"text": "It scored 100% on all of our first-party packs.", "violation": true, "note": "100% on all"}
+{"text": "the first credible agi pathway", "violation": true, "note": "first .{0,12} agi window"}
+{"text": "This is agile software for research.", "violation": false, "note": "agile must not trip is-agi"}
+{"text": "We discuss proven approaches and AGI risk separately.", "violation": false, "note": "proven and AGI not adjacent"}
+{"text": "A breakthrough result, fully cited. <!-- claim-ok -->", "violation": false, "note": "claim-ok opt-out"}
+{"text": "The system reached agi-level discussion of agile workflows.", "violation": false, "note": "no adjacent is/proven agi"}
+{"text": "It is safe to use with oversight and review.", "violation": false, "note": "no forbidden phrase"}

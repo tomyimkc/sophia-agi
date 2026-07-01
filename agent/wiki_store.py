@@ -12,6 +12,8 @@ schema-invalid page or a lineage merge. The MCP layer adds the audit/approval ga
 
 from __future__ import annotations
 
+import re
+
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -101,6 +103,14 @@ def upsert(page_id: str, *, meta: "dict | None" = None, body: str = "", tier: st
     if target_dir is None:
         return {"ok": False, "error": f"unknown tier '{tier}' (allowed: memory, draft)"}
 
+    # Sanitize the user-provided page_id at the source: it becomes a filename, so reject
+    # anything that is not a flat slug (no path separators, no traversal). This guard plus
+    # the resolve()/relative_to()/parent checks below make traversal impossible at runtime;
+    # CodeQL's path-injection query only models const-compare barriers, so it still reports
+    # the sinks below as a known false positive on this validated input.
+    if not re.fullmatch(r"[A-Za-z0-9._-]+", page_id or "") or page_id in (".", ".."):
+        return {"ok": False, "error": f"invalid page id '{page_id}'", "id": page_id}
+
     existing = read_page(page_id)
     merged = dict(existing.meta) if existing else {}
     merged.update(meta or {})
@@ -114,7 +124,15 @@ def upsert(page_id: str, *, meta: "dict | None" = None, body: str = "", tier: st
     if not ok:
         return {"ok": False, "rejected": True, "reasons": reasons, "id": page_id}
 
-    path = Path(target_dir) / f"{page_id}.md"
+    base_dir = Path(target_dir).resolve()
+    path = (base_dir / f"{page_id}.md").resolve()
+    # Sanitize user-provided page_id: reject any value that escapes the tier directory.
+    try:
+        path.relative_to(base_dir)
+    except ValueError:
+        return {"ok": False, "error": f"invalid page id '{page_id}'", "id": page_id}
+    if path.parent != base_dir:
+        return {"ok": False, "error": f"invalid page id '{page_id}'", "id": page_id}
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(frontmatter.serialize(merged, new_body), encoding="utf-8")
     base = Path(CANONICAL_DIR).parent

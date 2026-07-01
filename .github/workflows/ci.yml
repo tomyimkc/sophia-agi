@@ -25,7 +25,7 @@ jobs:
       heavy: ${{ steps.filter.outputs.heavy }}
     steps:
       - uses: actions/checkout@v7
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           filters: |
@@ -109,6 +109,16 @@ jobs:
           python tools/wiki_sync.py check
           python tools/wiki_validate.py
           python tools/lint_wiki_provenance.py
+      - name: Skill subsystem (router, forge bridge, projection, index, sandbox)
+        run: |
+          python tests/test_skill_triggering.py
+          python tests/test_skill_from_failure.py
+          python tests/test_project_forge_to_registry.py
+          python tests/test_proposed_predicate_runtime_sandbox.py
+          python tests/test_skill_meta_tools.py
+          python tools/lint_skill_descriptions.py
+          python tools/build_skill_index.py --check
+          python tools/project_forge_to_registry.py --check
       - name: OKF + provenance verifier tests
         run: |
           python tests/test_okf.py
@@ -182,6 +192,8 @@ jobs:
           python tests/test_contract_guardrails.py
           python tests/test_contract_adapters.py
           python tests/test_role_pipeline.py
+          python tests/test_vault_workflow_diagram.py
+          python tools/vault_workflow_diagram.py --check
       - name: Sophia Gateway P0–P5 (intercept pipeline + firewall, federation, skills, knowledge, flywheel, consensus)
         run: |
           python tests/test_gateway.py

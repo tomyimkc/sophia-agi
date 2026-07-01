@@ -40,9 +40,8 @@ real Mathlib lemma with a live kernel is a future run, gated by the no-overclaim
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable
 
-from agent.lean_verifier import ProofCertificate, check_proof, lean_available
+from agent.lean_verifier import check_proof, lean_available
 from selfextend.verified_reward import mean_reward, verified_reward
 
 

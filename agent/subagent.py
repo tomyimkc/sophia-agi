@@ -119,8 +119,14 @@ def run_subagent(
     index: int,
     client: ModelClient,
     approve_tools: bool = False,
+    deadline_monotonic: float | None = None,
 ) -> SubagentResult:
-    """Run one child through the full harness loop in an isolated run store."""
+    """Run one child through the full harness loop in an isolated run store.
+
+    ``deadline_monotonic`` (review D4) forwards a cooperative wall-clock deadline
+    into the child's plan-step loop so a long-horizon budget can stop this node
+    between steps; ``None`` (default) is unbounded, preserving prior behavior.
+    """
     task = AgentTask(goal=spec.goal, mode=spec.mode, task_id=spec.child_id(parent_id, index), context=spec.context, skill=spec.skill)
     result: AgentResult = run_agent(
         task,
@@ -129,6 +135,7 @@ def run_subagent(
         max_steps=spec.max_steps,
         approve_tools=approve_tools,
         allowed_tools=spec.allowed_tools,
+        deadline_monotonic=deadline_monotonic,
     )
     over_budget = spec.cost_budget_usd is not None and result.cost_usd > spec.cost_budget_usd
     failures = list(result.failures)

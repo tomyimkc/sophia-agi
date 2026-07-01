@@ -42,7 +42,6 @@ from tools.model_lab_lib import (  # noqa: E402
     example_to_text,
     find_failed_cases,
     find_local_run_responses,
-    load_json,
     parse_json_response,
     sample_teacher_examples,
 )

@@ -1,0 +1,45 @@
+{
+  "boundary": "Routing fidelity vs author labels only \u2014 NOT a real-decision effect. No claim that the gate detects drift from raw text without an explicit anchor. canClaimAGI:false.",
+  "canClaimAGI": false,
+  "candidateOnly": true,
+  "derivedAccuracy": 0.5,
+  "explicitAccuracy": 0.75,
+  "finding": "Explicit-anchor routing 0.75 vs derived-goal routing 0.5 (gap 0.25). The derived signal is weaker BY DESIGN (fail-closed: the gate cannot flag drift from a goal it cannot read); the fix is model-gated behind the default-off goal-extraction seam, not a threshold relaxation.",
+  "gap": 0.25,
+  "n": 4,
+  "rows": [
+    {
+      "derivedOk": false,
+      "derivedVerdict": "drifting",
+      "expect": "focused",
+      "explicitOk": true,
+      "explicitVerdict": "focused",
+      "id": "login-focus"
+    },
+    {
+      "derivedOk": true,
+      "derivedVerdict": "drifting",
+      "expect": "drifting",
+      "explicitOk": true,
+      "explicitVerdict": "drifting",
+      "id": "login-drift"
+    },
+    {
+      "derivedOk": false,
+      "derivedVerdict": "drifting",
+      "expect": "focused",
+      "explicitOk": false,
+      "explicitVerdict": "escalate",
+      "id": "checkout-focus"
+    },
+    {
+      "derivedOk": true,
+      "derivedVerdict": "drifting",
+      "expect": "drifting",
+      "explicitOk": true,
+      "explicitVerdict": "drifting",
+      "id": "checkout-drift"
+    }
+  ],
+  "schema": "sophia.prosoche_robustness.v1"
+}

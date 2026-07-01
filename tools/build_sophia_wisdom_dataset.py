@@ -467,6 +467,7 @@ def _read_jsonl(path: Path) -> list:
             try:
                 out.append(json.loads(line))
             except json.JSONDecodeError:
+                # tolerate malformed/partial lines in a JSONL file; skip and keep reading.
                 pass
     return out
 
@@ -599,7 +600,6 @@ def teacher_prompt_bank() -> list:
     for tid, rec in attr.items():
         ten = _title_en(tid, rec)
         tz = rec.get("canonicalTitleZh")
-        conf = rec.get("authorConfidence", "attributed")
         sid = [f"attributions:{tid}"]
         add("source_discipline", rec.get("domain", "philosophy"), "en", "allow",
             f"Is the authorship of {ten} historically settled, or is it traditionally attributed? Be precise about certainty.", sid)

@@ -16,7 +16,7 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
-from okf.projection import PromotionCandidate, ProjectionResult
+from okf.projection import ProjectionResult
 
 ROOT = Path(__file__).resolve().parents[1]
 PENDING_PATH = ROOT / "training" / "feedback" / "pending_projection_candidates.jsonl"

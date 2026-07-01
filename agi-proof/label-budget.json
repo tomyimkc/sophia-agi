@@ -1,0 +1,26 @@
+{
+  "_comment": "PRE-REGISTERED oracle-label budget ledger. Some gates depend on a SCARCE label source (human graders, a metered proprietary judge, a held-out gold set that can be spent). When an oracle's supply is exhausted, the gates that draw on it must FAIL CLOSED TO NON-BLOCKING ('advisory') rather than silently passing on stale/empty labels — a gate that always passes is worse than no gate. This ledger tracks per-oracle availability and spend, and names which gates each oracle feeds. Counts are conservative placeholders, NOT a claim of labels actually collected; a demoted gate makes NO capability claim.",
+  "schema_version": 1,
+  "status": "preregistration_only",
+  "canClaimAGI": false,
+  "oracles": {
+    "human_gold_anchor": {
+      "description": "One-time human-graded gold anchor for judge calibration (measurement-thesis pillar 7).",
+      "labelsAvailable": 50,
+      "labelsSpent": 0,
+      "gates": ["judge_calibration_gate"]
+    },
+    "metered_judge_openrouter": {
+      "description": "Metered proprietary LLM-judge inference; each blocking eval draws labels from this budget.",
+      "labelsAvailable": 2000,
+      "labelsSpent": 0,
+      "gates": ["retention_probe_gpu", "verifier_gate_gpu"]
+    },
+    "heldout_gold_set": {
+      "description": "Private held-out gold items; spending them contaminates them, so supply is finite by design.",
+      "labelsAvailable": 32,
+      "labelsSpent": 0,
+      "gates": ["heldout_transfer_gate"]
+    }
+  }
+}

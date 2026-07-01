@@ -38,14 +38,14 @@ _DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "temporal_facts.j
 # captured title normalizes to a known dated work, so an over-capture simply misses
 # the table and abstains rather than false-firing.
 _ATTR_ACTIVE = re.compile(
-    r"([A-Z][\w.''-]+(?:\s+[A-Z][\w.''-]+){0,3})\s+"
+    r"([A-Z][\w.'-]+(?:\s+[A-Z][\w.'-]+){0,3})\s+"
     r"(?:wrote|authored|composed|penned)\s+"
-    r"(?:the\s+)?[\"“'']?([A-Z][\w.''-]+(?:\s+[\w.''-]+){0,8})[\"”'']?"
+    r"(?:the\s+)?[\"“']?([A-Z][\w.'-]+(?:\s+[\w.'-]+){0,8})[\"”']?"
 )
 _ATTR_PASSIVE = re.compile(
-    r"[\"“'']?([A-Z][\w.''-]+(?:\s+[\w.''-]+){0,8})[\"”'']?\s+"
+    r"[\"“']?([A-Z][\w.'-]{0,63}(?:\s+[\w.'-]{1,64}){0,8})[\"”']?\s+"
     r"(?:was|were)\s+(?:written|authored|composed|penned)\s+by\s+"
-    r"([A-Z][\w.''-]+(?:\s+[A-Z][\w.''-]+){0,3})"
+    r"([A-Z][\w.'-]{0,63}(?:\s+[A-Z][\w.'-]{0,63}){0,3})"
 )
 
 

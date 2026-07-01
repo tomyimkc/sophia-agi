@@ -36,9 +36,9 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 
 from agent.config import ROOT
 from agent.model import ModelClient, default_client
@@ -241,6 +241,7 @@ def run_long_horizon(
     recovery: RecoveryMemory | None = None,
     approve_tools: bool = False,
     max_nodes: int = 256,
+    deadline_monotonic: float | None = None,
 ) -> LongHorizonResult:
     """Execute a task tree to completion, persisting after every node transition.
 
@@ -248,12 +249,24 @@ def run_long_horizon(
     On failure, a recovery hint is recorded; before each attempt the engine recalls
     a hint for the node's signature and injects it into the child's context. The
     ledger is durable: re-running with a resumed ledger skips ``done`` nodes.
+
+    ``deadline_monotonic`` (review D4) is a cooperative wall-clock budget expressed
+    as a ``time.monotonic()`` value. When set, the engine stops launching new nodes
+    once the deadline passes (node granularity) and forwards it into each child so a
+    running node stops between plan steps (step granularity). ``None`` (default) is
+    unbounded. Honest bound: a single in-flight model call still runs to its transport
+    timeout — this cancels cooperatively, it does not kill a blocking request.
     """
     client = client or default_client()
     recovery = recovery if recovery is not None else RecoveryMemory()
     total_cost = 0.0
     steps = 0
     while steps < max_nodes:
+        # Cooperative wall-clock deadline (review D4): stop launching new nodes once
+        # the budget is exhausted so a runaway tree actually halts. Node granularity;
+        # the per-node deadline below stops a running node between its plan steps.
+        if deadline_monotonic is not None and time.monotonic() >= deadline_monotonic:
+            break
         node = ledger.next_runnable()
         if node is None:
             break
@@ -275,7 +288,7 @@ def run_long_horizon(
             context=context,
             label=node.id,
         )
-        child = run_subagent(spec, parent_id=ledger.ledger_id, index=steps, client=client, approve_tools=approve_tools)
+        child = run_subagent(spec, parent_id=ledger.ledger_id, index=steps, client=client, approve_tools=approve_tools, deadline_monotonic=deadline_monotonic)
         node.cost_usd += child.cost_usd
         total_cost += child.cost_usd
 

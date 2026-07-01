@@ -29,7 +29,7 @@ tokens-over-FFN-experts to tasks-over-agent-teams.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Callable
 
 from agent.swarm_router import TEAMS, SwarmPlan
@@ -40,6 +40,7 @@ LAMBDA_COST = 0.015     # per compute-step
 LAMBDA_LB = 0.10        # per unit of (aux - 1.0) imbalance
 LAMBDA_TRUST = 0.40     # per fraction of dispatched agents that failed the gate
 LAMBDA_LAT = 0.02       # per unit of serial depth beyond 1
+LAMBDA_KL = 0.10        # per unit of mean KL(policy‖reference) — multi-turn stability control
 
 REWARD_FLOOR = -1.0
 REWARD_CEIL = 1.0
@@ -121,6 +122,125 @@ def swarm_reward(
     r -= lambda_lat * max(outcome.serial_depth - 1, 0)
     r -= lambda_lb * max(load_imbalance - 1.0, 0.0)
     return max(REWARD_FLOOR, min(REWARD_CEIL, r))
+
+
+@dataclass
+class TrajectoryOutcome:
+    """A multi-turn agentic rollout: a sequence of executed plans (turns), the machine-checked
+    success of the WHOLE trajectory, and optional per-turn KL(policy‖reference) supplied by the
+    trainer. The single-turn :class:`SwarmOutcome` is the degenerate one-turn case.
+
+    Everything the reward reads is produced by deterministic checkers — ``final_verified_success``
+    by the gate/verifiers, ``kl_per_turn`` by the trainer's reference-policy comparison — so the
+    multi-turn reward keeps the same unhackable property as the single-turn one."""
+
+    turns: "list[SwarmOutcome]"
+    final_verified_success: float            # in [0,1] from agent.gate over the FINAL trajectory
+    kl_per_turn: "tuple[float, ...]" = ()    # KL(policy‖ref) per turn (>=0), from the trainer
+
+    @property
+    def n_turns(self) -> int:
+        return max(len(self.turns), 1)
+
+    @property
+    def total_compute_steps(self) -> int:
+        return sum(t.compute_steps for t in self.turns)
+
+    @property
+    def total_agents(self) -> int:
+        return sum(t.n_agents for t in self.turns)
+
+    @property
+    def total_gate_failures(self) -> int:
+        return sum(t.n_agents_failed_gate for t in self.turns)
+
+    @property
+    def mean_kl(self) -> float:
+        return (sum(self.kl_per_turn) / len(self.kl_per_turn)) if self.kl_per_turn else 0.0
+
+
+def trajectory_reward(
+    traj: TrajectoryOutcome,
+    *,
+    lambda_cost: float = LAMBDA_COST,
+    lambda_trust: float = LAMBDA_TRUST,
+    lambda_kl: float = LAMBDA_KL,
+    length_normalize: bool = True,
+) -> float:
+    """Bounded, deterministic reward for a multi-turn tool-use rollout::
+
+        R = final_verified_success
+          − λ_cost  · (total_compute_steps / n_turns if length_normalize else total)
+          − λ_trust · over_reliance            (gate failures across the whole trajectory)
+          − λ_kl    · mean_kl                  (KL control vs the reference policy)
+
+    The two fixes the positioning plan calls for so GRPO does not collapse on long rollouts:
+    **length normalisation** (cost divided by turns, so a longer trajectory reaching the same
+    verified success is not penalised beyond its per-turn cost) and **KL control** (an explicit
+    penalty on divergence from the reference policy). Reuses the single-turn over-reliance signal,
+    summed across turns. Bounded to ``[REWARD_FLOOR, REWARD_CEIL]`` like :func:`swarm_reward`."""
+    r = float(traj.final_verified_success)
+    cost = traj.total_compute_steps / (traj.n_turns if length_normalize else 1)
+    r -= lambda_cost * cost
+    over_reliance = traj.total_gate_failures / max(traj.total_agents, 1)
+    r -= lambda_trust * over_reliance
+    r -= lambda_kl * max(traj.mean_kl, 0.0)
+    return max(REWARD_FLOOR, min(REWARD_CEIL, r))
+
+
+def trajectory_invariants() -> "tuple[bool, dict]":
+    """Falsifiable, deterministic invariants for the multi-turn reward (no model, no network)."""
+    from agent.swarm_router import SwarmRouter
+
+    r = SwarmRouter()
+    step = r.decide("Compare disputed authorship of the Dao De Jing versus the Analects, citing sources")
+    turns = [SwarmOutcome(step, verified_success=1.0) for _ in range(3)]
+
+    checks: dict[str, bool] = {}
+    detail: dict = {}
+
+    win = trajectory_reward(TrajectoryOutcome(turns, final_verified_success=1.0))
+    lose = trajectory_reward(TrajectoryOutcome(turns, final_verified_success=0.0))
+    checks["success_raises_reward"] = win > lose
+
+    # KL control: a trajectory that drifts from the reference policy scores lower.
+    calm = trajectory_reward(TrajectoryOutcome(turns, 1.0, kl_per_turn=(0.0, 0.0, 0.0)))
+    drift = trajectory_reward(TrajectoryOutcome(turns, 1.0, kl_per_turn=(2.0, 2.0, 2.0)))
+    checks["kl_control_penalises_drift"] = calm > drift
+    detail["calm"] = round(calm, 3)
+    detail["drift"] = round(drift, 3)
+
+    # Over-reliance across turns: a trajectory whose agents kept failing the gate scores lower.
+    clean = trajectory_reward(TrajectoryOutcome(turns, 1.0))
+    leaky_turns = [SwarmOutcome(step, verified_success=1.0, n_agents_failed_gate=step.n_agents)
+                   for _ in range(3)]
+    leaky = trajectory_reward(TrajectoryOutcome(leaky_turns, 1.0))
+    checks["over_reliance_penalised"] = clean > leaky
+
+    # Length normalisation stops long-rollout cost-collapse: with normalisation a 3-turn
+    # trajectory is penalised less than without it, all else equal.
+    normed = trajectory_reward(TrajectoryOutcome(turns, 1.0), length_normalize=True)
+    raw = trajectory_reward(TrajectoryOutcome(turns, 1.0), length_normalize=False)
+    checks["length_normalization_reduces_cost_penalty"] = normed > raw
+
+    # Bounded even under a pathological long, drifting, gate-failing trajectory.
+    worst = trajectory_reward(TrajectoryOutcome(
+        [SwarmOutcome(step, verified_success=0.0, n_agents_failed_gate=step.n_agents) for _ in range(20)],
+        final_verified_success=0.0, kl_per_turn=tuple(50.0 for _ in range(20))))
+    checks["bounded"] = REWARD_FLOOR <= worst <= REWARD_CEIL
+
+    # Determinism: identical trajectory → identical reward.
+    a = trajectory_reward(TrajectoryOutcome(turns, 0.7, kl_per_turn=(0.1, 0.2, 0.3)))
+    b = trajectory_reward(TrajectoryOutcome(turns, 0.7, kl_per_turn=(0.1, 0.2, 0.3)))
+    checks["deterministic"] = a == b
+
+    # Degenerate single-turn trajectory is well-defined (no div-by-zero on empty turns).
+    checks["empty_trajectory_defined"] = (
+        REWARD_FLOOR <= trajectory_reward(TrajectoryOutcome([], 1.0)) <= REWARD_CEIL
+    )
+
+    ok = all(checks.values())
+    return ok, {"checks": checks, **detail}
 
 
 def make_grpo_reward(
@@ -225,4 +345,11 @@ if __name__ == "__main__":
         print(f"  [{'ok' if v else 'XX'}] {k}")
     print("  win/lose:", detail.get("win"), "/", detail.get("lose"),
           " lb bal/collapsed:", detail.get("lbBalanced"), "/", detail.get("lbCollapsed"))
-    raise SystemExit(0 if ok else 1)
+
+    tok, tdetail = trajectory_invariants()
+    print("Multi-turn trajectory reward invariants:", "PASS" if tok else "FAIL")
+    for k, v in tdetail["checks"].items():
+        print(f"  [{'ok' if v else 'XX'}] {k}")
+    print("  calm/drift:", tdetail.get("calm"), "/", tdetail.get("drift"))
+
+    raise SystemExit(0 if (ok and tok) else 1)

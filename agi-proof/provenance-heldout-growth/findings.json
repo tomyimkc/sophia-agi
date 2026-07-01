@@ -1,0 +1,40 @@
+{
+  "schema": "sophia.provenance_heldout_growth_audit.v1",
+  "source": "data/attributions.json",
+  "canClaimAGI": false,
+  "corpusRecords": 30,
+  "derivableFacts": {
+    "total": 121,
+    "deny": 76,
+    "affirm": 30,
+    "confidence": 15
+  },
+  "trainedFacts": 121,
+  "heldoutPackFacts": 13,
+  "factDisjointCleanNew": 0,
+  "factDisjointExamples": [],
+  "promptLevel": {
+    "candidatesGenerated": 91,
+    "promptCleanVsTrainAndHeldout": 91,
+    "ofWhichFactAlreadyTrained": 91
+  },
+  "honestN": 0,
+  "ciProjection": {
+    "observedN": 32,
+    "observedUpliftPct": 6.25,
+    "observedCiHalfWidth": 0.172,
+    "rho": 0.342,
+    "requiredNFor80pct": 493,
+    "halfWidthByN": {
+      "32": 0.172,
+      "123": 0.0877,
+      "200": 0.0688,
+      "300": 0.0562,
+      "493": 0.0438
+    },
+    "lenientMaxTotalN": 123,
+    "lenientMaxCiHalfWidth": 0.0877,
+    "lenientMaxExcludesZero": false
+  },
+  "verdict": "EXHAUSTED. The 30 records of data/attributions.json yield 121 derivable provenance facts; the trained pack training/lora/train.jsonl already trains on 121 of them, covering all 121 derivable facts. FACT-DISJOINT (genuinely held-out) growth from this source = 0 items. The 91 prompt-level-clean candidates ALL test already-trained facts (memorization recall, identical in character to the existing 32-item held-out, whose 9/10 philosophy facts are also trained), so they cannot honestly grow a GENERALIZATION held-out. The held-out stays at N=32, CI +/-0.17, includes 0 -> still underpowered. 493 is unreachable from this source; even the lenient prompt-level max (N=123) gives CI +/-0.088, which still includes the +6.25pt effect."
+}

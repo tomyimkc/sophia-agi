@@ -26,7 +26,7 @@ See docs/11-Platform/Ontology-Claim-Boundary.md.
 from __future__ import annotations
 
 import re
-from typing import Any, Callable
+from typing import Callable
 
 FAMILIES = ("F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8")
 

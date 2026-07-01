@@ -459,7 +459,6 @@ def run_accumulation(episodes, *, controller=None, seed: int = 0) -> "dict[str, 
     deliberate_count = len(deliberate_ids | {r for r in retracted if r not in final_state})
 
     # Fill the per-episode breach/forgetting columns (both 0 for a clean run).
-    breaches_so_far = 0
     for row in curve:
         row["unintendedForgettingSoFar"] = len(unintended)
         row["cageBreachesSoFar"] = len(cage_breaches)

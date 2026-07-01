@@ -86,6 +86,24 @@
       "date": "2026-06-21",
       "scoring": "objective exact-match vs ground-truth expectPass; deterministic verifier, no LLM judge.",
       "note": "Measures the VERIFIER's accuracy at catching fabricated legal citations (the Mata v. Avianca failure mode) across federated sources (HK e-Legislation/HKLII, UK National Archives, US CourtListener), not any model's. Includes the actual Mata fabrication, Varghese v. China Southern Airlines 925 F.3d 1339, which is flagged. Honest bounds: tiny, constructed benchmark (N=14) and the result is capped by the bundled register's completeness, so this validates the extraction + fail-closed gate logic end-to-end \u2014 it is NOT a headline capability claim. Reproduce: python tools/run_legal_citation_bench.py."
+    },
+    {
+      "verifier": "step_verifier (misstep-injection)",
+      "benchmark": "misstep_injection (clean vs one-error math/physics derivations)",
+      "n": 29,
+      "accuracy": 1.0,
+      "fabricationDetectionRecall": 1.0,
+      "falseAlarmRate": 0.0,
+      "misstepCatchRecall": 1.0,
+      "confusion": {
+        "tp": 15,
+        "tn": 14,
+        "fp": 0,
+        "fn": 0
+      },
+      "date": "2026-06-29",
+      "scoring": "objective vs ground-truth expectVerified; deterministic step-verifier, no LLM judge.",
+      "note": "Measures the STEP-VERIFIER's accuracy at catching a single injected misstep (sign flip, dropped factor, arithmetic slip, wrong unit/dimension, wrong value) in a math/physics derivation \u2014 the 'every calculation step must be verified' gate, not any model's reasoning. Per-step checks delegate to the deterministic oracles: math via sympy symbolic equivalence (agent/math_verifier.py), physics via SI dimensional analysis + numeric tolerance (agent/physics_verifier.py). Measured with sympy present: 14/14 missteps caught at 0% false-alarm across all five error types. Honest bounds: small, constructed pack (N=29, one error per case); with sympy ABSENT the math cases abstain (Verified-Step Coverage drops) but no misstep is ever silently accepted (fp==0 invariant, fail-closed). Validates the step-verification + proof-carrying-calculation logic end-to-end \u2014 NOT a headline capability claim. Pre-reg: agi-proof/math-physics-verify/preregistration.json. Reproduce: python tools/run_misstep_bench.py."
     }
   ],
   "semanticEvals": {

@@ -1,0 +1,49 @@
+{
+  "experimentId": "third-party-verifiable-domain-intake",
+  "description": "Pre-registration for the third-party verifiable-domain intake pipeline (tools/third_party_intake.py). The decontam-gated intake scaffold is built and tested; this spec fixes the GO/NO-GO criteria for the closed-loop count BEFORE any powered external run, so the result cannot be tuned to the criteria. Attacks the honest N=0 bottleneck: the verifier-as-reward loop has no externally-authored verifiable domains.",
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "canClaimAGI": false,
+  "status": "preregistration_only",
+  "go": false,
+  "primaryMetric": "count of externally-authored verifiable domains that (a) pass tools/assert_decontam.py against the committed eval surface AND (b) are admitted by the verifier AND (c) yield a measured held-out gain — i.e. loopClosedCount, NOT admittedCount",
+  "twoCounterRule": {
+    "admittedCount": "items that pass validity + decontam and enter the pool; measures intake CAPACITY only",
+    "loopClosedCount": "items with verifier admission AND a measured held-out gain; the ONLY counter that can support a generalization claim",
+    "invariant": "loopClosedCount <= admittedCount; loopClosedCount is NEVER derived from admittedCount; conflating them is an overclaim",
+    "use": "GO/NO-GO"
+  },
+  "mde": {
+    "metric": "per-domain held-out pass@1 gain (adapter minus base) on the admitted external domain",
+    "value": 0.10,
+    "note": "minimum detectable effect the powered run must be able to resolve; the actual required N follows from tools/eval_stats.required_n_for_mde at the run's variance"
+  },
+  "requiredN": {
+    "closedLoopDomains": 1,
+    "seedsPerDomain": 3,
+    "note": "GO needs real N>=1 closed-loop external domain; each measured gain uses >=3 seeds with a 95% CI"
+  },
+  "uncertaintyRule": "every reported gain carries a 95% CI (tools/eval_stats.py fixed_n_ci_mean / bootstrap_ci_paired); a peeked metric uses the anytime-valid confidence sequence; a gain whose CI includes 0 does NOT close the loop",
+  "magnitudeRule": "GO requires at least one admitted external domain whose held-out pass@1 gain has a 95% CI strictly excluding 0 AND a point estimate >= the MDE; otherwise NO-GO",
+  "decontamRule": "every intake item MUST pass the assert_decontam primitives (exact/normalized overlap + content k-shingle Jaccard near-dup) against the committed eval surface; a failing item is refused and never admitted (fail-closed). The intake baseline excludes the manifest file itself (self-ingestion guard) but retains true cross-file collisions.",
+  "claimImpact": "No external corpora are committed (agi-proof/third-party-heldout/third-party.commitments.json has caseCount=0) and there is no in-session network to fetch a mathlib slice / GitHub CI suite / legal-citation corpus. Therefore loopClosedCount is 0. This zero is HONEST and PRE-REGISTERED: it is the starting state of the bottleneck this pipeline attacks, NOT a NEGATIVE result and NOT a pipeline failure. admittedCount>0 on the synthetic sample manifest demonstrates the intake scaffold works; it does NOT close the loop.",
+  "guardrails": {
+    "noSelfJudging": {
+      "rule": "the intake only admits machine-checkable oracles (sympy gold / exec test); llm-judged items are a separate labelled family and are refused at validity",
+      "use": "GO/NO-GO"
+    },
+    "independence": {
+      "rule": "the external domain author must have NO access to Sophia's train/eval prompts or sealed held-out items; a repo-authored pack does NOT satisfy the external-generalization claim",
+      "use": "GO/NO-GO"
+    },
+    "protectedDomains": {
+      "rule": "verifiable-reward domains are math/code/citation-checking only; religion and history are protected and out of scope for intake — no same-lineage/impersonation edges",
+      "use": "GO/NO-GO"
+    },
+    "conservatism": {
+      "rule": "when no admitted domain yields a CI excluding 0, the valid outcome is loopClosedCount stays 0 (NO-GO), not a relaxed threshold or counting admittedCount",
+      "use": "GO/NO-GO"
+    }
+  },
+  "preRegistrationProof": "tools/claim_gate.py --assert-prereg verifies this spec's add-commit is an ancestor of the result it judges (git merge-base --is-ancestor)",
+  "honestBound": "Pre-registration + tested decontam-gated intake scaffold only. loopClosedCount=0. Closing the loop requires a real externally-authored verifiable corpus committed under agi-proof/third-party-heldout/ AND a powered verifier run measuring held-out gain (GPU + external corpora + no in-session network). A NO-GO is a valid, publishable outcome. canClaimAGI stays false."
+}

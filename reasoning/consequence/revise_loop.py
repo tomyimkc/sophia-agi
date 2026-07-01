@@ -38,7 +38,7 @@ it with empirical evidence that escalation is the right operator response.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Callable
 
 from okf.graph import Graph
@@ -122,7 +122,7 @@ def run_revise_loop(
     graph: Graph,
     *,
     retraction_schedule: "list[list[str]] | None" = None,
-    policy: "Callable[[int, frozenset[str]], list[str] | None] | None" = None,
+    policy: Callable[[int, frozenset[str]], list[str] | None] | None = None,
     max_policy_rounds: int = 64,
     ko_max_rounds: "int | None" = None,
     escalate_threshold: "float | None" = None,

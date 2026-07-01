@@ -8,7 +8,7 @@ import json
 import re
 from pathlib import Path
 
-from agent.benchmark_checks import DOMAIN_BENCH, load_json, score_case
+from agent.benchmark_checks import DOMAIN_BENCH, load_json
 from agent.config import DATA_DIR, ROOT, TRAINING_DIR
 from agent.llm import complete
 
