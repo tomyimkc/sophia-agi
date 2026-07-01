@@ -2553,3 +2553,23 @@ Tests: `tests/test_abstention_serve.py` 6/6 (adds LCB-more-conservative + LCB-ra
 **Decision impact:** v5 ships today via abstention at ~64% coverage / ~99.7% answered (95%-robust). v6 QAT
 is now a WORTHWHILE quality push (not just optional): its job is to lift raw coverage so the hedge abstains
 on far fewer than 36% of tokens. Still owner-gated; v5 ships regardless. canClaimAGI stays false.
+
+
+### v6 dispatch blocked on a deploy-consistency footgun (2026-07-01)
+
+Owner GAVE explicit GO on the v6 QAT --run-train. Pre-flight caught that the v6 code is NOT on the
+spark-bridge checkout the idle poller runs from: `training/qat.py` and `tools/train_lora.py` there are
+the v5 versions (no `kd_top1_margin_loss`/`qat_bypass`, no `--qat-kd-weight` flags), and
+`run_local_benchmarks.sh` B1 forwards only `--qat-lambda`/`--epochs`, and the poller `ENV_ALLOWLIST`
+lacks QAT_KD_WEIGHT/QAT_TOP1_WEIGHT/QAT_TEMP/QAT_MARGIN (they'd be dropped). Dispatching now would burn
+hours training a v5-IDENTICAL adapter.
+
+**Why the cloud must NOT blind-deploy the fix:** spark-bridge's `train_lora.py` carries Spark-specific
+hardening the work-branch lacks — `load_kwargs["device_map"] = {"": 0}` full-GPU pinning (a bf16 7B left
+partially on meta/CPU breaks the manual QAT penalty with "Tensor on device meta is not on the expected
+device cuda:0"), plus a `_m.training` guard in qat.py and a finalTrainLoss NaN-guard. A cloud file-clobber
+would REGRESS these and crash the train. The v6 additions must be MERGED with the bridge hardening — a
+git-merge/cherry-pick the Mac can do (it holds both trees) and DRY-RUN/selftest before committing GPU,
+which the cloud cannot. Delegated to the Mac; v6 run command spec + owner approval recorded in the handoff.
+Lesson: single-file tool deploys from cloud are safe only when the target has no divergent local hardening;
+trainer/harness files do — verify the diff direction before any clobber.
