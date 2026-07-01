@@ -182,6 +182,67 @@
       "gate": "tools/validate_failure_ledger.py (structural validity, enforced)",
       "ablationDelta": null,
       "adopted": false
+    },
+    {
+      "id": "verifiability-world-model",
+      "layer": "verification-in-loop",
+      "module": "agent/verifiability_model.py",
+      "description": "World-model #1: predict P(verifier passes) from knowability features -> abstain PROACTIVELY (anticipate the consequence) instead of reactively. Nature ability-2 (representation).",
+      "proofStatus": "candidate",
+      "gate": "verifiability_model offline_invariants (separates trap/control, generalizes to held-out)",
+      "ablationDelta": null,
+      "adopted": false,
+      "openItem": "trained-model uplift from proactive vs reactive abstention not yet measured"
+    },
+    {
+      "id": "interventional-causal-ablation",
+      "layer": "eval-promotion",
+      "module": "tools/causal_ablation.py",
+      "description": "World-model #2: inject/remove a knowability feature, rank each by its CAUSAL effect on abstention (intervention, not observation). Error-centric intelligence: causal discovery.",
+      "proofStatus": "candidate",
+      "gate": "causal_ablation offline_invariants (real drivers > 0.8, null padding ~0, ranking correct)",
+      "ablationDelta": null,
+      "adopted": false
+    },
+    {
+      "id": "counterfactual-traps",
+      "layer": "eval-promotion",
+      "module": "tools/counterfactual_traps.py",
+      "description": "World-model #3: minimal knowable<->unknowable counterfactuals; intervention_consistency tests whether abstention FLIPS with the edit (world model) or not (surface). Strengthens A4.",
+      "proofStatus": "candidate",
+      "gate": "counterfactual_traps offline_invariants (world-model gate 1.0 vs surface 0.0, discriminates)",
+      "ablationDelta": null,
+      "adopted": false
+    },
+    {
+      "id": "verifier-constrained-world-model",
+      "layer": "objective",
+      "module": "agent/constrained_world_model.py",
+      "description": "World-model #4: forward-simulate under a verified law (A=L+E); derive the determined value, ABSTAIN when under-determined, flag violations. A physics-informed world model using a verifier as the law.",
+      "proofStatus": "candidate",
+      "gate": "constrained_world_model offline_invariants (derives, abstains under-determined, predictions on-law)",
+      "ablationDelta": null,
+      "adopted": false
+    },
+    {
+      "id": "active-query-selection",
+      "layer": "verification-in-loop",
+      "module": "agent/active_query.py",
+      "description": "World-model #5: turn abstention into a TARGETED request for the specific missing evidence (name the source it lacks). Nature ability-3 (selection) + verification-by-query.",
+      "proofStatus": "candidate",
+      "gate": "active_query offline_invariants (specific resolving query per feature; controls answer)",
+      "ablationDelta": null,
+      "adopted": false
+    },
+    {
+      "id": "process-world-model",
+      "layer": "verification-in-loop",
+      "module": "agent/process_world_model.py",
+      "description": "World-model #6: running validity confidence over reasoning steps; flag the first wrong step BEFORE the final verifier (early abstain/re-route). Predictive extension of okf_trace.locate_wrong_step.",
+      "proofStatus": "candidate",
+      "gate": "process_world_model offline_invariants (flags first wrong step early, clean not flagged)",
+      "ablationDelta": null,
+      "adopted": false
     }
   ]
 }
