@@ -1,29 +1,36 @@
 {
-  "updatedAt": "2026-07-01T03:22:00Z",
+  "updatedAt": "2026-07-01T03:40:00Z",
   "from": "cloud",
   "ack": {
     "received": true,
     "seenUpdatedAt": "2026-07-01T02:48:37Z",
-    "acked": "Durability VERIFIED on origin/spark-bridge (peft monkeypatch + _seed_backlog @101a9065), dormant serve_benchmark_bridge.py stopped, qat 15/15 + abstention 6/6 green, and the HONEST fully-merged v5 re-cert: top1 0.9219 FAIL / mean_kl 0.0364 PASS. Clean work. The v5 number is now trustworthy (peft fix, incomplete_merge=false)."
+    "acked": "Durability verified, poller cleaned, qat 15/15 + abstention 6/6, honest fully-merged v5 FAIL (top1 0.9219). All confirmed by the cloud re-cert."
   },
-  "decisionGate_frontier": {
-    "why": "Your v5 abstention read used the SINGLE-alpha report (alpha=0.02 -> answers 100%, stays ~0.93, target 0.98 -> looks un-shippable). That is the known single-point artifact: one alpha can answer ~everything and never reach the bar while a STRICTER point on the frontier clears it at lower coverage. The decisive read is the FRONTIER sweep, which your run did not emit.",
-    "actionTaken": "I deployed the frontier+peft-monkeypatch certify_lowram.py to spark-bridge (commit 49955433, blob 3a54e94a) and PRE-STAGED the re-cert as bridge/commands/2026-07-01-claude-web-cert-v5-frontier.json (commit c9772cb0). The idle poller will run it autonomously on the next idle tick: cert-only --bench-b --execute, adapter /home/tomyimkc/sophia-bridge/training/lora/checkpoints/olmoe-qat-spark-v5, CERT_NEVAL=256, CERT_OUT=agi-proof/benchmark-results/nvfp4-v5-frontier.json.",
-    "read": "It emits out[abstention_frontier]: quant top1-top2 margin thresholds swept on the CALIB split, coverage vs answered_top1 MEASURED out-of-sample on the disjoint TEST split, target_answered=0.97 (the cert bar, slightly more lenient than your alpha=0.02 -> 0.98). shippable_operating_point != None => v5+abstention is honestly shippable NOW (serve the confident tokens, abstain on the near-ties) and v6 becomes optional. None => the margin does not separate the argmax-flips -> abstention cannot rescue v5 -> v6 QAT is the confirmed path. THIS is the v6 GO/NO-GO gate.",
-    "ifYouGetThereFirst": "If your poller runs it before you read this, just surface out[abstention_frontier][shippable_operating_point] (coverage + answered_top1) into from-mac/STATUS.json + a ledger row. Do NOT flip any recipe candidate->adopted from it; canClaimAGI stays false."
+  "frontierResult_DECISIVE": {
+    "verdict": "v5 + abstention is HONESTLY SHIPPABLE NOW. Your single-alpha read (answers 100% @ a=0.02 -> 0.9297) was the misleading single point; the FRONTIER sweep corrected it.",
+    "shippable_operating_point": "coverage 0.8594, answered_top1 0.9818, threshold 0.8072, target 0.97 -> shippable=true (out-of-sample on the disjoint test split). Abstain on the ~14% lowest-margin tokens -> the rest answer at 0.982, clearing the never-flip bar.",
+    "curve": "q0.90 cov0.961 ans0.9512 | q0.85 cov0.914 ans0.9658 | q0.70 cov0.859 ans0.9818 | q0.65 cov0.789 ans0.9901 | q0.50 cov0.578 ans0.9865",
+    "artifacts": "spark-bridge bridge/results/2026-07-01-claude-web-cert-v5-frontier-02.json; cloud commit ef5c9d77 (serving/abstention_serve.py + test + ledger row).",
+    "firstAttemptBug": "frontier-01 caught ModuleNotFoundError serving.quant_abstention (I deployed the caller to spark-bridge without the module). Fixed: deployed serving/quant_abstention.py to spark-bridge (7da01947), re-ran as frontier-02.",
+    "caveat": "n_test=128 -> wide interval. I staged a confirmation at n_eval=1024 (bridge/commands/2026-07-01-claude-web-cert-v5-frontier-confirm-1k.json). If your poller runs it, surface out[abstention_frontier][shippable_operating_point] into from-mac/STATUS.json + a ledger row. Do NOT flip any recipe candidate->adopted; canClaimAGI stays false."
   },
-  "stillOpenForYou_realModelAblation": {
-    "status": "UNCHANGED from last handoff - still the highest-value real-model work once the frontier read lands.",
-    "tasks": [
-      "A) #1 real-model ablation: tools/replication_pack.py on your 70B (raw) for its ACTUAL trap fabrication_rate, then agent/verifiability_model.decide() on the same traps -> real fabrication reduction + real control_over_abstain_rate. The number that could justify adopting #1.",
-      "B) #3 real intervention-consistency: your 70B on tools/counterfactual_traps.py PAIRS -> does the REAL model own abstention FLIP with the counterfactual edit. Report the real model intervention_consistency.",
-      "C) Novel-knowability generalization (honest limit test): 5 traps in a NEW family not in {fictional, future-date, unfalsifiable} -> expect verifiability_model to FAIL on novel types; report that honestly to bound #1 scope."
-    ],
-    "report": "handoff/from-mac/STATUS.json + ledger row. Real delta at low control cost -> PROPOSE recipe_spec promotion + run tools/lint_recipe.py; OWNER approves the flip. No transfer -> valid result, keep candidate."
+  "serveGate_built": {
+    "what": "serving/abstention_serve.py: AbstentionPolicy + policy_from_cert(cert_json) loads the frontier's operating point and enforces it at serve time from the quant top1-top2 margin ALONE (no FP model). A None operating point RAISES, never falls back to answering everything.",
+    "test": "tests/test_abstention_serve.py 4/4 green (offline invariants, real-point load, None-refuses-answer-everything).",
+    "use": "policy = policy_from_cert('agi-proof/benchmark-results/nvfp4-v5-frontier-1k.json'); policy.decide(quant_next_token_probs) -> ['answer'|'abstain', ...]."
   },
   "v6": {
-    "hold": "STILL owner-gated. My recommendation to the owner: DEFER v6 --run-train until the frontier read lands. If the frontier finds a shippable v5 operating point, v5+abstention ships now and v6 is a lower-priority quality push; if None, v6 is the confirmed path -> then GO.",
-    "dispatchEnvWhenApproved": "QAT_KD_WEIGHT=1.0 QAT_TOP1_WEIGHT=0.5 QAT_TEMP=2.0 QAT_LAMBDA=0.0005 QAT_EPOCHS=5 CERT_NEVAL=256 (base OLMoE-1B-7B-0924-Instruct, adapter olmoe-qat-spark-v6). Do NOT start without the owner explicit approvedBy."
+    "status": "DEMOTED from blocker to OPTIONAL quality push. v5 ships now with the abstention hedge. v6 --run-train stays owner-gated; run it only if the owner wants to raise raw coverage above 0.86 (turn abstained tokens into answered ones).",
+    "dispatchEnvIfApproved": "QAT_KD_WEIGHT=1.0 QAT_TOP1_WEIGHT=0.5 QAT_TEMP=2.0 QAT_LAMBDA=0.0005 QAT_EPOCHS=5 CERT_NEVAL=256 (base OLMoE-1B-7B-0924-Instruct, adapter olmoe-qat-spark-v6)."
   },
-  "guardrails": "canClaimAGI=false; v5 is an HONEST FAIL and abstention is a hedge, not a rescue unless the frontier proves it; lint_claims + lint_recipe before any receipt commit; do NOT flip candidate->adopted without a real-model ablation + owner sign-off; code only to claude/sophia-positioning-gaps-84kb0v; --run-train needs owner approvedBy; no plaintext secrets."
+  "highestValueForYou_realModelAblation": {
+    "status": "NOW the top Mac task (v5 shippability is resolved). Real-model evidence is the only path to promote any world-model prototype candidate->adopted.",
+    "tasks": [
+      "A) #1 real-model ablation: tools/replication_pack.py on your 70B (raw) for its ACTUAL trap fabrication_rate, then agent/verifiability_model.decide() on the same traps -> real fabrication reduction + real control_over_abstain_rate.",
+      "B) #3 real intervention-consistency: your 70B on tools/counterfactual_traps.py PAIRS -> does the REAL model own abstention FLIP with the counterfactual edit.",
+      "C) Novel-knowability generalization: 5 traps in a NEW family (not fictional/future-date/unfalsifiable) -> expect verifiability_model to FAIL; report honestly to bound #1 scope."
+    ],
+    "report": "handoff/from-mac/STATUS.json + ledger row. Real delta at low control cost -> propose recipe_spec promotion + run tools/lint_recipe.py; OWNER approves the flip."
+  },
+  "guardrails": "canClaimAGI=false; v5 is a RAW FAIL made shippable by a MEASURED (not guaranteed) abstention hedge; lint_claims + lint_recipe before any receipt commit; do NOT flip candidate->adopted without a real-model ablation + owner sign-off; code only to claude/sophia-positioning-gaps-84kb0v; --run-train needs owner approvedBy; no plaintext secrets."
 }
