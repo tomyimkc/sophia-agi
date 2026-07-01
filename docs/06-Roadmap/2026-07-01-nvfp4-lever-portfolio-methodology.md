@@ -52,3 +52,24 @@ chasing raw 0.97.
 ## Provenance
 Probes: `/tmp/expert_sens.py`, `/tmp/rht_probe.py` (Spark). Reuse `training/qat.fake_quant`.
 Weight-space only — the load-bearing sensitivity (activation-weighted output-KL) is experiment #1 above.
+
+## Findings continued (same cycle): routing skew + the decisive protection test
+**Probe 3 — routing concentration (calib forward, 128 seqs):** despite load-balance training,
+top-8 experts/layer carry **27.8% of routing** (max 32.9%, layer 4) vs 12.5% uniform — ~2.2x skew.
+→ *output* error is NOT uniform even though *weight* error is; the expert-protection lever is LIVE.
+
+**Probe 4 — protection test (base model, n=64, guard KEPT-BF16-OK):** top1-vs-bf16 with (A) all
+NVFP4 = **0.8650** vs (B) NVFP4 + top-8/64 most-routed experts/layer bf16 = **0.8765** → **+0.0115**
+at **12% expert-param bf16**. (A first run returned a bogus 1.0000 — `is_served_param(suffixes=())`
+matched 0 params, a quant no-op; the rlvr-harness-traps too-clean rule caught it. Fixed via the full
+served-suffix set → 96 params matched.)
+
+## Refined conclusion (fully evidenced)
+Expert-protection is REAL but **MODEST** (+0.0115 for 12% bf16) — it cannot clear 0.97 alone
+(needs ~+0.10 → protecting a large fraction, defeating the memory purpose). Its role is a **cheap,
+no-train FRONTIER-IMPROVER**: +~1pt raw top1 buys back abstention coverage. Net strategy:
+1. **Ship v5 via the abstention frontier** (the product that works; cloud building the serve-time gate).
+2. **Optionally stack top-k expert-protection** (12% bf16, +~1pt) to raise the frontier's coverage — cheap, no train.
+3. **QAD only if coverage still short** — not to chase raw 0.97.
+4. **Do NOT chase raw NVFP4 0.97 via cheap levers** — intrinsic uniform ~10.8% weight error + modest protection gain make it infeasible.
+Probes: `/tmp/{expert_sens,rht_probe,routing_probe,protect2}.py` (Spark).
