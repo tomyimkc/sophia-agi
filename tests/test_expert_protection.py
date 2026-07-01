@@ -5,7 +5,9 @@ Exercises the per-expert-slice skip logic in isolation (the risky part) with an 
 The end-to-end reproduction (cert --keep-top-experts 8 -> raw 0.9414 / coverage 0.9297) is
 verified on the Spark GPU, not here.
 """
-import torch
+import pytest
+
+torch = pytest.importorskip("torch")  # torch-only test; skip cleanly on a torch-less CI runner
 import torch.nn as nn
 
 from tools.expert_protection import protected_quantize_served, layer_of
