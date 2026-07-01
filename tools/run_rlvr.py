@@ -48,6 +48,7 @@ from provenance_bench import (  # noqa: E402
     code_integrity,
     code_reward,
     faithfulness_rollout,
+    invention_dataset,
     math_dataset,
     math_reward,
     ontology_rl_dataset,
@@ -344,6 +345,13 @@ def _run_gpu(args: argparse.Namespace) -> int:
             reward_fn = code_integrity.make_grpo_reward(timeout_sec=args.code_timeout)
         else:
             reward_fn = code_reward.make_grpo_reward(timeout_sec=args.code_timeout)
+    elif args.task == "invention":
+        # Train on the invention TRAIN compositions (disjoint from the powered eval
+        # suite at this seed). Rows carry a ``holdout`` (private_test) so the GUARDED
+        # reward floors input special-casing IN-LOOP — closing the pass-shown/fail-holdout
+        # gap the first run surfaced. Held-out eval = eval_rlvr_adapter --task invention.
+        data = invention_dataset.build_invention_rl_dataset(seed=args.seed, eval_frac=args.eval_frac)
+        reward_fn = code_integrity.make_grpo_reward(timeout_sec=args.code_timeout)
     elif args.task == "physics":
         data = physics_dataset.build_physics_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
         # gold column -> dimensional+numeric verifier (agent.units). Judge-free and
@@ -397,7 +405,7 @@ def _run_gpu(args: argparse.Namespace) -> int:
     train_rows = data["train_rows"]
     if args.curriculum:
         train_rows = _gate_curriculum_order(train_rows, samples=args.curriculum_samples)
-    if args.task == "code":
+    if args.task in ("code", "invention"):
         # Wrap each prompt in the model's chat template so an instruct/chat base
         # generates an extractable fenced code block during GRPO rollouts. Must
         # match the eval side (eval_rlvr_adapter, chat_template=True), else the
@@ -529,7 +537,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--model", default="mock", help=f'subject model (default "mock"; GPU: "{DEFAULT_MODEL}")')
     ap.add_argument("--step-domain", choices=["math", "physics"], default="math",
                     help="for --task step: which RL split + per-step oracle to use")
-    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "physics", "step", "faithfulness"],
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "physics", "step", "faithfulness", "invention"],
                     default="provenance",
                     help="reward task: provenance (provenance_faithful), math (sympy math_equivalent), "
                          "code (hidden-tests-pass via provenance_bench.code_exec), concept "
@@ -611,6 +619,14 @@ def main(argv: list[str] | None = None) -> int:
                 ok = ok and integ_ok
                 detail.setdefault("checks", {})["codeIntegrityInvariants"] = integ_ok
                 detail["codeIntegrity"] = integ_detail
+        elif args.task == "invention":
+            # Same guarded-reward integrity invariants as code, plus the open-invention
+            # instrument-validity check (disjoint/covered/discriminates).
+            ok, detail = code_integrity.offline_invariants()
+            inv_ok, inv_detail = invention_dataset.offline_invariants(seed=args.seed)
+            ok = ok and inv_ok
+            detail.setdefault("checks", {})["inventionInstrument"] = inv_ok
+            detail["inventionInstrument"] = inv_detail
         elif args.task == "faithfulness":
             # Retrieve-then-reason rollout + counterfactual citation-drop reward.
             # Offline harness: proves a retrieval-USING policy outscores a weights-
