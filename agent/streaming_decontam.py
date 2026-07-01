@@ -25,6 +25,7 @@ guessing. Nothing here changes weights or writes canonical records.
 from __future__ import annotations
 
 from datetime import date, datetime
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -64,12 +65,19 @@ def parse_date(value: Any) -> date | None:
             return None
 
 
-def shingles(text: str, k: int) -> set[str]:
-    """Word k-shingle set over the normalized text (mirrors tools/assert_decontam)."""
+@lru_cache(maxsize=8192)
+def _shingle_cache(text: str, k: int) -> frozenset[str]:
+    """Cached word k-shingle set. Memoized so a fixed eval surface is shingled once
+    across many claims, not once per claim (the hot path in content_decontam)."""
     toks = normalize(text).split()
     if len(toks) < k:
-        return {" ".join(toks)} if toks else set()
-    return {" ".join(toks[i:i + k]) for i in range(len(toks) - k + 1)}
+        return frozenset({" ".join(toks)}) if toks else frozenset()
+    return frozenset(" ".join(toks[i:i + k]) for i in range(len(toks) - k + 1))
+
+
+def shingles(text: str, k: int) -> set[str]:
+    """Word k-shingle set over the normalized text (mirrors tools/assert_decontam)."""
+    return set(_shingle_cache(text, k))
 
 
 def jaccard(a: set[str], b: set[str]) -> float:
@@ -97,13 +105,13 @@ def content_decontam(
     npr = normalize(text)
     if npr in eval_prompts:
         return {"ok": False, "reason": "exact/normalized overlap with an eval prompt", "exact": True, "maxJaccard": 1.0, "nearMatch": npr[:120]}
-    tsh = shingles(text, k)
+    tsh = _shingle_cache(text, k)
     if not tsh:
         return {"ok": True, "reason": "too short to shingle; exact check passed", "exact": False, "maxJaccard": 0.0, "nearMatch": ""}
     best = 0.0
     best_match = ""
     for e in eval_prompts:
-        j = jaccard(tsh, shingles(e, k))
+        j = jaccard(tsh, _shingle_cache(e, k))
         if j > best:
             best, best_match = j, e
             if best >= 1.0:

@@ -310,7 +310,14 @@ def mark_stale(store_path: str | Path, as_of: str) -> dict[str, Any]:
     path = Path(store_path)
     if not path.exists():
         return {"schema": "sophia.realtime_reverify.v1", "nStale": 0, "nRows": 0, "asOf": as_of, "candidateOnly": True}
-    rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    rows: list[dict[str, Any]] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        try:
+            rows.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue  # skip a malformed/partial line rather than crash the daemon
     n_stale = 0
     for r in rows:
         if r.get("ingestState") != "ingested":

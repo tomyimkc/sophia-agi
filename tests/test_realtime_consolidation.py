@@ -41,6 +41,14 @@ def test_training_row_teaches_habit_not_fact() -> None:
     assert row["metadata"]["task_family"] == "realtime_grounding"
 
 
+def test_needed_sources_never_empty_string() -> None:
+    # a source dict present but with no url/id/domain must NOT yield ['']
+    belief = {"ingestState": "ingested", "verdict": "accepted", "confidence": 0.9,
+              "claim": "x", "sources": [{"title": "no usable ref"}], "validUntil": ""}
+    target = json.loads(rc.to_training_row(belief)["messages"][1]["content"])
+    assert target["needed_sources"] == ["(deterministic verifier; no external source)"], target["needed_sources"]
+
+
 def test_reward_is_bounded_and_verifier_sourced() -> None:
     accepted = {"ingestState": "ingested", "verdict": "accepted", "confidence": 0.95}
     assert rc.reward_for(accepted) == 0.95
@@ -81,6 +89,7 @@ def test_consolidate_self_decontaminates() -> None:
 
 def main() -> int:
     test_training_row_teaches_habit_not_fact()
+    test_needed_sources_never_empty_string()
     test_reward_is_bounded_and_verifier_sourced()
     test_consolidate_dry_run_and_ledger()
     test_consolidate_self_decontaminates()

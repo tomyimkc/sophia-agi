@@ -135,6 +135,18 @@ def test_claim_id_is_stable() -> None:
     assert rg.claim_id("2 + 2 = 4") == rg.claim_id("2 + 2 = 4")
 
 
+def test_mark_stale_tolerates_malformed_store_line() -> None:
+    with tempfile.TemporaryDirectory() as d:
+        store = Path(d) / "belief_store.jsonl"
+        row = _ingest("2 + 2 = 4")
+        row.ingestState = "ingested"
+        rg.append_belief_rows(store, [row])
+        with store.open("a", encoding="utf-8") as f:
+            f.write("{ this is not valid json\n")  # partial/corrupt append
+        out = rg.mark_stale(store, "2026-07-01")  # must not raise
+        assert out["nRows"] >= 1
+
+
 def main() -> int:
     test_math_accepted_is_ingested()
     test_math_contradiction_is_rejected()
@@ -148,6 +160,7 @@ def main() -> int:
     test_run_grounding_persists_only_ingested_and_dedups()
     test_mark_stale_flags_lapsed_beliefs()
     test_claim_id_is_stable()
+    test_mark_stale_tolerates_malformed_store_line()
     print("test_realtime_grounding: OK")
     return 0
 

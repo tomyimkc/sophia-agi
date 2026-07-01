@@ -70,7 +70,12 @@ def to_training_row(belief_row: dict[str, Any]) -> dict[str, Any]:
     provenance needed to trace and reverse it.
     """
     claim = str(belief_row.get("claim", ""))
-    needed = sorted({str(s.get("url") or s.get("id") or s.get("domain") or "") for s in belief_row.get("sources", []) if s}) or ["(deterministic verifier; no external source)"]
+    needed = sorted({
+        ref for ref in (
+            str(s.get("url") or s.get("id") or s.get("domain") or "")
+            for s in belief_row.get("sources", []) if s
+        ) if ref
+    }) or ["(deterministic verifier; no external source)"]
     target = {
         "route": "grounded-external",
         "epistemic_status": "externally-verified",
@@ -147,7 +152,10 @@ def _read_ingested(belief_store_path: str | Path) -> list[dict[str, Any]]:
     for line in path.read_text(encoding="utf-8").splitlines():
         if not line.strip():
             continue
-        row = json.loads(line)
+        try:
+            row = json.loads(line)
+        except json.JSONDecodeError:
+            continue  # tolerate a malformed/partial store line
         if row.get("ingestState") == "ingested":
             out.append(row)
     return out
