@@ -7,23 +7,50 @@
   "candidateOnly": true,
   "level3Evidence": false,
   "claimCeiling": "candidate_only; canClaimAGI:false",
-  "headline": "PENDING — Phase-1 online C1 run not performed; dated seed committed, powered pack + live backend not run",
+  "headline": "PENDING \u2014 Phase-1 online C1 run not performed; dated seed committed, powered pack + live backend not run",
   "generatedAt": "2026-07-01T00:00:00+00:00",
   "harness": "tools/run_realtime_benchmark.py --online (keyless LiveFactBackend)",
   "preregistration": "data/realtime/benchmark/measurement_spec.json",
   "seedPack": "eval/fact_check/phase1_dated_seed_v1.jsonl",
-  "seedStats": {"n": 28, "true": 12, "false": 10, "unknowable": 6, "temporallyCleanVsCutoff": "2026-07-01"},
+  "seedStats": {
+    "n": 28,
+    "true": 12,
+    "false": 10,
+    "unknowable": 6,
+    "temporallyCleanVsCutoff": "2026-07-01",
+    "n_total_curated": 58,
+    "batches": [
+      "eval/fact_check/phase1_dated_seed_v1.jsonl (n=28)",
+      "eval/fact_check/phase1_dated_batch_v2.jsonl (n=30, real sourced, verified 2026-07-01)"
+    ]
+  },
   "poweredTarget": {
     "requiredNForMDE_0_10": 393,
     "source": "tools/eval_stats.required_n_for_mde(0.10) at the default conservative paired_rho=0.0",
-    "note": "The committed measurement_spec brackets the paired requirement up to ~785 at rho=0; grow the pack to clear whichever the spec pins before any GO. 28 is a SEED, ~7% of 393 — nowhere near powered."
+    "note": "The committed measurement_spec brackets the paired requirement up to ~785 at rho=0; grow the pack to clear whichever the spec pins before any GO. 28 is a SEED, ~7% of 393 \u2014 nowhere near powered.",
+    "progress": "58/393 curated (15%). Batch v2 adds 30 REAL sourced dated facts (no synthesis), each with a `source` provenance field, validated by tools/validate_dated_pack.py (temporal_decontam + valid_time + provenance). Still underpowered; NOT a GO."
   },
   "arms": {
-    "accept_all": {"reason": "requires the live run", "status": "not_run"},
-    "raw_rag": {"reason": "requires the live run", "status": "not_run"},
-    "verdict_only": {"reason": "requires the live run", "status": "not_run"},
-    "gated": {"reason": "requires the live run", "status": "not_run"},
-    "full": {"reason": "requires the live run", "status": "not_run"}
+    "accept_all": {
+      "reason": "requires the live run",
+      "status": "not_run"
+    },
+    "raw_rag": {
+      "reason": "requires the live run",
+      "status": "not_run"
+    },
+    "verdict_only": {
+      "reason": "requires the live run",
+      "status": "not_run"
+    },
+    "gated": {
+      "reason": "requires the live run",
+      "status": "not_run"
+    },
+    "full": {
+      "reason": "requires the live run",
+      "status": "not_run"
+    }
   },
   "results": null,
   "criticalFailures": [
