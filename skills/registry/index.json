@@ -1,6 +1,6 @@
 {
   "schema": "sophia.skill_registry.unified_index.v1",
-  "count": 21,
+  "count": 22,
   "layers": {
     "A": "agent-skill (.claude)",
     "B": "harness-registry",
@@ -136,6 +136,28 @@
       "verifier_ref": null,
       "reliability": null,
       "encrypted": true
+    },
+    {
+      "id": "sophia-security-audit",
+      "layer": "A",
+      "description": "Run BEFORE a release / tag / publish, or when the user says \"security audit\", \"audit the repo\", \"before release\", \"secure the repo\", \"pre-release check\", or \"/sophia-security-audit\". Bundles the repo's three local security gates into one deterministic, offline pre-flight: the no-overclaim claims linter, the ReDoS/robustness verifier regression, and a heuristic secret-shape scan over the source tree. Use it to catch an overclaim, a re-introduced catastrophic-backtracking regex, or a leaked-key-shaped string LOCALLY before CI does. It COMPLEMENTS — does not replace — the authoritative CI scans (pip-audit, CodeQL, gitleaks). A clean audit is a filter, NOT a guarantee of security. metadata: short-description: \"One local pre-release security pre-flight: no-overclaim + ReDoS-robustness + heuristic secret scan (complements CI, not a guarantee)\"",
+      "triggers": [
+        "run",
+        "release",
+        "tag",
+        "publish",
+        "user",
+        "says",
+        "security",
+        "audit",
+        "repo",
+        "secure",
+        "pre",
+        "check"
+      ],
+      "body_ref": ".claude/skills/sophia-security-audit/SKILL.md",
+      "verifier_ref": null,
+      "reliability": null
     },
     {
       "id": "spark-cluster-ops",
