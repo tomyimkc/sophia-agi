@@ -341,6 +341,10 @@ if [[ "${RUN_B}" -eq 1 ]]; then
       --lora-dropout 0 \
       --qat --qat-scheme nvfp4 \
       --qat-lambda "${QAT_LAMBDA}" \
+      --qat-kd-weight "${QAT_KD_WEIGHT:-0}" \
+      --qat-top1-weight "${QAT_TOP1_WEIGHT:-0}" \
+      --qat-temp "${QAT_TEMP:-2.0}" \
+      --qat-margin "${QAT_MARGIN:-0}" \
       --epochs "${QAT_EPOCHS}"
   else
     step "B1 — QAT train SKIPPED (no --run-train); will certify existing adapter at ${QAT_ADAPTER}"
