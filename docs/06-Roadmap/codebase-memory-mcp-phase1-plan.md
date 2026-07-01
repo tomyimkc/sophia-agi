@@ -17,13 +17,13 @@ Phase 1 therefore enforces **two** things at launch, both already implemented:
   the working tree is git-crypt LOCKED and no `GITCRYPT_KEY_B64` is present.
 
 ## Install steps (human, once — each is a real gate, not a formality)
-1. **Fetch + build + audit the binary.** Clone `cbm.pin.json.repo`, checkout an audited
-   commit, build `binary_rel`, and inspect it (this is the trust decision). Put the built
-   binary OUT of the repo, e.g. `~/.cache/cbm/codebase-memory-mcp`.
-2. **Pin it.** `python tools/cbm/fetch_cbm.py --init ~/.cache/cbm/codebase-memory-mcp` —
-   records `ref` + `sha256` into `cbm.pin.json` (commit that pin update). Until this runs,
-   `--verify` refuses and indexing is off (test `test_committed_pin_is_uninitialized` enforces
-   the committed pin ships empty).
+1. **Fetch + build + audit the binary.** Clone the `repo` recorded in `cbm.pin.json`, checkout
+   an audited commit, build the `binary_rel` path, and inspect it (this is the trust decision).
+   Put the built binary OUT of the repo, e.g. `~/.cache/cbm/codebase-memory-mcp`.
+2. **Pin it.** `python tools/cbm/fetch_cbm.py --init ~/.cache/cbm/codebase-memory-mcp --ref <audited-commit>`
+   — records the binary `sha256` (and the `--ref` you pass; the ref is NOT auto-inferred) into
+   `cbm.pin.json` (commit that pin update). Until this runs, `--verify` refuses and indexing is off
+   (test `test_committed_pin_is_uninitialized` enforces the committed pin ships empty).
 3. **Set the cache OUT of the repo.** `export CBM_CACHE_DIR=~/.cache/cbm` (never inside the
    worktree). The L2 sink (`.gitignore` + `check_no_index_artifacts.py`) is belt-and-suspenders;
    the primary rule is the DB lives out-of-repo. Purge any pre-adoption `.codebase-memory/`.

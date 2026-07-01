@@ -49,9 +49,12 @@ def verify(binary: Path, pin: dict) -> "tuple[bool, str]":
     if not expected:
         return False, ("pin NOT initialized (cbm.pin.json sha256 is empty) — indexing stays "
                        "disabled; run --init after fetching+building+inspecting the pinned ref.")
-    if not binary.exists():
-        return False, f"binary not found: {binary}"
-    actual = sha256_file(binary)
+    if not binary.is_file():
+        return False, f"binary not found or not a file: {binary}"
+    try:
+        actual = sha256_file(binary)
+    except OSError as exc:
+        return False, f"cannot read binary {binary}: {exc}"
     if actual != expected:
         return False, f"sha256 MISMATCH — expected {expected[:12]}…, got {actual[:12]}… (refusing)."
     return True, f"verified sha256 {actual[:12]}… against pin (ref {pin.get('ref', '?')})."
@@ -59,11 +62,13 @@ def verify(binary: Path, pin: dict) -> "tuple[bool, str]":
 
 def main(argv: "list[str]") -> int:
     ap = argparse.ArgumentParser(description="pin + verify the codebase-memory-mcp binary")
-    ap.add_argument("--verify", metavar="BINARY",
-                    help="recompute sha256(BINARY) and check it against cbm.pin.json (exit 1 on mismatch)")
-    ap.add_argument("--init", metavar="BINARY",
-                    help="record sha256(BINARY) into the pin (first-time pin; do this only after auditing the ref)")
-    ap.add_argument("--print", action="store_true", help="print the current pin and exit")
+    g = ap.add_mutually_exclusive_group(required=True)  # exactly one action
+    g.add_argument("--verify", metavar="BINARY",
+                   help="recompute sha256(BINARY) and check it against cbm.pin.json (exit 1 on mismatch)")
+    g.add_argument("--init", metavar="BINARY",
+                   help="record sha256(BINARY) (and --ref if given) into the pin; do this only after auditing the ref")
+    g.add_argument("--print", action="store_true", help="print the current pin and exit")
+    ap.add_argument("--ref", help="the audited commit SHA to record alongside --init (sha256 is always recorded; ref is NOT auto-inferred)")
     ap.add_argument("--pin", default=str(PIN_PATH), help="path to the pin file (default: repo-root cbm.pin.json)")
     args = ap.parse_args(argv)
 
@@ -75,20 +80,19 @@ def main(argv: "list[str]") -> int:
         return 0
     if args.init:
         b = Path(args.init)
-        if not b.exists():
-            sys.stderr.write(f"[cbm-pin] binary not found: {b}\n")
+        if not b.is_file():
+            sys.stderr.write(f"[cbm-pin] binary not found or not a file: {b}\n")
             return 2
         pin["sha256"] = sha256_file(b)
+        if args.ref:
+            pin["ref"] = args.ref  # record the audited commit the human vouched for
         pin_path.write_text(json.dumps(pin, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         print(f"[cbm-pin] pinned sha256 {pin['sha256'][:12]}… for ref {pin.get('ref', '?')}")
         return 0
-    if args.verify:
-        ok, msg = verify(Path(args.verify), pin)
-        sys.stderr.write(f"[cbm-pin] {msg}\n")
-        return 0 if ok else 1
-
-    ap.print_help()
-    return 2
+    # the mutually-exclusive group is required, so --verify is the only remaining case
+    ok, msg = verify(Path(args.verify), pin)
+    sys.stderr.write(f"[cbm-pin] {msg}\n")
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":

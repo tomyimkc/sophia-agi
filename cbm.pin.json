@@ -3,5 +3,5 @@
   "ref": "REPLACE_WITH_AUDITED_COMMIT_SHA",
   "binary_rel": "target/release/codebase-memory-mcp",
   "sha256": "",
-  "note": "Phase-1 supply-chain pin for the codebase-memory-mcp binary. Empty sha256 => tools/cbm/fetch_cbm.py --verify REFUSES, so indexing stays disabled by default. To adopt: (1) clone `repo`, checkout an audited `ref`, build `binary_rel`, inspect it; (2) `python tools/cbm/fetch_cbm.py --init <binary>` to record `ref` + `sha256`; (3) wire per docs/06-Roadmap/codebase-memory-mcp-phase1-plan.md. canClaimAGI:false."
+  "note": "Phase-1 supply-chain pin for the codebase-memory-mcp binary. Empty sha256 => tools/cbm/fetch_cbm.py --verify REFUSES, so indexing stays disabled by default. To adopt: (1) clone `repo`, checkout an audited commit, build `binary_rel`, inspect it; (2) `python tools/cbm/fetch_cbm.py --init <binary> --ref <audited-commit>` records the binary sha256 (and the ref you pass — the ref is NOT auto-inferred); (3) wire per docs/06-Roadmap/codebase-memory-mcp-phase1-plan.md. canClaimAGI:false."
 }
