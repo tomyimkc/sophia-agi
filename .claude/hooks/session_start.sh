@@ -22,10 +22,14 @@ say "=== Sophia-AGI session bootstrap ==="
 # (Claude Code on the web: add it as an environment secret). Locally, if the repo
 # is already unlocked this is a no-op.
 unlock_status="locked"
-# A git-crypt-encrypted file begins with the magic bytes "\0GITCRYPT\0". If AGENTS.md (an
-# encrypted file) reads as plaintext, the repo is already unlocked — independent of the
-# git-crypt binary being present.
-if [ -f AGENTS.md ] && ! head -c 16 AGENTS.md 2>/dev/null | grep -q 'GITCRYPT'; then
+# A git-crypt-encrypted file begins with the magic bytes "\0GITCRYPT\0" — note the LEADING
+# NUL. If AGENTS.md (an encrypted file) does NOT start with those bytes it reads as plaintext,
+# so the repo is already unlocked — independent of the git-crypt binary being present.
+# We compare the first 10 bytes deterministically (hex 00474954435259505400). The old
+# `head -c 16 | grep -q GITCRYPT` was BROKEN: BSD/macOS grep treats the NUL-prefixed line as
+# binary and no-matches, so a genuinely LOCKED clone was misread as "already-unlocked" and
+# never auto-unlocked.
+if [ -f AGENTS.md ] && [ "$(head -c 10 AGENTS.md 2>/dev/null | od -An -tx1 | tr -d ' \n')" != "00474954435259505400" ]; then
   unlock_status="already-unlocked"
 elif [ -n "${GITCRYPT_KEY_B64:-}" ]; then
   if ! command -v git-crypt >/dev/null 2>&1; then
