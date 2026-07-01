@@ -1060,13 +1060,24 @@ def main() -> int:
             print(f"QAT enabled (scheme={args.qat_scheme}, lambda={args.qat_lambda}, "
                   f"fake-quant on {wrapped} module(s): attn={cov.get('attn', '?')} "
                   f"expert={cov.get('expert', '?')} other={cov.get('other', '?')})", flush=True)
-            # The blind spot that cost four certify rounds: if QAT reaches 0 experts on an MoE, the
-            # experts can't co-adapt to low-bit serving. Surface it at train time, loudly.
+            # The blind spot that cost four certify rounds AND a wasted v6 fire (2026-07-01): if QAT
+            # reaches 0 experts on an MoE, the experts co-adapt to bf16 (not the serving grid), so a
+            # long train is doomed to ~= the un-co-adapted baseline (v6~v5). The offline qat
+            # invariants (15/15) do NOT catch this — it is a RUNTIME wrapping gap (fused 3-D
+            # OlmoeExperts gate_up_proj/down_proj Parameters + peft ParamWrapper, unreached by the
+            # per-nn.Linear STE). ABORT before burning GPU hours rather than warn-and-waste.
             if cov.get("model_has_expert_params") and cov.get("expert", 0) == 0:
-                print("WARNING: QAT covered 0 EXPERT modules though the model has experts — the "
-                      "MoE experts will NOT be co-adapted to the serving grid and will degrade when "
-                      "served quantized. Check that experts load as per-expert nn.Linear and that "
-                      "--target-modules reaches them (see LoRA target summary above).", flush=True)
+                import os as _os
+                _msg = ("--qat covered 0 EXPERT modules but the model HAS fused experts: they would "
+                        "co-adapt to bf16, NOT the serving grid -> the run is doomed to ~= baseline "
+                        "(v6~v5), wasting GPU hours. Fix the fused-expert QAT reach first (failure "
+                        "ledger 'fused-expert QAT-compose': STE-fake-quant the OlmoeExperts "
+                        "gate_up_proj/down_proj 3-D Parameters inside the peft ParamWrapper forward; "
+                        "verify via THIS coverage line showing expert>0, not the offline invariants). "
+                        "Set QAT_ALLOW_UNCOVERED_EXPERTS=1 to train attn-only QAT deliberately.")
+                if _os.environ.get("QAT_ALLOW_UNCOVERED_EXPERTS") != "1":
+                    raise SystemExit("FATAL: " + _msg)
+                print("WARNING (QAT_ALLOW_UNCOVERED_EXPERTS override): " + _msg, flush=True)
 
     if args.shard == "fsdp":
         # High/top-tier multi-GPU path: shard the frozen base across torch.distributed ranks.
