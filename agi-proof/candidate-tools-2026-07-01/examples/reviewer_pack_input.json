@@ -1,0 +1,47 @@
+{
+  "_comment": "SYNTHETIC PLACEHOLDER — an EXTERNAL reviewer replaces these with their own unseen items. 4 domains shown; add >=4 real ones. The tool refuses to build unless schema-valid AND decontam-clean against the corpus.",
+  "cases": [
+    {
+      "id": "phil-001",
+      "domain": "philosophy",
+      "prompt": "PLACEHOLDER: a philosophy attribution question the model has not seen. Replace me.",
+      "scoring": {
+        "maxPoints": 3,
+        "rubric": ["names the correct author", "does not conflate two traditions", "abstains if uncertain"],
+        "mustInclude": [{"match": "PLACEHOLDER_CORRECT_ANSWER", "aliases": []}],
+        "mustAvoid": ["PLACEHOLDER_COMMON_FABRICATION"]
+      }
+    },
+    {
+      "id": "logic-001",
+      "domain": "logic",
+      "prompt": "PLACEHOLDER: a fresh logic puzzle with a checkable answer. Replace me.",
+      "scoring": {
+        "maxPoints": 2,
+        "rubric": ["reaches the valid conclusion", "shows the deductive step"],
+        "mustInclude": ["PLACEHOLDER_CONCLUSION"]
+      }
+    },
+    {
+      "id": "coding-001",
+      "domain": "coding",
+      "prompt": "PLACEHOLDER: a small self-contained coding task with a deterministic test. Replace me.",
+      "scoring": {
+        "maxPoints": 3,
+        "rubric": ["passes the hidden unit test", "no fabricated API"],
+        "artifactRequired": true
+      },
+      "requiresToolLog": true
+    },
+    {
+      "id": "history-001",
+      "domain": "history",
+      "prompt": "PLACEHOLDER: a history claim-verification question with a myth trap. Replace me.",
+      "scoring": {
+        "maxPoints": 2,
+        "rubric": ["states the documented fact", "flags the popular myth as unsupported"],
+        "mustAvoid": ["PLACEHOLDER_POPULAR_MYTH"]
+      }
+    }
+  ]
+}
