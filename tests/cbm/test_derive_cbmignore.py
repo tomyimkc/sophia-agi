@@ -39,9 +39,8 @@ def test_new_secret_path_is_covered_automatically():
 def test_check_fresh_vs_stale(tmp_path):
     """Exercise the fresh-vs-stale comparison that `--check` relies on.
 
-    We use a tmp_path-based approach: drive `main(["--check"])` against a real
-    but minimal tmp repo root by monkeypatching the paths inside the module.
-    We test the comparison logic directly via the derive() output equality.
+    Tests the derive() comparison directly, then drives the real `--check` CLI
+    against a controlled tmp repo (via CBM_ROOT_OVERRIDE) for fresh(0)/stale(1).
     """
     # Fresh: content derived from SAMPLE matches itself → would be flagged as up-to-date
     fresh = derive(SAMPLE)
@@ -51,26 +50,20 @@ def test_check_fresh_vs_stale(tmp_path):
     stale = fresh + "\n# drift added externally\n"
     assert fresh != stale  # differs → --check would return 1
 
-    # Drive main(["--check"]) against a real tmp directory
-    root = Path(__file__).resolve().parents[2]
-    # Write a fresh .cbmignore (matches what derive() produces from the real .gitattributes)
-    from tools.cbm.derive_cbmignore import main as cbm_main
-    gitattributes_text = (root / ".gitattributes").read_text()
-    fresh_content = derive(gitattributes_text)
+    # Drive the real `--check` CLI against a CONTROLLED tmp repo via CBM_ROOT_OVERRIDE,
+    # so we exercise the actual exit codes (0 fresh / 1 stale) — not the committed repo.
+    import os
+    script = Path(__file__).resolve().parents[2] / "tools/cbm/derive_cbmignore.py"
+    (tmp_path / ".gitattributes").write_text(SAMPLE)
+    fresh_content = derive(SAMPLE)
+    (tmp_path / ".cbmignore").write_text(fresh_content)
+    env = {**os.environ, "CBM_ROOT_OVERRIDE": str(tmp_path)}
 
-    # Write fresh → --check must pass (exit 0)
-    cbmignore = tmp_path / ".cbmignore"
-    cbmignore.write_text(fresh_content)
-    res_fresh = subprocess.run(
-        [sys.executable, str(root / "tools/cbm/derive_cbmignore.py"), "--check"],
-        env={**__import__("os").environ, "CBM_ROOT_OVERRIDE": str(tmp_path)},
-        cwd=str(root),
-    )
-    # NOTE: main() resolves root from __file__ (not an env var), so we test
-    # the logic via a subprocess that writes to the real repo root. Since the
-    # real .cbmignore IS fresh (kept in sync by CI), --check must exit 0.
-    assert res_fresh.returncode == 0, "--check should pass when .cbmignore is fresh"
+    # Fresh .cbmignore → --check exits 0
+    r_fresh = subprocess.run([sys.executable, str(script), "--check"], env=env)
+    assert r_fresh.returncode == 0, "--check should pass when .cbmignore is fresh"
 
-    # Write stale → verify the stale string differs (the comparison the --check path uses)
-    stale_content = fresh_content + "\n# deliberate drift\n"
-    assert fresh_content != stale_content
+    # Stale .cbmignore → --check exits 1
+    (tmp_path / ".cbmignore").write_text(fresh_content + "\n# deliberate drift\n")
+    r_stale = subprocess.run([sys.executable, str(script), "--check"], env=env)
+    assert r_stale.returncode == 1, "--check should fail when .cbmignore is stale"

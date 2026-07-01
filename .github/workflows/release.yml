@@ -26,10 +26,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - name: Refuse to publish if a codebase-memory index artifact is tracked
-        run: python3 tools/cbm/check_no_index_artifacts.py
         with:
           fetch-depth: 0     # need full history + tags
+      - name: Refuse to publish if a codebase-memory index artifact is tracked
+        run: python3 tools/cbm/check_no_index_artifacts.py
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"

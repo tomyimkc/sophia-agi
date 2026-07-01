@@ -13,6 +13,7 @@ additionally excluded by the tool's own .gitignore-respect; a short extras list
 backstops the non-git-crypt ones.
 """
 from __future__ import annotations
+import os
 import sys
 from pathlib import Path
 
@@ -55,7 +56,10 @@ def derive(gitattributes_text: str) -> str:
 
 
 def main(argv: list[str]) -> int:
-    root = Path(__file__).resolve().parents[2]
+    # CBM_ROOT_OVERRIDE lets the test drive --check against a controlled tmp repo
+    # (with its own .gitattributes/.cbmignore); default resolves the repo from __file__.
+    _override = os.environ.get("CBM_ROOT_OVERRIDE")
+    root = Path(_override).resolve() if _override else Path(__file__).resolve().parents[2]
     content = derive((root / ".gitattributes").read_text())
     target = root / ".cbmignore"
     if "--check" in argv:
