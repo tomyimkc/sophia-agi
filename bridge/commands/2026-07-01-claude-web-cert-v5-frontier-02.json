@@ -1,0 +1,13 @@
+{
+  "id": "2026-07-01-claude-web-cert-v5-frontier-02",
+  "args": "--bench-b --execute",
+  "createdBy": "claude (cloud, wheel)",
+  "createdAt": "2026-07-01T03:25:00Z",
+  "approvedBy": "user: standing \"act, don't ask / perform all benchmarking; run the GPU 24/7 when not judging\" (2026-06-30). Cert-only (--bench-b, NO --run-train), same class as approved cert-t1-v3 / cert-v5-skipdiag-02 / cert-v5-frontier. NOT a --run-train escalation.",
+  "note": "Re-run of cert-v5-frontier: attempt 01 confirmed the honest fully-merged v5 FAIL (top1 0.9219, mean_kl 0.0364, incomplete_merge=false) but caught ModuleNotFoundError on serving.quant_abstention -> the frontier was skipped. That module is now deployed to spark-bridge (commit 7da01947, 8/8 offline invariants). This re-run computes out[abstention_frontier]: quant top1-top2 margin thresholds swept on the CALIB split, coverage vs answered_top1 MEASURED out-of-sample on the disjoint TEST split, target_answered=0.97. shippable_operating_point != None => v5+abstention honestly shippable now; None => abstention cannot rescue v5 -> v6 QAT is the confirmed path. THIS is the v6 GO/NO-GO gate. Cert/diagnostic only — do NOT flip any recipe candidate->adopted; canClaimAGI stays false.",
+  "env": {
+    "QAT_ADAPTER": "/home/tomyimkc/sophia-bridge/training/lora/checkpoints/olmoe-qat-spark-v5",
+    "CERT_NEVAL": "256",
+    "CERT_OUT": "agi-proof/benchmark-results/nvfp4-v5-frontier-02.json"
+  }
+}
