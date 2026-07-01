@@ -1,0 +1,64 @@
+{
+  "schema": "sophia.judge_farm.local.v1",
+  "_comment": "THREE-family LOCAL judge farm for closing the m3-sft-2family-judge kappa gap (ledger row m3-sft-2family-judge-not-validated-2026-06-29). Sibling of inference.local.mac-judge.json (the 2-family reference), which stays intact. The 2-family 70B run already found BOTH families significantly favor the adapter across 3 seeds, but inter-judge kappa=0.236 < 0.40 (prevalence-deflation, Feinstein-Cicchetti 1990). This config adds a 3rd INDEPENDENT vendor family (deepseek) so the run can report all 3 pairwise kappas + a majority vote, and pre-registers the FORCED-CHOICE protocol as primary (ties disallowed) to remove the tie-rate asymmetry that mechanically depresses kappa. Consumed by tools/judge_pilot_answers.py --judges and tools/run_local_judge_eval.py --config. NOT YET RUN — the run is farm-gated (Spark + Mac + OpenRouter key) and dispatched via GitHub Actions, never local SSH.",
+  "why_three_families": "The 2nd-family null in the ORIGINAL run was a weak-judge artifact (Llama-8B-4bit), already fixed by swapping to Llama-3.3-70B (both families then significant, all 3 seeds). What remains open is the kappa>=0.40 FLOOR, which two high-agreement judges cannot clear when observed agreement ~0.75 (PABAK~0.42 but not comparable to the kappa-derived bar). A 3rd distinct-vendor judge (deepseek) does two things: (1) yields 3 pairwise kappas + a majority-vote consensus, so a single deflated pair no longer decides the verdict; (2) tests whether the deflation is pair-specific or structural. Combined with the forced-choice protocol (ties disallowed), this is the honest attempt to either CLEAR kappa>=0.40 or CONFIRM the result is deflation-bound. Either outcome is a verdict; canClaimAGI stays false regardless.",
+  "boxes": {
+    "spark": {
+      "machine": "NVIDIA DGX Spark (GB10 Grace Blackwell, aarch64, 128GB unified)",
+      "role": "judge family A (CUDA, vLLM)",
+      "engine": "vllm",
+      "base_url": "http://SPARK_HOST:8000/v1",
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "judge_spec": "vllm:Qwen/Qwen2.5-7B-Instruct@http://SPARK_HOST:8000/v1",
+      "family": "qwen",
+      "model_lineage": "qwen",
+      "serve": "vllm serve Qwen/Qwen2.5-7B-Instruct --port 8000   # on the Spark (aarch64+sm_100 build)",
+      "notes": "vLLM is an AGGREGATOR provider, so this keys to vendor family 'qwen'. Keep the judge a DIFFERENT vendor from the subject (gemma)."
+    },
+    "mac": {
+      "machine": "Mac Studio (Apple Silicon, Metal/MLX)",
+      "role": "judge family B (Apple Silicon, MLX)",
+      "engine": "mlx",
+      "base_url": "http://MAC_HOST:8080/v1",
+      "model": "mlx-community/Llama-3.3-70B-Instruct-4bit",
+      "judge_spec": "openai:mlx-community/Llama-3.3-70B-Instruct-4bit@http://MAC_HOST:8080/v1",
+      "family": "mlx",
+      "model_lineage": "meta-llama",
+      "serve": "mlx_lm.server --model mlx-community/Llama-3.3-70B-Instruct-4bit --port 8080   # on the Mac Studio; reach via openai: transport (agent.model mlx: is a LOCAL loader and returns empty/all-TIE on the Spark)",
+      "notes": "The capable 70B swap that made family B significant across 3 seeds. Reached over the 10GbE/Tailscale link via openai:-transport to the remote mlx_lm.server (NOT mlx: local). mlx-community/... over openai transport still keys to vendor 'meta-llama'? No: the openai provider is an aggregator and the model path 'mlx-community/Llama-3.3-70B-Instruct-4bit' keys to vendor 'mlx-community'. Distinct from 'qwen' and 'deepseek'."
+    },
+    "deepseek": {
+      "machine": "OpenRouter (proprietary inference API; the 3rd independent vendor)",
+      "role": "judge family C (DeepSeek lineage)",
+      "engine": "openrouter",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "deepseek/deepseek-chat",
+      "judge_spec": "openrouter:deepseek/deepseek-chat",
+      "family": "deepseek",
+      "model_lineage": "deepseek",
+      "serve": "hosted (OpenRouter); requires OPENROUTER_API_KEY in the Actions secret store, not local",
+      "notes": "openrouter is an AGGREGATOR provider and the model path 'deepseek/deepseek-chat' keys to vendor family 'deepseek' — a 3rd distinct family beyond qwen + mlx-community/meta-llama. This path is PROPRIETARY inference (open_weights model, proprietary serving); that is fine for grader INDEPENDENCE (it is a different numerical + serving stack again), it just does not count toward the separate non-proprietary-judge property."
+    }
+  },
+  "judge_farm": {
+    "judges": [
+      "vllm:Qwen/Qwen2.5-7B-Instruct@http://SPARK_HOST:8000/v1",
+      "openai:mlx-community/Llama-3.3-70B-Instruct-4bit@http://MAC_HOST:8080/v1",
+      "openrouter:deepseek/deepseek-chat"
+    ],
+    "recommended_flag": "--judges vllm:Qwen/Qwen2.5-7B-Instruct@http://SPARK_HOST:8000/v1,openai:mlx-community/Llama-3.3-70B-Instruct-4bit@http://MAC_HOST:8080/v1,openrouter:deepseek/deepseek-chat",
+    "distinct_families_expected": 3,
+    "expected_families": ["qwen", "mlx-community", "deepseek"],
+    "subject_lineages_to_avoid": ["qwen", "meta-llama", "deepseek"],
+    "_comment": "expected_families: how provenance_bench.aggregate._distinct_families keys these (vLLM->vendor 'qwen'; openai aggregator on 'mlx-community/...' -> 'mlx-community'; openrouter aggregator on 'deepseek/...' -> 'deepseek'). Three distinct families. subject_lineages_to_avoid: do NOT use Qwen/Llama/DeepSeek as the SUBJECT with these judges; the gemma-3-4b-it subject is clear of all three."
+  },
+  "gate": {
+    "min_judge_families": 3,
+    "kappa_floor": 0.40,
+    "min_seeds": 3,
+    "ci_excludes_zero": true,
+    "primary_protocol": "forced-choice",
+    "source": "RESULTS.md / provenance_bench.aggregate; ledger m3-sft-2family-judge-not-validated-2026-06-29",
+    "notes": "Pre-registered PASS for VALIDATED: all 3 families' adapter win-rate CI-excludes-0.5 across >=3 seeds AND at least one inter-judge pairing (or the forced-choice majority-consensus kappa) reaches kappa>=0.40. Pre-registered honest NO-GO/CANDIDATE: families significant but every pairwise + consensus kappa stays <0.40 -> the result is deflation-bound and stays CANDIDATE (a real, reportable finding that the kappa floor is the wrong instrument for a high-prevalence task). canClaimAGI stays false either way. >=3 seeds + CI-excludes-zero are RUN properties, not this config's."
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "experimentId": "m3-3family-judge",
+  "schema": "sophia.measurement_spec.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "question": "Does adding a 3rd independent judge family (deepseek) and a forced-choice protocol let the M3-SFT source-discipline adapter-vs-base win clear the kappa>=0.40 inter-judge floor, or does it confirm the 2-family result is deflation-bound?",
+  "background": "The 2-family run (m3-2family-judge-70b) found BOTH families significantly favor the adapter across 3 seeds (pooled Qwen-7B 0.719 [0.687,0.750], Llama-70B 0.806 [0.777,0.832]; all 6 seed x family cells Wilson95-exclude-0.5). The ONLY unmet bar is inter-judge kappa=0.236 (mean of 0.23/0.28/0.20) < 0.40 — documented prevalence-deflation (Feinstein-Cicchetti 1990): obsAgree 0.71-0.77 mechanically deflates kappa at high agreement (PABAK~0.42, NOT comparable to the kappa-derived bar). This experiment is the honest attempt to resolve that.",
+  "subject": {
+    "base": "gemma-3-4b-it",
+    "adapter": "sophia-wisdom-4b-m3 (SFT)",
+    "answers": "agi-proof/benchmark-results/wisdom-market/M3-pilot-answers-seed{1,2,3}.json (268 source-family cases)",
+    "subjectLineage": "gemma"
+  },
+  "judges": [
+    "vllm:Qwen/Qwen2.5-7B-Instruct@http://SPARK_HOST:8000/v1  (family qwen)",
+    "openai:mlx-community/Llama-3.3-70B-Instruct-4bit@http://MAC_HOST:8080/v1  (family mlx-community)",
+    "openrouter:deepseek/deepseek-chat  (family deepseek)"
+  ],
+  "judgeConfig": "config/inference.local.mac-judge-3family.json",
+  "primaryMetric": "per-family adapter win-rate vs 0.5 (binary, ties excluded) with Wilson95 CI, AND the maximum over {3 pairwise inter-judge kappa, forced-choice majority-consensus reliability}",
+  "primaryProtocol": "forced-choice (TIE disallowed) — removes the tie-rate asymmetry that mechanically deflates kappa in the tie-allowed protocol; tie-allowed reported as a secondary sensitivity check",
+  "secondaryMetrics": [
+    "PABAK, bias index, prevalence index per pair (Byrt 1993) — reported for transparency, NOT compared to the kappa-derived 0.40 bar (Landis & Koch cutoffs are not transferable, Zec 2023)",
+    "majority-vote consensus win-rate across the 3 families",
+    "per-seed x per-family win-rate cells (>=3 seeds)"
+  ],
+  "primaryN": "268 source-family cases x >=3 seeds x 3 judge families",
+  "primaryMDE": 0.105,
+  "alpha": 0.05,
+  "kappaFloor": 0.40,
+  "minSeeds": 3,
+  "groundTruth": {
+    "rule": "adapter-vs-base preference by 3 INDEPENDENT judge families (each != subject lineage gemma, != the source-discipline gate). Forced-choice so every judge faces the identical binary decision.",
+    "use": "GO/NO-GO"
+  },
+  "guardrails": {
+    "familyDistinctness": {
+      "rule": "the 3 judges must key to 3 DISTINCT families under provenance_bench.aggregate._distinct_families (qwen, mlx-community, deepseek); none may equal the subject lineage (gemma)",
+      "use": "GO/NO-GO"
+    },
+    "noMockJudge": {
+      "rule": "any judge response containing '[mock:' fails the verdict parser and is dropped; a run with a dropped judge is void, never scored as agreement",
+      "use": "GO/NO-GO"
+    },
+    "kappaHonesty": {
+      "rule": "if all pairwise + consensus kappa stay <0.40 while all families remain significant, the verdict is CANDIDATE (deflation-bound), NOT VALIDATED — the kappa floor being unmet is reported as a real finding, not silently relaxed",
+      "use": "always"
+    },
+    "noOverclaim": {
+      "rule": "win-rate vs 0.5 is the capability evidence; kappa/PABAK are reliability only; canClaimAGI stays false regardless of outcome",
+      "use": "always"
+    }
+  },
+  "preRegisteredVerdicts": {
+    "VALIDATED": "all 3 families' adapter win-rate CI-excludes-0.5 across >=3 seeds AND (>=1 pairwise kappa>=0.40 OR forced-choice majority-consensus reliability>=0.40)",
+    "CANDIDATE_deflation_bound": "all 3 families significant across >=3 seeds BUT every pairwise + consensus kappa<0.40 -> the source-discipline edge is real but the kappa instrument cannot certify it on a high-prevalence task",
+    "NO_GO": "any family's win-rate CI includes 0.5, or a judge is dropped/mock, or the adapter loses"
+  },
+  "reproduce": "OPENROUTER_API_KEY=... python3 tools/judge_pilot_answers.py --answers agi-proof/benchmark-results/wisdom-market/M3-pilot-answers-seed1.json --judges <recommended_flag from config/inference.local.mac-judge-3family.json> --forced-choice --out agi-proof/benchmark-results/wisdom-market/m3-3family-judge/judge-seed1.json ; repeat seeds 2,3",
+  "dispatch": "GitHub Actions -> RunPod/local farm only (never local SSH); requires Spark vLLM + Mac mlx_lm.server + OPENROUTER_API_KEY secret. Read wisdom-gpu-prebaked first.",
+  "ledgerRef": "m3-sft-2family-judge-not-validated-2026-06-29"
+}
