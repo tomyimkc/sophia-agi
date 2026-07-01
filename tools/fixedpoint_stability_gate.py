@@ -188,8 +188,7 @@ def main(argv: list[str] | None = None) -> int:
         records = _load_jsonl(args.records)
     except Exception as e:
         report = _env_artifact(f"could not read --records ({type(e).__name__}: {e})")
-        records = None
-    if records is not None:
+    else:
         report = run(records, dim=args.dim, tau=args.tau, steps=args.steps,
                      residual_threshold=args.residual_threshold)
     text = json.dumps(report, indent=2)

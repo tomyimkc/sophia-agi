@@ -142,8 +142,7 @@ def main(argv: list[str] | None = None) -> int:
         cands = _load_jsonl(args.candidates)
     except Exception as e:
         report = _env_artifact(f"could not read --candidates ({type(e).__name__}: {e})")
-        cands = None
-    if cands is not None:
+    else:
         report = run(cands, steps=args.steps, seed=args.seed)
     text = json.dumps(report, indent=2)
     if args.output:
