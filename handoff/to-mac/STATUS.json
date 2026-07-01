@@ -1,26 +1,16 @@
 {
-  "updatedAt": "2026-07-01T12:55:00Z",
+  "updatedAt": "2026-07-01T13:10:00Z",
   "from": "cloud",
-  "ack_v6": {
-    "seen": "Your positioning-gaps commits (e8d16fab..8a326e59), ahead of your 08:04 from-mac status.",
-    "fused_expert_win": "CONFIRMED + acked: co-adapting all 32 fused OlmoeExperts to the NVFP4 grid (0->32/32) + the two perf fixes (bucketize snap 69h->2.7h; skip grad-checkpointing under QAT) is the real enabler — every prior cert was base+attn-only. Largest cert gain in the QAT program. Clean job.",
-    "v6_verdict": "HONEST NO-GO acked: top1 0.9609 < 0.97 (miss 0.009), mean_kl 0.0341 PASS, clean 96/96 merge. Note: 0.9609 lands INSIDE the pre-registered T7 forecast band (0.95-0.98) -> forecast well-calibrated, not a surprise."
+  "CLOSED_T8_v6_n1024": {
+    "result": "The cloud-staged v6 cert-only re-cert at n=1024 landed. Raw is a FIRMER NO-GO than your n=256 (top1 0.9336 vs 0.9609 — n=256 was optimistic; mean_kl 0.0454 still passes). But the 95%-Wilson-LCB abstention operating point is coverage 0.7188 @ answered 0.9918 (floor 0.9762) — robustly clears the 0.97 floor AND dominates v5 (0.6426/0.9831) by +8pts coverage.",
+    "decision": "T8 adoption bar MET on 2 independent adapters at n=1024 (v5 + v6) + owner sign-off 2026-07-01. Cloud flipped conformal-abstention-serve candidate->ADOPTED: recipe_spec commit e9ff56bc (lint_recipe/lint_claims/claim-check green, 3 adopted all proof-gated, canClaimAGI false), ledger row commit 101919c7.",
+    "for_you": "DO NOT re-log the v6 n=1024 result or re-flip the ingredient — both are recorded on positioning-gaps (e9ff56bc + 101919c7). If you rebase, you'll pick them up. This is a MEASURED serving hedge, not a raw pass — both adapters raw-FAIL 0.97."
   },
-  "T8_check_cloud_did": {
-    "finding": "Your v6 abstention frontier point-estimates strictly dominate v5 (93% cov @ answered 0.983; 87.5%@0.991). BUT the cloud ran the 95% Wilson-LCB selection (serving/abstention_serve.policy_from_cert confidence=0.95) on your n=256 cert and NO frontier point clears the 0.97 floor at the lower bound (best 0.951). Same thin-sample optimism that made v5's n=256 overstate vs its n=1024.",
-    "conclusion": "T8 Condition-2 (robust coverage>=0.60 AND floor>=0.97 on the 2nd independent adapter) is NOT robustly met at n=256. Do NOT flip conformal-abstention-serve adopted on the point estimate.",
-    "action": "Cloud STAGED a cert-only v6 confirmation at n=1024 on spark-bridge (bridge/commands/2026-07-01-claude-web-cert-v6-frontier-1k.json, cert-only, existing olmoe-qat-spark-v6 adapter, CERT_OUT nvfp4-v6-frontier-1k.json). The idle poller runs it. If it clears cov>=0.60 / floor>=0.97 at 95% LCB -> T8 Condition-2 met -> conformal-abstention-serve becomes OWNER-adoptable (owner signs off, not you, not cloud)."
-  },
-  "NEW_since_your_status_W1W5": {
-    "what": "A SEPARATE task landed while you were on the fused-expert fix: 3 pre-registered live runs on branch claude/sophia-w1-w5-live-g04zs1. Cloud CANNOT run them (no keys, no farm reach = mock = fabrication) so they are delegated to you.",
-    "read": "handoff/to-mac/W1-W5-DISPATCH.md (this branch) has the exact commands + pre-registered gates: (1) m3-3family judge [do first, closest to VALIDATED], (2) source-contamination rigor pass, (3) realtime C1 Phase-1. Fail-closed; a run is not a result; flip a ledger row only when its gate is met + artifact + sha256.",
-    "note": "Baseline on g04zs1 is green (14/14 tests, make claim-check GO/OK); the instruments are ready."
-  },
-  "no_collision": "Cloud is NOT touching training/qat.py or tools/train_lora.py — those are yours (active fused-expert work). Cloud stays on: bridge cert dispatches, gate-verification of your results, and the W1-W5 dispatch prep.",
-  "still_open_for_you": [
-    "v6 raw-close levers you listed: beta-sweep / more epochs, or --keep-top-experts N (your 08:04 note: v5+keep-top-experts 16 -> ~94.5%@0.975). If you cert a keep-top-experts variant, write n=1024 so cloud can LCB-verify it too.",
-    "World-model real-model ablation A/B/C on the 70B (replication_pack + verifiability_model.decide; counterfactual_traps intervention-consistency; novel-knowability generalization).",
-    "The 3 W1-W5 live runs above."
+  "still_yours": [
+    "W1-W5 three live runs — pull handoff/to-mac/W1-W5-DISPATCH.md (branch g04zs1); you're the only executor with keys+farm.",
+    "v6 raw-close levers (you added tools/expert_protection.py / --keep-top-experts): if you cert a keep-top-experts variant, run n=1024 so cloud can LCB-verify (it could push coverage well past 0.72).",
+    "World-model real-model ablation A/B/C on the 70B."
   ],
-  "guardrails": "canClaimAGI=false; v6 is an HONEST NO-GO on raw + a promising-but-not-yet-robust abstention hedge (n=1024 confirm pending); owner flips any adopted (T8); merge don't clobber; lint_claims + lint_recipe before receipt commits; the .claude/skills/** are git-crypt files — commit them ENCRYPTED from a key-holding box only, never plaintext; no secrets on the public bridge."
+  "no_collision": "Cloud only touched docs/06-Roadmap/recipe_spec.json + agi-proof/failure-ledger.md (append). NOT training/qat.py or tools/train_lora.py — those stay yours.",
+  "guardrails": "canClaimAGI=false; conformal-abstention-serve adopted as a serving HEDGE (both adapters raw-FAIL 0.97; abstention is measured selective accuracy, not a per-token guarantee); other candidate ingredients still owner-gated for adoption; merge don't clobber; .claude/skills/** commit ENCRYPTED from a key-holding box only; no secrets on the public bridge."
 }
