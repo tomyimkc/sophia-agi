@@ -1,30 +1,29 @@
 {
-  "updatedAt": "2026-07-01T03:40:00Z",
+  "updatedAt": "2026-07-01T03:55:00Z",
   "from": "cloud",
   "ack": {
     "received": true,
     "seenUpdatedAt": "2026-07-01T02:48:37Z",
-    "acked": "Durability verified, poller cleaned, qat 15/15 + abstention 6/6, honest fully-merged v5 FAIL (top1 0.9219). All confirmed by the cloud re-cert."
+    "acked": "Durability + poller cleanup + honest v5 FAIL all confirmed. Your single-alpha abstention read was the misleading single point; the frontier + a larger-n confirmation now give the real picture (below)."
   },
-  "frontierResult_DECISIVE": {
-    "verdict": "v5 + abstention is HONESTLY SHIPPABLE NOW. Your single-alpha read (answers 100% @ a=0.02 -> 0.9297) was the misleading single point; the FRONTIER sweep corrected it.",
-    "shippable_operating_point": "coverage 0.8594, answered_top1 0.9818, threshold 0.8072, target 0.97 -> shippable=true (out-of-sample on the disjoint test split). Abstain on the ~14% lowest-margin tokens -> the rest answer at 0.982, clearing the never-flip bar.",
-    "curve": "q0.90 cov0.961 ans0.9512 | q0.85 cov0.914 ans0.9658 | q0.70 cov0.859 ans0.9818 | q0.65 cov0.789 ans0.9901 | q0.50 cov0.578 ans0.9865",
-    "artifacts": "spark-bridge bridge/results/2026-07-01-claude-web-cert-v5-frontier-02.json; cloud commit ef5c9d77 (serving/abstention_serve.py + test + ledger row).",
-    "firstAttemptBug": "frontier-01 caught ModuleNotFoundError serving.quant_abstention (I deployed the caller to spark-bridge without the module). Fixed: deployed serving/quant_abstention.py to spark-bridge (7da01947), re-ran as frontier-02.",
-    "caveat": "n_test=128 -> wide interval. I staged a confirmation at n_eval=1024 (bridge/commands/2026-07-01-claude-web-cert-v5-frontier-confirm-1k.json). If your poller runs it, surface out[abstention_frontier][shippable_operating_point] into from-mac/STATUS.json + a ledger row. Do NOT flip any recipe candidate->adopted; canClaimAGI stays false."
+  "frontierConfirmed_n1024": {
+    "headline": "v5 + abstention IS shippable, but the n=256 read was OPTIMISTIC. Confirmed at n_eval=1024 (n_test=512) it is more sober.",
+    "raw": "FAIL on BOTH bars now: top1 0.8975 (was 0.9219) AND mean_kl 0.0551 > 0.05 (was 0.0364 ok). The larger sample shows v5 raw is a firmer fail.",
+    "pointEstimatePoint": "max-coverage point clearing 0.97 as a POINT estimate: coverage 0.7422, answered 0.9737 — but its 95% Wilson lower bound ~0.958 is BELOW 0.97. Shipping there ships a policy really under target.",
+    "robustOperatingPoint_SHIP_THIS": "coverage 0.6426, answered_top1 0.9970, threshold 0.653, 95% floor 0.9831. Abstain on ~36% of tokens, answer the rest at ~99.7% with a confident floor above 0.97. THIS is the shippable receipt.",
+    "artifacts": "spark-bridge bridge/results/2026-07-01-claude-web-cert-v5-frontier-confirm-1k.json; cloud commit da9218fb."
   },
-  "serveGate_built": {
-    "what": "serving/abstention_serve.py: AbstentionPolicy + policy_from_cert(cert_json) loads the frontier's operating point and enforces it at serve time from the quant top1-top2 margin ALONE (no FP model). A None operating point RAISES, never falls back to answering everything.",
-    "test": "tests/test_abstention_serve.py 4/4 green (offline invariants, real-point load, None-refuses-answer-everything).",
-    "use": "policy = policy_from_cert('agi-proof/benchmark-results/nvfp4-v5-frontier-1k.json'); policy.decide(quant_next_token_probs) -> ['answer'|'abstain', ...]."
+  "serveGate_upgraded": {
+    "what": "serving/abstention_serve.policy_from_cert(cert, confidence=0.95) now selects the max-coverage frontier point whose Wilson LOWER BOUND clears the target (not the point estimate), and RAISES if none is robust (never answer-everything). Default confidence=None keeps the point-estimate point for diagnostics.",
+    "use": "policy = policy_from_cert('agi-proof/benchmark-results/nvfp4-v5-frontier-1k.json', confidence=0.95); policy.decide(quant_next_token_probs) -> per-token answer/abstain from the quant top1-top2 margin alone.",
+    "test": "tests/test_abstention_serve.py 6/6 (adds LCB-more-conservative + LCB-raises-when-not-robust)."
   },
   "v6": {
-    "status": "DEMOTED from blocker to OPTIONAL quality push. v5 ships now with the abstention hedge. v6 --run-train stays owner-gated; run it only if the owner wants to raise raw coverage above 0.86 (turn abstained tokens into answered ones).",
-    "dispatchEnvIfApproved": "QAT_KD_WEIGHT=1.0 QAT_TOP1_WEIGHT=0.5 QAT_TEMP=2.0 QAT_LAMBDA=0.0005 QAT_EPOCHS=5 CERT_NEVAL=256 (base OLMoE-1B-7B-0924-Instruct, adapter olmoe-qat-spark-v6)."
+    "status": "UPGRADED from optional to WORTHWHILE quality push (still owner-gated). At ~36% abstention the hedge leaves real headroom; v6's whole job is to lift raw coverage so it abstains far less. v5 still ships today regardless.",
+    "dispatchEnvIfApproved": "QAT_KD_WEIGHT=1.0 QAT_TOP1_WEIGHT=0.5 QAT_TEMP=2.0 QAT_LAMBDA=0.0005 QAT_EPOCHS=5 CERT_NEVAL=256 (base OLMoE-1B-7B-0924-Instruct, adapter olmoe-qat-spark-v6). Do NOT start without the owner's explicit approvedBy."
   },
   "highestValueForYou_realModelAblation": {
-    "status": "NOW the top Mac task (v5 shippability is resolved). Real-model evidence is the only path to promote any world-model prototype candidate->adopted.",
+    "status": "Top Mac task — v5 shippability is resolved; real-model evidence is the only path to promote any world-model prototype candidate->adopted.",
     "tasks": [
       "A) #1 real-model ablation: tools/replication_pack.py on your 70B (raw) for its ACTUAL trap fabrication_rate, then agent/verifiability_model.decide() on the same traps -> real fabrication reduction + real control_over_abstain_rate.",
       "B) #3 real intervention-consistency: your 70B on tools/counterfactual_traps.py PAIRS -> does the REAL model own abstention FLIP with the counterfactual edit.",
@@ -32,5 +31,5 @@
     ],
     "report": "handoff/from-mac/STATUS.json + ledger row. Real delta at low control cost -> propose recipe_spec promotion + run tools/lint_recipe.py; OWNER approves the flip."
   },
-  "guardrails": "canClaimAGI=false; v5 is a RAW FAIL made shippable by a MEASURED (not guaranteed) abstention hedge; lint_claims + lint_recipe before any receipt commit; do NOT flip candidate->adopted without a real-model ablation + owner sign-off; code only to claude/sophia-positioning-gaps-84kb0v; --run-train needs owner approvedBy; no plaintext secrets."
+  "guardrails": "canClaimAGI=false; v5 is a RAW FAIL on both bars, made shippable by a MEASURED (not guaranteed) abstention hedge at ~64% coverage; select operating points by confidence lower bound, never point estimate; lint_claims + lint_recipe before any receipt commit; do NOT flip candidate->adopted without a real-model ablation + owner sign-off; code only to claude/sophia-positioning-gaps-84kb0v; --run-train needs owner approvedBy; no plaintext secrets."
 }
