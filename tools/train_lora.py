@@ -642,6 +642,10 @@ def run_manual_train(
     qat: bool = False,
     qat_scheme: str = "int8",
     qat_lambda: float = 1e-3,
+    qat_kd_weight: float = 0.0,
+    qat_top1_weight: float = 0.0,
+    qat_temp: float = 2.0,
+    qat_margin: float = 0.0,
 ) -> dict:
     import math
 
@@ -657,6 +661,13 @@ def run_manual_train(
 
         def qat_penalty_fn() -> Any:
             return _qat_penalty(model, scheme=qat_scheme, lam=qat_lambda)
+
+    # v6: output-space objective — train the CERT's own metrics (mean_kl + top1), not just the
+    # weight-space penalty. Off by default (all weights 0) => v5 loss is byte-identical. When ON, an
+    # extra DETACHED full-precision reference forward (qat_bypass) provides the KD/top1 teacher.
+    v6_on = qat and (qat_kd_weight > 0.0 or qat_top1_weight > 0.0 or qat_margin > 0.0)
+    if v6_on:
+        from training.qat import kd_top1_margin_loss as _kd_top1, qat_bypass as _qat_bypass
 
     device = model.get_input_embeddings().weight.device
     # Packing concatenates short rows into one flat sequence (no padding) and relies on
@@ -710,6 +721,17 @@ def run_manual_train(
             loss = outputs.loss / grad_accum
             if qat_penalty_fn is not None:
                 loss = loss + qat_penalty_fn() / grad_accum
+            if v6_on:
+                # DETACHED full-precision reference forward = the KD/top1 teacher; the fake-quant
+                # forward (outputs.logits) is the student. Only supervised (labels != -100) positions
+                # are scored, mirroring what the cert measures.
+                with torch.no_grad(), _qat_bypass(model):
+                    fp_logits = model(**batch).logits
+                v6 = _kd_top1(fp_logits, outputs.logits,
+                              valid_mask=(batch["labels"] != -100),
+                              temperature=qat_temp, kd_weight=qat_kd_weight,
+                              top1_weight=qat_top1_weight, margin=qat_margin)
+                loss = loss + v6 / grad_accum
             loss.backward()
             if (step + 1) % grad_accum == 0:
                 torch.nn.utils.clip_grad_norm_(trainable, max_grad_norm)
@@ -842,6 +864,18 @@ def main() -> int:
                         help="Deployment quantization grid the model co-adapts to (default: int8).")
     parser.add_argument("--qat-lambda", type=float, default=1e-3,
                         help="Weight on the quant-pushing penalty term (default: 1e-3).")
+    # v6 output-space objective (train the cert's own metrics). All default 0 => v5 loss unchanged.
+    parser.add_argument("--qat-kd-weight", type=float, default=0.0,
+                        help="v6: weight on the output-space KD term KL(FP||quant)@T (drives mean_kl). "
+                             "Recommended v6: 1.0. Default 0 keeps the v5 objective.")
+    parser.add_argument("--qat-top1-weight", type=float, default=0.0,
+                        help="v6: weight on the top1 term CE(quant, argmax(FP)) (drives top1). "
+                             "Recommended v6: 0.5. Default 0 keeps the v5 objective.")
+    parser.add_argument("--qat-temp", type=float, default=2.0,
+                        help="v6: KD temperature T (default 2.0).")
+    parser.add_argument("--qat-margin", type=float, default=0.0,
+                        help="v6: optional hinge wanting the FP-top token to win the quant logits by "
+                             "this margin (default 0 = off; the KD+top1 terms are the core).")
     parser.add_argument("--shard", choices=("none", "fsdp"), default="none",
                         help="Multi-GPU param sharding for high/top-tier MoE bases (training/sharding.py). "
                              "'fsdp' shards the frozen base across torch.distributed ranks; launch with torchrun.")
@@ -1116,6 +1150,10 @@ def main() -> int:
         qat=args.qat and args.backend != "mlx",
         qat_scheme=args.qat_scheme,
         qat_lambda=args.qat_lambda,
+        qat_kd_weight=args.qat_kd_weight,
+        qat_top1_weight=args.qat_top1_weight,
+        qat_temp=args.qat_temp,
+        qat_margin=args.qat_margin,
     )
 
     # Remove the NEFTune noise hook before persisting so inference is noise-free.
