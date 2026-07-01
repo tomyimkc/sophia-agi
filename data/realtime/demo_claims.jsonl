@@ -1,0 +1,6 @@
+{"claim": "2 + 2 = 4", "sourceTimestamp": "2025-06-01", "risk": "normal"}
+{"claim": "See https://example.org/spec-8 for details.", "sourceTimestamp": "2025-01-15", "risk": "normal"}
+{"claim": "2 + 2 = 5", "sourceTimestamp": "2025-06-01", "risk": "normal"}
+{"claim": "The service tier ships a new caching layer in build nine.", "sourceTimestamp": "2025-06-01", "risk": "normal"}
+{"claim": "See https://example.org/spec-9 for details.", "sourceTimestamp": "2027-03-01", "risk": "normal"}
+{"claim": "3 + 3 = 6", "sourceTimestamp": "2025-06-01", "validFrom": "2020-01-01", "validUntil": "2021-01-01", "risk": "normal"}
