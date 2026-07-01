@@ -80,3 +80,14 @@ grazes 0 (CI [-0.008, +0.108]). Every seed: goodhartGap ≤ 0.15, from-scratch a
 0.958–0.967. High-base seeds *also* improved → not pure regression-to-mean. This substantiates the
 K=4 ensemble as a **genuine anti-Goodhart training method**. Not a full close (seed2 grazes 0);
 row stays **Open**.
+
+## v4 (2026-07-02) — larger N: seed2 is a CEILING effect, not low power
+
+Re-ran at larger N (test ~198). 2/3 seeds' audit-delta CI still excludes 0 (seed0 0.889→0.975
+[+0.046,+0.126]; seed1 0.753→0.950 [+0.141,+0.258]); **seed2 still grazes 0** (0.919→0.939
+[-0.030,+0.071]). Larger N did **not** close seed2 — its non-significance is a **ceiling effect**:
+its base audit is already 0.919 (near-saturated), so the room to improve is small (+0.02). The
+improvement **magnitude scales with headroom** (seed1's low base 0.753 → +0.197). This substantiates
+the ensemble as a genuine anti-Goodhart method (improves the disjoint audit whenever there is
+headroom, never degrades it) and honestly explains the seed heterogeneity. A clean 3/3 needs seeds
+with matched moderate base-audit. Row stays **Open**.

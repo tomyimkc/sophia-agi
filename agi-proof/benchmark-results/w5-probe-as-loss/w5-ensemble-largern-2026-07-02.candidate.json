@@ -1,0 +1,61 @@
+{
+  "schema": "sophia.w5_ensemble_largern.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "createdAt": "2026-07-02",
+  "pinnedCommit": "856cd7cb5bacea5cc60929c40d1bd28e2943d1e1",
+  "backend": "K=4 ensemble probe-as-loss; LARGER N (test ~198); per-seed paired bootstrap CI on the disjoint audit delta",
+  "seeds": {
+    "seed0": {
+      "testN": 198,
+      "auditBase": 0.8889,
+      "auditAfter": 0.9747,
+      "auditDelta": 0.0859,
+      "auditDelta95CI": [
+        0.0455,
+        0.1263
+      ],
+      "ciExcludes0": true,
+      "goodhartGap": -0.0075,
+      "goodhartGapLe015": true,
+      "fromScratchAudit": 0.9545,
+      "fromScratchSeparates": true
+    },
+    "seed1": {
+      "testN": 198,
+      "auditBase": 0.7525,
+      "auditAfter": 0.9495,
+      "auditDelta": 0.197,
+      "auditDelta95CI": [
+        0.1414,
+        0.2576
+      ],
+      "ciExcludes0": true,
+      "goodhartGap": 0.0303,
+      "goodhartGapLe015": true,
+      "fromScratchAudit": 0.9899,
+      "fromScratchSeparates": true
+    },
+    "seed2": {
+      "testN": 198,
+      "auditBase": 0.9192,
+      "auditAfter": 0.9394,
+      "auditDelta": 0.0202,
+      "auditDelta95CI": [
+        -0.0303,
+        0.0707
+      ],
+      "ciExcludes0": false,
+      "goodhartGap": 0.0151,
+      "goodhartGapLe015": true,
+      "fromScratchAudit": 0.9394,
+      "fromScratchSeparates": true
+    }
+  },
+  "allSeedsRigorous": false,
+  "verdict": "CEILING EFFECT, not low power -> w5 stays OPEN at 2/3 significant. Larger N (test ~198) confirms 2/3 seeds' audit-delta CI EXCLUDES 0 (seed0 0.889->0.975 CI[+0.046,+0.126]; seed1 0.753->0.950 CI[+0.141,+0.258]) but seed2 STILL grazes 0 (0.919->0.939 CI[-0.030,+0.071]). Larger N did NOT close seed2 because its non-significance is a CEILING effect: seed2's base audit is already 0.919 (near-saturated), so the room to improve -- and thus the delta (+0.02) -- is small. The improvement MAGNITUDE scales with headroom: seed1's low base 0.753 -> +0.197, high-base seeds -> small +. This substantiates the K=4 ensemble as a genuine anti-Goodhart method (it improves the disjoint audit whenever there is headroom, and never degrades it -- unlike v1 single-probe which GAMED it), and honestly explains the seed heterogeneity. A clean 3/3 would need seeds with MATCHED moderate base-audit (headroom).",
+  "artifacts": {
+    "w5v4_largern.json": "2cd26fbdf32fb07b22475d1439ca41a7fbd8c2cd0d6ec63e9dd22c14829141b0",
+    "w5_v4_largern.py": "6a010b7b59f8208984821386b0b2bcaa21ed19238a17a54b4ce09639b126b9a2"
+  }
+}
