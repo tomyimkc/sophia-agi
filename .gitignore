@@ -167,3 +167,10 @@ secret/**
 .claude/skills/
 skills/portable/
 .grok/skills/
+
+# --- codebase-memory-mcp index artifacts (NEVER commit; embed source-derived
+#     docstrings/signatures and are git-crypt-blind). Enforced by
+#     tools/cbm/check_no_index_artifacts.py (survives `git add -f`). ---
+.codebase-memory/
+graph.db*
+*.db.zst

@@ -1,0 +1,44 @@
+# .github/workflows/codebase-memory-guard.yml
+name: codebase-memory-guard
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # L3: no workflow or composite action may carry the git-crypt key.
+      # Searches all of .github/ (covers composite actions under .github/actions/
+      # as well as workflow files under .github/workflows/) for both .yml and
+      # .yaml extensions. Excludes THIS file to avoid self-matching.
+      - name: No git-crypt key referenced in any workflow
+        run: |
+          if grep -RIn -e 'secrets\.GITCRYPT' -e 'GITCRYPT_KEY_B64' \
+               .github/ --include='*.yml' --include='*.yaml' \
+               --exclude='codebase-memory-guard.yml'; then
+            echo "::error::a workflow references the git-crypt key — CI must never hold it"
+            exit 1
+          fi
+          echo "no git-crypt key in workflows — OK"
+
+      # L1 invariant in CI: the checkout must be LOCKED (ciphertext) because no
+      # key was provided. Fails if something unlocked it. lockcheck exit 0==locked.
+      - name: CI checkout must be git-crypt LOCKED
+        run: python3 tools/cbm/lockcheck.py
+
+      # L2: no index artifact may be tracked on this ref.
+      - name: No index artifact tracked
+        run: python3 tools/cbm/check_no_index_artifacts.py
+
+      # D1: .cbmignore must be fresh vs .gitattributes.
+      - name: .cbmignore not stale
+        run: python3 tools/cbm/derive_cbmignore.py --check
