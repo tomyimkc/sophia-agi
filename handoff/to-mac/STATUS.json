@@ -1,16 +1,20 @@
 {
-  "updatedAt": "2026-07-01T13:10:00Z",
+  "updatedAt": "2026-07-01T13:30:00Z",
   "from": "cloud",
-  "CLOSED_T8_v6_n1024": {
-    "result": "The cloud-staged v6 cert-only re-cert at n=1024 landed. Raw is a FIRMER NO-GO than your n=256 (top1 0.9336 vs 0.9609 — n=256 was optimistic; mean_kl 0.0454 still passes). But the 95%-Wilson-LCB abstention operating point is coverage 0.7188 @ answered 0.9918 (floor 0.9762) — robustly clears the 0.97 floor AND dominates v5 (0.6426/0.9831) by +8pts coverage.",
-    "decision": "T8 adoption bar MET on 2 independent adapters at n=1024 (v5 + v6) + owner sign-off 2026-07-01. Cloud flipped conformal-abstention-serve candidate->ADOPTED: recipe_spec commit e9ff56bc (lint_recipe/lint_claims/claim-check green, 3 adopted all proof-gated, canClaimAGI false), ledger row commit 101919c7.",
-    "for_you": "DO NOT re-log the v6 n=1024 result or re-flip the ingredient — both are recorded on positioning-gaps (e9ff56bc + 101919c7). If you rebase, you'll pick them up. This is a MEASURED serving hedge, not a raw pass — both adapters raw-FAIL 0.97."
+  "adoption_followthrough_DONE": {
+    "what": "conformal-abstention-serve is ADOPTED (recipe e9ff56bc, ledger 101919c7). Cloud added the deployment follow-through (commit 9d19c73d): serving/adopted_operating_points.json (95%-LCB serve-time op point per adapter: v5 cov 0.6426/floor 0.9831; v6 cov 0.7188/floor 0.9762, default), abstention_serve.adopted_policy() loader, tests 9/9, and filled the T7+T8 RESULT blocks in Spark-Theory-Test-Forecast.md. If you rebase you'll pick these up.",
+    "no_collision": "Cloud touched only serving/*, tests/*, docs/06-Roadmap/*. NOT training/qat.py, tools/train_lora.py, tools/certify_lowram.py, tools/expert_protection.py — all yours."
+  },
+  "NEXT_high_value_for_you": {
+    "task": "Cert the --keep-top-experts lever at n=1024 (cert-only, no train). Your 08:04 point-estimate was v5+keep-top-16 -> ~94.5%@0.975; if that holds at the 95%-LCB on n=1024 it becomes a MUCH higher-coverage adopted operating point (0.72 -> ~0.90+).",
+    "why_you_not_cloud": "The bridge is NOT wired for --keep-top-experts (no KEEP_TOP_EXPERTS in run_local_benchmarks.sh B2 or the poller ENV_ALLOWLIST), and you own certify_lowram.py + expert_protection.py. Run certify_lowram directly, not via a bridge command.",
+    "run": "python3 tools/certify_lowram.py --base-model allenai/OLMoE-1B-7B-0924-Instruct --adapter training/lora/checkpoints/olmoe-qat-spark-v6 --calib training/lora/train.jsonl --scheme nvfp4 --n-eval 1024 --keep-top-experts 16 --out agi-proof/benchmark-results/nvfp4-v6-keeptop16-frontier-1k.json   (also try --keep-top-experts 8; and the same on the v5 adapter for comparability)",
+    "report": "Write the cert + out[abstention_frontier] to a committed artifact + a ledger row. If serving/abstention_serve.policy_from_cert(cert, confidence=0.95) clears cov>=0.60 AND floor>=0.97 at higher coverage than 0.72, add it to serving/adopted_operating_points.json as a new keep-top operating point (owner sign-off already covers the ADOPTED ingredient; you're adding a variant point, not a new ingredient). canClaimAGI stays false."
   },
   "still_yours": [
-    "W1-W5 three live runs — pull handoff/to-mac/W1-W5-DISPATCH.md (branch g04zs1); you're the only executor with keys+farm.",
-    "v6 raw-close levers (you added tools/expert_protection.py / --keep-top-experts): if you cert a keep-top-experts variant, run n=1024 so cloud can LCB-verify (it could push coverage well past 0.72).",
-    "World-model real-model ablation A/B/C on the 70B."
+    "W1-W5 three live runs — pull handoff/to-mac/W1-W5-DISPATCH.md (branch g04zs1); only you have keys+farm.",
+    "World-model real-model ablation A/B/C on the 70B.",
+    "v6 raw-close: beta-sweep / more epochs if you want to chase the 0.97 raw bar (optional; abstention already ships)."
   ],
-  "no_collision": "Cloud only touched docs/06-Roadmap/recipe_spec.json + agi-proof/failure-ledger.md (append). NOT training/qat.py or tools/train_lora.py — those stay yours.",
-  "guardrails": "canClaimAGI=false; conformal-abstention-serve adopted as a serving HEDGE (both adapters raw-FAIL 0.97; abstention is measured selective accuracy, not a per-token guarantee); other candidate ingredients still owner-gated for adoption; merge don't clobber; .claude/skills/** commit ENCRYPTED from a key-holding box only; no secrets on the public bridge."
+  "guardrails": "canClaimAGI=false; the adopted hedge is measured selective accuracy, not a per-token guarantee, and both adapters raw-FAIL 0.97; owner flips any NEW ingredient adoption; merge don't clobber; .claude/skills/** commit ENCRYPTED from a key-holding box only; no secrets on the public bridge."
 }
