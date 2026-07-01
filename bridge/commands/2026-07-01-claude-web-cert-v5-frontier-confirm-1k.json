@@ -1,0 +1,13 @@
+{
+  "id": "2026-07-01-claude-web-cert-v5-frontier-confirm-1k",
+  "args": "--bench-b --execute",
+  "createdBy": "claude (cloud, wheel)",
+  "createdAt": "2026-07-01T03:35:00Z",
+  "approvedBy": "user: standing \"act, don't ask / perform all benchmarking; run the GPU 24/7 when not judging\" (2026-06-30). Cert-only (--bench-b, NO --run-train), same class as the approved cert-v5-frontier runs. NOT a --run-train escalation.",
+  "note": "Confirmation run of the v5 abstention frontier at 4x eval positions. frontier-02 (n_eval=256, n_test=128) found shippable_operating_point answered_top1=0.9818 @ coverage=0.8594 clearing target 0.97 — but 128 test tokens is a thin sample with a wide interval. This re-run at CERT_NEVAL=1024 (n_test~512) tightens the estimate so v5+abstention can be treated as a shippable receipt (or not) on firmer ground. Read out[abstention_frontier][shippable_operating_point]: if it still clears 0.97 at coverage ~0.86 with the larger sample, the serve gate (serving/abstention_serve.py) can enforce the threshold in production. Cert/diagnostic only — do NOT flip any recipe candidate->adopted; canClaimAGI stays false.",
+  "env": {
+    "QAT_ADAPTER": "/home/tomyimkc/sophia-bridge/training/lora/checkpoints/olmoe-qat-spark-v5",
+    "CERT_NEVAL": "1024",
+    "CERT_OUT": "agi-proof/benchmark-results/nvfp4-v5-frontier-1k.json"
+  }
+}
