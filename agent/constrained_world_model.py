@@ -11,7 +11,6 @@ holds for any linear conservation law (mass balance, energy). stdlib-only. canCl
 """
 from __future__ import annotations
 
-from typing import Any
 
 _TOL = 1e-9
 

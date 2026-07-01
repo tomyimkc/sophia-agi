@@ -17,7 +17,6 @@ prototype, not a validated capability. Numerics proven GPU-free in offline_invar
 from __future__ import annotations
 
 import re
-from typing import Any
 
 try:
     import numpy as np

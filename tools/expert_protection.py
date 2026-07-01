@@ -63,7 +63,7 @@ def top_routed_experts(model: Any, tok: Any, rows: "list[dict]", *, k: int,
 
 def protected_quantize_served(model: Any, *, scheme: str, suffixes,
                               keep_experts: "dict[int, set[int]]",
-                              is_served: "Callable[..., bool] | None" = None) -> dict:
+                              is_served: Callable[..., bool] | None = None) -> dict:
     """Quantize served weights to ``scheme`` in place, but hold ``keep_experts[layer]`` bf16 for the
     fused 3-D expert tensors (per-expert-slice skip). Kept slices count as ``kept_params`` so the
     memory ratio stays honest. Returns the same dict shape as

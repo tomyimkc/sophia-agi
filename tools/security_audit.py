@@ -95,11 +95,11 @@ def _value_allowlisted(line: str) -> bool:
 def scan_text(text: str) -> list[dict]:
     """Heuristic secret scan over a string. Returns a list of findings; empty == clean.
 
-    A finding is {"pattern": <name>, "match": <redacted preview>, "length": <len>}.
-    The ``match`` is only the leading 4 chars (the public type prefix, e.g. AKIA /
-    ghp_ / sk-) followed by an ellipsis — the secret BODY is never included, so
-    results can be logged/printed safely. Placeholder values (per the gitleaks
-    allowlist regexes) are not reported.
+    A finding is {"pattern": <name>, "match": "[redacted]...", "length": <len>}.
+    The ``match`` is a FIXED redaction marker — no bytes of the secret-shaped token
+    (not even a prefix) are ever included, so results can be logged/printed safely;
+    identify a finding by ``pattern`` + ``length``. Placeholder values (per the
+    gitleaks allowlist regexes) are not reported.
     """
     findings: list[dict] = []
     for line in text.splitlines():
@@ -109,10 +109,11 @@ def scan_text(text: str) -> list[dict]:
             m = rx.search(line)
             if m:
                 raw = m.group(0)
-                # Redact: emit only the leading 4 chars (the public type prefix,
-                # e.g. AKIA / ghp_ / sk-) + an ellipsis, plus the length — never
-                # the secret BODY, so findings are safe to log/print.
-                findings.append({"pattern": name, "match": raw[:4] + "...", "length": len(raw)})
+                # Redact: `match` is a fixed marker (NO bytes of the secret-shaped
+                # token — not even a prefix, which CodeQL flags as clear-text
+                # logging); identify the finding by `pattern` + `length` only, so
+                # the result is safe to log/print.
+                findings.append({"pattern": name, "match": "[redacted]...", "length": len(raw)})
     return findings
 
 

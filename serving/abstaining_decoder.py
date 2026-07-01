@@ -27,7 +27,7 @@ _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from serving.abstention_serve import ABSTAIN, ANSWER, AbstentionPolicy  # noqa: E402
+from serving.abstention_serve import ANSWER, AbstentionPolicy  # noqa: E402
 
 # Sentinel emitted in place of a token when the policy abstains. A real runtime maps this to its own
 # defer action (special token, tool-call, route to a bigger model); -1 is never a valid vocab id.

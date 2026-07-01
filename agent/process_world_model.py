@@ -11,7 +11,6 @@ trajectories. stdlib-only, deterministic. canClaimAGI false; CANDIDATE prototype
 """
 from __future__ import annotations
 
-from typing import Any
 
 
 def predict_error_step(step_scores: "list[float]", *, threshold: float = 0.5) -> dict:
