@@ -63,6 +63,7 @@ def _read_records(path: str | Path) -> list[dict]:
         if isinstance(obj, list):
             return obj
     except json.JSONDecodeError:
+        # not a single JSON value; fall through to the JSONL (line-per-record) path below.
         pass
     return [json.loads(line) for line in text.splitlines() if line.strip()]
 

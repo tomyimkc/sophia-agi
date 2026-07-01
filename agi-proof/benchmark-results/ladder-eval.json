@@ -1,0 +1,146 @@
+{
+  "benchmark": "math_physics_ladder",
+  "proposer": "answer-only",
+  "illustrative": true,
+  "n": 10,
+  "tiers": [
+    {
+      "tier": 1,
+      "tierName": "grade-school",
+      "n": 2,
+      "verifiedCorrect": 2,
+      "rejected": 0,
+      "abstained": 0,
+      "meanVSC": 1.0
+    },
+    {
+      "tier": 2,
+      "tierName": "high-school",
+      "n": 2,
+      "verifiedCorrect": 2,
+      "rejected": 0,
+      "abstained": 0,
+      "meanVSC": 1.0
+    },
+    {
+      "tier": 3,
+      "tierName": "undergraduate",
+      "n": 2,
+      "verifiedCorrect": 2,
+      "rejected": 0,
+      "abstained": 0,
+      "meanVSC": 1.0
+    },
+    {
+      "tier": 4,
+      "tierName": "competition",
+      "n": 1,
+      "verifiedCorrect": 1,
+      "rejected": 0,
+      "abstained": 0,
+      "meanVSC": 1.0
+    },
+    {
+      "tier": 5,
+      "tierName": "formal-proof",
+      "n": 1,
+      "verifiedCorrect": 0,
+      "rejected": 0,
+      "abstained": 1,
+      "meanVSC": 0.0
+    },
+    {
+      "tier": 6,
+      "tierName": "research-frontier",
+      "n": 2,
+      "verifiedCorrect": 0,
+      "rejected": 0,
+      "abstained": 2,
+      "meanVSC": 0.0
+    }
+  ],
+  "cases": [
+    {
+      "id": "L1_arith",
+      "tier": 1,
+      "domain": "math",
+      "verdict": "accepted",
+      "vsc": 1.0,
+      "target": "verified-correct"
+    },
+    {
+      "id": "L1_units",
+      "tier": 1,
+      "domain": "physics",
+      "verdict": "accepted",
+      "vsc": 1.0,
+      "target": "verified-correct"
+    },
+    {
+      "id": "L2_algebra",
+      "tier": 2,
+      "domain": "math",
+      "verdict": "accepted",
+      "vsc": 1.0,
+      "target": "verified-correct"
+    },
+    {
+      "id": "L2_newton",
+      "tier": 2,
+      "domain": "physics",
+      "verdict": "accepted",
+      "vsc": 1.0,
+      "target": "verified-correct"
+    },
+    {
+      "id": "L3_identity",
+      "tier": 3,
+      "domain": "math",
+      "verdict": "accepted",
+      "vsc": 1.0,
+      "target": "verified-correct"
+    },
+    {
+      "id": "L3_energy",
+      "tier": 3,
+      "domain": "physics",
+      "verdict": "accepted",
+      "vsc": 1.0,
+      "target": "verified-correct"
+    },
+    {
+      "id": "L4_trig",
+      "tier": 4,
+      "domain": "math",
+      "verdict": "accepted",
+      "vsc": 1.0,
+      "target": "verified-correct"
+    },
+    {
+      "id": "L5_lean_lemma",
+      "tier": 5,
+      "domain": "math",
+      "verdict": "abstain",
+      "vsc": 0.0,
+      "target": "verified-proof"
+    },
+    {
+      "id": "L6_riemann",
+      "tier": 6,
+      "domain": "math",
+      "verdict": "abstain",
+      "vsc": 0.0,
+      "target": "honest-abstention"
+    },
+    {
+      "id": "L6_navier_stokes",
+      "tier": 6,
+      "domain": "physics",
+      "verdict": "abstain",
+      "vsc": 0.0,
+      "target": "honest-abstention"
+    }
+  ],
+  "note": "answer-only proposer is a deterministic harness-validation baseline (feeds gold back); verified-correct counts are illustrative, NOT a capability claim. L6 abstains by design.",
+  "canClaimAGI": false
+}

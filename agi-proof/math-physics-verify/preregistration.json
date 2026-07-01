@@ -1,0 +1,57 @@
+{
+  "schema": "sophia.preregistration.v1",
+  "experimentId": "math-physics-verify",
+  "status": "OPEN",
+  "registeredAt": "2026-06-29",
+  "branch": "claude/math-physics-llm-benchmark-8pn47l",
+  "canClaimAGI": false,
+  "thesis": "A verifier-gated math/physics reasoner that emits a Verified Reasoning Graph (proof-carrying calculation): the answer is accepted ONLY when every step is machine-verified, otherwise it abstains (fail-closed). 'Critical thinking' = knowing which of its own steps it can prove and refusing the rest. The research-frontier tier ('unsolvable' problems) is scored on abstention integrity + verified partial progress, NEVER 'solved'.",
+  "baseModel": "Qwen/Qwen2.5-Math-7B",
+  "phases": [
+    {"phase": 0, "name": "Pre-registration + difficulty ladder + harness", "gpu": false, "deliverable": ["data/math_physics_ladder.jsonl", "this preregistration", "oracle-split.md", "heldout-seal.manifest.json"], "status": "DONE"},
+    {"phase": 1, "name": "StepVerifier + misstep-injection benchmark", "gpu": false, "deliverable": ["agent/step_verifier.py", "agent/verified_reasoning_graph.py", "data/misstep_pack.jsonl", "tools/run_misstep_bench.py"], "status": "DONE", "note": "Deterministic verifier-eval, no LLM judge — measures the verifier, not a model."},
+    {"phase": 2, "name": "Proof-carrying-calculation solve loop + dashboard", "gpu": false, "deliverable": ["agent/derivation_parser.py", "agent/math_physics_solver.py", "tools/run_ladder_eval.py", "tools/build_math_physics_dashboard.py", "docs/math-physics/index.html"], "status": "DONE", "note": "answer-only baseline + model-proposer wiring; dashboard is drift-gated inline-SVG. Real model-proposer run needs an API key."},
+    {"phase": 3, "name": "Process-RLVR / SFT on verifiable derivations", "gpu": true, "deliverable": ["provenance_bench/step_reward.py", "tools/run_step_rlvr.py", "tools/run_rlvr.py --task step", "tools/eval_rlvr_adapter.py --task step", "tools/runpod_rlvr.py --task step", ".github/workflows/rlvr-runpod.yml (task=step)"], "status": "WIRED end-to-end (train + held-out verified-correct eval + RunPod orchestrator + dispatch-only Actions workflow); offline invariants pass for math+physics. GPU GRPO run NOT launched — fire via the cost-guarded workflow or the DGX Spark Hermes runbook."},
+    {"phase": 4, "name": "Frontier tier (Lean expert-iteration + abstention integrity)", "gpu": true, "deliverable": ["tools/run_abstention_integrity.py"], "status": "WIRED — abstention-integrity offline = 1.0 (0 fabricated proofs); Lean expert-iteration GPU run NOT launched (reuses tools/run_lean_expert_iteration.py)."},
+    {"phase": 5, "name": "External validation (licensed MATH / miniF2F / PutnamBench) + third-party replication", "gpu": true, "deliverable": ["tools/run_math_physics_external.py"], "status": "WIRED — offline oracle-graded harness on style samples; licensed sets + third-party pack pending (license/download)."}
+  ],
+  "trainingOracle": {
+    "step": "agent/step_verifier.py (per-step sympy symbolic equivalence + SI dimensional analysis)",
+    "math": "agent/math_verifier.py (sympy)",
+    "physics": "agent/physics_verifier.py (units, dimensional + numeric)",
+    "formal": "agent/lean_verifier.py (Lean 4 kernel, opt-in; abstains fail-closed when absent)",
+    "citableAsBenchmarkEvidence": false
+  },
+  "evidenceOracle": {
+    "benchmarks": ["MATH (licensed)", "miniF2F", "PutnamBench", "U-MATH", "third-party-authored held-out pack"],
+    "citableWhen": "≥3 seeds, 95% bootstrap CI excludes 0, contamination CLEAN, holdout seal OK, lint_claims OK"
+  },
+  "metrics": {
+    "verifiedStepCoverage": "fraction of steps machine-checked at L0-L5 (NOT the LLM-judge tier L6)",
+    "verifiedCorrectRate": "final answer correct AND verifiedStepCoverage == 1.0",
+    "misstepCatchRecall": "fraction of injected missteps the step-verifier flags (verifier-eval, deterministic)",
+    "abstentionIntegrity": "fraction of unsolvable (open-problem) cases correctly abstained; a confident proof of an open problem is a hard falsification"
+  },
+  "thresholds": [
+    {"metric": "misstep-catch recall (deterministic verifier-eval, sympy present)", "threshold": 0.95, "direction": "min_value", "ciExcludesZero": false, "notes": "Measures the VERIFIER. With sympy absent, math cases abstain (coverage drops) but fp (missed misstep) must stay 0 — fail-closed."},
+    {"metric": "false-alarm rate on clean derivations", "threshold": 0.05, "direction": "max_value", "ciExcludesZero": false, "notes": "A valid derivation must not be wrongly rejected."},
+    {"metric": "verified-step-coverage uplift (adapter vs base), Phase 3", "threshold": 0.05, "direction": "min_increase", "ciExcludesZero": true, "notes": "≥3 seeds; honest negative acceptable (SFT may beat process-RLVR)."},
+    {"metric": "abstention integrity on open-problems tier (L6)", "threshold": 1.0, "direction": "min_value", "ciExcludesZero": false, "notes": "100% abstain target; ANY confident proof of an open problem is a hard falsification."},
+    {"metric": "protected suites (religion/history) regression", "threshold": 0.0, "direction": "no_regression", "ciExcludesZero": false, "notes": "promote_adapter protected floor."}
+  ],
+  "success": {
+    "headline": "Phase 1 verifier-eval cleared (deterministic); Phase 3 evidence-oracle uplift on ≥3 seeds CI-excludes-0; contamination CLEAN; lint_claims OK",
+    "canClaimAGI": false
+  },
+  "failure": [
+    "A corrupted derivation is accepted (missed misstep, fp > 0) → verifier defect, fix before any claim",
+    "A confident proof emitted for an open-problem (L6) case → hard falsification of abstention integrity",
+    "Training-oracle (step-verifier) pass cited as MATH/miniF2F/PutnamBench proof → protocol violation",
+    "Evidence-oracle uplift CI includes 0 across ≥3 seeds → honest negative in failure-ledger"
+  ],
+  "falsification": [
+    "Held-out external Δ ≤ 0 with CI including 0 across ≥3 seeds",
+    "Train/eval contamination detected",
+    "Any L6 open-problem answered with a non-abstaining 'proof'"
+  ]
+}

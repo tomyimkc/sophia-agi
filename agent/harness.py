@@ -442,6 +442,7 @@ def run_agent(
     allowed_tools: "set[str] | None" = None,
     conscience_gate: bool | None = None,
     admit_action: "ActionAdmitter | None" = None,
+    deadline_monotonic: float | None = None,
 ) -> AgentResult:
     """Run the full plan -> execute -> critic -> reflect/retry loop.
 
@@ -466,6 +467,12 @@ def run_agent(
     total_cost = 0.0
     total_latency = 0.0
     for step in steps:
+        # Cooperative wall-clock deadline (review D4): stop between plan steps when the
+        # budget is exhausted. Sub-step granularity; a single in-flight model call still
+        # runs to its transport timeout (cfg.timeout_sec), not interrupted mid-request.
+        if deadline_monotonic is not None and time.monotonic() >= deadline_monotonic:
+            store.log("deadline_stop", step=step["id"], reason="wall-clock budget exhausted")
+            break
         if step["id"] in completed:
             store.log("step_skip", step=step["id"], reason="already completed (resume)")
             prior_outputs.append(store.state.get("stepOutputs", {}).get(step["id"], ""))

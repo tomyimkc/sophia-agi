@@ -24,7 +24,7 @@ fabricated claim ("Anthony Ascham wrote Voynich") is contradicted by the truth-r
 """
 from __future__ import annotations
 
-from typing import Any, Callable
+from typing import Callable
 
 __all__ = ["make_independent_verifier"]
 

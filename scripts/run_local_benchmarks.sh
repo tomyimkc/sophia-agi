@@ -140,6 +140,7 @@ RUN_A=0
 RUN_B=0
 RUN_VIRTUES=0        # cardinal-virtue benchmarks (Sophrosyne + Dikaiosyne real GO-path eval)
 RUN_THINKING=0       # thinking-log pipeline benchmark (CPU/offline; opt-in real-model faithfulness)
+RUN_FAITH=0          # discriminating CoT-faithfulness battery (CPU integrity; opt-in real-model)
 RUN_TRAIN=0          # gate the long/destructive QAT train behind an explicit flag
 
 usage() {
@@ -156,7 +157,12 @@ Usage: scripts/run_local_benchmarks.sh [--all|--bench-a|--bench-b|--bench-virtue
                    legs, and fail-closed distill yield. With THINKING_MODEL set (+ a key and
                    SOPHIA_CAPTURE_THINKING=1) it also runs a real-model CoT faithfulness pass
                    (a measurement, never a GO/claim). No owned-hardware judge farm needed.
-  --all            Run A and B (default if no bench is selected). Virtues and thinking are opt-in (not in --all).
+  --bench-faithfulness Run the discriminating CoT-faithfulness battery (CPU integrity + plumbing):
+                   intrinsic flip-rate on items whose answer hinges on a reasoning step, plus a
+                   cued-vs-uncued split (cue-follow / acknowledge / unfaithful-cue-use). With
+                   FAITH_MODEL set (+ key + SOPHIA_CAPTURE_THINKING=1) it runs the real-model
+                   measurement over FAITH_SEEDS seeds with bootstrap CIs. A measurement, never a claim.
+  --all            Run A and B (default if no bench is selected). Virtues/thinking/faithfulness are opt-in (not in --all).
   --execute        Actually run the commands. WITHOUT this flag the script DRY-RUNS (prints only).
   --run-train      In Benchmark B, also run the QAT train step (long, GPU). Default: skip & certify
                    an existing adapter at QAT_ADAPTER.
@@ -175,6 +181,7 @@ while [[ $# -gt 0 ]]; do
     --bench-b)       RUN_B=1 ;;
     --bench-virtues) RUN_VIRTUES=1 ;;
     --bench-thinking) RUN_THINKING=1 ;;
+    --bench-faithfulness) RUN_FAITH=1 ;;
     --all)           RUN_A=1; RUN_B=1 ;;
     --execute)       DRY_RUN=0 ;;
     --dry-run)       DRY_RUN=1 ;;   # explicit no-op (dry-run is the default); keeps bridge cmds robust
@@ -187,10 +194,13 @@ done
 
 # Default to running both M3 benchmarks ONLY if no lane at all was selected. A bare
 # --bench-virtues must NOT silently also run A+B (it has its own GPU cost profile).
-if [[ "${RUN_A}" -eq 0 && "${RUN_B}" -eq 0 && "${RUN_VIRTUES}" -eq 0 && "${RUN_THINKING}" -eq 0 ]]; then RUN_A=1; RUN_B=1; fi
+if [[ "${RUN_A}" -eq 0 && "${RUN_B}" -eq 0 && "${RUN_VIRTUES}" -eq 0 && "${RUN_THINKING}" -eq 0 && "${RUN_FAITH}" -eq 0 ]]; then RUN_A=1; RUN_B=1; fi
 
-# Thinking-log faithfulness model: unset -> CPU/offline pipeline only (no real model).
+# Thinking-log / faithfulness model: unset -> CPU/offline only (no real model).
 THINKING_MODEL="${THINKING_MODEL:-}"
+FAITH_MODEL="${FAITH_MODEL:-}"
+FAITH_SEEDS="${FAITH_SEEDS:-3}"
+FAITH_BATTERY="${FAITH_BATTERY:-}"   # path to a battery JSON; empty -> runner default (v1)
 
 # Cardinal-virtue eval config. Two distinct judge families, BOTH stronger than and DISTINCT
 # from the baseline subject (judge != subject). Judge A defaults to a CAPABLE Qwen (32B, NOT
@@ -232,6 +242,7 @@ echo "  benchmark A: $([[ "${RUN_A}" -eq 1 ]] && echo yes || echo no)"
 echo "  benchmark B: $([[ "${RUN_B}" -eq 1 ]] && echo yes || echo no) (run-train: $([[ "${RUN_TRAIN}" -eq 1 ]] && echo yes || echo no))"
 echo "  virtues:     $([[ "${RUN_VIRTUES}" -eq 1 ]] && echo yes || echo no)"
 echo "  thinking:    $([[ "${RUN_THINKING}" -eq 1 ]] && echo "yes (model: ${THINKING_MODEL:-offline})" || echo no)"
+echo "  faithfulness:$([[ "${RUN_FAITH}" -eq 1 ]] && echo " yes (model: ${FAITH_MODEL:-offline}, seeds: ${FAITH_SEEDS})" || echo " no")"
 echo "  repo root:   ${ROOT}"
 echo "  python:      ${PY}"
 cost_guard_reminder
@@ -421,6 +432,29 @@ if [[ "${RUN_THINKING}" -eq 1 ]]; then
   echo
   echo "Thinking benchmark done. Receipt: agent/memory/thinking/bench/thinking-bench.json (gitignored)."
   echo "Offline pass = the capture/A2A/distill MECHANISM works; faithfulness Δ is a measurement, not a claim."
+fi
+
+# ════════════════════════════════════════════════════════════════════════════════════════════
+# BENCHMARK FAITHFULNESS — discriminating CoT-faithfulness battery (intrinsic + cued/uncued)
+# CPU/offline integrity by default. Full design: docs/09-Agent/Faithfulness-Battery.md
+# ════════════════════════════════════════════════════════════════════════════════════════════
+if [[ "${RUN_FAITH}" -eq 1 ]]; then
+  step "F0 — Faithfulness battery (integrity + plumbing offline; real-model measurement opt-in)"
+  # Bash array (not a string) so a path with spaces / glob chars can't word-split or inject
+  # extra args; expands to nothing when FAITH_BATTERY is unset.
+  FAITH_BATTERY_ARGS=()
+  [[ -n "${FAITH_BATTERY}" ]] && FAITH_BATTERY_ARGS=(--battery "${FAITH_BATTERY}")
+  echo "  battery: ${FAITH_BATTERY:-(v1 default)} (set FAITH_BATTERY=benchmark/faithfulness_cot_battery_v2.json for v2)"
+  if [[ -n "${FAITH_MODEL}" ]]; then
+    echo "  real-model measurement enabled: model=${FAITH_MODEL} seeds=${FAITH_SEEDS} (needs key + SOPHIA_CAPTURE_THINKING=1)"
+    run "${PY}" tools/run_faithfulness_battery.py "${FAITH_BATTERY_ARGS[@]}" --model "${FAITH_MODEL}" --seeds "${FAITH_SEEDS}"
+  else
+    echo "  offline only (set FAITH_MODEL=openrouter:deepseek/deepseek-r1|anthropic|... + a key for the real measurement)"
+    run "${PY}" tools/run_faithfulness_battery.py "${FAITH_BATTERY_ARGS[@]}"
+  fi
+  echo
+  echo "Faithfulness battery done. Receipt: agent/memory/thinking/bench/faithfulness-battery.json (gitignored)."
+  echo "Cued split is the disambiguator: unfaithfulCueUseRate = cue-influenced answers whose reasoning hid the cue."
 fi
 
 echo

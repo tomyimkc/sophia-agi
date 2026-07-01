@@ -23,7 +23,6 @@ source task file). No model calls. Output feeds `verified_world_model.make_split
 
 from __future__ import annotations
 
-import hashlib
 import json
 import re
 from pathlib import Path

@@ -44,7 +44,6 @@ support and ``Governed-Scaling.md`` for the equivalence/bounded-error bar it cle
 
 from __future__ import annotations
 
-import math
 from typing import Callable
 
 try:

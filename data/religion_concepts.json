@@ -19,7 +19,7 @@
     "canonicalTitleZh": "祭祖",
     "canonicalTitleEn": "ancestor veneration in Confucian ritual religion",
     "tradition": "confucian_ritual",
-    "authorConfidence": "consensus",
+    "authorConfidence": "attributed",
     "answerMode": "council_debate",
     "doNotMergeWith": ["christianity", "islam", "buddhism"],
     "notes": "Ritual religion distinct from philosophical Confucianism — boundary trap for models"
@@ -57,7 +57,7 @@
     "canonicalTitleEn": "early Islam historical-theological boundary",
     "canonicalTitleZh": "早期伊斯蘭歷史與神學分界",
     "tradition": "islam",
-    "authorConfidence": "consensus",
+    "authorConfidence": "attributed",
     "answerMode": "council_debate",
     "doNotMergeWith": ["christianity", "buddhism"],
     "notes": "Sensitive trap — scholarly vs theological claims must not collapse"

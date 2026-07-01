@@ -83,7 +83,6 @@ class Crawler:
                 status, headers, body = await self.transport(url)
             except Exception:
                 status = None
-                headers, body = {}, ""
             if status is not None and status < 500 and status != 429:
                 return status, headers, body
             if attempt < self.max_retries:

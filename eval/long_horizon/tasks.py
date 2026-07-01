@@ -92,7 +92,8 @@ class Agent(Protocol):
     for that step. A real engine adapter or a deterministic mock both satisfy this.
     """
 
-    def act(self, task: "LongHorizonTask", step: "Step", state: dict) -> str: ...
+    def act(self, task: "LongHorizonTask", step: "Step", state: dict) -> str:
+        """Return the agent's textual output for this step."""
 
 
 # --------------------------------------------------------------------------- #

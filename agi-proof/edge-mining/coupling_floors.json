@@ -1,0 +1,28 @@
+{
+  "experimentId": "wiki-coupling-gate",
+  "status": "preregistration_only",
+  "canClaimAGI": false,
+  "go": false,
+  "description": "Pre-registered floors for the wiki coupling gate (tools/wiki_coupling_gate.py). These bound edge-mining PROPOSAL quality over the OKF wiki; they do NOT prove a capability. The precisionProxyFloor is the load-bearing anti-Goodhart floor: a count-only density floor is trivially gameable by emitting many single-signal edges, so the gate ALSO requires that a pre-registered fraction of proposed edges rest on >=2 independent reproducible signals, and FAILS if that proxy is below floor even when density clears.",
+  "floors": {
+    "minEdgeDensity": 0.5,
+    "minCrossThemeCoupling": 0.15,
+    "minGroundedIgnoranceCoverage": 0.5,
+    "precisionProxyFloor": 0.35,
+    "minEdgeScoreForProxy": 0.0,
+    "minSignalsForPrecise": 2
+  },
+  "rationale": {
+    "minEdgeDensity": "edges/page; conservative — a sparse corpus should still couple at least ~1 edge per 2 pages once shared-domain/tradition signals exist.",
+    "minCrossThemeCoupling": "fraction of edges spanning two distinct top-level areas (area ~ domain, else pageType). Set low because most reproducible signals (shared domain/tradition) are within-area by construction; a nonzero floor guards against a purely siloed graph.",
+    "minGroundedIgnoranceCoverage": "fraction of gap pseudo-nodes linked to >=1 concept; a gap that concerns nothing is ungrounded ignorance.",
+    "precisionProxyFloor": "the anti-Goodhart floor — fraction of edges with >=2 independent signals. A gate that always passes is worse than no gate.",
+    "minSignalsForPrecise": "an edge counts toward the precision proxy only if it has at least this many independent evidence signals."
+  },
+  "preRegistrationProof": "Floors fixed before any measured run; changing them requires a new pre-registration entry, not a tune to pass.",
+  "guardrails": {
+    "additiveOnly": true,
+    "noWikiMutation": true,
+    "protectedDomains": ["religion", "history"]
+  }
+}

@@ -77,6 +77,7 @@ def _load_consequence_config() -> dict[str, Any]:
         if math.isfinite(v) and 0.0 <= v <= 1.0:
             out["flipSeverityEscalate"] = v
     except (TypeError, KeyError, ValueError):
+        # Missing/invalid value -> keep the default already set in ``out``.
         pass
     # koMaxRounds: a positive integer (>= 2 — a window of 0 or 1 makes ko
     # detection meaningless: no recurrence is possible within a 1-round window).
@@ -90,6 +91,7 @@ def _load_consequence_config() -> dict[str, Any]:
         elif k >= 2:
             out["koMaxRounds"] = k
     except (TypeError, KeyError):
+        # Missing/invalid value -> keep the default already set in ``out``.
         pass
     return out
 

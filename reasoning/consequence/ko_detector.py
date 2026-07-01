@@ -23,7 +23,7 @@ is an irreducible oscillation that a human or a new source must break.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 KO_MAX_ROUNDS = 4  # window in which a revisited belief state counts as a ko

@@ -23,13 +23,13 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from agent.harness import RUNS_DIR  # noqa: E402
+from agent import harness  # noqa: E402
 from agent.trace_distill import distill_dir, to_jsonl  # noqa: E402
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Distill harness traces into preference pairs")
-    parser.add_argument("--runs-dir", type=Path, default=RUNS_DIR, help="directory of *.jsonl run logs")
+    parser.add_argument("--runs-dir", type=Path, default=harness.RUNS_DIR, help="directory of *.jsonl run logs")
     parser.add_argument("--out", type=Path, default=None, help="write JSONL here (else stdout)")
     args = parser.parse_args()
 

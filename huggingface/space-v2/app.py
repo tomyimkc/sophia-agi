@@ -27,7 +27,7 @@ ROOT = _find_root()
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from gateway import Gateway, ToolEntry  # noqa: E402
+from gateway import Gateway  # noqa: E402
 from provenance_bench.calibration_score import score_answer  # noqa: E402
 from sophia_contract import SophiaContract  # noqa: E402
 

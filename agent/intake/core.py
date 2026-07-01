@@ -17,7 +17,6 @@ from typing import Any, Callable
 from agent.metacognition import MetacognitionReport, assess_uncertainty
 from sophia_contract import blp
 from sophia_contract.intake import (
-    INTAKE_CONTRACT_VERSION,
     build_intake_contract,
     mechanical_normalize_prompt,
     validate_intake_contract,

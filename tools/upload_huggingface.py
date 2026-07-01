@@ -10,7 +10,6 @@ Token: set HF_TOKEN or HUGGING_FACE_HUB_TOKEN, or run `huggingface-cli login`
 from __future__ import annotations
 
 import os
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]

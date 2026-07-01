@@ -36,7 +36,7 @@ Offline invariants (``offline_invariants()``, CI-gated):
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Callable, Optional
+from typing import Callable, Optional
 
 from provenance_bench.async_rl import ReplayBuffer, Trajectory
 

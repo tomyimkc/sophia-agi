@@ -312,6 +312,7 @@ def main() -> int:
     parser.add_argument("--timeout-sec", type=int, default=600)
     args = parser.parse_args()
 
+    spec = None
     if args.self_test:
         spec = SELF_TEST_SPEC
     elif args.spec:

@@ -41,12 +41,14 @@ def _child_limits(cpu_sec: int, mem_mb: int) -> None:
     try:
         resource.setrlimit(resource.RLIMIT_CPU, (cpu_sec, cpu_sec + 1))
     except (ValueError, OSError):
+        # rlimits are best-effort and platform-dependent; if unsupported, proceed without the cap
         pass
     if mem_mb > 0:
         try:
             cap = mem_mb * 1024 * 1024
             resource.setrlimit(resource.RLIMIT_AS, (cap, cap))
         except (ValueError, OSError):
+            # rlimits are best-effort and platform-dependent; if unsupported, proceed without the cap
             pass
 
 

@@ -34,6 +34,21 @@ def load_all_traps() -> list:
     return traps
 
 
+# The physical / 2.5D axes a VLM is weakest on (depth, occlusion, real size,
+# distance) + their discrimination controls + the numeric `measure` rows. Used to
+# scope a real-VLM run to the physical-understanding pre-registration.
+PHYSICAL_CATEGORIES = (
+    "depth_order", "depth_control", "occlusion", "occlusion_control",
+    "size_illusion", "size_control", "distance", "distance_control", "distance_measure",
+)
+
+
+def filter_by_category(traps: list, categories) -> list:
+    """Keep only traps whose ``category`` is in ``categories`` (order preserved)."""
+    cats = set(categories)
+    return [t for t in traps if t.get("category") in cats]
+
+
 def run_cases(traps: list, answer_fn, judge_fn=None) -> list:
     """Score each trap: get the model's answer, judge it, record the verdict."""
     judge_fn = judge_fn or judge_mod.lexical_judge

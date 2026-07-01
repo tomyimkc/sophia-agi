@@ -1,0 +1,24 @@
+{
+  "_comment": "PRE-REGISTERED, CONSERVATIVE staleness horizons per domain, in days. A load-bearing fact/source is STALE when (today - verifiedAsOf) exceeds its domain horizon. A null horizon means 'timeless' (never goes stale by clock alone) — used for domains whose ground truth is a fixed historical/textual record, not a moving research front. These defaults are deliberate placeholders chosen to be defensible, NOT empirically calibrated: they should be re-registered against measured error-vs-age curves before any claim leans on them. Records lacking a verifiedAsOf field are treated as 'unknown' (counted separately), NEVER as fresh.",
+  "schema_version": 1,
+  "status": "preregistration_only",
+  "canClaimAGI": false,
+  "unit": "days",
+  "defaultHorizonDays": 365,
+  "horizons": {
+    "science": 365,
+    "psychology": 730,
+    "philosophy": null,
+    "history": null,
+    "religion": null
+  },
+  "domainNotes": {
+    "science": "Moving research front; a year-old empirical fact may be superseded. Conservative 365d.",
+    "psychology": "Slower-moving than bench science but replication-sensitive; 730d.",
+    "philosophy": "Argument/text record, not a moving empirical front — timeless (null).",
+    "history": "PROTECTED. Ground truth is the historical/textual record; timeless (null). Recency does not license re-attribution or merges across the history/religion protected domains.",
+    "religion": "PROTECTED. Same as history — timeless (null); doNotMergeWith / doNotAttributeTo remain HARD constraints regardless of recency."
+  },
+  "alarmFractionThreshold": 0.10,
+  "alarmNote": "ALARM (exit 1) when the fraction of LOAD-BEARING records that are STALE exceeds alarmFractionThreshold. 'unknown' (no verifiedAsOf) records are reported but do not by themselves trip the alarm — they trip a SEPARATE coverage warning so a corpus cannot dodge staleness by simply never stamping dates."
+}

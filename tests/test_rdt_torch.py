@@ -50,7 +50,7 @@ def test_forward_shapes_and_loss() -> None:
     model = RDT(cfg)
     idx = torch.randint(0, cfg.vocab_size, (2, 10))
     tgt = torch.randint(0, cfg.vocab_size, (2, 10))
-    logits, loss = model(idx, tgt)
+    logits, loss, _ = model(idx, tgt)
     assert logits.shape == (2, 10, cfg.vocab_size)
     assert torch.isfinite(loss)
 
@@ -63,8 +63,8 @@ def test_loop_count_changes_output() -> None:
     model = RDT(cfg)
     idx = torch.randint(0, cfg.vocab_size, (2, 8))
     with torch.no_grad():
-        a, _ = model(idx, n_loop=2)
-        b, _ = model(idx, n_loop=8)
+        a, _, _ = model(idx, n_loop=2)
+        b, _, _ = model(idx, n_loop=8)
     assert (a - b).abs().max() > 1e-4
 
 
@@ -77,7 +77,7 @@ def test_gqa_and_moe_paths_run() -> None:
         model = RDT(cfg)
         idx = torch.randint(0, cfg.vocab_size, (2, 8))
         tgt = torch.randint(0, cfg.vocab_size, (2, 8))
-        _, loss = model(idx, tgt)
+        _, loss, _ = model(idx, tgt)
         loss.backward()
         assert all(p.grad is not None for p in model.parameters() if p.requires_grad)
 

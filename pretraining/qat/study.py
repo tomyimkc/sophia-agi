@@ -35,7 +35,6 @@ Pure Python (reuses the hand-backpropped NanoLM); no torch/numpy required for th
 from __future__ import annotations
 
 import math
-import random
 from typing import Any
 
 from pretraining.nano.model import NanoLM, eval_loss
@@ -133,7 +132,6 @@ def train_qat(model: NanoLM, examples, *, epochs: int = 8, lr: float = 0.05,
     if lam == 0.0:
         return train(model, examples, epochs=epochs, optimizer="adam", lr=lr, seed=seed)
 
-    rng = random.Random(seed)
     epoch_loss: list[float] = []
     # Simple Adam-like nudge: re-use the base train but interleave a grid-projection step.
     # The cleanest faithful integration is to call the base loop and, per-epoch, project.
@@ -232,7 +230,6 @@ def offline_invariants() -> "tuple[bool, dict]":
     s = 2.0
     vals = [-3.0, -0.3, 0.0, 0.4, 1.6, 3.0]
     q = [ternary_quantize_value(v, s) for v in vals]
-    grid = {-s, 0.0, s}
     checks["ternary_in_grid"] = all(abs(x) in {0.0, s} for x in q)
     checks["ternary_signs"] = q[0] == -s and q[4] == s and q[2] == 0.0
     detail["ternary_sample"] = q

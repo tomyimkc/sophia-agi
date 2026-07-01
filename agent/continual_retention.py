@@ -22,7 +22,7 @@ chain) has not dropped below what it was when introduced. The headline metric is
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 from okf import build_graph, is_grounded, propagate_confidence

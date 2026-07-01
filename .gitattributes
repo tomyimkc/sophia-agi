@@ -24,6 +24,7 @@ CONTRACT.md filter=git-crypt diff=git-crypt
 .claude/skills/git-discipline/** !filter !diff
 .claude/skills/ci-artifact-drift/** !filter !diff
 .claude/skills/session-handover/** !filter !diff
+.claude/skills/skill-author/** !filter !diff
 .claude/skills/spark-cluster-ops/** !filter !diff
 .claude/skills/rlvr-harness-traps/** !filter !diff
 .grok/** filter=git-crypt diff=git-crypt

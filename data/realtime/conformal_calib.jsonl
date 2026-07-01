@@ -1,0 +1,12 @@
+{"id": "cal01", "nonconformity": 0.0, "correct": true, "risk": "normal"}
+{"id": "cal02", "nonconformity": 0.02, "correct": true, "risk": "normal"}
+{"id": "cal03", "nonconformity": 0.05, "correct": true, "risk": "normal"}
+{"id": "cal04", "nonconformity": 0.05, "correct": true, "risk": "normal"}
+{"id": "cal05", "nonconformity": 0.10, "correct": true, "risk": "normal"}
+{"id": "cal06", "nonconformity": 0.12, "correct": true, "risk": "normal"}
+{"id": "cal07", "nonconformity": 0.15, "correct": true, "risk": "normal"}
+{"id": "cal08", "nonconformity": 0.20, "correct": true, "risk": "normal"}
+{"id": "cal09", "nonconformity": 0.25, "correct": true, "risk": "normal"}
+{"id": "cal10", "nonconformity": 0.30, "correct": true, "risk": "normal"}
+{"id": "cal11", "nonconformity": 0.70, "correct": false, "risk": "normal"}
+{"id": "cal12", "nonconformity": 0.85, "correct": false, "risk": "normal"}

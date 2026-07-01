@@ -1,0 +1,53 @@
+{
+  "benchmark": "misstep_injection",
+  "n": 29,
+  "confusion": {
+    "tp": 15,
+    "tn": 14,
+    "fp": 0,
+    "fn": 0
+  },
+  "abstained": {
+    "clean": 0,
+    "corrupt": 0
+  },
+  "accuracy": 1.0,
+  "misstepCatchRecall": 1.0,
+  "falseAlarmRate": 0.0,
+  "verifiedStepCoverage": 1.0,
+  "catchByErrorType": {
+    "arithmetic": {
+      "caught": 2,
+      "total": 2,
+      "abstain": 0,
+      "recall": 1.0
+    },
+    "dropped_factor": {
+      "caught": 3,
+      "total": 3,
+      "abstain": 0,
+      "recall": 1.0
+    },
+    "sign": {
+      "caught": 4,
+      "total": 4,
+      "abstain": 0,
+      "recall": 1.0
+    },
+    "unit": {
+      "caught": 3,
+      "total": 3,
+      "abstain": 0,
+      "recall": 1.0
+    },
+    "value": {
+      "caught": 2,
+      "total": 2,
+      "abstain": 0,
+      "recall": 1.0
+    }
+  },
+  "misses": [],
+  "scoring": "objective vs ground-truth expectVerified; deterministic step-verifier, no LLM judge",
+  "canClaimAGI": false
+}

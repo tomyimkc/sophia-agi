@@ -21,12 +21,16 @@ from typing import Any, Protocol
 
 
 class Strategy(Protocol):
-    def initial(self) -> "dict[str, Any]": ...
-    def propose_next(self, history: list) -> "dict[str, Any] | None": ...
+    def initial(self) -> "dict[str, Any]":
+        pass
+
+    def propose_next(self, history: list) -> "dict[str, Any] | None":
+        pass
 
 
 class Backend(Protocol):
-    def run(self, config: "dict[str, Any]") -> "dict[str, Any]": ...
+    def run(self, config: "dict[str, Any]") -> "dict[str, Any]":
+        pass
 
 
 def autopilot(strategy: Strategy, backend: Backend, *, max_trials: int = 12,

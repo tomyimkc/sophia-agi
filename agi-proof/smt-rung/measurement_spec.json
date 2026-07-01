@@ -1,0 +1,42 @@
+{
+  "experimentId": "smt-rung-abstention-reclaim",
+  "description": "Pre-registration for the certificate-carrying SMT rung (agent/smt_verifier.py). The optional-backend checker and its independent certificate re-checker are BUILT and TESTED in the z3-absent environment (where every check() abstains, fail-closed). This spec fixes the GO/NO-GO criteria for the powered z3-present run BEFORE it executes, so the reclaim number cannot be tuned to the criteria. z3 is NOT installed here, so NO live reclaim rate has been measured.",
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "canClaimAGI": false,
+  "status": "preregistration_only",
+  "go": false,
+  "primaryMetric": "abstention-reclaim rate: fraction of a FROZEN set of decidable-but-currently-abstained claims that the z3-present SMT rung decides (pass or fail) INSTEAD of abstaining, subject to the hard gate that every emitted certificate is accepted by the independent re-checker (recheck_certificate) at rate EXACTLY 1.00",
+  "mde": 0.10,
+  "requiredN": 200,
+  "frozenSet": {
+    "id": "smt-decidable-abstained-v1",
+    "description": "A pre-registered, content-hashed set of claims in the decidable band (unit/dimension consistency, bounded-integer linear constraints, rational interval containment) that the CURRENT z3-absent rung abstains on with reason 'z3-not-installed'. The set is frozen (hashed) before the powered run so items cannot be added or removed to move the reclaim rate.",
+    "hashRule": "SHA-256 over the canonical JSON of the frozen claim list; the hash is committed with this spec and re-checked at run time (mismatch => automatic NO-GO)",
+    "labelSource": "each frozen claim carries an INDEPENDENT ground-truth verdict (pass/fail) derived without z3 — e.g. by hand or by a distinct decision procedure — so the SMT rung is never scored against its own output"
+  },
+  "certificateRule": {
+    "rule": "every pass/fail verdict from the z3-present rung MUST carry a certificate that recheck_certificate() accepts; independent-checker acceptance must be EXACTLY 1.00 over the whole frozen set",
+    "use": "GO/NO-GO",
+    "rationale": "the rung's value is that trust rests on a re-checkable witness (satisfying model / unsat core), not on trusting z3's yes/no. Any single certificate the dumb re-checker rejects is an automatic NO-GO, even if the reclaim count looks good."
+  },
+  "uncertaintyRule": "the reported reclaim rate carries a 95% CI (tools/eval_stats.py fixed_n_ci_mean); at N below requiredN the verdict is UNDERPOWERED, not a claim (eval_stats.verdict_or_underpowered)",
+  "magnitudeRule": "GO requires (a) independent-checker acceptance EXACTLY 1.00 on every emitted certificate AND (b) reclaim-rate lower 95% CI bound >= mde (0.10); otherwise NO-GO. A reclaim rate achieved with even one re-checker rejection is a NO-GO.",
+  "correctnessRule": "on the frozen set, the rung's decided verdicts must agree with the INDEPENDENT ground-truth labels at rate 1.00 (a wrong pass/fail is worse than an abstain); any disagreement is an automatic NO-GO",
+  "decontamRule": "the frozen claims are synthetic/decidable and carry no training-corpus provenance; N/A for corpus decontam, but the independent labels must not be produced by the SMT rung itself (noSelfJudging)",
+  "guardrails": {
+    "failClosedWhenBackendAbsent": {
+      "rule": "with z3 absent, check() returns verdict 'abstain'/'z3-not-installed' for EVERY claim and NEVER a false 'pass'. A gate that always passes is worse than no gate; a gate that cannot run is a HELD verdict. Enforced by tests/test_smt_verifier.py in this z3-absent environment.",
+      "use": "GO/NO-GO"
+    },
+    "narrowDecidableBand": {
+      "rule": "the rung only accepts claims in a genuinely decidable fragment (linear integer/real arithmetic, integer-exponent dimensional analysis). Out-of-band claims ABSTAIN ('claim-not-in-decidable-band'); they are never force-fit into a solver call to inflate the reclaim count.",
+      "use": "GO/NO-GO"
+    },
+    "noSelfJudging": {
+      "rule": "the SMT rung may not supply the ground-truth labels it is scored against; labels come from an independent decision procedure or human, and each certificate is confirmed by the DUMB re-checker, not by the solver.",
+      "use": "GO/NO-GO"
+    }
+  },
+  "preRegistrationProof": "tools/claim_gate.py --assert-prereg verifies this spec's add-commit is an ancestor of the result it judges (git merge-base --is-ancestor)",
+  "honestBound": "Pre-registration only. z3-solver is NOT installed in this environment, so agent/smt_verifier.check() abstains on every claim (verified by the fail-closed tests) and NO live abstention-reclaim rate has been measured. The reclaim number is UNPROVEN until a powered run installs z3-solver (requirements-smt.txt), runs the frozen decidable-but-abstained set, and clears the certificate/magnitude/correctness gates above. A NO-GO is a valid, publishable outcome."
+}
