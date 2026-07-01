@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-01T06:48:46Z",
+  "updatedAt": "2026-07-01T06:49:24Z",
   "host": "spark-2f2d",
   "running": null,
   "pendingCommands": [],
@@ -1135,6 +1135,11 @@
       "path": "agi-proof/benchmark-results/nvfp4-v5-skipdiag.json",
       "bytes": 11690,
       "mtime": "2026-06-30T14:03:58Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/nvfp4-v6-cert.json",
+      "bytes": 3696,
+      "mtime": "2026-07-01T06:48:47Z"
     },
     {
       "path": "agi-proof/benchmark-results/pif.public-report.json",
