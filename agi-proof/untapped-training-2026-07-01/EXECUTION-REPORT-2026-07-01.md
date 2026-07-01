@@ -105,10 +105,12 @@ PYTHONPATH=. venv312/bin/python tools/adversarial_gate_selfplay.py \
 > deliberately not rushed).** Reused the implemented MLX featurizer and ran the disjoint
 > loss/audit/test Goodhart methodology over real honest/deceptive DPO text: the base model
 > separates them **perfectly on real residual streams (1.0/1.0, goodhartGap 0.0)** — honesty
-> is linearly decodable (the probe-as-loss precondition). The actual probe-as-loss LM coupling
-> (a custom gradient-through-probe fine-tune) is **left as a careful next step**, not rushed —
-> a gamed probe-as-loss that looks honest is the exact invisible failure this tool guards
-> against. **Gate not met, w5 row stays Open.** Detail + checksums:
+> is linearly decodable (the probe-as-loss precondition). The probe-as-loss LM coupling was
+> **then performed** (custom MLX gradient-through-probe LoRA loop) → **GOODHART DETECTED**:
+> optimizing against the loss probe raised its accuracy 0.867→0.956 but the **disjoint audit
+> probe dropped 0.756→0.711** (goodhartGap 0.244 > 0.15) — the mandatory audit correctly refused
+> to certify. A valid **negative** result that validates the tool's safety methodology on a real
+> run. **Gate not met (correctly), w5 row stays Open.** Detail + checksums:
 > `agi-proof/benchmark-results/w5-probe-as-loss/`.
 
 **Wired/run (offline, exact command):**
