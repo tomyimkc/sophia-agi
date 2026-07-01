@@ -1,0 +1,14 @@
+{
+  "id": "2026-07-01-claude-web-cert-v5-downproj-frontier",
+  "args": "--bench-b --execute",
+  "createdBy": "claude (cloud, wheel)",
+  "createdAt": "2026-07-01T04:15:00Z",
+  "approvedBy": "user: standing \"act, don't ask / perform all benchmarking; run the GPU 24/7 when not judging\" (2026-06-30). Cert-only (--bench-b, NO --run-train), same class as the approved cert-t1 / cert-v5-frontier runs.",
+  "note": "v5 mixed-precision lever: hold down_proj in bf16 (KEEP_SUFFIXES=down_proj) and re-measure the NVFP4 cert + abstention frontier at n_eval=1024. v5 full-NVFP4 raw top1 is 0.8975 -> shippable via abstention only at ~64% coverage (95%-robust). down_proj is the documented mixed-precision lever ('try down_proj if top-1 stays < 0.97'). If holding it bf16 lifts raw top1 materially, the abstention frontier shifts UP -> v5 ships at much higher coverage with NO training, and v6 may be unnecessary. Trade-off: mem_ratio drops (less compression) — the cert reports it so we see the coverage-vs-compression exchange. Read out[abstention_frontier] with serving/abstention_serve confidence=0.95 for the robust operating point. Cert/diagnostic only; canClaimAGI stays false.",
+  "env": {
+    "KEEP_SUFFIXES": "down_proj",
+    "QAT_ADAPTER": "/home/tomyimkc/sophia-bridge/training/lora/checkpoints/olmoe-qat-spark-v5",
+    "CERT_NEVAL": "1024",
+    "CERT_OUT": "agi-proof/benchmark-results/nvfp4-v5-downproj-frontier.json"
+  }
+}
