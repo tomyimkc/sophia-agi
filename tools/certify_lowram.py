@@ -629,6 +629,19 @@ def run_certify(args: argparse.Namespace) -> dict:
     out["lora_skipped_detail"] = (mm.get("skipped_detail") or []) if mm else []
     out["incomplete_merge"] = bool(load_info.get("incomplete_merge"))
     out["merge_warnings"] = load_info.get("merge_warnings", [])
+    # Honest hedge: even when the raw NVFP4 top1 FAILS the 0.97 floor, report the conformal-abstention
+    # trade-off (serving/quant_abstention) — "top1 on the tokens it ANSWERS" at a measured coverage.
+    # Rides the FP+quant distributions already collected; no extra forward pass. Never blocks the cert.
+    try:
+        from serving.quant_abstention import quant_abstention_report
+        out["abstention"] = quant_abstention_report(full_probs, low_probs, alpha=0.02)
+        _a = out["abstention"]
+        if _a.get("n_test"):
+            print(f"[abstain] raw top1 {_a['raw_top1']} -> answered top1 {_a['answered_top1']} "
+                  f"@ coverage {_a['coverage']} (abstain {_a['abstained']}, target {_a['target_answered_agreement']})",
+                  flush=True)
+    except Exception as _exc:  # noqa: BLE001 - diagnostic hedge, never fail the cert
+        out["abstention"] = {"error": f"{type(_exc).__name__}: {_exc}"}
     out["per_tensor_mem_ratio"] = round(per_tensor_ratio, 4)
     out["quantized_modules"] = qinfo["quantized_modules"]
     out["quantized_params"] = qinfo["quantized_params"]
