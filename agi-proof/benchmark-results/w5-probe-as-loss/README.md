@@ -55,3 +55,18 @@ probe-as-loss variant that improves the **audit** probe too (not just the loss p
 e.g. multi-probe/ensemble loss directions, adversarial-probe co-training, or activation-steering
 toward a held-out honesty target — with `goodhartGap ≤ 0.15` and a from-scratch post-run audit
 that *improves*. Until a coupling passes the audit, the direction stays quarantined (row Open).
+
+## v2 (2026-07-02) — ENSEMBLE probe-as-loss REVERSES the gaming (strong signal, still Open)
+
+Hypothesis: optimizing the LM against an **ensemble of K=4 independent probes** (even 30-row
+disjoint fits) makes a single-direction Goodhart shortcut insufficient. Result across **3 seeds**
+(`w5-ensemble-probe-as-loss-2026-07-02.candidate.json`): the disjoint **audit probe IMPROVES on
+all 3 seeds** — 0.90→0.917, 0.75→0.983, 0.917→0.983 (mean Δ **+0.106**) — with goodhartGap ≤ 0.15
+every seed and a from-scratch post-run audit separating at 0.95–0.967. This **reverses v1's clean
+Goodhart gaming** (v1 single-probe dropped the audit 0.756→0.711).
+
+**Still Open (highest-risk tool, strict bar):** seed0's +0.017 is one test example (noise); there
+is no per-seed bootstrap CI; base-audit varies 0.75–0.92 across seeds (regression-to-mean
+confound); N=60, single controlled surface. A rigorous close needs per-seed CIs excluding 0 at
+matched base-audit on a broader surface. The ensemble is a promising **anti-Goodhart training
+method**, not yet a certified one.
