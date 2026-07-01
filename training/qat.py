@@ -219,6 +219,66 @@ def _torch_nvfp4(w):  # pragma: no cover - torch-only
     return dq.reshape(-1)[: w.numel()].reshape(w.shape)
 
 
+def _attach_qat_fused_experts(model: Any, scheme: str) -> "list[str]":  # pragma: no cover - torch-only
+    """Reach the fused MoE experts that ``attach_qat``'s per-``nn.Linear`` loop cannot.
+
+    OLMoE stores its experts as 3-D ``gate_up_proj``/``down_proj`` ``nn.Parameter``s wrapped by
+    peft's ``ParamWrapper`` (``target_parameters`` LoRA) — not ``Linear`` modules with ``.weight`` —
+    so the forward-STE never sees them and QAT co-adapts 0 experts (the blind spot that wasted a v6
+    fire). torch ``parametrize`` infinitely-recurses on the nested ParamWrapper, so instead we wrap
+    the ``ParamWrapper.forward``: compute ``base + LoRA-delta``, STE-fake-quant the MERGED param
+    (matches the serve-time ``fake_quant(base+delta)`` order), swap it onto the inner expert module
+    for the base forward, then restore. Honours ``_qat_bypass`` / ``eval`` (FP teacher). Verified on
+    OLMoE: fake-quant rel-err ~0.09 on all 32 fused params, all expert LoRA grads flow, eval leaves
+    the FP path untouched. Returns the wrapped ParamWrapper names (counted as experts in coverage).
+    """
+    ste = _torch_ste_quant()
+    wrapped: "list[str]" = []
+    for name, m in model.named_modules():
+        if type(m).__name__ != "ParamWrapper":
+            continue
+        pname = getattr(m, "parameter_name", None)
+        if pname not in ("gate_up_proj", "down_proj"):        # fused MoE expert params only
+            continue
+        if getattr(m, "_qat_wrapped", False):
+            continue
+        orig_forward = m.forward
+
+        def qat_paramwrapper_forward(x, *args, _pw=m, _orig=orig_forward, _pn=pname, **kwargs):
+            if ((not _pw.training) or getattr(_pw, "_qat_bypass", False)
+                    or getattr(_pw, "disable_adapters", False) or getattr(_pw, "merged", False)):
+                return _orig(x, *args, **kwargs)          # FP reference (KD/top1 teacher)
+            base = _pw.get_base_layer()
+            raw = base._parameters.get(_pn)
+            if raw is None:
+                return _orig(x, *args, **kwargs)
+            delta = None
+            for adapter in _pw.active_adapters:
+                try:
+                    d = _pw.get_delta_weight(adapter)
+                except Exception:
+                    d = None
+                if d is not None and d.shape == raw.shape:
+                    delta = d if delta is None else delta + d
+            merged = raw if delta is None else raw + delta
+            merged_q = ste.apply(merged, scheme)          # STE fake-quant the MERGED (base+LoRA) param
+            saved = base._parameters[_pn]
+            del base._parameters[_pn]
+            object.__setattr__(base, _pn, merged_q)       # inner expert forward uses the fake-quant param
+            try:
+                # NOT _orig: that re-applies LoRA via _activate_lora (would double-count the delta).
+                return _pw.base_layer(x, *args, **kwargs)
+            finally:
+                object.__delattr__(base, _pn)
+                base._parameters[_pn] = saved
+
+        m._qat_orig_forward = orig_forward
+        m.forward = qat_paramwrapper_forward
+        m._qat_wrapped = True
+        wrapped.append(name)
+    return wrapped
+
+
 def attach_qat(model: Any, *, scheme: str = "int8",
                module_types: "tuple[str, ...]" = ("Linear",)) -> int:  # pragma: no cover - torch-only
     """Wrap each target module's ``forward`` to compute with the STE-fake-quantized weight.
@@ -269,6 +329,12 @@ def attach_qat(model: Any, *, scheme: str = "int8",
         m.forward = qat_forward
         m._qat_wrapped = True
         wrapped_names.append(name)
+
+    # Fused MoE experts (3-D OlmoeExperts gate_up_proj/down_proj wrapped by peft ParamWrapper) are
+    # NOT Linear modules with a ``.weight``, so the loop above misses them and QAT would co-adapt 0
+    # experts (the blind spot that wasted a v6 fire, 2026-07-01). Reach them via a
+    # ParamWrapper.forward wrap (torch ``parametrize`` infinitely-recurses on the nested wrapper).
+    wrapped_names.extend(_attach_qat_fused_experts(model, scheme))
 
     cov = summarize_qat_coverage(wrapped_names)
     # If QAT reached NO experts but the model HAS expert weights, the forward-STE can't see them
