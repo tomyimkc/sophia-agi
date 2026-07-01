@@ -73,3 +73,17 @@ no-train FRONTIER-IMPROVER**: +~1pt raw top1 buys back abstention coverage. Net 
 3. **QAD only if coverage still short** — not to chase raw 0.97.
 4. **Do NOT chase raw NVFP4 0.97 via cheap levers** — intrinsic uniform ~10.8% weight error + modest protection gain make it infeasible.
 Probes: `/tmp/{expert_sens,rht_probe,routing_probe,protect2}.py` (Spark).
+
+## UPGRADE — real-v5 measurement (harness-verified): expert-protection is a STRONG no-train lever
+Ran the protected frontier on the REAL merged v5, reusing the cert's own `load_merged_model` +
+`collect_next_token_probs` + `quant_abstention_frontier` (only the per-slice protected quant is
+custom; guard KEPT-BF16-OK). **Harness-check PASSED — baseline reproduces the known cert exactly.**
+- BASELINE (all-NVFP4):  raw_top1 **0.9219**, shippable @ coverage **0.8594** (answered 0.9818).
+- PROTECTED (top-8/64 experts/layer bf16 = 12%): raw_top1 **0.9414** (+0.0195), shippable @ coverage **0.9297** (answered 0.9748).
+- **COVERAGE GAIN +0.0703** — nearly HALVES the abstention rate (14%→7%) at NO retrain, still clearing 0.97-answered.
+The base-model probe (+0.0115) UNDERSTATED it; on real v5 it is **+0.0195 raw top1 and +7pt shippable coverage**.
+### Corrected conclusion + recommended shipping config
+Expert-protection is a **meaningful, no-train product lever** (+7pt coverage for 12% expert-param bf16).
+**Recommended: ship v5 + top-8-expert-protection + abstention → answer ~93% of tokens at answered-top1
+~0.975, no retrain.** QAD only to push coverage past ~93%. This is the lever-portfolio methodology's
+payoff: a concrete, verified, no-train win found by measuring, not retraining. canClaimAGI=false.
