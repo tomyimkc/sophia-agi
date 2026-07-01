@@ -1,9 +1,15 @@
-# W3 provenance-weighted training — local take-live (2026-07-01)
+# W3 provenance-weighted training — local take-live (2026-07-01 → strengthened 2026-07-02)
 
-> **candidateOnly:true · level3Evidence:false · canClaimAGI:false · gateMet:false**
-> The `w3-provenance-weighting-not-validated-vs-loo` ledger row **stays Open.** All three gate
-> mechanisms fire strongly on a controlled surface — a strong *candidate*, not a cleared gate.
-> Result + sha256: `w3-provenance-weighted-2026-07-01.candidate.json`.
+> **UPDATE 2026-07-02 — strengthened with TRUE per-example loss weighting; row STAYS OPEN.**
+> A custom MLX loop with genuine per-example weighted next-token CE (loss = Σ wᵢ·CEᵢ / Σ wᵢ,
+> NOT replication) gives **weighted 1.0 vs uniform 0.45–0.55 correct across 2 seeds** (beats the
+> replication proxy 0.95/0.50). Still Open: the "held-out suite" is the SAME 20 invented facts
+> used in training (in-sample memorization of which source won, not held-out generalization),
+> N=20, and influence is a model-free proxy (validated via LOO, not a real TracIn backend).
+> Artifact: `w3-weighted-loss-2026-07-02.candidate.json`.
+
+> **candidateOnly:true · gateMet:false** (original replication run, 2026-07-01). Result + sha256:
+> `w3-provenance-weighted-2026-07-01.candidate.json`.
 
 ## Design (conflicting-provenance, verifier-checkable, decontaminated)
 

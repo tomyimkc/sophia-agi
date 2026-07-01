@@ -1,0 +1,45 @@
+{
+  "schema": "sophia.w3_weighted_loss.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "createdAt": "2026-07-02",
+  "pinnedCommit": "2dcd06861049d9ea3b0dfc800c311030363f0e5a",
+  "baseModel": "Qwen/Qwen2.5-3B-Instruct",
+  "backend": "custom MLX LoRA loop with TRUE per-example weighted next-token CE (loss = sum_i w_i*CE_i / sum_i w_i); NOT replication",
+  "result": {
+    "seed0": {
+      "weighted": {
+        "correct": 1.0,
+        "wrong": 0.0,
+        "other": 0.0
+      },
+      "uniform": {
+        "correct": 0.55,
+        "wrong": 0.45,
+        "other": 0.0
+      },
+      "delta_correct": 0.45
+    },
+    "seed1": {
+      "weighted": {
+        "correct": 1.0,
+        "wrong": 0.0,
+        "other": 0.0
+      },
+      "uniform": {
+        "correct": 0.45,
+        "wrong": 0.55,
+        "other": 0.0
+      },
+      "delta_correct": 0.55
+    },
+    "summary": "weighted correct 1.0 vs uniform 0.45-0.55 (delta +0.45/+0.55) on 2 seeds -- true per-example loss weighting beats the earlier replication proxy (0.95/0.50)."
+  },
+  "gateMet": false,
+  "gateVerdict": "STRENGTHENED but STAYS OPEN. Gate parts (a) weighted>uniform, (b) influence~LOO, (c) no register collapse all hold on the controlled conflict. BUT the 'held-out suite' is the SAME 20 invented facts used in training (in-sample memorization of which SOURCE won, NOT held-out generalization to unseen facts); N=20; influence validated via LOO only (model-free proxy, not a real TracIn/influence-function backend). Provenance-weighting cannot show held-out generalization via fact-memorization, so this direction needs a task where the weighting PATTERN transfers to unseen items.",
+  "artifacts": {
+    "w3v2_weighted.json": "eebc07adaafe2a527701cf89f69778da61956f945d733e8d9680ea5227a56589",
+    "w3_v2_weighted.py": "16fbb31d41057fef76d384b4b9d490bba29c3906742d48d0a7a7584daa7a6fc6"
+  }
+}

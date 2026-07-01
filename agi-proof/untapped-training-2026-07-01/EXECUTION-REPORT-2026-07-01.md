@@ -67,6 +67,8 @@ PYTHONPATH=. venv312/bin/python tools/distill_process_reward_model.py \
 > register collapse** (diversity 1.0). But it's a controlled synthetic in-sample surface
 > (N=20, single seed, replication-as-weighting) → strong candidate, **w3 row stays Open**.
 > Detail + checksums: `agi-proof/benchmark-results/w3-provenance-weighted/`.
+>
+> **v2 (2026-07-02): strengthened, still Open.** True per-example weighted-loss (not replication) → weighted 1.0 vs uniform 0.45–0.55 across 2 seeds; eval is in-sample (no held-out generalization) so row stays Open.
 
 **Wired/run (offline, exact command):**
 ```
@@ -87,6 +89,12 @@ PYTHONPATH=. venv312/bin/python tools/provenance_weighted_training.py \
 > **fixed** prompt pool (not adaptive), so proposer-novelty isn't genuinely tested. Strong
 > candidate, **w4 row stays Open.** Detail + checksums:
 > `agi-proof/benchmark-results/w4-adversarial-selfplay/`.
+>
+> **v2 (2026-07-02): GATE MET (scoped).** A MIXED objective (abstain-on-unanswerable +
+> answer-correctly-on-answerable) + adaptive proposer → held-out fabrication 0.375→0.0 across 3
+> rounds, **answerable accuracy stays 1.0 (over-abstention FIXED)**, proposer novelty 0.75–1.0.
+> Row flipped **MET-SCOPED** (controlled surface, single run). Close artifact:
+> `.../w4-adversarial-selfplay-CLOSE-2026-07-02.json`.
 
 **Wired/run — offline (exact command):**
 ```
