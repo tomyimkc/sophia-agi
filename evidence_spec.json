@@ -1,0 +1,88 @@
+{
+  "specId": "evidence-spec-contract-v1",
+  "status": "active",
+  "canClaimAGI": false,
+  "purpose": "Declare, per evidence TYPE, the MINIMUM structural bar a record must meet before its claimed authorConfidence is admissible. This is the machine-checkable form of 'no claim beyond what the evidence licenses': a page/attribution may not carry a confidence rank higher than what its typed, independence-checked, recency-bounded evidence supports. Conservative by construction: when in doubt, the ceiling is LOWER, not higher.",
+  "confidenceModel": "min-over-chain: a derived confidence is the WEAKEST link in the evidence chain, capped by the per-type confidenceCeiling. Ranks are okf.schema.CONFIDENCE_RANK. A single strong citation can never launder a chain that contains a weak (legendary/disputed/anachronism_risk) link.",
+  "independenceModel": "N nominally-distinct sources that share one 'origin' collapse to effectiveIndependentCount=1 (illusory corroboration). Corroboration floors are checked against the EFFECTIVE independent count, not the raw source count.",
+  "rankVocabulary": {
+    "note": "authorConfidence values ranked by okf.schema.CONFIDENCE_RANK (higher == stronger).",
+    "none_extant": 0,
+    "anachronism_risk": 0,
+    "legendary": 1,
+    "disputed": 1,
+    "compiled": 2,
+    "layered": 2,
+    "attributed": 3,
+    "consensus": 4
+  },
+  "evidenceTypes": {
+    "citation": {
+      "description": "A textual/documentary citation to a source (manuscript, edition, attributions.json record). The workhorse evidence type for the wiki.",
+      "minIndependentSources": 1,
+      "maxAgeDays": null,
+      "requiredCorroboration": 1,
+      "confidenceCeiling": "attributed",
+      "rationale": "A single well-formed citation licenses at most 'attributed'. 'consensus' requires independent corroboration and is not reachable from one citation alone (see requiredCorroboration on consensus)."
+    },
+    "formal-proof": {
+      "description": "A machine- or hand-checked formal derivation (proof term, verifier trace). Timeless: a valid proof does not stale.",
+      "minIndependentSources": 1,
+      "maxAgeDays": null,
+      "requiredCorroboration": 1,
+      "confidenceCeiling": "consensus",
+      "rationale": "A checkable proof is the strongest evidence type; one independently checkable proof can license 'consensus'. But a proof MISSING its checker artifact degrades to a bare 'attributed' assertion (enforced by the loader: no origin/checker -> capped)."
+    },
+    "experimental": {
+      "description": "An empirical measurement / experiment with a reported result. Stales: methods and instruments drift, replications matter.",
+      "minIndependentSources": 2,
+      "maxAgeDays": 3650,
+      "requiredCorroboration": 2,
+      "confidenceCeiling": "consensus",
+      "rationale": "One experiment is a datum, not a fact. 'consensus' needs >=2 INDEPENDENT replications (distinct origins). A stale single experiment (>10y, no replication) is capped low. Prevents single-study over-reading (the M3 lesson at corpus scale)."
+    },
+    "verifier-pass": {
+      "description": "A deterministic in-repo verifier/gate GO receipt (e.g. claim_gate). Stales quickly: code and specs move under it.",
+      "minIndependentSources": 1,
+      "maxAgeDays": 365,
+      "requiredCorroboration": 1,
+      "confidenceCeiling": "attributed",
+      "rationale": "A GO receipt licenses 'attributed' for at most a year (the spec/instrument can drift). It NEVER licenses 'consensus' on its own — a passing gate is one construct, and one construct is not a claim (measurement-thesis Pillar 5)."
+    },
+    "witness-testimony": {
+      "description": "Attested testimony / reported speech (a witness, a doxographer, a reception). Inherently weak provenance.",
+      "minIndependentSources": 2,
+      "maxAgeDays": null,
+      "requiredCorroboration": 2,
+      "confidenceCeiling": "compiled",
+      "rationale": "Testimony caps at 'compiled' even with corroboration; a single uncorroborated witness caps at 'legendary'. This is where illusory-corroboration attacks concentrate (N retellings of one origin), so independence is checked hard here."
+    },
+    "consensus": {
+      "description": "A claimed scholarly/scientific consensus. The highest ceiling, so it carries the strictest bar.",
+      "minIndependentSources": 3,
+      "maxAgeDays": 5475,
+      "requiredCorroboration": 3,
+      "confidenceCeiling": "consensus",
+      "rationale": "To claim 'consensus' you must show >=3 INDEPENDENT origins agreeing and recency within 15y. Fewer independent origins, or all collapsing to one origin, downgrades to the corroboration actually present. This is the single most abused label and the primary confidence-inflation target."
+    }
+  },
+  "corroborationFloorByRank": {
+    "note": "The minimum EFFECTIVE independent origin count required to license each target rank, regardless of evidence type. A record whose effectiveIndependentCount is below the floor for its claimed rank is DOWNGRADED (fail-closed).",
+    "none_extant": 0,
+    "anachronism_risk": 0,
+    "legendary": 1,
+    "disputed": 1,
+    "compiled": 1,
+    "layered": 1,
+    "attributed": 1,
+    "consensus": 3
+  },
+  "recencyPolicy": {
+    "note": "maxAgeDays is measured from a source's 'observedDate' (ISO-8601) to the audit 'asOf' date. A source with no observedDate is treated as UNKNOWN-AGE and, for a staling type, does NOT count toward the recency-bounded corroboration (fail-closed). Timeless types (maxAgeDays null) ignore recency."
+  },
+  "honestLimits": [
+    "This contract bounds STRUCTURE (source count, independence, recency, type ceiling), not truth. Clearing it is necessary, not sufficient — it cannot detect a plausible-but-false single well-formed citation.",
+    "The illusory-corroboration graph collapses sources by an explicit 'origin' field; it cannot infer hidden shared provenance that the data does not declare. Undeclared shared origins are out of scope.",
+    "Ceilings are deliberately conservative; a legitimately strong claim may be under-credited. That is the intended fail-closed direction (under-claim, never over-claim)."
+  ]
+}
