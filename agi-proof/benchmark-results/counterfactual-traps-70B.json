@@ -1,0 +1,38 @@
+{
+  "n_pairs": 5,
+  "intervention_consistency": 1.0,
+  "consistent": 5,
+  "rows": [
+    {
+      "edit": "future->past year",
+      "abstain_trap": true,
+      "abstain_knowable": false,
+      "consistent": true
+    },
+    {
+      "edit": "fictional->real place",
+      "abstain_trap": true,
+      "abstain_knowable": false,
+      "consistent": true
+    },
+    {
+      "edit": "fictional->real planet",
+      "abstain_trap": true,
+      "abstain_knowable": false,
+      "consistent": true
+    },
+    {
+      "edit": "unfalsifiable->knowable",
+      "abstain_trap": true,
+      "abstain_knowable": false,
+      "consistent": true
+    },
+    {
+      "edit": "future->past event",
+      "abstain_trap": true,
+      "abstain_knowable": false,
+      "consistent": true
+    }
+  ],
+  "note": "high => the gate causally tracks knowability (world model); low => surface pattern."
+}

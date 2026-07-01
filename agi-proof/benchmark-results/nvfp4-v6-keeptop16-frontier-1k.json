@@ -1,0 +1,139 @@
+{
+  "passed": false,
+  "mean_kl": 0.03385,
+  "top1_agreement": 0.943359,
+  "protected_max_kl": 0.652264,
+  "protected_min_agreement": 0.943359,
+  "mem_ratio": 2.1268,
+  "n_eval": 1024,
+  "reasons": [
+    "top1_agreement 0.9434 < 0.97",
+    "protected_max_kl 0.6523 > 0.1",
+    "protected_min_agreement 0.9434 < 0.95"
+  ],
+  "device": "cuda",
+  "scheme": "nvfp4",
+  "keep_top_experts": 16,
+  "base_model": "allenai/OLMoE-1B-7B-0924-Instruct",
+  "adapter": "/home/tomyimkc/sophia-bridge/training/lora/checkpoints/olmoe-qat-spark-v6",
+  "lora_load": "peft.merge_and_unload",
+  "lora_modules_merged": null,
+  "lora_modules_skipped": null,
+  "lora_skipped_detail": [],
+  "incomplete_merge": false,
+  "merge_warnings": [],
+  "abstention": {
+    "raw_top1": 0.9434,
+    "answered_top1": 0.9418,
+    "coverage": 0.9727,
+    "abstained": 0.0273,
+    "target_answered_agreement": 0.98,
+    "meets_target_on_answered": false,
+    "nonconformity_threshold": 0.9777,
+    "n_calib": 512,
+    "n_test": 512,
+    "alpha": 0.02,
+    "note": "answered_top1 is MEASURED on a held-out split (selective accuracy), not a proven per-token guarantee. Serve-time signal (quant top1-top2 margin) needs no FP model."
+  },
+  "abstention_frontier": {
+    "raw_top1": 0.9434,
+    "target_answered": 0.97,
+    "shippable_operating_point": {
+      "calib_quantile": 0.9,
+      "threshold": 0.9038,
+      "coverage": 0.8691,
+      "answered_top1": 0.982
+    },
+    "shippable": true,
+    "frontier": [
+      {
+        "calib_quantile": 1.0,
+        "threshold": 1.0,
+        "coverage": 1.0,
+        "answered_top1": 0.9336
+      },
+      {
+        "calib_quantile": 0.95,
+        "threshold": 0.9448,
+        "coverage": 0.9297,
+        "answered_top1": 0.9643
+      },
+      {
+        "calib_quantile": 0.9,
+        "threshold": 0.9038,
+        "coverage": 0.8691,
+        "answered_top1": 0.982
+      },
+      {
+        "calib_quantile": 0.85,
+        "threshold": 0.8124,
+        "coverage": 0.7969,
+        "answered_top1": 0.9902
+      },
+      {
+        "calib_quantile": 0.8,
+        "threshold": 0.7287,
+        "coverage": 0.7422,
+        "answered_top1": 0.9921
+      },
+      {
+        "calib_quantile": 0.75,
+        "threshold": 0.6728,
+        "coverage": 0.7031,
+        "answered_top1": 0.9944
+      },
+      {
+        "calib_quantile": 0.7,
+        "threshold": 0.5776,
+        "coverage": 0.6426,
+        "answered_top1": 0.997
+      },
+      {
+        "calib_quantile": 0.65,
+        "threshold": 0.4751,
+        "coverage": 0.5898,
+        "answered_top1": 0.9967
+      },
+      {
+        "calib_quantile": 0.6,
+        "threshold": 0.3914,
+        "coverage": 0.5371,
+        "answered_top1": 0.9964
+      },
+      {
+        "calib_quantile": 0.55,
+        "threshold": 0.2914,
+        "coverage": 0.4746,
+        "answered_top1": 0.9959
+      },
+      {
+        "calib_quantile": 0.5,
+        "threshold": 0.1706,
+        "coverage": 0.3945,
+        "answered_top1": 1.0
+      }
+    ],
+    "n_calib": 512,
+    "n_test": 512,
+    "note": "best = max-coverage point whose out-of-sample answered_top1 >= target. If None, the quant top1-top2 margin does not separate the argmax-flips well enough -> abstention cannot rescue this model; the recipe fix (v6) is the path. Measured, not guaranteed."
+  },
+  "per_tensor_mem_ratio": 3.5556,
+  "quantized_modules": 96,
+  "quantized_params": 5100273664,
+  "kept_params": 1818888192,
+  "total_model_params": 6919161856,
+  "quantized_fraction": 0.7371,
+  "coverage_warning": null,
+  "n_calib_rows": 439,
+  "keep_suffixes": [],
+  "served_suffixes": [
+    "q_proj",
+    "k_proj",
+    "v_proj",
+    "o_proj",
+    "gate_proj",
+    "up_proj",
+    "down_proj",
+    "gate_up_proj"
+  ]
+}
