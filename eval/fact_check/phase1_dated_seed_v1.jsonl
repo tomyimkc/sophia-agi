@@ -1,0 +1,36 @@
+# sophia realtime C1 Phase-1 DATED-QA SEED v1 (candidateOnly:true, level3Evidence:false)
+# A SEED toward the pre-registered powered pack (N>=393; eval_stats.required_n_for_mde(0.10)).
+# NOT the powered pack. Every item carries sourceTimestamp/validFrom (+ validUntil where finite)
+# so the Phase-1 online run exercises temporal_decontam + valid_time. All sources here are <=
+# the 2026-07-01 eval cutoff and valid at as_of=2026-07-01 (the seed is temporally CLEAN by
+# construction); the temporal-leakage / stale-fact rejection paths are unit-tested directly in
+# tests/test_phase1_dated_seed.py, not embedded as mislabeled pack items. Facts are stable and
+# hand-authored (same spirit as heldout_v1), not synthesized-to-inflate-N.
+{"id": "t_math_001", "claim": "144 / 12 = 12", "label": "true", "type": "math", "risk": "normal", "sourceTimestamp": "2020-01-15", "validFrom": "0001-01-01"}
+{"id": "t_math_002", "claim": "13 * 13 = 169", "label": "true", "type": "math", "risk": "normal", "sourceTimestamp": "2020-01-15", "validFrom": "0001-01-01"}
+{"id": "t_math_003", "claim": "2 ^ 10 = 1024", "label": "true", "type": "math", "risk": "normal", "sourceTimestamp": "2020-01-15", "validFrom": "0001-01-01"}
+{"id": "t_date_001", "claim": "The Berlin Wall fell in 1989", "label": "true", "type": "date_temporal", "risk": "normal", "sourceTimestamp": "2015-03-01", "validFrom": "1989-11-09"}
+{"id": "t_date_002", "claim": "The Second World War ended in 1945", "label": "true", "type": "date_temporal", "risk": "normal", "sourceTimestamp": "2016-06-01", "validFrom": "1945-09-02"}
+{"id": "t_date_003", "claim": "The first crewed Moon landing occurred in 1969", "label": "true", "type": "date_temporal", "risk": "normal", "sourceTimestamp": "2019-07-20", "validFrom": "1969-07-20"}
+{"id": "t_date_004", "claim": "The euro was introduced as an accounting currency in 1999", "label": "true", "type": "date_temporal", "risk": "normal", "sourceTimestamp": "2018-01-01", "validFrom": "1999-01-01"}
+{"id": "t_auth_001", "claim": "Charles Darwin authored On the Origin of Species", "label": "true", "type": "authorship_external", "risk": "normal", "sourceTimestamp": "2017-05-10", "validFrom": "1859-11-24"}
+{"id": "t_auth_002", "claim": "George Orwell authored Nineteen Eighty-Four", "label": "true", "type": "authorship_external", "risk": "normal", "sourceTimestamp": "2017-05-10", "validFrom": "1949-06-08"}
+{"id": "t_auth_003", "claim": "Leo Tolstoy authored War and Peace", "label": "true", "type": "authorship_external", "risk": "normal", "sourceTimestamp": "2017-05-10", "validFrom": "1869-01-01"}
+{"id": "t_sci_001", "claim": "Water freezes at 0 degrees Celsius at standard atmospheric pressure", "label": "true", "type": "date_temporal", "risk": "normal", "sourceTimestamp": "2018-09-01", "validFrom": "0001-01-01"}
+{"id": "t_sci_002", "claim": "The speed of light in vacuum is 299792458 metres per second", "label": "true", "type": "date_temporal", "risk": "normal", "sourceTimestamp": "2019-11-01", "validFrom": "1983-01-01"}
+{"id": "f_math_001", "claim": "144 / 12 = 13", "label": "false", "type": "math", "risk": "normal", "sourceTimestamp": "2020-01-15", "validFrom": "0001-01-01"}
+{"id": "f_math_002", "claim": "13 * 13 = 170", "label": "false", "type": "math", "risk": "normal", "sourceTimestamp": "2020-01-15", "validFrom": "0001-01-01"}
+{"id": "f_math_003", "claim": "2 ^ 10 = 1000", "label": "false", "type": "math", "risk": "normal", "sourceTimestamp": "2020-01-15", "validFrom": "0001-01-01"}
+{"id": "f_date_001", "claim": "The Berlin Wall fell in 1991", "label": "false", "type": "date_temporal", "risk": "normal", "sourceTimestamp": "2015-03-01", "validFrom": "0001-01-01"}
+{"id": "f_date_002", "claim": "The Second World War ended in 1946", "label": "false", "type": "date_temporal", "risk": "normal", "sourceTimestamp": "2016-06-01", "validFrom": "0001-01-01"}
+{"id": "f_auth_001", "claim": "Isaac Newton authored On the Origin of Species", "label": "false", "type": "authorship_external", "risk": "normal", "sourceTimestamp": "2017-05-10", "validFrom": "0001-01-01"}
+{"id": "f_auth_002", "claim": "Charles Dickens authored War and Peace", "label": "false", "type": "authorship_external", "risk": "normal", "sourceTimestamp": "2017-05-10", "validFrom": "0001-01-01"}
+{"id": "f_doi_001", "claim": "The DOI 10.5555/sophia-not-a-real-doi-2026 resolves to a peer-reviewed article", "label": "false", "type": "doi", "risk": "normal", "sourceTimestamp": "2026-01-10", "validFrom": "0001-01-01"}
+{"id": "f_doi_002", "claim": "The DOI 10.9999/fabricated-citation-xyz is registered with Crossref", "label": "false", "type": "doi", "risk": "high", "sourceTimestamp": "2026-01-10", "validFrom": "0001-01-01"}
+{"id": "f_sci_001", "claim": "Water freezes at 10 degrees Celsius at standard atmospheric pressure", "label": "false", "type": "date_temporal", "risk": "normal", "sourceTimestamp": "2018-09-01", "validFrom": "0001-01-01"}
+{"id": "u_open_001", "claim": "An unpublished internal Sophia Lab memo was circulated privately on 2026-06-15", "label": "unknowable", "type": "open_empirical", "risk": "high", "sourceTimestamp": "2026-06-20", "validFrom": "2026-06-15"}
+{"id": "u_open_002", "claim": "A private RunPod job produced an unshared benchmark score yesterday", "label": "unknowable", "type": "open_empirical", "risk": "high", "sourceTimestamp": "2026-06-30", "validFrom": "2026-06-30"}
+{"id": "u_open_003", "claim": "The next unreleased model checkpoint contains exactly 41 hidden eval items", "label": "unknowable", "type": "open_empirical", "risk": "high", "sourceTimestamp": "2026-06-01", "validFrom": "2026-06-01"}
+{"id": "u_open_004", "claim": "A confidential contract was signed by two unnamed parties in Q2 2026", "label": "unknowable", "type": "open_empirical", "risk": "normal", "sourceTimestamp": "2026-06-01", "validFrom": "2026-04-01"}
+{"id": "u_open_005", "claim": "An internal ablation privately changed its random seed last week", "label": "unknowable", "type": "open_empirical", "risk": "normal", "sourceTimestamp": "2026-06-25", "validFrom": "2026-06-24"}
+{"id": "u_open_006", "claim": "A withheld dataset shard holds a document dated 2026-06-28", "label": "unknowable", "type": "open_empirical", "risk": "normal", "sourceTimestamp": "2026-06-29", "validFrom": "2026-06-28"}

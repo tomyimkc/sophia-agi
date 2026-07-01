@@ -1,0 +1,37 @@
+{
+  "experimentId": "realtime-grounding-c1-phase1-online",
+  "status": "not_run",
+  "verdict": "NO-GO",
+  "go": false,
+  "canClaimAGI": false,
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "headline": "PENDING — Phase-1 online C1 run not performed; dated seed committed, powered pack + live backend not run",
+  "generatedAt": "2026-07-01T00:00:00+00:00",
+  "harness": "tools/run_realtime_benchmark.py --online (keyless LiveFactBackend)",
+  "preregistration": "data/realtime/benchmark/measurement_spec.json",
+  "seedPack": "eval/fact_check/phase1_dated_seed_v1.jsonl",
+  "seedStats": {"n": 28, "true": 12, "false": 10, "unknowable": 6, "temporallyCleanVsCutoff": "2026-07-01"},
+  "poweredTarget": {
+    "requiredNForMDE_0_10": 393,
+    "source": "tools/eval_stats.required_n_for_mde(0.10) at the default conservative paired_rho=0.0",
+    "note": "The committed measurement_spec brackets the paired requirement up to ~785 at rho=0; grow the pack to clear whichever the spec pins before any GO. 28 is a SEED, ~7% of 393 — nowhere near powered."
+  },
+  "arms": {
+    "accept_all": {"reason": "requires the live run", "status": "not_run"},
+    "raw_rag": {"reason": "requires the live run", "status": "not_run"},
+    "verdict_only": {"reason": "requires the live run", "status": "not_run"},
+    "gated": {"reason": "requires the live run", "status": "not_run"},
+    "full": {"reason": "requires the live run", "status": "not_run"}
+  },
+  "results": null,
+  "criticalFailures": [
+    "not_run: no --online LiveFactBackend run has been performed",
+    "underpowered_seed: N=28 seed << 393; MDE@28 far exceeds the 0.10 practical threshold, so no arm delta would be a direction even if run",
+    "no_2family_judge: Phase-1 promotion needs >=2 INDEPENDENT LLM-judge families (judge != the verifier) with kappa>=0.40; not run",
+    "backend_not_asserted_live: a run must assert the backend is the real LiveFactBackend, never a mock (mock .generate() fabricates with ok=True)"
+  ],
+  "note": "Intentionally PENDING, following the okf-multihop precedent. The dated SEED (eval/fact_check/phase1_dated_seed_v1.jsonl) is genuinely hand-authored stable facts with sourceTimestamp/validFrom so the online run can exercise temporal_decontam + valid_time; it is temporally clean vs the 2026-07-01 cutoff (tests/test_phase1_dated_seed.py). It is NOT the powered pack and NOT a result. Promotion follows data/realtime/benchmark/measurement_spec.json: grow the pack to N>=393 with real dated live sources (do NOT synthesize to inflate N), run --online against a frozen snapshot with the LiveFactBackend (assert kind!=mock), report precision/recall/fabricationRate with 95% CIs, extend decontam to time, add >=2 independent judge families, and gate any slow-loop LoRA delta through claim_gate before merge. canClaimAGI stays false. See realtime-grounding-loop-candidate-only-2026-07-01 in agi-proof/failure-ledger.md.",
+  "ledgerRef": "realtime-grounding-loop-candidate-only-2026-07-01"
+}
