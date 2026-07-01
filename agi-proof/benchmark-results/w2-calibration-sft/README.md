@@ -1,14 +1,13 @@
 # W2 calibration-SFT — local-MLX take-live (2026-07-01 pilot → 2026-07-02 gate MET-scoped)
 
-> **UPDATE 2026-07-02 — GATE MET (SCOPED).** On a **decontaminated** held-out (N=195,
-> sympy-checkable), **all 3 seeds** lower ECE (base 0.231 → 0.060/0.083/0.058) with every
-> per-seed ΔECE 95% CI **excluding 0**, at matched-or-better accuracy and **accuracy-at-coverage
-> 0.79 → 0.98/0.99/0.99** (no hedging collapse), one pinned commit. This satisfies the w2 gate
-> text. **SCOPE: controlled verifier-checkable MATH surface, type-level confidence via
-> calibration-SFT — NOT general calibration, NOT level3Evidence, NOT canClaimAGI.** The
-> remaining generality step is a broader non-math surface. Close artifact + sha256:
-> `w2-calibration-sft-CLOSE-2026-07-02.json`. The original N=80 pilot (below) stands as the
-> first-pass evidence.
+> **UPDATE 2026-07-02 — gate CONDITIONS met on the math surface; recorded as CANDIDATE, row
+> stays OPEN** (per the no-overclaim contract — not promoted without maintainer sign-off + a
+> broader surface). On a **decontaminated** held-out (N=195, sympy-checkable), **all 3 seeds**
+> lower ECE (base 0.231 → 0.060/0.083/0.058) with every per-seed ΔECE 95% CI **excluding 0**, at
+> matched-or-better accuracy and **accuracy-at-coverage 0.79 → 0.98/0.99/0.99** (no hedging
+> collapse), one pinned commit. **SCOPE: controlled verifier-checkable MATH surface, type-level
+> confidence via calibration-SFT — NOT general calibration, NOT level3Evidence, NOT canClaimAGI.**
+> Artifact + sha256: `w2-calibration-sft-CLOSE-2026-07-02.json` (`promotedToLedger:false`).
 
 > **candidateOnly:true · level3Evidence:false · canClaimAGI:false** (original pilot, 2026-07-01;
 > N=80, seed-1 CI included 0). Machine-readable result + sha256:

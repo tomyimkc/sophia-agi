@@ -1,6 +1,6 @@
 {
   "schema": "sophia.w4v2_selfplay_close.v1",
-  "candidateOnly": false,
+  "candidateOnly": true,
   "level3Evidence": false,
   "canClaimAGI": false,
   "createdAt": "2026-07-02",
@@ -35,5 +35,7 @@
   "artifacts": {
     "w4v2_live.json": "86e49e5bc4b5a0e190523f2f5c671abf5c277d52f60a3c8a88a85e9ededf4b9f",
     "w4_v2_selfplay.py": "0cbdb5a42e99618feb266cd0969522cc68e0d548b6a1b9469d3aac7f29dc90da"
-  }
+  },
+  "promotedToLedger": false,
+  "promotionNote": "Gate conditions met on the controlled surface, but recorded as CANDIDATE (ledger row stays OPEN) per the no-overclaim contract \u2014 awaiting maintainer sign-off + seeds/harder guardrail."
 }

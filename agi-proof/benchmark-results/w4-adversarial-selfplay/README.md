@@ -1,12 +1,13 @@
 # W4 adversarial gate self-play — local multi-round (2026-07-01 → v2 gate MET-scoped 2026-07-02)
 
-> **UPDATE 2026-07-02 — GATE MET (SCOPED), v2 fixes the over-abstention.** With a **mixed
-> objective** (abstain-on-unanswerable **+** answer-correctly-on-answerable) + an **adaptive
-> proposer**: held-out fabrication **0.375 → 0.0** across 3 rounds, **answerable accuracy stays
-> 1.0** (v1 over-abstained 2/5 — fixed), **proposer novelty 0.75–1.0** (above floor). Satisfies
-> the gate text. **SCOPE: controlled made-up-fact surface, single run — NOT level3Evidence, NOT
-> canClaimAGI.** Close artifact: `w4-adversarial-selfplay-CLOSE-2026-07-02.json`. The v1 result
-> (below) documents the original over-abstention flaw this fixes.
+> **UPDATE 2026-07-02 — gate CONDITIONS met; recorded as CANDIDATE, row stays OPEN** (per the
+> no-overclaim contract — not promoted without sign-off + seeds/harder guardrail). v2 fixes the
+> over-abstention: with a **mixed objective** (abstain-on-unanswerable **+** answer-correctly-on-
+> answerable) + an **adaptive proposer**, held-out fabrication **0.375 → 0.0** across 3 rounds,
+> **answerable accuracy stays 1.0** (v1 over-abstained 2/5 — fixed), **proposer novelty 0.75–1.0**
+> (above floor). **SCOPE: controlled made-up-fact surface, single run — NOT level3Evidence, NOT
+> canClaimAGI.** Artifact: `w4-adversarial-selfplay-CLOSE-2026-07-02.json` (`promotedToLedger:false`).
+> The v1 result (below) documents the original over-abstention flaw this fixes.
 
 > **candidateOnly:true** (original v1, 2026-07-01; over-abstained 2/5, fixed proposer). Result +
 > sha256: `w4-adversarial-selfplay-2026-07-01.candidate.json`.

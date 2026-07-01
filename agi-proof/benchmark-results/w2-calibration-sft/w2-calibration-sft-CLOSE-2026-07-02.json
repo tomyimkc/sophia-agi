@@ -1,6 +1,6 @@
 {
   "schema": "sophia.w2_calibration_sft_close.v1",
-  "candidateOnly": false,
+  "candidateOnly": true,
   "level3Evidence": false,
   "canClaimAGI": false,
   "createdAt": "2026-07-02",
@@ -50,5 +50,7 @@
     "adapter_eval_seed2_L.jsonl": "cab7e6e834d7e5918109634549e8f75f2bef0a3bdb8787760b4058a895521971",
     "w2_close_result.json": "5518a3229935ebcde17d735ad805192a95f4c3b10a49187c02a530fe35f60bdb",
     "w2_calib_pilot.py": "372c699fa3cce6759059ad76e8acb6dba685433b40b0cc6c6c4e092af123eac5"
-  }
+  },
+  "promotedToLedger": false,
+  "promotionNote": "Gate conditions met on the controlled math surface, but recorded as CANDIDATE (ledger row stays OPEN) per the no-overclaim contract \u2014 awaiting maintainer sign-off + a broader non-math surface."
 }

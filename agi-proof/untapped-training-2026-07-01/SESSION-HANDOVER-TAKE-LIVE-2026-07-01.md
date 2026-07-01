@@ -5,14 +5,17 @@
 > live gates landed as **candidates / one clean Goodhart negative**, honestly not flipped.
 > Branch `feat/agi-proof-candidate-tools` (`b07e2b9b..601d3d15`).
 
-> **Round 3 (2026-07-02): gate-closing next steps implemented for all five. TWO gates now
-> cleared (scoped): W2 + W4.**
-> - **W2 → MET-SCOPED** (commit `e21831dc`): larger run (decontaminated held-out N=195, **3
->   seeds**) — every ΔECE 95% CI excludes 0, accuracy-at-coverage 0.79→0.99. Row flipped
->   Open→MET-SCOPED (controlled math surface).
-> - **W4 → MET-SCOPED** (commit `520809a9`): v2 MIXED objective (abstain-on-unanswerable +
+> **Round 3 (2026-07-02): gate-closing next steps implemented for all five. All five rows
+> REMAIN OPEN** — W2 and W4 met their gate conditions on controlled surfaces but are recorded as
+> **candidates (not promoted)** per the no-overclaim contract (maintainer sign-off required for
+> any claim-status flip; the user chose to keep them Open).
+> - **W2 — candidate, Open** (commit `e21831dc`): larger run (decontaminated held-out N=195, **3
+>   seeds**) — every ΔECE 95% CI excludes 0, accuracy-at-coverage 0.79→0.99 (controlled math
+>   surface). Gate conditions met; promotion pending a broader non-math surface + sign-off.
+> - **W4 — candidate, Open** (commit `520809a9`): v2 MIXED objective (abstain-on-unanswerable +
 >   answer-correctly-on-answerable) + adaptive proposer FIXES the over-abstention — fabrication
->   0.375→0.0, answerable acc stays 1.0, novelty 0.75–1.0. Row flipped Open→MET-SCOPED.
+>   0.375→0.0, answerable acc stays 1.0, novelty 0.75–1.0. Gate conditions met; promotion pending
+>   seeds/harder guardrail + sign-off.
 > - **W3 strengthened, still Open** (commit `520809a9`): true per-example weighted-loss (custom
 >   loop, not replication) → weighted 1.0 vs uniform 0.45–0.55, 2 seeds. Eval is in-sample (no
 >   held-out generalization) → Open.

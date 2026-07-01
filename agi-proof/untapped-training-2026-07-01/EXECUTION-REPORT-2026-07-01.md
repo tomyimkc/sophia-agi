@@ -90,11 +90,11 @@ PYTHONPATH=. venv312/bin/python tools/provenance_weighted_training.py \
 > candidate, **w4 row stays Open.** Detail + checksums:
 > `agi-proof/benchmark-results/w4-adversarial-selfplay/`.
 >
-> **v2 (2026-07-02): GATE MET (scoped).** A MIXED objective (abstain-on-unanswerable +
-> answer-correctly-on-answerable) + adaptive proposer → held-out fabrication 0.375→0.0 across 3
-> rounds, **answerable accuracy stays 1.0 (over-abstention FIXED)**, proposer novelty 0.75–1.0.
-> Row flipped **MET-SCOPED** (controlled surface, single run). Close artifact:
-> `.../w4-adversarial-selfplay-CLOSE-2026-07-02.json`.
+> **v2 (2026-07-02): gate CONDITIONS met, recorded as CANDIDATE (row stays Open).** A MIXED
+> objective (abstain-on-unanswerable + answer-correctly-on-answerable) + adaptive proposer →
+> held-out fabrication 0.375→0.0 across 3 rounds, **answerable accuracy stays 1.0
+> (over-abstention FIXED)**, proposer novelty 0.75–1.0. Not promoted (no-overclaim contract;
+> user chose Open). Artifact: `.../w4-adversarial-selfplay-CLOSE-2026-07-02.json`.
 
 **Wired/run — offline (exact command):**
 ```
