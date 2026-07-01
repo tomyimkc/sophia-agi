@@ -19,6 +19,7 @@ for p in (ROOT, ROOT / "tools"):
 
 SEED = ROOT / "eval" / "fact_check" / "phase1_dated_seed_v1.jsonl"
 BATCH = ROOT / "eval" / "fact_check" / "phase1_dated_batch_v2.jsonl"
+BATCHES = sorted((ROOT / "eval" / "fact_check").glob("phase1_dated_batch_v*.jsonl"))
 
 
 def test_validator_offline_invariants():
@@ -27,19 +28,20 @@ def test_validator_offline_invariants():
     assert ok, d["checks"]
 
 
-def test_batch_v2_is_valid_and_sourced():
+def test_all_batches_are_valid_and_sourced():
     import validate_dated_pack
-    ok, d = validate_dated_pack.validate([BATCH], require_source=True)
+    # every batch (v2, v3, …) must pass with provenance required
+    ok, d = validate_dated_pack.validate(BATCHES, require_source=True)
     assert ok, d["errors"]
-    assert d["total"] == 30
-    # honest label mix (real true/false/unknowable spread)
+    assert d["total"] >= 30
+    # honest label mix across the batches (real true/false/unknowable spread)
     assert d["mix"]["true"] >= 10 and d["mix"]["false"] >= 8 and d["mix"]["unknowable"] >= 4, d["mix"]
 
 
 def test_seed_plus_batch_no_id_collision_and_still_underpowered():
     import validate_dated_pack
     # seed v1 predates the `source` field -> validate the union without requiring it
-    ok, d = validate_dated_pack.validate([SEED, BATCH], require_source=False)
+    ok, d = validate_dated_pack.validate([SEED, *BATCHES], require_source=False)
     assert ok, d["errors"]
     assert d["unique_ids"] == d["total"], "id collision between seed and batch"
     # the pack must STILL be underpowered — no GO is permissible below N=393

@@ -18,17 +18,18 @@
     "false": 10,
     "unknowable": 6,
     "temporallyCleanVsCutoff": "2026-07-01",
-    "n_total_curated": 58,
+    "n_total_curated": 88,
     "batches": [
-      "eval/fact_check/phase1_dated_seed_v1.jsonl (n=28)",
-      "eval/fact_check/phase1_dated_batch_v2.jsonl (n=30, real sourced, verified 2026-07-01)"
+      "phase1_dated_seed_v1.jsonl (n=28)",
+      "phase1_dated_batch_v2.jsonl (n=30)",
+      "phase1_dated_batch_v3.jsonl (n=30)"
     ]
   },
   "poweredTarget": {
     "requiredNForMDE_0_10": 393,
     "source": "tools/eval_stats.required_n_for_mde(0.10) at the default conservative paired_rho=0.0",
     "note": "The committed measurement_spec brackets the paired requirement up to ~785 at rho=0; grow the pack to clear whichever the spec pins before any GO. 28 is a SEED, ~7% of 393 \u2014 nowhere near powered.",
-    "progress": "58/393 curated (15%). Batch v2 adds 30 REAL sourced dated facts (no synthesis), each with a `source` provenance field, validated by tools/validate_dated_pack.py (temporal_decontam + valid_time + provenance). Still underpowered; NOT a GO."
+    "progress": "88/393 curated (22%). Batches v2+v3 add 60 REAL sourced dated facts (no synthesis), each with a `source` field, all passing tools/validate_dated_pack.py. Still underpowered; NOT a GO."
   },
   "arms": {
     "accept_all": {
