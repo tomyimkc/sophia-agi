@@ -121,7 +121,8 @@ def run(records: list[dict[str, Any]], *, dim: int = oc.EMBED_DIM_DEFAULT, k_min
         "schema": "sophia.adaptive_compute.v1",
         "candidateOnly": True, "level3Evidence": False, "canClaimAGI": False,
         "n": len(rows), "fixedK": fixed_k,
-        "hashEmbedSeam": True,
+        "hashEmbedSeam": oc.active_embed_backend().startswith("hash"),
+        "embedBackend": oc.active_embed_backend(),
         "cost": {
             "meanSamplesAdaptive": round(sum(ks) / len(ks), 3),
             "meanSamplesFixed": float(fixed_k),

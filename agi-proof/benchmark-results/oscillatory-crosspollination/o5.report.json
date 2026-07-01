@@ -1,0 +1,44 @@
+{
+  "schema": "sophia.oscillator_substrate_sim.v1",
+  "simulationOnly": true,
+  "hardwareClaim": false,
+  "canClaimAGI": false,
+  "n": 4,
+  "digitalDecision": {
+    "acceptId": "a",
+    "acceptIndex": 0
+  },
+  "substrateDecision": {
+    "acceptId": "a",
+    "acceptIndex": 0
+  },
+  "substrateMatchesDigital": true,
+  "annealingGap": 2.0,
+  "perCandidate": [
+    {
+      "id": "a",
+      "energy": -2.1,
+      "phase": 0.0,
+      "acceptScore": 1.0
+    },
+    {
+      "id": "b",
+      "energy": 0.5,
+      "phase": -3.1416,
+      "acceptScore": -1.0
+    },
+    {
+      "id": "c",
+      "energy": 1.8,
+      "phase": -3.1416,
+      "acceptScore": -1.0
+    },
+    {
+      "id": "d",
+      "energy": 3.0,
+      "phase": -3.1416,
+      "acceptScore": -1.0
+    }
+  ],
+  "banner": "SIMULATION of idealized oscillator-Ising relaxation; not hardware, not an energy measurement, not LLM-scale. Demonstrates the O2->O5 encoding only."
+}

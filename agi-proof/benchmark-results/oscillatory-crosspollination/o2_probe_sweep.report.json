@@ -1,0 +1,56 @@
+{
+  "schema": "sophia.o2_probe_sweep.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "n": 122,
+  "domains": [
+    "authorship_external",
+    "date_temporal",
+    "doi",
+    "econ_causal",
+    "econ_empirical",
+    "math",
+    "open_empirical",
+    "url"
+  ],
+  "featurizer": "Qwen2.5-3B MLX hidden states (real)",
+  "arms": {
+    "logistic(C=0.1) supervised_on=accepted": {
+      "oofAUROC": 0.3605,
+      "ci95": [
+        0.253,
+        0.475
+      ],
+      "beatsChance(CI>0.5)": false,
+      "nOOF": 122
+    },
+    "logistic(C=1.0) supervised_on=accepted": {
+      "oofAUROC": 0.381,
+      "ci95": [
+        0.2713,
+        0.4981
+      ],
+      "beatsChance(CI>0.5)": false,
+      "nOOF": 122
+    },
+    "logistic(C=0.1) supervised_on=correct": {
+      "oofAUROC": 0.4298,
+      "ci95": [
+        0.3034,
+        0.5661
+      ],
+      "beatsChance(CI>0.5)": false,
+      "nOOF": 122
+    },
+    "logistic(C=1.0) supervised_on=correct": {
+      "oofAUROC": 0.4273,
+      "ci95": [
+        0.2956,
+        0.5667
+      ],
+      "beatsChance(CI>0.5)": false,
+      "nOOF": 122
+    }
+  },
+  "verdict": "gate_not_met_robust \u2014 proper probe + more data/domains still does not clear chance out-of-fold"
+}

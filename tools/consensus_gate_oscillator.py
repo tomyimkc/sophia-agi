@@ -130,7 +130,8 @@ def run(records: list[dict[str, Any]], *, dim: int = oc.EMBED_DIM_DEFAULT,
         "level3Evidence": False,
         "canClaimAGI": False,
         "n": len(scored),
-        "hashEmbedSeam": True,   # hash_embed is a stand-in; a semantic embedder is the drop-in
+        "hashEmbedSeam": oc.active_embed_backend().startswith("hash"),  # false once a semantic embedder is wired
+        "embedBackend": oc.active_embed_backend(),
         "baselineGate": calibration_report(base_conf, correct, coverage=coverage),
         "consensusGate": calibration_report(cons_conf, correct, coverage=coverage),
         "aurcDelta": {
