@@ -529,6 +529,27 @@ def run_certify(args: argparse.Namespace) -> dict:
     from serving.lowram_eval import LowRamGate
 
     adapter_dir = Path(args.adapter)
+    # Fail FAST with an actionable error if the adapter isn't where we're looking. The deep
+    # Peft/manual-merge FileNotFoundError is cryptic, and the #1 real cause is a RELATIVE --adapter
+    # path resolved under the wrong cwd — e.g. dispatched through the bridge (cwd = the BRIDGE
+    # checkout) while the trained adapters live in the FULL checkout. Name the path, the cwd, and
+    # the fix BEFORE loading the (expensive) base model. (2026-06-30 T1 footgun.)
+    _cfg_ok = (adapter_dir / "adapter_config.json").exists()
+    _wt_ok = ((adapter_dir / "adapter_model.safetensors").exists()
+              or (adapter_dir / "adapter_model.bin").exists())
+    if not (adapter_dir.exists() and _cfg_ok and _wt_ok):
+        import os as _os
+        if not adapter_dir.exists():
+            _why = "directory does not exist"
+        else:
+            _why = "missing " + ", ".join(
+                f for f, ok in (("adapter_config.json", _cfg_ok),
+                                ("adapter_model.safetensors|.bin", _wt_ok)) if not ok)
+        raise FileNotFoundError(
+            f"adapter not usable at {adapter_dir} ({_why}; resolved from cwd={_os.getcwd()}). "
+            f"If you dispatched this through the bridge, the cwd is the BRIDGE checkout but trained "
+            f"adapters live in the FULL checkout — pass an ABSOLUTE --adapter path "
+            f"(e.g. /home/<user>/sophia-agi/training/lora/checkpoints/<name>).")
     calib = Path(args.calib)
     rows = _load_calib_rows(calib)
     protected_ids = set(args.protected_ids.split(",")) if args.protected_ids else None
@@ -608,6 +629,29 @@ def run_certify(args: argparse.Namespace) -> dict:
     out["lora_skipped_detail"] = (mm.get("skipped_detail") or []) if mm else []
     out["incomplete_merge"] = bool(load_info.get("incomplete_merge"))
     out["merge_warnings"] = load_info.get("merge_warnings", [])
+    # Honest hedge: even when the raw NVFP4 top1 FAILS the 0.97 floor, report the conformal-abstention
+    # trade-off (serving/quant_abstention) — "top1 on the tokens it ANSWERS" at a measured coverage.
+    # Rides the FP+quant distributions already collected; no extra forward pass. Never blocks the cert.
+    try:
+        from serving.quant_abstention import quant_abstention_frontier, quant_abstention_report
+        out["abstention"] = quant_abstention_report(full_probs, low_probs, alpha=0.02)
+        # The frontier is the DECISIVE read: is there ANY operating point where answered-top1 clears
+        # the floor at usable coverage? A single alpha can answer ~100% and look un-shippable.
+        out["abstention_frontier"] = quant_abstention_frontier(full_probs, low_probs, target_answered=0.97)
+        _a = out["abstention"]
+        _f = out["abstention_frontier"]
+        if _a.get("n_test"):
+            print(f"[abstain] raw top1 {_a['raw_top1']} -> answered top1 {_a['answered_top1']} "
+                  f"@ coverage {_a['coverage']} (abstain {_a['abstained']}, target {_a['target_answered_agreement']})",
+                  flush=True)
+        if isinstance(_f, dict) and "shippable" in _f:
+            bp = _f.get("shippable_operating_point")
+            print(f"[abstain-frontier] shippable={_f['shippable']} "
+                  + (f"best: answered {bp['answered_top1']} @ coverage {bp['coverage']} (target 0.97)"
+                     if bp else "no point reaches answered-top1 0.97 -> abstention cannot rescue; v6 is the path"),
+                  flush=True)
+    except Exception as _exc:  # noqa: BLE001 - diagnostic hedge, never fail the cert
+        out["abstention"] = {"error": f"{type(_exc).__name__}: {_exc}"}
     out["per_tensor_mem_ratio"] = round(per_tensor_ratio, 4)
     out["quantized_modules"] = qinfo["quantized_modules"]
     out["quantized_params"] = qinfo["quantized_params"]
