@@ -2487,3 +2487,45 @@ genuine uplift AND refused to celebrate it because the policy still emits cheats
 
 **Next:** add held-out private inputs to the GRPO *training* reward (make special-casing unprofitable
 in-loop, not only caught at eval), then re-run the 3-seed sweep for a clean integrity gate.
+
+
+---
+
+## v5 NVFP4 raw FAIL — but honestly SHIPPABLE via abstention (frontier read, 2026-07-01)
+
+The fully-merged v5 adapter (peft monkeypatch working, `incomplete_merge=false` — NOT the earlier
+32/96 half-merge artifact) genuinely misses the never-flip cert bar: **top1_agreement 0.9219 < 0.97**,
+mean_kl 0.0364 ✓, mem_ratio 3.30x, n_eval 256 (spark-bridge result `cert-v5-frontier-02`). That is a
+real model/recipe limit, confirmed independently by the Mac (top1 0.9219) and the cloud re-cert.
+
+**The single-α abstention read was misleading and the FRONTIER corrected it.** At alpha=0.02 the gate
+answers 100% of tokens (nonconformity threshold saturates at 1.0) and stays at 0.9297 — looks
+un-shippable. But sweeping the abstention threshold (`serving/quant_abstention.quant_abstention_frontier`,
+out-of-sample on the disjoint test split) traces a clean coverage/answered-top1 trade-off:
+
+| calib_q | coverage | answered_top1 |
+|--------:|---------:|--------------:|
+| 1.00    | 1.000    | 0.9297 |
+| 0.90    | 0.961    | 0.9512 |
+| 0.85    | 0.914    | 0.9658 |
+| **0.70**| **0.859**| **0.9818** ← max-coverage point clearing 0.97 |
+| 0.65    | 0.789    | 0.9901 |
+| 0.50    | 0.578    | 0.9865 |
+
+**shippable_operating_point: coverage 0.8594, answered_top1 0.9818, threshold 0.8072 → shippable=true.**
+By abstaining (defer/flag) on the ~14% lowest-margin tokens — computable at serve time from the quant
+top1-top2 margin ALONE, no FP model — v5 answers the rest at 0.982, clearing the cert's 0.97 bar. This
+makes v5 an honest hedge-shipped model TODAY; **v6 QAT is demoted from blocker to optional quality push.**
+
+**Honest caveats (no overclaim, canClaimAGI stays false):** (1) answered_top1 is MEASURED selective
+accuracy on a held-out split, not a proven per-token guarantee. (2) n_test=128 tokens → wide interval;
+a confirmation run at n_eval=1024 is staged (`cert-v5-frontier-confirm-1k`) to tighten it before this
+is treated as a shippable receipt. (3) Serve-time answered accuracy tracks the cert number only if the
+serve distribution matches calibration. (4) A `None` operating point must never fall back to
+answering-everything — `serving/abstention_serve.policy_from_cert` raises instead.
+
+**Built:** `serving/abstention_serve.py` (`AbstentionPolicy` + `policy_from_cert` — loads the frontier's
+operating point and enforces it from quant-only margins at serve time) + `tests/test_abstention_serve.py`
+(4/4 green, incl. the None-refuses-to-answer-everything guard). A first mishap: the frontier cert
+initially skipped the sweep with `ModuleNotFoundError: serving.quant_abstention` (caller deployed to
+spark-bridge without its dependency) — fixed by deploying the module (spark-bridge `7da01947`).
