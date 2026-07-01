@@ -87,3 +87,21 @@ Expert-protection is a **meaningful, no-train product lever** (+7pt coverage for
 **Recommended: ship v5 + top-8-expert-protection + abstention → answer ~93% of tokens at answered-top1
 ~0.975, no retrain.** QAD only to push coverage past ~93%. This is the lever-portfolio methodology's
 payoff: a concrete, verified, no-train win found by measuring, not retraining. canClaimAGI=false.
+
+## Full Pareto — `--keep-top-experts` N-sweep (v5, n=256; harness-verified N=0 reproduces baseline)
+| N | raw top1 | shippable coverage | answered | mem_eff | slices bf16 |
+|---|---|---|---|---|---|
+| 0 | 0.9219 | 0.8594 | 0.9818 | 3.30x | 0 |
+| 4 | 0.9375 | 0.8984 | 0.9826 | 2.90x | 128 |
+| 8 | 0.9414 | 0.9297 | 0.9748 | 2.59x | 256 |
+| 16 | **0.9453** | **0.9453** | 0.9752 | 2.13x | 512 |
+| 32 | 0.9453 | 0.9453 | 0.9752 | 1.57x | 1024 |
+
+Two decisive reads: (1) **coverage rises to N=16 then PLATEAUS** — **N=32 is strictly DOMINATED** (same
+coverage as N=16 at worse memory), so N=16 is the max useful protection. (2) **raw top1 plateaus at
+0.9453 << 0.97** — protection raises the frontier's COVERAGE but cannot clear raw 0.97 (residual flips
+are the intrinsic uniform-weight-error, not concentrated experts); **abstention closes the last gap.**
+### Optimal ship config (evidence-based)
+- **MAX coverage: `--keep-top-experts 16`** -> answer ~94.5% of tokens at answered-top1 ~0.975, mem 2.13x, NO train.
+- **BALANCED: `--keep-top-experts 8`** -> ~93% at ~0.975, mem 2.59x.
+- Do NOT use N>16 (dominated). Always stack with conformal-abstention-serve. canClaimAGI=false.
