@@ -1,20 +1,19 @@
 {
-  "updatedAt": "2026-07-01T13:30:00Z",
+  "updatedAt": "2026-07-01T14:05:00Z",
   "from": "cloud",
-  "adoption_followthrough_DONE": {
-    "what": "conformal-abstention-serve is ADOPTED (recipe e9ff56bc, ledger 101919c7). Cloud added the deployment follow-through (commit 9d19c73d): serving/adopted_operating_points.json (95%-LCB serve-time op point per adapter: v5 cov 0.6426/floor 0.9831; v6 cov 0.7188/floor 0.9762, default), abstention_serve.adopted_policy() loader, tests 9/9, and filled the T7+T8 RESULT blocks in Spark-Theory-Test-Forecast.md. If you rebase you'll pick these up.",
-    "no_collision": "Cloud touched only serving/*, tests/*, docs/06-Roadmap/*. NOT training/qat.py, tools/train_lora.py, tools/certify_lowram.py, tools/expert_protection.py — all yours."
+  "cluster_status_cloud_sees": {
+    "spark": "ALIVE but IDLE (poller beat 13:45Z, running:None, pending:[]). Last job was the cloud v6 n=1024 cert. GPU free.",
+    "mac_operator": "APPEARS INACTIVE. Your from-mac status is STALE at 08:04Z with the old 'fused-expert BLOCKER' headline — but you RESOLVED that (commits e8d16fab..8a326e59: 32/32 experts, v6 cert ran). Your last commit is 8a326e59; the 3 commits above it (e9ff56bc/101919c7/9d19c73d) are cloud's. Please REFRESH handoff/from-mac/STATUS.json — the stale file is misleading."
   },
-  "NEXT_high_value_for_you": {
-    "task": "Cert the --keep-top-experts lever at n=1024 (cert-only, no train). Your 08:04 point-estimate was v5+keep-top-16 -> ~94.5%@0.975; if that holds at the 95%-LCB on n=1024 it becomes a MUCH higher-coverage adopted operating point (0.72 -> ~0.90+).",
-    "why_you_not_cloud": "The bridge is NOT wired for --keep-top-experts (no KEEP_TOP_EXPERTS in run_local_benchmarks.sh B2 or the poller ENV_ALLOWLIST), and you own certify_lowram.py + expert_protection.py. Run certify_lowram directly, not via a bridge command.",
-    "run": "python3 tools/certify_lowram.py --base-model allenai/OLMoE-1B-7B-0924-Instruct --adapter training/lora/checkpoints/olmoe-qat-spark-v6 --calib training/lora/train.jsonl --scheme nvfp4 --n-eval 1024 --keep-top-experts 16 --out agi-proof/benchmark-results/nvfp4-v6-keeptop16-frontier-1k.json   (also try --keep-top-experts 8; and the same on the v5 adapter for comparability)",
-    "report": "Write the cert + out[abstention_frontier] to a committed artifact + a ledger row. If serving/abstention_serve.policy_from_cert(cert, confidence=0.95) clears cov>=0.60 AND floor>=0.97 at higher coverage than 0.72, add it to serving/adopted_operating_points.json as a new keep-top operating point (owner sign-off already covers the ADOPTED ingredient; you're adding a variant point, not a new ingredient). canClaimAGI stays false."
+  "cloud_did_while_you_were_quiet": {
+    "adopted": "conformal-abstention-serve ADOPTED (T8 met v5+v6 n=1024 + owner sign-off): recipe e9ff56bc, ledger 101919c7, deployment artifact + adopted_policy() loader 9d19c73d. Don't re-log.",
+    "idle_spark": "Staged a bridge-doable v6 + down_proj-bf16 n=1024 cert (bridge/commands/2026-07-01-claude-web-cert-v6-downproj-1k.json) to use the idle GPU while you're away. If your poller runs it, cloud will LCB-verify it.",
+    "third_party": "Running item ③ source-contamination (W1-W5) in the CLOUD via OpenRouter (deepseek/qwen, non-US) — off-cluster, doesn't touch your GPU."
   },
-  "still_yours": [
-    "W1-W5 three live runs — pull handoff/to-mac/W1-W5-DISPATCH.md (branch g04zs1); only you have keys+farm.",
-    "World-model real-model ablation A/B/C on the 70B.",
-    "v6 raw-close: beta-sweep / more epochs if you want to chase the 0.97 raw bar (optional; abstention already ships)."
+  "YOUR_farm_only_tasks_STALLED": [
+    "① m3-3family judge (W1-W5) — REQUIRES the local Spark-vLLM + Mac-mlx judge servers; cloud CANNOT run it (and must not substitute OpenRouter judges — that breaks the pre-registration). Pull handoff/to-mac/W1-W5-DISPATCH.md (branch g04zs1) for the exact command + gate.",
+    "keep-top-experts n=1024 cert — you own tools/expert_protection.py + certify_lowram; bridge isn't wired for --keep-top-experts. Run certify_lowram directly at n=1024; it's expected to beat down_proj on the coverage/memory trade and could add a much-higher-coverage adopted operating point.",
+    "World-model real-model ablation A/B/C on the 70B."
   ],
-  "guardrails": "canClaimAGI=false; the adopted hedge is measured selective accuracy, not a per-token guarantee, and both adapters raw-FAIL 0.97; owner flips any NEW ingredient adoption; merge don't clobber; .claude/skills/** commit ENCRYPTED from a key-holding box only; no secrets on the public bridge."
+  "guardrails": "canClaimAGI=false; adopted hedge is measured selective accuracy (both adapters raw-FAIL 0.97); a run is not a result — flip a row only when its pre-registered gate is met + artifact + sha256; do NOT substitute pre-registered judges; owner flips any NEW ingredient adoption; .claude/skills/** commit ENCRYPTED from a key-holding box only; no secrets on the public bridge."
 }
