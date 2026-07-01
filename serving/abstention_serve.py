@@ -38,14 +38,30 @@ ANSWER = "answer"
 ABSTAIN = "abstain"
 
 
+def _wilson_lcb(p: float, n: float, z: float = 1.96) -> float:
+    """Wilson score lower bound for a binomial proportion — the honest floor on answered accuracy.
+
+    A point estimate answered_top1=0.9737 on ~380 tokens can have a lower bound BELOW the 0.97 bar;
+    shipping the max-coverage point on the point estimate alone would ship a policy that is really under
+    the target. We select the operating point by this floor, not the point estimate, when asked."""
+    if n <= 0:
+        return 0.0
+    denom = 1.0 + z * z / n
+    centre = p + z * z / (2 * n)
+    margin = z * ((p * (1 - p) / n + z * z / (4 * n * n)) ** 0.5)
+    return max(0.0, (centre - margin) / denom)
+
+
 @dataclass(frozen=True)
 class AbstentionPolicy:
     """A calibrated serve-time abstention policy: abstain when quant nonconformity EXCEEDS ``threshold``.
 
     ``threshold`` is the top1-top2-margin nonconformity cut chosen on the cert's frontier (the
-    max-coverage point whose out-of-sample answered_top1 >= ``target_answered``). ``measured_coverage``
-    and ``measured_answered_top1`` are the cert's out-of-sample numbers AT that point — provenance, not
-    a guarantee. ``n_test`` records the sample size behind them so a thin read is visible, not hidden."""
+    max-coverage point whose out-of-sample answered_top1 — or its confidence lower bound — clears
+    ``target_answered``). ``measured_coverage`` and ``measured_answered_top1`` are the cert's out-of-sample
+    numbers AT that point — provenance, not a guarantee. ``n_test`` records the sample size, and
+    ``answered_lcb`` / ``selection`` record whether a point estimate or a confidence floor was used, so a
+    thin or razor-thin read is visible, not hidden."""
     threshold: float
     target_answered: float
     measured_coverage: float
@@ -53,6 +69,8 @@ class AbstentionPolicy:
     raw_top1: float
     n_test: int
     source: str = "unknown"
+    selection: str = "point_estimate"
+    answered_lcb: "float | None" = None
 
     def decide(self, low_probs) -> "list[str]":
         """ANSWER / ABSTAIN per row of a quant next-token distribution (probabilities or logits;
@@ -73,32 +91,56 @@ class AbstentionPolicy:
         return asdict(self)
 
 
-def policy_from_cert(cert_path: "str | Path") -> "AbstentionPolicy":
+def policy_from_cert(cert_path: "str | Path", *, confidence: "float | None" = None) -> "AbstentionPolicy":
     """Load the shippable operating point from a certify_lowram.py artifact (``out['abstention_frontier']``).
 
-    Raises if the cert found NO shippable point (``shippable_operating_point is None``) — that means
-    abstention cannot rescue the model at the target and there is no honest policy to serve; the caller
-    must NOT silently fall back to answering everything (that would re-introduce the fabrication risk the
-    whole hedge exists to remove)."""
+    ``confidence=None`` (default) trusts the cert's ``shippable_operating_point`` — the max-coverage point
+    whose out-of-sample answered_top1 POINT ESTIMATE clears the target. ``confidence=0.95`` instead selects
+    the max-coverage frontier point whose Wilson lower bound at that confidence clears the target — the
+    HONEST serving choice, because a point estimate on a few hundred answered tokens can sit above the bar
+    while its lower bound is below it (v5 @ n=1024: max-cov point 0.9737 has a 95% floor of ~0.958 < 0.97).
+
+    Raises if NO point qualifies — abstention cannot honestly reach the target and the caller must NOT
+    silently fall back to answering everything (that re-introduces the fabrication risk the hedge removes)."""
     data = json.loads(Path(cert_path).read_text())
     fr = data.get("abstention_frontier")
     if not fr:
         raise ValueError(f"{cert_path}: no abstention_frontier block (old cert or frontier errored)")
-    best = fr.get("shippable_operating_point")
-    if not best:
+    target = float(fr.get("target_answered", 0.97))
+    n_test = int(fr.get("n_test", 0))
+
+    if confidence is None:
+        best = fr.get("shippable_operating_point")
+        if not best:
+            raise ValueError(
+                f"{cert_path}: shippable_operating_point is None — abstention cannot reach "
+                f"target_answered={target} on this model; do NOT ship an answer-everything fallback. "
+                f"The recipe fix (v6 QAT) is the path.")
+        return AbstentionPolicy(
+            threshold=float(best["threshold"]), target_answered=target,
+            measured_coverage=float(best["coverage"]), measured_answered_top1=float(best["answered_top1"]),
+            raw_top1=float(fr.get("raw_top1", 0.0)), n_test=n_test, source=str(cert_path),
+            selection="point_estimate", answered_lcb=None)
+
+    z = {0.9: 1.645, 0.95: 1.96, 0.99: 2.576}.get(round(float(confidence), 2), 1.96)
+    chosen = None  # max-coverage frontier point whose Wilson LCB clears the target
+    for pt in fr.get("frontier", []):
+        cov = float(pt["coverage"])
+        n_ans = cov * n_test
+        lcb = _wilson_lcb(float(pt["answered_top1"]), n_ans, z=z)
+        if lcb >= target and cov > 0 and (chosen is None or cov > chosen[0]):
+            chosen = (cov, pt, lcb)
+    if chosen is None:
         raise ValueError(
-            f"{cert_path}: shippable_operating_point is None — abstention cannot reach "
-            f"target_answered={fr.get('target_answered')} on this model; do NOT ship an answer-everything "
-            f"fallback. The recipe fix (v6 QAT) is the path.")
+            f"{cert_path}: no frontier point clears target_answered={target} at its {confidence:.0%} "
+            f"lower bound (n_test={n_test}). The point-estimate operating point is not robust; do NOT ship "
+            f"an answer-everything fallback. Confirm at larger n or fix the recipe (v6 QAT).")
+    cov, pt, lcb = chosen
     return AbstentionPolicy(
-        threshold=float(best["threshold"]),
-        target_answered=float(fr.get("target_answered", 0.97)),
-        measured_coverage=float(best["coverage"]),
-        measured_answered_top1=float(best["answered_top1"]),
-        raw_top1=float(fr.get("raw_top1", 0.0)),
-        n_test=int(fr.get("n_test", 0)),
-        source=str(cert_path),
-    )
+        threshold=float(pt["threshold"]), target_answered=target,
+        measured_coverage=cov, measured_answered_top1=float(pt["answered_top1"]),
+        raw_top1=float(fr.get("raw_top1", 0.0)), n_test=n_test, source=str(cert_path),
+        selection=f"wilson_lcb@{confidence:.2f}", answered_lcb=round(lcb, 4))
 
 
 # --------------------------------------------------------------------------- #

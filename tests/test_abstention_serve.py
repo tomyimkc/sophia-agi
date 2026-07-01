@@ -51,6 +51,54 @@ def test_policy_from_cert_loads_shippable_point():
     assert pol.n_test == 128                                    # thin-sample provenance is preserved
 
 
+def test_lcb_selection_is_more_conservative_than_point_estimate():
+    from serving.abstention_serve import policy_from_cert
+    # v5 @ n=1024 shape: the max-coverage point (0.9737) clears 0.97 as a POINT estimate but its 95%
+    # lower bound is below it; a stricter, lower-coverage point clears the bound. The LCB selection must
+    # pick a point with coverage <= the point-estimate point and record the floor.
+    fr = {"abstention_frontier": {
+        "raw_top1": 0.8975, "target_answered": 0.97, "shippable": True, "n_test": 512,
+        "shippable_operating_point": {"threshold": 0.8072, "coverage": 0.7422, "answered_top1": 0.9737},
+        "frontier": [
+            {"calib_quantile": 1.0, "threshold": 1.0, "coverage": 1.0, "answered_top1": 0.8750},
+            {"calib_quantile": 0.85, "threshold": 0.9252, "coverage": 0.8027, "answered_top1": 0.9611},
+            {"calib_quantile": 0.80, "threshold": 0.8072, "coverage": 0.7422, "answered_top1": 0.9737},
+            {"calib_quantile": 0.75, "threshold": 0.8614, "coverage": 0.7012, "answered_top1": 0.9833},
+            {"calib_quantile": 0.70, "threshold": 0.8072, "coverage": 0.6426, "answered_top1": 0.9970},
+        ]}}
+    fd, p = tempfile.mkstemp(suffix=".json")
+    Path(p).write_text(json.dumps(fr))
+    try:
+        pt_pol = policy_from_cert(p)                     # point estimate -> max coverage
+        lcb_pol = policy_from_cert(p, confidence=0.95)   # confidence floor -> stricter
+    finally:
+        Path(p).unlink()
+    assert pt_pol.selection == "point_estimate"
+    assert lcb_pol.selection.startswith("wilson_lcb")
+    assert lcb_pol.measured_coverage <= pt_pol.measured_coverage        # more conservative
+    assert lcb_pol.answered_lcb is not None and lcb_pol.answered_lcb >= 0.97  # floor clears the bar
+
+
+def test_lcb_raises_when_no_point_is_robust():
+    from serving.abstention_serve import policy_from_cert
+    # A frontier that clears the target only as point estimates on tiny samples -> no robust point.
+    fr = {"abstention_frontier": {
+        "raw_top1": 0.9, "target_answered": 0.97, "n_test": 20,
+        "shippable_operating_point": {"threshold": 0.5, "coverage": 0.9, "answered_top1": 0.972},
+        "frontier": [{"calib_quantile": 0.9, "threshold": 0.5, "coverage": 0.9, "answered_top1": 0.972}]}}
+    fd, p = tempfile.mkstemp(suffix=".json")
+    Path(p).write_text(json.dumps(fr))
+    try:
+        raised = False
+        try:
+            policy_from_cert(p, confidence=0.95)
+        except ValueError:
+            raised = True
+        assert raised, "LCB selection must raise when no point is robust, not answer everything"
+    finally:
+        Path(p).unlink()
+
+
 def test_none_operating_point_refuses_to_answer_everything():
     from serving.abstention_serve import policy_from_cert
     # If abstention cannot rescue the model, loading MUST raise, never silently answer-everything.

@@ -2529,3 +2529,27 @@ operating point and enforces it from quant-only margins at serve time) + `tests/
 (4/4 green, incl. the None-refuses-to-answer-everything guard). A first mishap: the frontier cert
 initially skipped the sweep with `ModuleNotFoundError: serving.quant_abstention` (caller deployed to
 spark-bridge without its dependency) — fixed by deploying the module (spark-bridge `7da01947`).
+
+
+### CONFIRMATION @ n=1024 — v5+abstention shippable, but at ~64% coverage (2026-07-01)
+
+The n=256 read above was OPTIMISTIC (small-sample). The n_eval=1024 confirmation
+(`cert-v5-frontier-confirm-1k`, n_test=512) tightens it and is more sober:
+
+- **Raw is a firmer FAIL:** top1 0.8975 (was 0.9219) AND mean_kl 0.0551 > 0.05 (was 0.0364 ✓) — v5 raw
+  now fails BOTH cert bars, not just top1.
+- **Frontier still shippable, lower coverage:** the max-coverage point clearing 0.97 as a POINT estimate
+  is coverage 0.7422 / answered 0.9737 — but its 95% Wilson lower bound is ~0.958, **below the bar**.
+  Shipping there would ship a policy that is really under 0.97.
+- **Honest 95%-robust operating point:** coverage **0.6426**, answered_top1 **0.9970**, threshold 0.653,
+  95% floor **0.9831** — abstain on ~36% of tokens, answer the rest at ~99.7% with a confident floor
+  comfortably above 0.97. THIS is the shippable receipt.
+
+**Serve-gate upgrade:** `serving/abstention_serve.policy_from_cert(cert, confidence=0.95)` now selects the
+max-coverage frontier point whose Wilson LOWER BOUND clears the target (not the point estimate), and RAISES
+if none is robust. Default (`confidence=None`) still returns the point-estimate point for diagnostics.
+Tests: `tests/test_abstention_serve.py` 6/6 (adds LCB-more-conservative + LCB-raises-when-not-robust).
+
+**Decision impact:** v5 ships today via abstention at ~64% coverage / ~99.7% answered (95%-robust). v6 QAT
+is now a WORTHWHILE quality push (not just optional): its job is to lift raw coverage so the hedge abstains
+on far fewer than 36% of tokens. Still owner-gated; v5 ships regardless. canClaimAGI stays false.
