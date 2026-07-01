@@ -61,7 +61,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from provenance_bench.dataset_guard import check_contamination, eval_prompt_set  # noqa: E402
+from provenance_bench.dataset_guard import check_contamination  # noqa: E402
 from tools.gen_verifier_dpo import run as label_run  # noqa: E402
 from tools.gen_preference_candidates import (  # noqa: E402
     SELF_TEST_ROWS as GEN_FIXTURES,

@@ -37,13 +37,12 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
 from typing import Any, Sequence
 
 try:
     from agent.activation_probes import (
-        train_centroid_probe, evaluate_probe, FEATURES, build_hidden_state_featurizer,
+        train_centroid_probe, evaluate_probe, build_hidden_state_featurizer,
     )
     _REPO_OK = True
     _IMPORT_ERR = ""

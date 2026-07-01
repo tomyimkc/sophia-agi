@@ -111,7 +111,7 @@ def _inrepo_imports(pyfile: str, root: "Path | None" = None) -> "list[str]":
     """Parse ``pyfile`` for in-repo imports (``agent``/``provenance_bench``/``tools``/
     ``skills``/``sophia_contract``) and return their resolved paths. No execution."""
     import ast
-    import os
+
     base = (root or ROOT)
     try:
         tree = ast.parse((base / pyfile).read_text(encoding="utf-8"))
@@ -162,7 +162,6 @@ def content_tamper_indicators(file_contents: "dict[str, str]",
 
     The path firewall cannot see runtime tricks; this content layer is the second wall.
     """
-    compiled = [re.compile(p) for p in patterns]
     hits: "dict[str, list[str]]" = {}
     for path, text in (file_contents or {}).items():
         found = [p for p in patterns if re.compile(p).search(text or "")]
@@ -377,8 +376,8 @@ def _ledger_entry(exp: Experiment, d: Decision) -> dict:
 def run_loop(
     experiments: "Iterable[Experiment]",
     *,
-    on_keep: "Callable[[Experiment, Decision], None] | None" = None,
-    on_discard: "Callable[[Experiment, Decision], None] | None" = None,
+    on_keep: Callable[[Experiment, Decision], None] | None = None,
+    on_discard: Callable[[Experiment, Decision], None] | None = None,
     patterns: "Iterable[str]" = DEFAULT_PROTECTED_PATTERNS,
     max_iters: "int | None" = None,
 ) -> dict:
@@ -406,6 +405,8 @@ def run_loop(
             elif on_discard:
                 on_discard(exp, d)
     except KeyboardInterrupt:
+        # best-effort: allow Ctrl-C to stop the sweep early and still return the
+        # decisions/ledger accumulated so far (partial results are non-fatal here).
         pass
     return {
         "evaluated": len(decisions),

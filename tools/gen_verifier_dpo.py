@@ -195,9 +195,9 @@ SELF_TEST_ROWS: list[dict] = [
         "mode": "advisor",
         "candidates": [
             "No — Confucius did not write the Dao De Jing. It is a distinct Daoist text "
-            "traditionally attributed to Laozi; that attribution is legendary and disputed. "
-            "Confucius is a Confucian figure, and the Daoist and Confucian traditions should "
-            "not be merged. 來源存疑。",
+            + "traditionally attributed to Laozi; that attribution is legendary and disputed. "
+            + "Confucius is a Confucian figure, and the Daoist and Confucian traditions should "
+            + "not be merged. 來源存疑。",
             "Confucius wrote the Dao De Jing.",
         ],
         "metadata": {"caseId": "merge-confucius-daodejing"},
@@ -208,7 +208,7 @@ SELF_TEST_ROWS: list[dict] = [
         "mode": "advisor",
         "candidates": [
             "No — Socrates wrote nothing himself; The Republic was written by Plato, who "
-            "casts Socrates as a speaker. The attribution to Socrates is a misconception. 來源：Plato。",
+            + "casts Socrates as a speaker. The attribution to Socrates is a misconception. 來源：Plato。",
             "Yes, Socrates wrote The Republic.",
         ],
         "metadata": {"caseId": "false-socrates-republic"},

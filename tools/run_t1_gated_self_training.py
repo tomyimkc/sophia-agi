@@ -49,7 +49,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
@@ -60,7 +59,7 @@ try:
         reward as gate_reward, is_abstention, REWARD_CLEAN, REWARD_ABSTAIN,
     )
     from agent.continual_plasticity import (
-        EvalMetric, UpdateCandidate, evaluate_update, append_promotion_ledger,
+        EvalMetric, UpdateCandidate, evaluate_update,
     )
     _REPO_OK = True
     _IMPORT_ERR = ""
