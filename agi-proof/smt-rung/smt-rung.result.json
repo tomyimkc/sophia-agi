@@ -1,0 +1,38 @@
+{
+  "experimentId": "smt-rung-abstention-reclaim",
+  "verdict": "GO",
+  "canClaimAGI": false,
+  "claimCeiling": "candidate_only; a decidable-band reclaim result, not a capability claim",
+  "z3Present": true,
+  "z3Version": "4.16.0",
+  "interpreter": "3.12.13",
+  "frozenSet": {
+    "id": "smt-decidable-abstained-v1",
+    "path": "agi-proof/smt-rung/frozen_set_v1.jsonl",
+    "n": 240,
+    "sha256": "6ae4b2360217ff1660a148569afdcb4837431bded372001b6fb1a763639db8ae",
+    "seed": 0,
+    "deterministic": true
+  },
+  "metrics": {
+    "reclaimRate": 1.0,
+    "reclaimRateCI95": [
+      1.0,
+      1.0
+    ],
+    "decided": 240,
+    "abstained": 0,
+    "labelAgreement": 1.0,
+    "certificateAcceptance": 1.0,
+    "oobGuardrailAbstained": "5/5"
+  },
+  "gate": {
+    "reclaimLowerCI>=0.10": true,
+    "labelAgreement==1.00": true,
+    "certificateAcceptance==1.00": true,
+    "oobAllAbstain": true
+  },
+  "mislabels": [],
+  "certFailures": [],
+  "honestBound": "Measured locally with z3 present. Labels are first-principles and independent of agent.smt_verifier (dimensional equality / exhaustive bounded enumeration / exact rational containment). Frozen set is deterministic (seed 0), no tuning. To reproduce in CI, install requirements-smt.txt. canClaimAGI stays false; this reclaims a narrow decidable band (unit/dimension, bounded-int, interval), NOT general reasoning."
+}

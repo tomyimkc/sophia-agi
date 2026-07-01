@@ -105,13 +105,16 @@ def _load_real_generators(
 ):
     """Return (base_generate, adapter_generate). Imported lazily for CPU/CI safety.
 
-    ``chat_template``: when True (the code task), wrap each prompt in the model's
-    own chat template before tokenizing, so an *instruct/chat* base (e.g.
-    GLM-4-9B-chat) responds as an assistant and emits an extractable fenced code
-    block. Without it, a chat model fed a raw prompt emits prose, the code reward
-    finds no code, and base AND adapter both score 0 — an eval artifact, not a
-    capability reading (see failure-ledger rlvr-code-no-chat-template). Left False
-    for math/provenance, which already cleared on the raw-prompt path.
+    ``chat_template``: when True (the code and step tasks), wrap each prompt in the
+    model's own chat template before tokenizing, so an *instruct/chat* base (e.g.
+    GLM-4-9B-chat) responds as an assistant and emits an extractable structured
+    answer (a fenced code block for code; STEP: lines for step). Without it, a chat
+    model fed a raw prompt emits prose, the verifier finds nothing parseable, and
+    base AND adapter both score 0 — an eval artifact, not a capability reading (see
+    failure-ledger rlvr-code-no-chat-template / step-math-chat-wrap-gap). It is a
+    NO-OP for a base/completion model (no chat template -> chat_wrap passes through),
+    so a completion base stays on the identical raw-prompt path. Left False for
+    math/provenance, which already cleared on the raw-prompt path.
     """
     import torch
     from peft import PeftModel
@@ -432,7 +435,16 @@ def run_eval_step(args: argparse.Namespace) -> dict:
     else:
         if not args.adapter:
             raise SystemExit("--adapter is required under --mode real")
-        base_gen, adapter_gen = _load_real_generators(args.model, args.adapter, max_new_tokens=args.max_new_tokens)
+        # chat_template=True: mirror run_eval_code. The step task feeds a STRUCTURED
+        # instruction (STEP_INSTRUCTION + prompt) that a CHAT/instruct subject only
+        # honours when delivered as an assistant turn; fed raw it emits prose, the step
+        # verifier finds no parseable derivation, and base AND adapter score 0 (an eval
+        # artifact, not a capability reading — failure-ledger step-math-chat-wrap-gap).
+        # chat_wrap is a NO-OP for a base/completion model (no chat template), so the
+        # registered Qwen2.5-Math-7B BASE run stays on the identical raw-prompt path.
+        base_gen, adapter_gen = _load_real_generators(
+            args.model, args.adapter, max_new_tokens=args.max_new_tokens, chat_template=True
+        )
         base, adapter = {}, {}
         for i, p in enumerate(problems, 1):
             print(f"[eval-step] {i}/{len(problems)} {p['id']}", flush=True)

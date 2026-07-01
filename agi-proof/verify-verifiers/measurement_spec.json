@@ -1,0 +1,41 @@
+{
+  "experimentId": "verify-verifiers-live-oracle-split-rescoring",
+  "status": "preregistration_only",
+  "canClaimAGI": false,
+  "go": false,
+  "description": "Verification-of-verification. Each DEPLOYED verifier in agent/verifiers.py is periodically re-scored (precision/recall) on a FRESH, independent oracle-labeled split it has never gated, and a WITH/WITHOUT-meta ablation is re-measured. tools/verify_verifiers.py auto-demotes any verifier whose precision falls below its PRE-REGISTERED floor (agi-proof/verify-verifiers/drift_floors.json) and HALTS fail-closed if the meta-verify ablation gap collapses. This spec pre-registers the LIVE standing re-scoring; committing it claims no capability. The monitor + a seed-degraded self-test are REAL and tested; the live oracle labels do not exist in-repo, so the standing drift result is NOT-PROVEN.",
+  "constructs": [
+    "per-verifier precision on a fresh oracle-labeled split (the fraction of the verifier's passed=true verdicts that the oracle agrees are truly verified)",
+    "per-verifier recall on that split (the fraction of true violations the verifier catches)",
+    "with/without-meta ablation gap (does meta-verification actually add precision — the trust-root evidence)",
+    "drift vs the verifier's own pre-registered floor (mechanical demotion trigger, not a judgment call)"
+  ],
+  "primaryMetric": "per_verifier_precision_on_fresh_oracle_split",
+  "primaryMetricDefinition": "For a deployed verifier V and a fresh oracle-labeled split, precision = TP / (TP + FP) where a 'positive' is V returning passed=true and the oracle label is the ground truth of whether the answer was actually verifiable. Demotion trigger: precision < floor(V) AND the drop is RESOLVABLE at the split's N (eval_stats.mde_at_n(N) <= |floor - precision|). An underpowered split is HELD (abstain), never a silent trust.",
+  "direction": "trusted iff precision >= floor for every deployed verifier AND ablationGap >= floor",
+  "assumedBaselineP0": 0.9,
+  "mde": 0.05,
+  "requiredN": 471,
+  "requiredNnote": "required_n_for_mde(0.05, p0=0.9, power=0.8) = 471 oracle-labeled cases per verifier to resolve a 0.05 precision drop below the 0.90 floor; mde_at_n(30, p0=0.9) approx 0.128, so the minN=30 in drift_floors.json can only resolve a large collapse — small drifts at low N are correctly HELD as underpowered, not demoted. A real standing gate needs ~471 fresh oracle labels per verifier per cycle.",
+  "uncertaintyRule": "each per-verifier precision is reported with a fixed-n CI AND an anytime-valid confidence sequence (eval_stats.confidence_sequence_mean), because re-scoring is a repeated-peek/optional-stopping process; a demotion requires the breach to be POWERED at the split N (eval_stats.verdict_or_underpowered / mde_at_n), never a raw point estimate.",
+  "magnitudeRule": "demotion trigger is precision < pre-registered floor (a fixed, committed bar), not a delta vs a moving baseline, so the trigger cannot be gamed by drifting the baseline. driftTolerance in drift_floors.json only reports the magnitude of the decline.",
+  "decontamRule": "the fresh oracle split MUST be disjoint from every case the verifier has previously gated AND from the split used to set its floor; oracle labels MUST come from an independent oracle (human or a distinct verified source), never from the verifier under test or a same-family verifier — otherwise it is grading its own homework.",
+  "claimCeiling": "monitor_and_selftest_only; the live standing precision/recall drift result is NOT-PROVEN until fresh oracle-labeled splits exist. No capability, no AGI, is claimed.",
+  "preRegistrationProof": "this spec + agi-proof/verify-verifiers/drift_floors.json committed BEFORE any live re-scoring run; tools/claim_gate.py-style prereg-ordering (spec commit ancestor of any result commit) applies.",
+  "honestBound": "N=0 live oracle-labeled fresh-split cases exist in-repo. The auto-demote monitor and the seed-degraded self-test are REAL and unit-tested; the standing drift verdict over deployed verifiers is preregistration_only / NOT-PROVEN.",
+  "guardrails": {
+    "failClosed": "if the oracle-split JSON is missing/unreadable the monitor exits 2 (unreadable), never a default-trust; if the meta ablation gap has collapsed it HALTS (exit 1) and demotes nothing silently.",
+    "underpoweredHeld": "a floor breach on an underpowered split is HELD (abstain), not a demotion, so the gate does not fire on noise; a POWERED breach ALWAYS demotes so the gate cannot be starved into never firing.",
+    "noSelfGrading": "oracle labels must not originate from the verifier under test or its family (decontamRule).",
+    "protectedDomains": "provenance_faithful (religion/history don't-merge) carries a higher precision floor; a false pass there could ship a forbidden cross-lineage attribution."
+  },
+  "arms": {
+    "with_meta": "verifiers gated normally AND monitored by verify_verifiers.py (demotion active).",
+    "without_meta": "verifiers gated with the meta-monitor disabled (no demotion) — the ablation baseline whose precision gap vs with_meta is the trust-root evidence."
+  },
+  "openCaveats": [
+    "no fresh oracle-labeled splits exist in-repo (needs an independent oracle: human labels or a distinct verified source); live standing re-scoring is unrun.",
+    "the with/without-meta ablation is pre-registered but not measured on live data; the self-test exercises the HALT path with a synthetic collapsed gap only.",
+    "N=30 minN can only resolve a large precision collapse; a real standing gate needs ~471 oracle labels per verifier per cycle (see requiredNnote)."
+  ]
+}

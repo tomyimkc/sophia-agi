@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: Apache-2.0
+# SMT-solver backend (optional, fail-closed) — the certificate-carrying SMT rung.
+#
+# agent.smt_verifier.check uses z3 when present to decide a narrow DECIDABLE band
+# (SI unit/dimension consistency, bounded-integer linear constraints, rational
+# interval containment) and to emit a RE-CHECKABLE certificate (satisfying model
+# or unsat core). agent.smt_verifier.recheck_certificate replays that certificate
+# WITHOUT the solver, so the gate's trust rests on an independently-confirmable
+# witness, not on trusting z3's yes/no.
+#
+# When z3 is ABSENT, agent.smt_verifier.check returns verdict "abstain" with
+# reason "z3-not-installed" — it NEVER returns a false "pass" (fail-closed, exactly
+# like the optional sympy backend in requirements-math.txt and the optional Lean
+# backend in requirements-theorem.txt). A held verdict is not a pass.
+#
+# CI and the production DEFAULT stay z3-free; this is an opt-in research extra, not
+# a core dependency. The abstention-reclaim RATE this rung is meant to earn is
+# PRE-REGISTERED in agi-proof/smt-rung/measurement_spec.json and is NOT proven in
+# the z3-absent environment.
+z3-solver>=4.12

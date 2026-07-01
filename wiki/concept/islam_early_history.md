@@ -4,7 +4,7 @@ pageType: concept
 domain: religion
 recordType: concept
 tradition: islam
-authorConfidence: consensus
+authorConfidence: attributed
 canonicalTitleEn: early Islam historical-theological boundary
 canonicalTitleZh: 早期伊斯蘭歷史與神學分界
 doNotAttributeTo: []

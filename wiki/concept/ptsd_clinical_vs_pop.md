@@ -3,7 +3,7 @@ id: ptsd_clinical_vs_pop
 pageType: concept
 domain: psychology
 recordType: concept
-authorConfidence: consensus
+authorConfidence: attributed
 subfield: clinical
 canonicalTitleEn: "PTSD as a clinical diagnosis vs pop 'trauma' talk"
 canonicalTitleZh: 創傷後壓力症（臨床診斷）與通俗「創傷」用語之別

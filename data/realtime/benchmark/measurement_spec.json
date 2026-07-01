@@ -1,0 +1,62 @@
+{
+  "experimentId": "realtime-grounding-c1-verifier-truth-filter",
+  "schema": "sophia.measurement_spec.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "question": "Does the verifier-gated ingestion loop admit true live facts and reject false/unknowable ones better than naive retrieval (raw RAG) and than no filter (accept-all), on a labeled held-out pack, without fabricating (admitting false claims)?",
+  "theoryClaims": {
+    "C1": "verifier-as-truth-filter — admission precision/recall/fabricationRate (THIS spec, Phase-0 offline floor)",
+    "C2": "grounding uplift — live passAt1 vs baselines on time-sensitive QA (Phase-1, online, requires a model)",
+    "C3": "no self-harm — contamination rate ~0, calibration, forgetting, reward-hack-rate==0 (Phase-1/3)"
+  },
+  "primaryMetric": "admission precision of the full gate, and delta admission-accuracy (full minus raw_rag), paired per item",
+  "secondaryMetrics": [
+    "admission recall / F1 of the full gate",
+    "fabricationRate per arm (admitted but label != true)",
+    "ECE / Brier from the verdict-level construct (fact_check_eval)"
+  ],
+  "arms": [
+    "accept_all (no filter) — fabrication upper bound",
+    "raw_rag (admit on any retrieved evidence, no verifier) — the key baseline; falsifier is full ~= raw_rag",
+    "verdict_only (verifier verdict, no conformal)",
+    "gated (verifier + conformal nonconformity gate)",
+    "full (verifier + conformal + content-decontam + temporal-decontam + valid-time)"
+  ],
+  "primaryN": "Phase-0 committed run: eval/fact_check/heldout_v1.jsonl (N=53; true=22/false=19/unknowable=12). This N is a FLOOR/WIRING check: MDE@53 ~= 0.27, so any arm delta below that is reported 'underpowered', never as a direction. A GO/NO-GO needs the Phase-1 powered N below.",
+  "primaryMDE": 0.10,
+  "requiredNForMDE": "computed at run time via eval_stats.required_n_for_mde(0.10) (~=785 paired items at rho=0); grow the labeled pack to this before any GO",
+  "alpha": 0.05,
+  "conformalAlpha": 0.1,
+  "groundTruth": {
+    "rule": "each claim carries an external label in {true,false,unknowable}; true should be admitted, false/unknowable should not. Phase-1 promotion additionally requires >=2 INDEPENDENT LLM-judge families (judge != the verifier), reporting kappa>=0.40 or Gwet AC1 with CI.",
+    "use": "GO/NO-GO — the deterministic Phase-0 construct alone does NOT satisfy the >=2-family rule"
+  },
+  "guardrails": {
+    "controlSanity": {
+      "rule": "the verifier must admit >50% of known-true AND reject >50% of known-false; otherwise the backend/harness is artifacting (the 0/N-on-both-sides trap) and the arms are void",
+      "use": "GO/NO-GO"
+    },
+    "baselineContrast": {
+      "rule": "raw_rag and accept_all are scored on the IDENTICAL pack/grader; the falsifier is that raw_rag matches or beats full",
+      "use": "GO/NO-GO"
+    },
+    "coupledVerifierAudit": {
+      "rule": "the verifier that supplies the ingestion gate must NOT also be the sole labeler; Phase-1 uses a sealed, independently-adjudicated audit set the verifier is never tuned on",
+      "use": "GO/NO-GO (Phase-1)"
+    },
+    "temporalDecontam": {
+      "rule": "for the Phase-1 live pack, reject any source whose publish date postdates the frozen eval cutoff (streaming_decontam.temporal_decontam); measure and report the leakage rate",
+      "use": "GO/NO-GO (Phase-1)"
+    },
+    "decontam": {
+      "rule": "Phase-1 live-ingested items are disjoint from the held-out/eval surface (exact + shingle + paraphrase); do NOT synthesize/paraphrase to inflate N (that is contamination)",
+      "use": "GO/NO-GO"
+    },
+    "noOverclaim": {
+      "rule": "report precision/recall/fabricationRate honestly; a powered CI-excludes-0 uplift is still NO-GO if it trips an integrity gate; canClaimAGI stays false",
+      "use": "always"
+    }
+  },
+  "reproduce": "python3 tools/run_realtime_benchmark.py --offline",
+  "ledgerRef": "realtime-grounding-loop-candidate-only-2026-07-01"
+}

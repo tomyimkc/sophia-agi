@@ -1,0 +1,44 @@
+{
+  "experimentId": "self-model-calibration-lift",
+  "status": "preregistration_only",
+  "canClaimAGI": false,
+  "go": false,
+  "description": "Does consulting a provenance-tagged self-reliability belief store (agent/calibration_belief_store.py) BEFORE answering raise the agent's calibration versus an otherwise-identical STATELESS baseline that commits on its stated confidence alone? The self-modeling arm defers/hedges when its OWN track record in a (domain, confidence-band) slice says its stated confidence is not earned. No capability is claimed by committing this spec; the store is REAL and unit-tested on a synthetic decision stream, but the calibration-lift claim needs the live agent loop and is NOT proven here.",
+  "constructs": [
+    "expected-calibration-error (binned, stated confidence vs observed held-rate)",
+    "selective-risk (error among the most-confident answered fraction at fixed coverage)",
+    "tamper-evident-self-model (hash-chained; no ungated write reaches the store)"
+  ],
+  "primaryMetric": "ece_reduction",
+  "primaryMetricDefinition": "ECE(stateless baseline) - ECE(self-model arm) over a held-out live decision stream; positive means the self-model is better calibrated. Computed by agent.calibration.expected_calibration_error on the SAME decision set for both arms (paired).",
+  "secondaryMetric": "selective_risk_reduction",
+  "secondaryMetricDefinition": "selectiveRisk(baseline, coverage=0.5) - selectiveRisk(self-model, coverage=0.5); positive means fewer errors among committed answers at matched coverage.",
+  "direction": "self_model_arm improves (lower ECE AND lower-or-equal selective risk) vs stateless baseline",
+  "assumedBaselineP0": 0.5,
+  "mde": 0.05,
+  "requiredN": 1570,
+  "requiredNnote": "required_n_for_mde(0.05, p0=0.5, power=0.8, paired_rho=0.0) = 1570 paired decisions (conservative per-item held/contradicted difference, variance proxy 2*p0*(1-p0)). paired_rho>0 (the same decision stream scored by both arms is positively correlated per item) would LOWER this materially; leave rho=0 for the worst-case the claim gate uses. mde_at_n on the delivered live-loop N must be <= 0.05 or the run is UNDERPOWERED and torn out.",
+  "practicalThreshold": 0.05,
+  "uncertaintyRule": "anytime-valid confidence sequence (eval_stats.confidence_sequence_mean) on the paired per-decision ECE/selective-risk difference; a live loop peeks/iterates so fixed-n CIs are INVALID under optional stopping. GO only if the CS lower bound EXCLUDES zero for the primary metric.",
+  "magnitudeRule": "eval_stats.verdict_or_underpowered(delta, n, tolerance=0.05): a directional word ('improves') is emitted ONLY when MDE_at_N <= tolerance; otherwise the verdict is 'underpowered' and the claim is torn out (a gate that always passes is worse than no gate).",
+  "decontamRule": "the live decision stream used to MEASURE lift must be disjoint from any stream used to WARM the belief store (no training-on-the-test-set); content-shingle overlap check + a reserved held-out decision split never used to tune bands, prior, or reliability_floor.",
+  "claimCeiling": "candidate_only; canClaimAGI:false; a functional self-model of calibration, NOT episodic/human memory or experience (pillar 4 stays self-modeling-only per docs/11-Platform/Fail-Closed-Memory.md non-goals).",
+  "preRegistrationProof": "this file is committed BEFORE any live agent-loop run; the arms, primary metric, MDE, requiredN, and tear-out rules are fixed in advance so a post-hoc favorable slice cannot be selected.",
+  "honestBound": "N=0 live paired decisions run. The store + metrics are unit-tested on a SYNTHETIC decision stream (tests/test_calibration_belief_store.py): the calibrated reliability tracks the injected true reliability, ECE is computed correctly, and an ungated write is rejected fail-closed. NO live calibration lift has been measured; go:false stands until a powered, decontaminated live run clears every gate below.",
+  "guardrails": {
+    "failClosedWrite": "every write to the self-model passes the SAME injected fail-closed gate as belief promotion (Fail-Closed-Memory.md invariant 1); an ungated 'held' can never inflate reliability. Red-team: a fabricated held outcome that fails the gate must NOT change reliability(...).",
+    "noSelfCertification": "reliability is scored against an EXTERNAL outcome (verifier held vs contradicting source), never against the model's own say-so; the self-model cannot mark its own homework.",
+    "tamperEvidence": "the store is hash-chained (okf.forgetting_audit pattern); verify() must return False after any retroactive edit, so a self-model rewritten to look better is detectable.",
+    "abstentionNotSilence": "when a slice is data-poor the posterior shrinks to the prior and reliability_ci is wide; should_answer defers rather than committing on a thin posterior — measured, not assumed."
+  },
+  "arms": {
+    "baseline_stateless": "commits/abstains on the stated per-decision confidence alone; no self-model consulted (the current behavior).",
+    "self_model": "consults CalibrationBeliefStore.should_answer(domain, confidence) BEFORE answering; defers when the calibrated posterior for the (domain, band) slice is below reliability_floor; otherwise identical to baseline."
+  },
+  "instrument": "agent/calibration_belief_store.py (record_outcome / reliability / reliability_ci / should_answer / compute_ece / selective_risk / verify); metrics via agent.calibration; gate via tools/claim_gate.py; uncertainty via tools/eval_stats.py.",
+  "openCaveats": [
+    "no live agent loop wired yet (Phase 1 of Fail-Closed-Memory.md): the base-vs-self-model paired compare is UNRUN (N=0).",
+    "the reliability_floor, band edges, and Beta prior are hyperparameters that MUST be fixed on the warm/dev split before the held-out measurement, or the comparison is contaminated.",
+    "domain granularity (schema.DOMAINS) may be too coarse to resolve per-subfield miscalibration; a finer slice raises requiredN — pre-register the slice before measuring."
+  ]
+}

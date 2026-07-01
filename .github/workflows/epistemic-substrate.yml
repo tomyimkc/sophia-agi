@@ -1,0 +1,62 @@
+name: epistemic-substrate
+
+# ============================================================================
+# The EPISTEMIC-SUBSTRATE lane.
+#
+# Makes the epistemic-substrate suite LOAD-BEARING: its blocking tests + the two
+# self-tests (verifier-of-verifiers, sleeper-injection) must be green for this
+# check to pass, so the gates cannot silently rot. The pre-registered
+# not-yet-passing diagnostics (lint_evidence, wiki_coupling_gate,
+# honest_closure_gate, fact_recency_gate) are run for visibility inside the lane
+# script but do NOT fail the build — see scripts/epistemic_substrate_ci.sh.
+#
+# All logic lives in scripts/epistemic_substrate_ci.sh so `bash
+# scripts/epistemic_substrate_ci.sh` behaves identically locally and in CI.
+# ============================================================================
+
+on:
+  pull_request:
+    paths:
+      - "tools/**"
+      - "okf/**"
+      - "agent/**"
+      - "tests/**"
+      - "eval/**"
+      - "agi-proof/epistemic-substrate/**"
+      - "evidence_spec.json"
+      - "scripts/epistemic_substrate_ci.sh"
+  push:
+    paths:
+      - "tools/**"
+      - "okf/**"
+      - "agent/**"
+      - "tests/**"
+      - "eval/**"
+      - "agi-proof/epistemic-substrate/**"
+      - "evidence_spec.json"
+      - "scripts/epistemic_substrate_ci.sh"
+
+concurrency:
+  group: epistemic-substrate-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  epistemic-substrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pytest numpy sympy
+
+      # Blocking gates (17 tests + vov_selftest + sleeper_injection_selftest) fail
+      # the build; the pre-registered diagnostics are reported but non-blocking.
+      - name: Run epistemic-substrate CI lane
+        run: bash scripts/epistemic_substrate_ci.sh
