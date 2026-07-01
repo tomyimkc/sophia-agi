@@ -15,4 +15,7 @@ python tools/lint_claims.py
 echo "[pre-commit] habit-not-fact training-row lint…"
 python tools/lint_training_rows.py
 
+echo "[pre-commit] no codebase-memory index artifact staged…"
+python tools/cbm/check_no_index_artifacts.py --staged
+
 echo "[pre-commit] OK — measurement-contract fast checks passed."

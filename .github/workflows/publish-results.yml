@@ -26,6 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - name: Refuse to publish if a codebase-memory index artifact is tracked
+        run: python3 tools/cbm/check_no_index_artifacts.py
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
