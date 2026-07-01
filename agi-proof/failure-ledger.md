@@ -2647,3 +2647,17 @@ point clears coverage≥0.60 AND floor≥0.97 on ≥2 INDEPENDENT adapters + own
 2026-07-01. Not fit-after-the-fact. **This is a MEASURED serving HEDGE, not a raw-bar pass and not a
 capability claim — both adapters raw-FAIL 0.97; canClaimAGI stays false.** Artifact: bridge result
 2026-07-01-claude-web-cert-v6-frontier-1k (CERT_OUT nvfp4-v6-frontier-1k.json).
+
+
+### v6 + down_proj-bf16 mixed-precision — higher-coverage operating point (2026-07-01)
+
+Cloud idle-Spark cert (cert-only, no train) on the existing olmoe-qat-spark-v6 adapter, holding down_proj
+in bf16 (KEEP_SUFFIXES=down_proj), n=1024. Result: raw top1 0.9365 (still <0.97, NO-GO on the raw bar),
+mean_kl 0.0372 ✓, mem_ratio 1.9013. The 95%-Wilson-LCB abstention operating point is **coverage 0.8438 @
+answered 0.9884 (floor 0.9732)** — +12.5pts robust coverage over v6 full-NVFP4 (0.7188), at a memory cost
+(mem 3.30x -> 1.90x, ~42% less compression). Recorded in serving/adopted_operating_points.json as variant
+`v6_downproj16` (a higher-coverage / higher-memory regime, NOT the default; v6 @ 3.30x stays byte-efficient
+default). Ingredient conformal-abstention-serve already adopted (owner sign-off) — this adds a measured
+variant point, not a new adoption. Coverage progression (95%-robust): v5 0.64 -> v6 0.72 -> v6+down_proj
+0.84. The Mac's --keep-top-experts lever may beat down_proj on the coverage/memory trade (pending). Artifact:
+spark-bridge bridge/results/2026-07-01-claude-web-cert-v6-downproj-1k.json. canClaimAGI=false.
