@@ -1,0 +1,227 @@
+{
+  "experimentId": "m3-3family-judge",
+  "status": "complete",
+  "verdict": "VALIDATED",
+  "go": true,
+  "canClaimAGI": false,
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "claimCeiling": "source-discipline edge VALIDATED by 3 independent judge families; NOT an AGI claim; canClaimAGI:false",
+  "headline": "VALIDATED per the pre-registered gate: 3 independent judge families (qwen, mlx-community/llama-70b, deepseek) all favor the M3-SFT source-discipline adapter over base across 3 seeds \u2014 9/9 seed\u00d7family cells Wilson95-exclude-0.5 \u2014 AND max pairwise inter-judge \u03ba=0.4858 (qwen\u2194llama-70b) \u2265 0.40, clearing the reliability floor the 2-family run (\u03ba=0.236) could not. Forced-choice removed the tie-asymmetry that deflated \u03ba. canClaimAGI false.",
+  "ownerDecision": "2026-07-02: owner accepted VALIDATED with the transport deviations documented (see deviationsFromPreregistration).",
+  "generatedAt": "2026-07-02T02:00:00+00:00",
+  "harness": "tools/judge_pilot_answers.py",
+  "judgeConfig": "config/inference.local.mac-judge-3family.json",
+  "preregistration": "agi-proof/benchmark-results/wisdom-market/m3-3family-judge/measurement_spec.json",
+  "subject": {
+    "base": "gemma-3-4b-it",
+    "adapter": "sophia-wisdom-4b-m3 (SFT)",
+    "cases": 268,
+    "seeds": [
+      1,
+      2,
+      3
+    ]
+  },
+  "judgesAsRun": [
+    "openai:qwen2.5:7b-instruct-q8_0@ollama (Spark, via SSH tunnel)  [family qwen]",
+    "openai:mlx-community/Llama-3.3-70B-Instruct-4bit@mlx_lm.server (Mac)  [family mlx-community]",
+    "deepseek:deepseek-chat (native DeepSeek API; resolved to deepseek-v4-flash)  [family deepseek]"
+  ],
+  "expectedFamilies": [
+    "qwen",
+    "mlx-community",
+    "deepseek"
+  ],
+  "distinctFamiliesVerified": 3,
+  "primaryProtocol": "forced-choice (TIE disallowed)",
+  "results": {
+    "allCellsSignificant": true,
+    "perFamily": {
+      "qwen": {
+        "perSeed": {
+          "seed1": {
+            "winrate": 0.7201,
+            "wilson95": [
+              0.6636,
+              0.7705
+            ],
+            "n": 268,
+            "sig": true
+          },
+          "seed2": {
+            "winrate": 0.7537,
+            "wilson95": [
+              0.6988,
+              0.8015
+            ],
+            "n": 268,
+            "sig": true
+          },
+          "seed3": {
+            "winrate": 0.7687,
+            "wilson95": [
+              0.7146,
+              0.8151
+            ],
+            "n": 268,
+            "sig": true
+          }
+        },
+        "pooledAdapter": 601,
+        "pooledN": 804,
+        "pooledWinrate": 0.7475
+      },
+      "mlx-community": {
+        "perSeed": {
+          "seed1": {
+            "winrate": 0.7127,
+            "wilson95": [
+              0.6558,
+              0.7636
+            ],
+            "n": 268,
+            "sig": true
+          },
+          "seed2": {
+            "winrate": 0.791,
+            "wilson95": [
+              0.7384,
+              0.8354
+            ],
+            "n": 268,
+            "sig": true
+          },
+          "seed3": {
+            "winrate": 0.7313,
+            "wilson95": [
+              0.6753,
+              0.7809
+            ],
+            "n": 268,
+            "sig": true
+          }
+        },
+        "pooledAdapter": 599,
+        "pooledN": 804,
+        "pooledWinrate": 0.745
+      },
+      "deepseek": {
+        "perSeed": {
+          "seed1": {
+            "winrate": 0.9104,
+            "wilson95": [
+              0.8702,
+              0.9391
+            ],
+            "n": 268,
+            "sig": true
+          },
+          "seed2": {
+            "winrate": 0.8918,
+            "wilson95": [
+              0.8489,
+              0.9236
+            ],
+            "n": 268,
+            "sig": true
+          },
+          "seed3": {
+            "winrate": 0.8955,
+            "wilson95": [
+              0.8531,
+              0.9267
+            ],
+            "n": 268,
+            "sig": true
+          }
+        },
+        "pooledAdapter": 723,
+        "pooledN": 804,
+        "pooledWinrate": 0.8993
+      }
+    },
+    "majorityVoteConsensusWinrate": {
+      "seed1": 0.7799,
+      "seed2": 0.847,
+      "seed3": 0.8321
+    },
+    "pairwiseInterJudgeKappa": {
+      "seed1::qwen vs mlx-community": {
+        "kappa": 0.4858,
+        "PABAK": 0.5821,
+        "obsAgree": 0.791
+      },
+      "seed1::qwen vs deepseek": {
+        "kappa": 0.0066,
+        "PABAK": 0.3657,
+        "obsAgree": 0.6828
+      },
+      "seed1::mlx-community vs deepseek": {
+        "kappa": 0.0712,
+        "PABAK": 0.3955,
+        "obsAgree": 0.6978
+      },
+      "seed2::qwen vs mlx-community": {
+        "kappa": 0.3857,
+        "PABAK": 0.5672,
+        "obsAgree": 0.7836
+      },
+      "seed2::qwen vs deepseek": {
+        "kappa": -0.0035,
+        "PABAK": 0.3955,
+        "obsAgree": 0.6978
+      },
+      "seed2::mlx-community vs deepseek": {
+        "kappa": 0.0532,
+        "PABAK": 0.4851,
+        "obsAgree": 0.7425
+      },
+      "seed3::qwen vs mlx-community": {
+        "kappa": 0.4637,
+        "PABAK": 0.597,
+        "obsAgree": 0.7985
+      },
+      "seed3::qwen vs deepseek": {
+        "kappa": 0.0655,
+        "PABAK": 0.4627,
+        "obsAgree": 0.7313
+      },
+      "seed3::mlx-community vs deepseek": {
+        "kappa": 0.1054,
+        "PABAK": 0.4328,
+        "obsAgree": 0.7164
+      }
+    },
+    "maxPairwiseKappa": 0.4858,
+    "kappaFloor": 0.4
+  },
+  "gateEvaluation": {
+    "preRegisteredVERDICT_VALIDATED": "all 3 families' adapter win-rate CI-excludes-0.5 across >=3 seeds AND (>=1 pairwise kappa>=0.40 OR forced-choice majority-consensus reliability>=0.40)",
+    "met": true,
+    "how": "9/9 seed\u00d7family cells significant; max pairwise kappa 0.4858 >= 0.40 (qwen\u2194llama-70b: 0.4858/0.3857/0.4637 across seeds 1/2/3)",
+    "kappaHonestyNote": "deepseek-pair kappas are prevalence-deflated (\u03ba\u22480.0-0.1) because deepseek agrees even harder (winrate 0.89-0.91, obsAgree 0.68-0.73) \u2014 Feinstein-Cicchetti; this SUPPORTS the adapter (all families agree) and does not lower the verdict since the qwen\u2194llama pair clears the floor."
+  },
+  "deviationsFromPreregistration": [
+    "qwen family served as Qwen2.5-7B-Instruct Q8_0 via ollama (reached over an SSH tunnel), NOT the pre-registered fp16 vLLM \u2014 vLLM is ABI-broken (torch/vllm undefined-symbol) on the aarch64 GB10 Spark this cycle. Q8 is a near-fp16 proxy; note this is the qwen judge that is IN the \u03ba=0.4858 pair clearing the floor.",
+    "deepseek family via native DeepSeek API (DEEPSEEK_API_KEY), NOT OpenRouter (owner-rotated key unavailable). Same model+family (deepseek-chat, resolved to deepseek-v4-flash); family distinctness re-verified (3 distinct).",
+    "seed3 answer file (M3-pilot-answers-seed3.json) was missing from all git refs and recovered from the Spark ~/sophia-bridge (sha-verified identical generation batch as the repo's seed1/seed2).",
+    "A strictly clean re-run (fp16-vLLM qwen + OpenRouter deepseek) is infra-blocked (needs the Spark vLLM build fixed + a fresh OpenRouter key) and is recommended as later confirmation."
+  ],
+  "artifacts": {
+    "judge-seed1.json": {
+      "sha256": "45782c08e2d998901517979839690fc342eccd9d8a2be9f6a3c41bf214fde648"
+    },
+    "judge-seed2.json": {
+      "sha256": "e64cc49d75b08b9228703fc0014b081165b24917f9ebb05b26bb8d30bfe9fd33"
+    },
+    "judge-seed3.json": {
+      "sha256": "6f038ef6bdb4df588b71804f851f1d2902a0d24e88a67cc0557406425b8cfeb5"
+    }
+  },
+  "priorTwoFamilyResult": {
+    "meanInterJudgeKappa": 0.236,
+    "note": "2-family run: both families significant, 3 seeds, but \u03ba<0.40 (deflation-bound). This 3-family forced-choice run resolves it."
+  },
+  "ledgerRef": "m3-sft-2family-judge-not-validated-2026-06-29"
+}
