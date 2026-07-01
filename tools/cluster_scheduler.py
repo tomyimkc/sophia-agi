@@ -200,10 +200,10 @@ def collect_shard_results(parent_id: str, results: "list[dict]") -> dict:
         for s in (r.get("expectedShards") or []):
             expected.add(s)
     expected |= landed
-    missing = sorted([s for s in expected if s not in landed], key=lambda x: str(x))
+    missing = sorted([s for s in expected if s not in landed], key=str)
     return {
         "parentId": parent_id,
-        "shards": sorted(landed, key=lambda x: str(x)),
+        "shards": sorted(landed, key=str),
         "complete": bool(expected) and not missing,
         "missing": missing,
     }

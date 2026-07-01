@@ -7,7 +7,8 @@ adds a thin, conservative **safety overlay** that flags only machine-checkable e
 answer must never ship:
 
   * an **implausible dose** — non-positive, or absurdly large for a single dose (unit-aware ceiling);
-  * an **unknown dose unit** where a dose is clearly intended;
+  * doses are recognized only via a fixed set of known units; an unrecognized unit is *not*
+    flagged (the overlay stays conservative and defers to provenance + human review);
   * a small table of **hard contraindications** explicitly co-recommended in the same answer.
 
 It is reference-grade and **fails closed but conservatively**: it flags gross errors and otherwise

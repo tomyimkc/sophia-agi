@@ -24,7 +24,7 @@ generalises over phrasing, not deep meaning; the trained router overrides ``rout
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True)

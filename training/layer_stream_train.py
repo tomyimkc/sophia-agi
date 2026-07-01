@@ -374,9 +374,9 @@ def report(scheme: str = "adam-fp32", *, double_buffer_depth: int = 2) -> str:
     lines = [
         f"MegaTrain offline planner — scheme={scheme}, double_buffer_depth={double_buffer_depth}, "
         f"activations: batch={act_cfg.batch} seq={act_cfg.seq} hidden={act_cfg.hidden}",
-        "  (PLANNING: pure byte-accounting model; NO real training, NO hardware/capability claim. "
+        "  (PLANNING: pure byte-accounting model; NO real training, NO hardware/capability claim. " +
         "canClaimAGI=false)",
-        "  (MegaTrain property: peak DEVICE bytes = double_buffer_depth layers + activations, "
+        "  (MegaTrain property: peak DEVICE bytes = double_buffer_depth layers + activations, " +
         "NOT the whole model)",
         "",
     ]

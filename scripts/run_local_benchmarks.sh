@@ -312,8 +312,9 @@ if [[ "${RUN_A}" -eq 1 ]]; then
   run "${PY}" tools/run_local_judge_eval.py --config "${JUDGE_CONFIG}"
 
   step "A2 — Judge M3-SFT answers across seeds [${SEEDS}] with both families"
-  # judge_pilot_answers.py judges ONE answers file per call (one seed). No --seed flag exists:
-  # seeds are separate answer JSONs. We loop over seeds and write one judge report per seed.
+  # judge_pilot_answers.py judges ONE answers file per call (one seed's answer JSON). It accepts
+  # --seed (added in this PR) which we pass below for reproducibility/stamping. We still loop over
+  # seeds — each seed is a separate answers JSON — and write one judge report per seed.
   RAW_SIDECARS=""
   for s in ${SEEDS}; do
     ans="${ANSWERS_DIR}/${ANSWERS_PREFIX}${s}.json"

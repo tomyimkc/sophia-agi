@@ -249,7 +249,7 @@ def report(jobs: "list[Job]", node_counts="(1,2,4,8,16)", mac_judge_concurrency:
         f"Throughput sim — {len(jobs)} jobs ({n_judge} need the Mac judge), "
         f"mac_judge_concurrency={mac_judge_concurrency}",
         "  (PLANNING: schedules the owner's GPU-time ESTIMATES; no hardware claim. "
-        "canClaimAGI=false)",
+        + "canClaimAGI=false)",
         "",
         f"  {'nodes':>5} | {'wall(min)':>9} | {'speedup':>7} | {'eff':>5} | "
         f"{'judgeWait(min)':>14} | bottleneck",

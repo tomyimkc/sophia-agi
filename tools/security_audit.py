@@ -11,8 +11,9 @@ agent). It runs three checks and returns a structured result:
                          (public copy must not exceed the failure ledger).
   (b) redos_robustness — tests/test_verifier_robustness.py main() must return 0
                          (discipline verifiers stay ReDoS-safe on adversarial input).
-  (c) secret_scan      — a cheap heuristic regex scan over a bounded set of tracked
-                         non-binary files for high-entropy / secret-shaped patterns.
+  (c) secret_scan      — a cheap heuristic regex scan over a bounded set of
+                         working-tree (incl. untracked) non-binary files for
+                         high-entropy / secret-shaped patterns.
 
 This is a LOCAL PRE-FLIGHT, not a replacement for CI. The authoritative scans live
 in .github/workflows/security.yml (pip-audit + CodeQL + gitleaks). A clean result
@@ -94,8 +95,10 @@ def _value_allowlisted(line: str) -> bool:
 def scan_text(text: str) -> list[dict]:
     """Heuristic secret scan over a string. Returns a list of findings; empty == clean.
 
-    A finding is {"pattern": <name>, "match": <redacted preview>}. Placeholder
-    values (per the gitleaks allowlist regexes) are not reported.
+    A finding is {"pattern": <name>, "length": <len of matched token>}. The
+    matched secret value is NEVER included — only its length — so results can be
+    logged/printed safely. Placeholder values (per the gitleaks allowlist
+    regexes) are not reported.
     """
     findings: list[dict] = []
     for line in text.splitlines():
@@ -105,9 +108,9 @@ def scan_text(text: str) -> list[dict]:
             m = rx.search(line)
             if m:
                 raw = m.group(0)
-                # Redact: never echo a full secret-shaped token back out.
-                preview = raw[:6] + "..." if len(raw) > 6 else raw + "..."
-                findings.append({"pattern": name, "match": preview})
+                # Redact fully: emit only the match length, never any bytes of
+                # the secret-shaped token, so findings are safe to log/print.
+                findings.append({"pattern": name, "length": len(raw)})
     return findings
 
 

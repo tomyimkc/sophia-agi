@@ -16,7 +16,6 @@ injectable). Built on agent/okf_schema.py + agent/okf_trace.py. No capability cl
 from __future__ import annotations
 
 import argparse
-import sys
 import tempfile
 from pathlib import Path
 
@@ -137,14 +136,14 @@ def offline_invariants() -> tuple[bool, dict]:
     with tempfile.TemporaryDirectory() as td:
         log = LoopLog("selftest", root=td, clock=_fixed_clock())
         e = log.event("err", "an error happened")
-        o = log.observe("look", "spawned an explore agent; found a clue", actor="Explore-agent")
-        r = log.reason("think", "the clue implies X")
-        d = log.decide("decide", "fix by doing Y")
-        a = log.act("fix", "called the coding agent / tool to apply Y", tool="Edit")
+        log.observe("look", "spawned an explore agent; found a clue", actor="Explore-agent")
+        log.reason("think", "the clue implies X")
+        log.decide("decide", "fix by doing Y")
+        log.act("fix", "called the coding agent / tool to apply Y", tool="Edit")
         v_fail = log.verify("check-1", "ran gates; one failed", verdict="fail")
-        a2 = log.act("fix-2", "applied the follow-up fix", tool="Edit")
-        v_ok = log.verify("check-2", "ran gates; all pass", verdict="pass")
-        res = log.resolve("done", "incident resolved")
+        log.act("fix-2", "applied the follow-up fix", tool="Edit")
+        log.verify("check-2", "ran gates; all pass", verdict="pass")
+        log.resolve("done", "incident resolved")
 
         # 1) every step is a valid OKF node
         checks["all_nodes_valid"] = all(

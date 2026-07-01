@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -37,8 +36,12 @@ def load_manifest(path: Path = MANIFEST_PATH) -> dict:
 def _target_for(surface: dict, harness_id: str, harness: dict) -> str:
     """Compute the repo-relative target path for a surface under a harness.
 
-    Skills install into the harness `skillsDir`; mcp/gate install into a flat
-    `operator/` folder beside the skills dir so non-skill surfaces are explicit.
+    Skills are directory-shaped (each has its own SKILL.md plus sibling assets),
+    so they install as a directory under the harness `skillsDir`. An mcp surface
+    installs to the harness `mcpFile` target when the manifest declares one (e.g.
+    `.cursor/mcp.json`), falling back to a flat `operator/` folder. The gate (and
+    any other non-skill surface without a per-harness target) installs into that
+    same `operator/` folder beside the skills dir so it is explicit.
     """
     source = surface["source"]
     kind = surface.get("kind")
@@ -46,7 +49,10 @@ def _target_for(surface: dict, harness_id: str, harness: dict) -> str:
     if kind == "skill":
         skills_dir = harness.get("skillsDir", f".{harness_id}/skills")
         # Skills are directory-shaped (each has its own SKILL.md), so target the dir.
-        return f"{skills_dir}/{surface['id']}/{name}"
+        return f"{skills_dir}/{surface['id']}/"
+    if kind == "mcp" and harness.get("mcpFile"):
+        # Honour the per-harness MCP target path (e.g. .cursor/mcp.json).
+        return harness["mcpFile"]
     base = harness.get("skillsDir", f".{harness_id}/skills")
     parent = str(Path(base).parent)
     return f"{parent}/operator/{name}"

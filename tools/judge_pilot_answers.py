@@ -336,7 +336,20 @@ def main() -> int:
     # only the cross-box idle gap is reclaimed. We refuse to parallelize families that SHARE a box
     # (that would just oversubscribe one endpoint, not parallelize) and honor --no-parallel-families.
     per_judge: dict = {}
-    boxes = [(s.split("@", 1)[1] if "@" in s else s.split(":", 1)[0]) for s in judge_specs]
+    def _box_key(spec: str) -> str:
+        # The physical box a family targets: the base_url after '@', else the host before ':'.
+        raw = spec.split("@", 1)[1] if "@" in spec else spec.split(":", 1)[0]
+        # Normalize cosmetically-different-but-same endpoints so they count as ONE box:
+        # strip trailing '/', and lowercase the scheme+host (case-insensitive per RFC 3986)
+        # while preserving any case-sensitive path.
+        raw = raw.rstrip("/")
+        if "://" in raw:
+            scheme, rest = raw.split("://", 1)
+            netloc, sep, path = rest.partition("/")
+            return f"{scheme.lower()}://{netloc.lower()}{sep}{path}"
+        host, sep, path = raw.partition("/")
+        return f"{host.lower()}{sep}{path}"
+    boxes = [_box_key(s) for s in judge_specs]
     distinct_boxes = len(set(boxes)) == len(boxes)
     parallel = (not args.no_parallel_families) and len(judge_specs) >= 2 and distinct_boxes
     if parallel:
