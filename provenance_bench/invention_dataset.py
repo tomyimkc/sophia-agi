@@ -302,7 +302,7 @@ def build_invention_rl_dataset(*, seed: int = 0, depths: tuple[int, ...] = (2, 3
             drows = _random.Random(seed + d).sample(drows, per)
         rows.extend(drows)
     rows.sort(key=lambda r: r["task_id"])
-    seal = hashlib.sha256("\n".join(r["task_id"] for r in rows).encode()).hexdigest()
+    seal = hashlib.sha256("|".join(r["task_id"] for r in rows).encode("utf-8")).hexdigest()[:16]
     return {
         "train_rows": rows,
         "eval_rows": [],  # held-out eval is the powered suite (eval_rlvr_adapter --task invention)
