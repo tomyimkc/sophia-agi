@@ -189,10 +189,11 @@
       "module": "agent/verifiability_model.py",
       "description": "World-model #1: predict P(verifier passes) from knowability features -> abstain PROACTIVELY (anticipate the consequence) instead of reactively. Nature ability-2 (representation).",
       "proofStatus": "candidate",
-      "gate": "verifiability_model offline_invariants (separates trap/control, generalizes to held-out)",
-      "ablationDelta": null,
+      "gate": "verifiability_model offline_invariants + tools/ablate_verifiability.py (held-out mechanism ablation)",
+      "ablationDelta": 1.0,
       "adopted": false,
-      "openItem": "trained-model uplift from proactive vs reactive abstention not yet measured"
+      "note": "OFFLINE held-out mechanism ablation: proactive gate cut fabrication 1.0->0.0 at 0 control cost on disjoint strings in KNOWN feature families (artifact agi-proof/benchmark-results/verifiability-ablation.json). Deliberately NOT adopted: feature-based gate on a small synthetic held-out is weaker than a judged capability result; adoption waits for a REAL-MODEL ablation (Mac) + generalization to novel knowability types.",
+      "openItem": "real-model proactive-vs-reactive ablation (Mac) + novel-knowability-type generalization"
     },
     {
       "id": "interventional-causal-ablation",
