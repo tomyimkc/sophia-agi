@@ -27,12 +27,6 @@
       "description": "RunPod connectivity skill for remote GPU operations."
     },
     {
-      "id": "prompt-author",
-      "kind": "skill",
-      "source": ".claude/skills/prompt-author/SKILL.md",
-      "description": "Prompt-author skill: write precise, machine-checkable prompts for other agents with abstention paths."
-    },
-    {
       "id": "sophia-mcp",
       "kind": "mcp",
       "source": ".mcp.json",
