@@ -80,6 +80,14 @@ PYTHONPATH=. venv312/bin/python tools/provenance_weighted_training.py \
 
 ### W4 — `tools/adversarial_gate_selfplay.py` (adversarial self-play, single round / dry)
 
+> **UPDATE 2026-07-01 (same day): W4 taken LIVE locally (multi-round).** Local Qwen is the
+> trained model; gate = real `agent.gate` + `agent.temptation`. Held-out **fabricate-and-pass
+> 0.375 → 0.0** after one self-play round (SFT-to-abstain on mined cases). BUT honest costs:
+> the model **over-abstains on 2/5 answerable questions** (base 0/5), and the proposer was a
+> **fixed** prompt pool (not adaptive), so proposer-novelty isn't genuinely tested. Strong
+> candidate, **w4 row stays Open.** Detail + checksums:
+> `agi-proof/benchmark-results/w4-adversarial-selfplay/`.
+
 **Wired/run — offline (exact command):**
 ```
 PYTHONPATH=. venv312/bin/python tools/adversarial_gate_selfplay.py \
