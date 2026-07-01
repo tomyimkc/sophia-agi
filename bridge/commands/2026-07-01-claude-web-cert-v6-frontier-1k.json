@@ -1,0 +1,13 @@
+{
+  "id": "2026-07-01-claude-web-cert-v6-frontier-1k",
+  "args": "--bench-b --execute",
+  "createdBy": "claude (cloud, wheel)",
+  "createdAt": "2026-07-01T12:50:00Z",
+  "approvedBy": "user: standing \"act, don't ask / perform all benchmarking; run the GPU 24/7 when not judging\" (2026-06-30). Cert-only (--bench-b, NO --run-train) on the EXISTING v6 adapter, same class as the approved v5 frontier certs. NOT a --run-train escalation.",
+  "note": "v6 confirmation at 4x eval positions. The Mac's v6 train+cert (train-03) ran at n=256: honest NO-GO on raw top1 (0.9609 < 0.97, miss 0.009) but mean_kl passes and the fused-expert co-adaptation is confirmed. Its abstention frontier point-estimates strictly dominate v5 (93% coverage @ answered 0.983, 87.5%@0.991), BUT at n_test=128 no frontier point clears the 0.97 floor at the 95% Wilson lower bound (best floor 0.951) -> the pre-registered T8 Condition-2 (robust coverage>=0.60 AND floor>=0.97 on the 2nd independent adapter) is NOT robustly met at n=256. This re-cert of the existing olmoe-qat-spark-v6 adapter at CERT_NEVAL=1024 (n_test~512) tightens the interval so serving/abstention_serve.policy_from_cert(confidence=0.95) can decide T8 Condition-2 on firm ground. Cert/diagnostic only — do NOT flip any recipe candidate->adopted (owner-gated); canClaimAGI stays false.",
+  "env": {
+    "QAT_ADAPTER": "training/lora/checkpoints/olmoe-qat-spark-v6",
+    "CERT_NEVAL": "1024",
+    "CERT_OUT": "agi-proof/benchmark-results/nvfp4-v6-frontier-1k.json"
+  }
+}
