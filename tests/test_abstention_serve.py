@@ -32,6 +32,29 @@ def test_abstention_serve_offline_invariants():
     assert ok, d["checks"]
 
 
+def test_abstaining_decoder_offline_invariants():
+    from serving import abstaining_decoder
+    ok, d = abstaining_decoder.offline_invariants()
+    assert ok, d["checks"]
+
+
+def test_decoder_circuit_breaker_never_ships_mostly_abstained():
+    import numpy as np
+
+    from serving.abstaining_decoder import ABSTAIN_TOKEN, AbstainingDecoder
+    from serving.abstention_serve import AbstentionPolicy
+    # A policy that abstains on everything must trip the breaker and NOT return a full-length answer.
+    pol = AbstentionPolicy(threshold=-1.0, target_answered=0.97, measured_coverage=0.0,
+                           measured_answered_top1=0.0, raw_top1=0.5, n_test=512, source="t")
+    V = 16
+
+    def tie(step, emitted):
+        r = np.full(V, 0.005 / (V - 2)); r[0] = 0.5; r[1] = 0.495; return r
+    tr = AbstainingDecoder(pol).decode(tie, max_tokens=64, stop_on_coverage_below=0.5)
+    assert tr.n_steps < 64, "breaker must stop a mostly-abstained decode early"
+    assert all(t == ABSTAIN_TOKEN for t in tr.tokens)
+
+
 def test_policy_from_cert_loads_shippable_point():
     from serving.abstention_serve import policy_from_cert
     # A cert artifact whose frontier cleared the bar -> a usable policy with the right threshold.

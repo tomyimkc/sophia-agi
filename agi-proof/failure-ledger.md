@@ -2573,3 +2573,29 @@ git-merge/cherry-pick the Mac can do (it holds both trees) and DRY-RUN/selftest 
 which the cloud cannot. Delegated to the Mac; v6 run command spec + owner approval recorded in the handoff.
 Lesson: single-file tool deploys from cloud are safe only when the target has no divergent local hardening;
 trainer/harness files do — verify the diff direction before any clobber.
+
+
+### v5 mixed-precision (down_proj bf16) lever + abstaining decoder (2026-07-01)
+
+Cheap cert-only lever (no training) to see if holding down_proj in bf16 lifts v5 enough to ship the
+abstention hedge at higher coverage. Result (n=1024, `cert-v5-downproj-frontier`) — a valid but
+memory-expensive lever, NOT a v6 substitute:
+
+| v5 variant       | raw top1 | mean_kl    | mem_ratio | 95%-robust coverage | answered | floor  |
+|------------------|---------:|-----------:|----------:|--------------------:|---------:|-------:|
+| full NVFP4       |  0.8975  | 0.0551 ✗   |   3.30x   |       0.6426        |  0.9970  | 0.9831 |
+| down_proj bf16   |  0.9111  | 0.0429 ✓   |   1.90x   |       0.7012        |  0.9889  | 0.9718 |
+
+down_proj bf16 lifts raw top1 +1.4pts, FIXES mean_kl (0.0429 < 0.05, full-NVFP4 fails it at 0.0551), and
+raises the 95%-robust shippable coverage 0.6426 -> 0.7012 (+6pts). BUT it gives back ~42% of the
+compression (3.30x -> 1.90x) — a steep memory price for +6pts coverage. For a low-RAM deployment (the
+whole point) full-NVFP4 @ 3.30x / 64% coverage is the better byte-efficient point; down_proj-held only
+wins where memory is abundant. Neither reaches high coverage -> v6 (train the cert metric) or a smarter
+mixed scheme remains the path to real coverage gains without the memory cost. canClaimAGI stays false.
+
+**Also built (serving, end-to-end):** `serving/abstaining_decoder.py` — `AbstainingDecoder(policy)` wires
+the abstention policy into the token loop over a caller-supplied quant `logits_provider` (the only model
+touch-point; no FP model). Confident step -> emit argmax; low-margin step -> emit ABSTAIN_TOKEN (defer/
+flag/route). Tracks live coverage + a `stop_on_coverage_below` circuit-breaker so a mostly-abstained
+answer fails loud instead of shipping. `tests/test_abstention_serve.py` now 8/8 (adds decoder invariants
++ the breaker guard). This is the deployable shape of v5+abstention: measured in the cert, enforced in the loop.
