@@ -315,6 +315,18 @@ When a run lands:
 | T4 | on-disc +0.05–0.20 | _pending_ | _—_ | _—_ |
 | T5 | 3B fits / 8B recompute-only | _pending_ | _—_ | _—_ |
 | T6 | A wins trace/edit, ties acc | _pending_ | _—_ | _—_ |
+| T7 | v6 (KD+top1) top1 0.95–0.98, GO ~45% | _pending_ | _—_ | _—_ |
+
+## T7 — v6 output-space QAT (pre-registered 2026-07-01, BEFORE the run)
+**Hypothesis:** training the QAT objective on the cert's own metrics (output-space KD +
+CE-to-FP-argmax; `training/qat.py::kd_top1_margin_loss`) lifts NVFP4 top1 past the 0.97 floor where
+the v5 weight-space penalty could not. **Conditions:** OLMoE-1B-7B, LoRA r16 all-linear, env
+`QAT_KD_WEIGHT=1.0 QAT_TOP1_WEIGHT=0.5 QAT_TEMP=2.0 QAT_LAMBDA=0.0005 QAT_EPOCHS=5`; cert n=256;
+gate mean_kl ≤ 0.05 AND top1 ≥ 0.97. **Forecast:** top1 **0.95–0.98** (from the honest fully-merged
+v5 baseline top1 0.922), mean_kl stays ≤ 0.05; **GO probability ~45%** (the loss now targets top1
+directly, but a single 4-bit MoE may still flip a few argmaxes — a NO-GO here would point to
+depth-mixed precision or a less-aggressive scheme, not another recipe knob). **Decided before the
+run; measures the prediction, not a fit-after.** `canClaimAGI` false.
 
 `canClaimAGI` stays **false** throughout; forecasts are predictions, not results, and every landed
 number goes through `make claim-check` before it is called anything but candidate.
