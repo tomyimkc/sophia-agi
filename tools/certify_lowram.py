@@ -270,6 +270,50 @@ def _manual_merge_lora(model: Any, adapter_dir: Path) -> "tuple[int, dict]":
     return merged, info
 
 
+def _ensure_peft_weightconverter_compat() -> "str | None":
+    """Make peft's fused-MoE-expert merge shim work on transformers>=5.6 (the P0-A skew).
+
+    peft 0.19.1 (the latest release) constructs
+    ``WeightConverter(..., distributed_operation=, quantization_operation=)`` inside
+    ``peft.utils.transformers_weight_conversion`` when merging a fused-expert (mixtral/OLMoE-style)
+    LoRA. transformers>=5.6 dropped those two names from ``WeightConverter.__init__`` — they are now
+    plain attributes set after construction — so the call raises
+    ``TypeError: WeightConverter.__init__() got an unexpected keyword argument 'distributed_operation'``
+    and the 32 fused-expert modules never merge (the peft path dies; the manual fallback below can
+    only reach the non-fused 64/96). We wrap ``__init__`` to absorb the two kwargs back into
+    attributes, restoring peft's own tested fused-expert merge so all 96/96 experts apply.
+
+    Idempotent and process-local: it patches nothing on disk and no-ops when the running transformers
+    still accepts the kwargs (or exposes no such class). Returns a short status string for load_info,
+    or ``None`` when there is nothing to patch (caller then keeps the manual-merge fallback)."""
+    try:
+        import inspect
+
+        from transformers.core_model_loading import WeightConverter
+    except Exception:  # noqa: BLE001 - older transformers has no core_model_loading.WeightConverter
+        return None
+    init = WeightConverter.__init__
+    if getattr(init, "_peft_compat", False):
+        return "already-patched"
+    try:
+        params = inspect.signature(init).parameters
+    except (TypeError, ValueError):
+        return None
+    if "distributed_operation" in params:
+        return None  # this transformers still takes the kwargs in __init__ — nothing to do
+
+    def __init__(self, *args, distributed_operation=None, quantization_operation=None, **kwargs):
+        init(self, *args, **kwargs)
+        # transformers>=5.6 sets these post-construction; peft passes them in. Restore as attributes
+        # so downstream ``getattr(mapping, "distributed_operation", None)`` sees the intended value.
+        self.distributed_operation = distributed_operation
+        self.quantization_operation = quantization_operation
+
+    __init__._peft_compat = True  # type: ignore[attr-defined]
+    WeightConverter.__init__ = __init__  # type: ignore[method-assign]
+    return "patched WeightConverter.__init__ (peft fused-expert kwargs -> attrs)"
+
+
 def load_merged_model(base_model: str, adapter_dir: Path, *, dtype_str: str,
                       attn: str, device: str) -> "tuple[Any, Any, dict]":
     """Load base + LoRA as a single merged bf16 model. Tries the peft API first, falls back to a
@@ -298,6 +342,9 @@ def load_merged_model(base_model: str, adapter_dir: Path, *, dtype_str: str,
     try:
         import warnings as _warnings
 
+        # P0-A: absorb peft 0.19.1's dropped WeightConverter kwargs so the fused-expert merge path
+        # (all 96/96 experts) works on transformers>=5.6 instead of dying into the partial manual merge.
+        info["peft_compat"] = _ensure_peft_weightconverter_compat()
         from peft import PeftModel
         # Capture peft's load/merge warnings — notably "target_parameters=[...] were set but no
         # parameter was matched", which means part of the adapter (e.g. fused-name expert LoRA on a
