@@ -315,8 +315,8 @@ When a run lands:
 | T4 | on-disc +0.05–0.20 | _pending_ | _—_ | _—_ |
 | T5 | 3B fits / 8B recompute-only | _pending_ | _—_ | _—_ |
 | T6 | A wins trace/edit, ties acc | _pending_ | _—_ | _—_ |
-| T7 | v6 (KD+top1) top1 0.95–0.98, GO ~45% | _pending_ | _—_ | _—_ |
-| T8 | abstention-serve adopt: robust cov ≥0.60 on ≥2 adapters | v5 MET (0.6426); 2nd pending | _—_ | _—_ |
+| T7 | v6 (KD+top1) top1 0.95–0.98, GO ~45% | top1 **0.9336** (n=1024; n=256 0.9609), **NO-GO** | dir ✓ / mag ✗ (n=1024 below band) | fused-expert co-adapt lifts top1 0.88→0.93 but not to band at the firm N; abstention is the ship path |
+| T8 | abstention-serve adopt: robust cov ≥0.60 on ≥2 adapters | **MET → ADOPTED** — v5 0.6426, v6 0.7188 (n=1024) | inside ✓ | conformal-abstention-serve adopted (owner sign-off 2026-07-01); measured hedge, canClaimAGI false |
 
 ## T7 — v6 output-space QAT (pre-registered 2026-07-01, BEFORE the run)
 **Hypothesis:** training the QAT objective on the cert's own metrics (output-space KD +
@@ -328,6 +328,15 @@ v5 baseline top1 0.922), mean_kl stays ≤ 0.05; **GO probability ~45%** (the lo
 directly, but a single 4-bit MoE may still flip a few argmaxes — a NO-GO here would point to
 depth-mixed precision or a less-aggressive scheme, not another recipe knob). **Decided before the
 run; measures the prediction, not a fit-after.** `canClaimAGI` false.
+
+**RESULT (2026-07-01):** the fused-expert QAT reach fix (co-adapt all 32 `OlmoeExperts`, was 0) was the
+real enabler — top1 **0.8828 → 0.9609** (n=256) and mean_kl 0.0506 → 0.0341 (passes). But the firmer
+**n=1024** re-cert reads **top1 0.9336** (the n=256 was optimistic), mean_kl 0.0454 — **NO-GO** (miss 0.97
+by 0.066). Direction ✓ (NO-GO as ~55% expected); magnitude ✗ (0.9336 sits *below* the 0.95–0.98 band at
+the firm N). **Prior update:** output-space KD+top1 genuinely lifts NVFP4 top1 and *confirms the
+fused-expert co-adaptation hypothesis*, but a single 4-bit MoE still won't clear the never-flip bar → the
+ship path is v6 **+ abstention** (adopted, T8) and the next lever is `--keep-top-experts` mixed precision,
+exactly as the pre-registration's NO-GO branch predicted. `canClaimAGI` false.
 
 ## T8 — conformal-abstention-serve ADOPTION bar (pre-registered 2026-07-01, BEFORE the 2nd condition)
 **Decision being pre-registered:** when may `recipe_spec.conformal-abstention-serve` flip
@@ -345,6 +354,16 @@ model, not just a bigger-N re-run of the same one), **AND** the owner signs off 
 likely better) → adoption becomes honest; a v6 that fails the *raw* 0.97 but still serves ≥0.60 robust
 coverage STILL satisfies T8 (the hedge is a serving claim, not a never-flip claim). **Held at `validated`
 until Condition 2 + owner sign-off.** Decided before the run; `canClaimAGI` false.
+
+**RESULT (2026-07-01): MET → ADOPTED.** Condition 2 = the v6 cert at n=1024 (independent adapter: KD+top1
+output-space objective, distinct from v5's weight-space penalty). Its 95%-Wilson-LCB operating point is
+**coverage 0.7188 @ answered 0.9918, floor 0.9762** — clears cov ≥ 0.60 AND floor ≥ 0.97, and *dominates*
+v5's 0.6426/0.9831 by +8pts coverage (the fused-expert co-adaptation improved the shippable point even
+though it missed the raw bar). Both independent adapters clear the bar out-of-sample at n=1024; owner
+signed off 2026-07-01. `recipe_spec.conformal-abstention-serve` flipped `validated → adopted` (commit
+e9ff56bc; ledger 101919c7). As forecast (~55% adopt), the exemplar case where a raw NO-GO still yields an
+honest shippable serving hedge. `canClaimAGI` stays false — it is a measured selective-accuracy hedge, not
+a capability claim.
 
 `canClaimAGI` stays **false** throughout; forecasts are predictions, not results, and every landed
 number goes through `make claim-check` before it is called anything but candidate.

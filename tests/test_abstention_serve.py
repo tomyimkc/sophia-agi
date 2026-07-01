@@ -122,6 +122,22 @@ def test_lcb_raises_when_no_point_is_robust():
         Path(p).unlink()
 
 
+def test_adopted_operating_points_are_self_consistent():
+    from serving.abstention_serve import ADOPTED_OPERATING_POINTS, adopted_policy
+    data = json.loads(Path(ADOPTED_OPERATING_POINTS).read_text())
+    assert data["adopted"] is True and data["ingredient"] == "conformal-abstention-serve"
+    min_cov = float(data["min_coverage"]); target = float(data["target_answered"])
+    # every pinned adopted point must clear its own pre-registered bar (cov>=min AND LCB floor>=target)
+    for key, op in data["operating_points"].items():
+        assert op["coverage"] >= min_cov, (key, op["coverage"])
+        assert op["answered_top1_lcb95"] >= target, (key, op["answered_top1_lcb95"])
+        assert op["raw_top1"] < target, (key, "raw should FAIL the bar — this is a hedge, not a raw pass")
+    # the default loads into a usable AbstentionPolicy carrying the confidence-floor provenance
+    pol = adopted_policy()
+    assert pol.selection.startswith("wilson_lcb") and pol.answered_lcb >= target
+    assert pol.measured_coverage >= min_cov
+
+
 def test_none_operating_point_refuses_to_answer_everything():
     from serving.abstention_serve import policy_from_cert
     # If abstention cannot rescue the model, loading MUST raise, never silently answer-everything.

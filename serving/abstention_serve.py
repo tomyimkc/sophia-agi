@@ -143,6 +143,35 @@ def policy_from_cert(cert_path: "str | Path", *, confidence: "float | None" = No
         selection=f"wilson_lcb@{confidence:.2f}", answered_lcb=round(lcb, 4))
 
 
+ADOPTED_OPERATING_POINTS = _ROOT / "serving" / "adopted_operating_points.json"
+
+
+def adopted_policy(adapter: "str | None" = None,
+                   path: "str | Path" = ADOPTED_OPERATING_POINTS) -> "AbstentionPolicy":
+    """Load a pinned, ADOPTED serve-time abstention policy without re-running a cert.
+
+    ``serving/adopted_operating_points.json`` records the 95%-LCB operating point that cleared the
+    pre-registered T8 adoption bar for each certified adapter. ``adapter=None`` uses the config's
+    ``default``. This is the deployment entry point — a server loads the adopted operating point (one
+    small JSON) rather than shipping/parsing a full cert. The numbers are MEASURED selective accuracy,
+    not per-token guarantees; ``canClaimAGI`` stays false. Re-derive with ``policy_from_cert(cert,
+    confidence=0.95)`` if the adapter or serve distribution changes."""
+    data = json.loads(Path(path).read_text())
+    if not data.get("adopted"):
+        raise ValueError(f"{path}: ingredient is not adopted — do not serve a non-adopted operating point")
+    key = adapter or data["default"]
+    pts = data["operating_points"]
+    if key not in pts:
+        raise ValueError(f"{path}: no adopted operating point for adapter {key!r} (have {sorted(pts)})")
+    op = pts[key]
+    return AbstentionPolicy(
+        threshold=float(op["threshold"]), target_answered=float(data.get("target_answered", 0.97)),
+        measured_coverage=float(op["coverage"]), measured_answered_top1=float(op["answered_top1"]),
+        raw_top1=float(op.get("raw_top1", 0.0)), n_test=int(op.get("n_eval", 0)), source=f"{path}#{key}",
+        selection=str(data.get("selection", "wilson_lcb@0.95")),
+        answered_lcb=float(op["answered_top1_lcb95"]))
+
+
 # --------------------------------------------------------------------------- #
 # Offline invariants — GPU-free, prove the serve gate matches the cert's frontier decision.
 # --------------------------------------------------------------------------- #
