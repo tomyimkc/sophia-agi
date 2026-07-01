@@ -39,6 +39,15 @@ PYTHONPATH=. venv312/bin/python tools/train_calibration_objective.py \
 
 ### W1 — `tools/distill_process_reward_model.py` (verifier-distilled PRM not trained live)
 
+> **UPDATE 2026-07-01 (same day): W1 partially taken LIVE locally.** Implemented the gate's
+> named seam `agent.activation_probes.build_hidden_state_featurizer(spec="mlx", model, tok)`
+> (real 2048-d residual-stream vectors; fail-closed default preserved → 36 tests green) and
+> swapped it into the PRM path. Real hidden states lift held-out agreement from the degenerate
+> transparent baseline to within-domain **0.727 (math) / 0.896 (physics)** — but **held-out-
+> DOMAIN (math→physics) is 0.50 = chance** (no cross-domain transfer — the coverage trap),
+> and the PRM-as-RLVR-reward half is unrun (needs GPU). **Gate not met, w1 row stays Open.**
+> Full result + checksums: `agi-proof/benchmark-results/w1-verifier-distilled-prm/`.
+
 **Wired/run (offline, exact command):**
 ```
 PYTHONPATH=. venv312/bin/python tools/distill_process_reward_model.py \

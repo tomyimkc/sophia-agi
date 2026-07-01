@@ -96,18 +96,45 @@ def probe_deception_context(probe: "LinearProbe", text: str) -> dict[str, Any]:
     }
 
 
-def build_hidden_state_featurizer(spec: str = "mlx", *, adapter_path: "str | None" = None):
+def build_hidden_state_featurizer(
+    spec: str = "mlx", *, adapter_path: "str | None" = None,
+    model: "Any | None" = None, tokenizer: "Any | None" = None,
+    layer: int = -1, pool: str = "mean",
+):
     """Seam for residual-stream features (the real introspection upgrade), fail-closed.
 
     Replaces :func:`featurize_text`'s transparent features with hidden-state vectors from a
-    local model while preserving thresholding/calibration/fail-closed semantics. Lazy and
-    raises ``RuntimeError`` when the backend is unavailable, so the text-feature path stays
-    the offline default and a missing backend never silently degrades the probe.
+    local MLX model while preserving thresholding/calibration/fail-closed semantics.
+
+    **Fail-closed default:** with NO live backend handle (``model``/``tokenizer`` both None)
+    this raises ``RuntimeError`` — the offline text-feature path stays the default and a 3B
+    model is never loaded implicitly, so a missing backend never silently degrades the probe.
+
+    **Live path:** pass a loaded ``(model, tokenizer)`` from ``mlx_lm.load(...)`` and this
+    returns ``featurize(text) -> list[float]``: the mean-pooled (or last-token) final
+    residual-stream vector for that text. ``layer=-1`` uses the trunk output (post-final-norm
+    for most mlx_lm architectures); ``adapter_path`` is honored by the caller's ``load``.
     """
-    raise RuntimeError(
-        "hidden-state featurizer requires a local MLX/PyTorch-MPS backend; not available "
-        "offline. Use the transparent featurize_text path until a backend is wired."
-    )
+    if spec != "mlx":
+        raise RuntimeError(f"unknown hidden-state featurizer spec {spec!r} (only 'mlx')")
+    if model is None or tokenizer is None:
+        raise RuntimeError(
+            "hidden-state featurizer requires a live MLX backend: pass a loaded "
+            "(model, tokenizer) from mlx_lm.load(...). Not available offline; use the "
+            "transparent featurize_text path until a backend is wired."
+        )
+    import mlx.core as mx
+
+    inner = getattr(model, "model", model)  # the transformer trunk (embed + layers + norm)
+
+    def featurize(text: str) -> list[float]:
+        ids = mx.array(tokenizer.encode(text or " "))[None]
+        h = inner(ids)                       # (1, seq, hidden) final residual stream
+        seq = h[0]
+        vec = mx.mean(seq, axis=0) if pool == "mean" else seq[layer]
+        return [float(x) for x in vec]
+
+    return featurize
 
 
 def load_jsonl(path: str | Path) -> list[dict[str, Any]]:

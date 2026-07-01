@@ -1,0 +1,47 @@
+{
+  "schema": "sophia.w1_prm_live.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "createdAt": "2026-07-01",
+  "pinnedCommit": "d5f2eeda7c47d0e0c8e0913d3b2c6ae5c5dcb653",
+  "baseModel": "Qwen/Qwen2.5-3B-Instruct",
+  "backend": "mlx-lm 0.31.3; real residual-stream featurizer via agent.activation_probes.build_hidden_state_featurizer(spec='mlx', model, tok) [implemented this session, fail-closed preserved]",
+  "labels": "REAL fail-closed agent.step_verifier.verify_derivation (checkers: math-sympy, physics-units); 188 labeled steps, balanced 94/94",
+  "gate": ">=0.80 held-out-DOMAIN agreement with the symbolic oracle AND, as dense RLVR reward, lifts a held-out reasoning suite with no reward-hacking on the symbolic audit.",
+  "results": {
+    "transparentFeatures_baseline": {
+      "heldOutRandom_math_acc": 0.4103,
+      "heldOutDomain_physics_acc": 0.5,
+      "note": "degenerate: featurize_text returns all-zeros on math/physics step text -> predicts all-accepted -> base rate"
+    },
+    "mlxHiddenStates_live": {
+      "heldOutRandom_math_acc": 0.7949,
+      "heldOutDomain_physics_acc_CROSS": 0.5,
+      "withinDomain_heldout_3seed_mean": {
+        "math": 0.727,
+        "physics": 0.896
+      },
+      "withinDomain_heldout_3seed": {
+        "math": [
+          0.7949,
+          0.6667,
+          0.7179
+        ],
+        "physics": [
+          1.0,
+          0.75,
+          0.9375
+        ]
+      }
+    }
+  },
+  "gateMet": false,
+  "gateVerdict": "NOT MET, w1 row STAYS OPEN. (1) The real MLX featurizer WORKS: it lifts held-out agreement from the degenerate transparent baseline (0.41 math / 0.50 physics) to within-domain 0.727 (math) / 0.896 (physics) mean over 3 seeds -- physics clears 0.80 within-domain. (2) But HELD-OUT-DOMAIN (train math -> test physics) agreement is 0.50 = chance: the process-reward direction learned on math does NOT transfer across domains -- the coverage trap the tool warned of, now empirically confirmed with real features. The gate requires >=0.80 HELD-OUT-DOMAIN. (3) The entire PRM-as-dense-RLVR-reward half (tools/run_rlvr.py) with a symbolic reward-hack audit is UNRUN (needs a GPU RL stack; not local).",
+  "bindingChange": "Implemented agent.activation_probes.build_hidden_state_featurizer(spec='mlx', model=..., tokenizer=...) -> mean-pooled final residual-stream (2048-d) from the mlx_lm trunk. Fail-closed default preserved (no model handle -> RuntimeError), so test_truth_probe + test_probe_representation_training stay green (36 passed).",
+  "nextToClose": "Multi-domain training (include physics in train) to test whether a MIXED PRM reaches >=0.80 on a genuinely held-out THIRD domain; a per-token/per-layer featurizer sweep; then wire the PRM as dense reward in tools/run_rlvr.py on a GPU with the symbolic verifier as periodic reward-hack audit.",
+  "artifacts": {
+    "w1_live_seed0.json": "1ada8eb3104cd2ea52922877f2781de252e21ab63026981cccebea95d3e6c7cf",
+    "w1_prm_live.py": "602f954d77ddfd1bc3482482b16bd3ff76abc2fbda2bb8289c44b869f382dfc5"
+  }
+}
