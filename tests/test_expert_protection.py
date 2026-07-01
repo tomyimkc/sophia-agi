@@ -74,6 +74,12 @@ def test_layers_to_hold_returns_last_n():
     assert layers_to_hold(m, 0) == set()
     assert layers_to_hold(m, 10) == {0, 1, 2, 3}   # clamps to the layers present
 
+    # robust to NON-CONTIGUOUS indices: the last n PRESENT, not top-n arithmetic
+    gappy = _FakeModel([(f"model.layers.{L}.mlp.down_proj", nn.Parameter(torch.zeros(2, 2)))
+                        for L in (0, 2, 4, 6)])
+    assert layers_to_hold(gappy, 2) == {4, 6}
+    assert layers_to_hold(gappy, 3) == {2, 4, 6}
+
 
 def test_protected_keep_layers_holds_last_blocks_bf16():
     """Depth-based hold (QAT-v7 Lever D): a served param in a kept layer stays bf16, others quantize."""

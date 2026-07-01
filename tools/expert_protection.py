@@ -32,10 +32,8 @@ def layers_to_hold(model: Any, n: int) -> "set[int]":
     if n <= 0:
         return set()
     layers = {layer_of(name) for name, _ in model.named_parameters() if layer_of(name) >= 0}
-    if not layers:
-        return set()
-    top = max(layers)
-    return {L for L in layers if L > top - n}
+    # the last n indices PRESENT, robust to gaps (e.g. {0,2,4,6}, n=2 -> {4,6}), not `top-n`
+    return set(sorted(layers)[-n:])
 
 
 def top_routed_experts(model: Any, tok: Any, rows: "list[dict]", *, k: int,
