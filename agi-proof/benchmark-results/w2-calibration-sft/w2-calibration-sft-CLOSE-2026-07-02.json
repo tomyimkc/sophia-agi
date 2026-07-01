@@ -1,0 +1,54 @@
+{
+  "schema": "sophia.w2_calibration_sft_close.v1",
+  "candidateOnly": false,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "createdAt": "2026-07-02",
+  "pinnedCommit": "a53e2d8e393625373d4d66660019f2871e377869",
+  "baseModel": "Qwen/Qwen2.5-3B-Instruct",
+  "backend": "mlx-lm 0.31.3 LoRA calibration-SFT",
+  "gate": "the calibration objective wired into LM fine-tuning lowers ECE on a HELD-OUT verifier-checkable eval at matched-or-better accuracy-at-coverage (no hedging collapse), across >=2 seeds on one pinned commit.",
+  "surface": "freshly-generated sympy-checkable math; DECONTAMINATED held-out N=195 (train seeds 1/3/5 removed by exact q-match); target Confidence = verifier-measured per-kind train accuracy",
+  "heldoutDecontaminatedN": 195,
+  "base": {
+    "ece": 0.2308,
+    "accAtCov0.5": 0.794
+  },
+  "seeds": {
+    "seed0": {
+      "ece": 0.0601,
+      "acc": 0.779,
+      "accCov": 0.979,
+      "ciLo": 0.1038,
+      "ciHi": 0.2211,
+      "excl": true
+    },
+    "seed1": {
+      "ece": 0.0828,
+      "acc": 0.81,
+      "accCov": 0.99,
+      "ciLo": 0.0708,
+      "ciHi": 0.208,
+      "excl": true
+    },
+    "seed2": {
+      "ece": 0.058,
+      "acc": 0.821,
+      "accCov": 0.99,
+      "ciLo": 0.1073,
+      "ciHi": 0.23,
+      "excl": true
+    }
+  },
+  "gateMet": true,
+  "gateVerdict": "MET (SCOPED). On a decontaminated held-out (N=195), all THREE independently-trained seeds lower ECE (base 0.231 -> 0.060/0.083/0.058) with every per-seed \u0394ECE 95%% bootstrap CI EXCLUDING 0, at matched-or-better accuracy (0.77 -> 0.78/0.81/0.82) AND improved accuracy-at-coverage (0.79 -> 0.98/0.99/0.99 = no hedging collapse), on one pinned commit. This satisfies the w2 acceptance-gate text.",
+  "scopeBound": "Demonstrated on a CONTROLLED verifier-checkable MATH surface with TYPE-LEVEL confidence (6 per-kind values) via calibration-SFT (mlx_lm 0.31.3 has no DPO trainer). This is NOT a claim of general open-domain calibration, NOT level3Evidence, NOT canClaimAGI. A broader non-math verifier-checkable surface is the remaining GENERALITY step (does not affect the math-surface gate).",
+  "artifacts": {
+    "base_eval_L.jsonl": "dfe62b8197cdbdc915e6b1caab6360d3dbb8d1ebc9af353e364561ebad0d3049",
+    "adapter_eval_seed0_L.jsonl": "890e88a1a9e3c681010eba900084f572aacf4d5acf1c1bfcdfb7eef45241cca1",
+    "adapter_eval_seed1_L.jsonl": "bc37a2800bba0a7b034ae833c3351c9c2466f6192d597c7337ce1896f090ab17",
+    "adapter_eval_seed2_L.jsonl": "cab7e6e834d7e5918109634549e8f75f2bef0a3bdb8787760b4058a895521971",
+    "w2_close_result.json": "5518a3229935ebcde17d735ad805192a95f4c3b10a49187c02a530fe35f60bdb",
+    "w2_calib_pilot.py": "372c699fa3cce6759059ad76e8acb6dba685433b40b0cc6c6c4e092af123eac5"
+  }
+}
