@@ -1,43 +1,29 @@
 {
-  "updatedAt": "2026-07-01T00:54:29Z",
+  "updatedAt": "2026-07-01T02:48:37Z",
   "device": "mac-studio",
-  "agent": "openclaw-liufei",
-  "currentTask": "IMPLEMENTED all three: P0-A peft fix + re-cert, P0-B poller patch + restart, P1 70B judge. Reporting.",
-  "lastAction": "committed P0-A+P1 to work branch (8b249617..5285ac74); deployed fixes to Spark; validated v5 re-cert; patched+restarted the bridge poller; backlog now self-seeding",
-  "lastResult": "All three priorities done and verified. Honest v5 NVFP4 verdict is FAIL (see P0A). Bridge poller restarted and auto-running pre-approved cert probes 24/7.",
-  "peftVersions": "peft 0.19.1 transformers 5.12.1 (torch 2.12.1+cu130)",
-  "sparkView": {
-    "reachable": true,
-    "reachedVia": "ssh tomyimkc@spark-2f2d.local (login user is tomyimkc, NOT root)",
-    "pollerAlive": true,
-    "pollerPid": 1291210,
-    "pollerNote": "RESTARTED with the idle-backlog patch. Sole active poller (confirmed 347443/serve_benchmark_bridge is dormant: cwd ~/sophia-agi has no bridge dir, sleeping, writes no STATUS).",
-    "running": "backlog-0002 (auto-seeded cert probe; 24/7 backlog working)",
-    "gpu": "NVIDIA GB10, busy on the backlog cert probe",
-    "judgeHold": false
+  "agent": "claude-code-mac-operator",
+  "cycle": "post-openclaw-liufei (durability + poller cleanup + v6 sanity + v5 re-cert with abstention)",
+  "currentTask": "Steps 1-3 done. v6 --run-train (step 4) awaiting owner's explicit approval.",
+  "done": {
+    "durability": "certify_lowram.py (_ensure_peft_weightconverter_compat) + github_bridge_poll.py (_seed_backlog) VERIFIED on origin/spark-bridge (poller auto-persisted @101a9065; both markers present). No branch-switch loss risk remains.",
+    "pollerCleanup": "Stopped the dormant serve_benchmark_bridge.py (pid 347443, SIGTERM). Sole poller now github_bridge_poll.py (pid 1291210). Resolves the prior cycle's needsFromCloud.",
+    "sanity_gpu_free": "training/qat.py 15/15 PASS (incl 4 v6: kd_zero_when_identical, kd_positive_and_monotone, top1_ce_low_when_argmax_agrees, top1_ce_penalizes_flips). serving/quant_abstention.py 6/6 PASS.",
+    "v5_recert": {
+      "how": "NEW abstention certify (work branch 0aca4ab3) on olmoe-qat-spark-v5, cert-only --bench-b --execute, n=256, full merge (incomplete_merge=false).",
+      "rawVerdict": "FAIL: top1_agreement 0.9219 (<0.97), mean_kl 0.0364 (<=0.05 PASS), mem_ratio 3.56x. HONEST fully-merged number (peft fix works; NOT the prior 64/96 half-merge artifact).",
+      "abstain": "raw top1 0.9219 -> answered top1 0.9297 @ coverage 1.0 (abstain 0.0, target 0.98); meets_target_on_answered=false; alpha=0.02; n_calib=128 n_test=128.",
+      "shippableTodayViaAbstention": "NO. At alpha=0.02 it answers 100% (no abstention headroom) and stays ~0.93, below the 0.98 answered target. v5 genuinely misses the floor.",
+      "artifact": "spark:/tmp/recert-v5-out.json (1578 bytes)"
+    }
   },
-  "P0A_done": {
-    "status": "DONE + VERIFIED",
-    "fix": "certify_lowram.py: added process-local idempotent _ensure_peft_weightconverter_compat() wrapping WeightConverter.__init__ to absorb peft 0.19.1's dropped distributed_operation/quantization_operation kwargs into attributes (TF5 API). NOT a transformers version pin (no released TF5 satisfies peft's shim).",
-    "committed": "work branch claude/sophia-positioning-gaps-84kb0v @ 2cc0ad10 (pushed 8b249617..5285ac74). Deployed (uncommitted) to BOTH Spark checkouts: ~/sophia-agi (work branch) + ~/sophia-bridge (harness copy) so the bridge/backlog produces honest 96/96.",
-    "verified": "direct v5 re-cert: load_info.lora_load=peft.merge_and_unload, incomplete_merge=false, merge_warnings=[] -> full fused-expert merge (no 64/96 manual fallback, no WeightConverter TypeError). total_params=6.919B.",
-    "honestVerdict": "v5 @ NVFP4 (keep-suffixes empty, n=256): FAIL. mean_kl=0.0364 (<=0.05 PASS) BUT top1_agreement=0.9219 (<0.97 FAIL), mem_ratio=3.30x. This is the honest fully-merged result (the prior 64/96 contaminated merge was not comparable). canClaimAGI=false; NOT claiming v5 passes. A keep-down_proj-bf16 variant probe is running via the backlog (backlog-0001/0002) to see if it clears top1."
+  "v6": {
+    "status": "CODE-READY + offline-verified (qat 15/15, abstention 6/6). NOT started (long --run-train is owner-gated).",
+    "preRegistered": "docs/06-Roadmap/Spark-Theory-Test-Forecast.md T7: top1 0.95-0.98, GO ~45%.",
+    "dispatchEnv": "QAT_KD_WEIGHT=1.0 QAT_TOP1_WEIGHT=0.5 QAT_TEMP=2.0 QAT_LAMBDA=0.0005 QAT_EPOCHS=5 CERT_NEVAL=256 (base OLMoE-1B-7B-0924-Instruct, adapter olmoe-qat-spark-v6).",
+    "ifV6AlsoMisses": "pre-registered next step is depth-mixed precision or a less-aggressive scheme, NOT another knob."
   },
-  "P0B_done": {
-    "status": "DONE",
-    "action": "Applied scripts/spark/2026-06-30-poller-idle-backlog.patch to ~/sophia-bridge/tools/github_bridge_poll.py (the ACTUAL active poller's file; the live poller runs github_bridge_poll.py from cwd ~/sophia-bridge, NOT serve_benchmark_bridge.py which is a dormant hermes vestige with lost source). Restarted the sole poller (940829 -> 1291210) identically (nohup python3.12 tools/github_bridge_poll.py --interval 30 --trainwatch http://127.0.0.1:8420/api/runs).",
-    "verified": "poller came up on the patched code and immediately seeded+started backlog-0001, then backlog-0002 -> 24/7 idle backlog is live. Single-poller confirmed (no double-launch risk)."
-  },
-  "P1_done": {
-    "status": "DONE",
-    "action": "config/inference.local.mac-judge.json mac.model/judge_spec/serve + judge_farm.judges/recommended_flag bumped 8B -> mlx-community/Llama-3.3-70B-Instruct-4bit (committed @ 5285ac74). Family stays 'mlx', lineage 'meta-llama' -> >=2-family gate + judge!=subject unchanged; tests/test_mac_judge_config.py green (7/7).",
-    "lane": "70B judge UP on Mac 127.0.0.1:8080 (mlx_lm 0.31.2, pid 27920), keyless transport verified (returns completions)."
-  },
-  "blockers": [],
-  "guardrailsAck": "canClaimAGI=false (honest v5 FAIL reported, not overclaimed); lint_claims run before every commit (OK); no plaintext secrets; CODE pushed only to claude/sophia-positioning-gaps-84kb0v; re-cert is not --run-train (no owner-approval needed); JUDGE_HOLD respected (touch it before a Mac judge run to yield the GPU backlog).",
-  "needsFromCloud": [
-    "Deploy hygiene: the P0-A cert fix + the poller patch are applied UNCOMMITTED on the ~/sophia-bridge (spark-bridge) checkout per the 'code only to work branch' guardrail. They will be LOST on the next branch-switch of ~/sophia-bridge (that is how serve_benchmark_bridge.py was wiped). Please land them on spark-bridge properly (or tell me to commit there).",
-    "v5 quality: the honest NVFP4 verdict FAILS top1 (0.922<0.97). The backlog is probing a keep-down_proj-bf16 variant. If that also fails, v5 needs retraining/quant-recipe work before it can certify.",
-    "Cleanup: the dormant hermes serve_benchmark_bridge.py (pid 347443) is a stale second poller (harmless now). OK to have hermes stop it so there is unambiguously one poller?"
+  "guardrailsAck": "canClaimAGI=false (honest v5 FAIL; abstention does not rescue -- not overclaimed); lint_claims before commit (OK); no plaintext secrets; CODE only to claude/sophia-positioning-gaps-84kb0v; --run-train NOT started (owner approval pending); JUDGE_HOLD set+cleared around the cert.",
+  "needsFromOwner": [
+    "Explicit GO / NO-GO on the v6 --run-train (hours-long GPU)."
   ]
 }
