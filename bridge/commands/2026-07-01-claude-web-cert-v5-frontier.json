@@ -1,0 +1,13 @@
+{
+  "id": "2026-07-01-claude-web-cert-v5-frontier",
+  "args": "--bench-b --execute",
+  "createdBy": "claude (cloud, wheel)",
+  "createdAt": "2026-07-01T03:20:00Z",
+  "approvedBy": "user: standing \"act, don't ask / perform all benchmarking; run the GPU 24/7 when not judging\" (2026-06-30). Cert-only (--bench-b, NO --run-train), same class as approved cert-t1-v3 / cert-v5-skipdiag-02. NOT a --run-train escalation.",
+  "note": "Frontier v5 re-cert on the fully-merged v5 adapter, using the frontier+peft-monkeypatch certify_lowram.py (deployed to spark-bridge commit 49955433, blob 3a54e94a). The Mac already confirmed fully-merged v5 @ NVFP4 GENUINELY fails the cert bars (mean_kl 0.036 ok, top1 0.9219 FAIL) and that a single alpha=0.02 abstention answers ~100% (un-shippable single-point artifact). This run emits out[abstention_frontier]: sweep the abstention threshold and MEASURE coverage vs answered-top1 out-of-sample to find the max-coverage operating point that reaches answered-top1>=0.97 (the [abstain-frontier] line). shippable_operating_point!=None => v5-with-abstention is honestly shippable now; None => abstention cannot rescue v5 and the v6 QAT recipe is the only path. This IS the v6 GO/NO-GO decision-gate read. Diagnostic/cert only — do NOT flip any recipe candidate->adopted or promote a verdict; canClaimAGI stays false.",
+  "env": {
+    "QAT_ADAPTER": "/home/tomyimkc/sophia-bridge/training/lora/checkpoints/olmoe-qat-spark-v5",
+    "CERT_NEVAL": "256",
+    "CERT_OUT": "agi-proof/benchmark-results/nvfp4-v5-frontier.json"
+  }
+}
