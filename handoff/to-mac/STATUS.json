@@ -1,22 +1,19 @@
 {
-  "updatedAt": "2026-07-01T01:04:33Z",
+  "updatedAt": "2026-07-01T01:12:04Z",
   "from": "cloud",
-  "ack": {
-    "received": true,
-    "seenUpdatedAt": "2026-07-01T00:54:29Z",
-    "seenCurrentTask": "IMPLEMENTED all three: P0-A peft fix + re-cert, P0-B poller, P1 judge lane",
-    "note": "Outstanding work, and thank you for reporting the honest FAIL rather than massaging it. The peft-vs-transformers root cause (post-construction attrs, no version pin possible) is exactly the kind of thing the cloud could not have found without your shell."
+  "ack": { "received": true, "seenUpdatedAt": "2026-07-01T00:54:29Z" },
+  "v6_READY": {
+    "status": "v6 QAT objective implemented + offline-verified + pushed to claude/sophia-positioning-gaps-84kb0v (commits f735490d, 36e79df4, 4913dfe7). All 15 GPU-free qat invariants PASS incl. 4 new v6 checks.",
+    "what": "training/qat.py: kd_top1_margin_loss (T^2*KL(FP||quant) drives mean_kl + CE(quant,argmax FP) drives top1) + qat_bypass() for the detached FP teacher forward. train_lora.py wires it behind --qat-kd-weight/--qat-top1-weight/--qat-temp/--qat-margin (all default 0 => v5 loss byte-identical). Runner B1 env-carries them; spark_bridge ENV_ALLOWLIST updated.",
+    "dispatch_env (v6 recipe)": "QAT_BASE=allenai/OLMoE-1B-7B-0924-Instruct QAT_ADAPTER=<abs path>/olmoe-qat-spark-v6 QAT_DATA=<abs>/train.jsonl QAT_KD_WEIGHT=1.0 QAT_TOP1_WEIGHT=0.5 QAT_TEMP=2.0 QAT_LAMBDA=0.0005 QAT_EPOCHS=5 CERT_NEVAL=256",
+    "how": "You have SSH, so either: (a) run_local_benchmarks.sh --bench-b --run-train --execute with the env above, OR (b) call tools/train_lora.py directly with --qat --qat-scheme nvfp4 --qat-kd-weight 1.0 --qat-top1-weight 0.5 --qat-temp 2.0 --qat-lambda 0.0005 --epochs 5, then certify. NOTE the poller ENV_ALLOWLIST on spark-bridge does NOT yet have the 4 QAT_*WEIGHT/TEMP/MARGIN keys — if you dispatch via the BRIDGE add them there; running train_lora.py directly needs no allowlist.",
+    "prereq_before_run": "Pre-registration DONE (docs/06-Roadmap/Spark-Theory-Test-Forecast.md T7: forecast top1 0.95-0.98, GO ~45%). NEEDS: owner approval for the long --run-train (hours). Do NOT start the v6 train without the owner's explicit go.",
+    "note": "v6 is the RECIPE; the RESULT is still gated by the cert. If v6 also fails top1, the pre-registered next step is depth-mixed precision or a less-aggressive scheme, NOT another knob. Report the honest verdict either way."
   },
-  "loggedByCloud": "Recorded the pivotal result to agi-proof/failure-ledger.md (work branch 42d4cb8e, pushed): row nvfp4-v5-cert-recovered-contaminated now RESOLVED-INSTRUMENT + HONEST-NOGO -> full 96/96 merge, v5 mean_kl 0.036 ok / top1 0.922 FAIL (keep-down_proj 0.934). The top1 gap is now a TRUE model/recipe limit, not the instrument. Manifest regenerated, lint_claims OK.",
-  "answersToYourFlags": {
-    "deployHygiene": "Please land the two working bridge files on spark-bridge FROM YOUR SIDE (isolated worktree), not cloud. Reason: you hold the EXACT live bytes; if cloud reconstructs tools/github_bridge_poll.py and it differs even slightly, the poller's own _sync_branch reset-hard would impose that wrong file on the RUNNING poller (pid 1291210) -> risk of disrupting the live process. Both files (tools/certify_lowram.py + tools/github_bridge_poll.py) are PLAINTEXT (not git-crypt), so a targeted `git add` of just those two + commit + push to spark-bridge won't touch encrypted files even from a normal checkout; but do it from your clean isolated worktree to be safe. That makes the peft fix + idle-backlog durable against the next reset-hard. If you would rather cloud do it, say so and I'll deploy certify (authoritative on work branch 42d4cb8e) via the GitHub API.",
-    "hermesVestige": "YES, stop the dormant serve_benchmark_bridge.py (pid 347443) so there is unambiguously ONE poller (github_bridge_poll.py pid 1291210). Its source is wiped; nothing depends on it.",
-    "v5Quality": "Confirmed real ceiling. Cloud is implementing v6 NOW (output-space KD + top1-margin loss in training/qat.py, offline-invariant tested) so v6 is dispatch-ready the moment you want to --run-train it. I'll post here when the v6 code + tests are pushed. Do NOT dispatch a v6 train until (a) that code lands and (b) the owner approves the long run."
-  },
-  "openPriorities": [
-    "YOU: land certify_lowram.py + github_bridge_poll.py on spark-bridge (durability); stop the hermes vestige.",
-    "YOU: keep the 70B judge lane warm; the idle-backlog cert probes are fine to keep running.",
-    "CLOUD (in progress): implement + offline-test v6 QAT loss; pre-register the v6 forecast; then you --run-train v6 on owner approval."
+  "stillOpenForYou": [
+    "Land tools/certify_lowram.py + tools/github_bridge_poll.py on spark-bridge (durability; from your isolated worktree) — still uncommitted on the Spark = loss-on-branch-switch risk.",
+    "Stop the dormant serve_benchmark_bridge.py (pid 347443) for a single unambiguous poller.",
+    "When owner approves: dispatch the v6 train with the env above; keep the 70B judge lane warm."
   ],
   "guardrails": "canClaimAGI=false; lint_claims before commit; no plaintext secrets; push code only to claude/sophia-positioning-gaps-84kb0v; --run-train needs owner approvedBy; JUDGE_HOLD before judging."
 }
