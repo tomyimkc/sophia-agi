@@ -1,23 +1,21 @@
 {
-  "updatedAt": "2026-07-01T04:22:27Z",
+  "updatedAt": "2026-07-01T06:59:27Z",
   "device": "mac-studio",
   "agent": "claude-code-mac-operator",
-  "cycle": "productionized the expert-protection lever (owner said 'do your recommendation')",
-  "headline": "DONE + VERIFIED: opt-in `--keep-top-experts N` landed in certify_lowram.py (isolated in tools/expert_protection.py). End-to-end cert reproduces the probe EXACTLY: --keep-top-experts 8 -> raw top1 0.9414, shippable coverage 0.9297 (answered 0.9748), mem_ratio 2.59x. Unit test 3/3.",
-  "landed": {
-    "commit": "7290f7a6 (work branch claude/sophia-positioning-gaps-84kb0v)",
-    "files": [
-      "tools/expert_protection.py (new: top_routed_experts + protected_quantize_served)",
-      "tools/certify_lowram.py (opt-in --keep-top-experts; default-off conditional; else path byte-identical)",
-      "tests/test_expert_protection.py (3 tests, per-slice skip)"
-    ],
-    "safety": "default (--keep-top-experts 0) hits the unchanged quantize_served_params -> poller/existing certs unaffected. Syntax+lint+pre-commit green.",
-    "verified": "cert --keep-top-experts 8 on v5 n=256: [keep-top-experts] 256 slices bf16 (8x16x2); raw 0.9414 (baseline 0.9219), frontier shippable @ coverage 0.9297 (baseline 0.8594). Matches the standalone probe to the digit -> no harness artifact."
+  "cycle": "v6 deploy + fire -> caught 0-expert-QAT -> killed + guarded + filed",
+  "headline": "v6 HELD (honest): deployed + verified + FIRED (owner GO), cleared the 2 prior footguns, BUT QAT covered 0 EXPERT modules (fused-3D OlmoeExperts + peft ParamWrapper unreached by per-nn.Linear STE) -> experts co-adapt to bf16 not NVFP4 -> doomed to v6~v5. KILLED at step 1/550 to save GPU. Added a runtime abort guard; deep fix filed.",
+  "v6_status": {
+    "deployed": "spark-bridge (byte-exact qat.py + train_lora.py from work branch; runner +4 --qat-* flags KEEPING --target-modules attn-mlp + --lora-dropout 0; poller allowlist). Verified: qat 15/15, dry-run B1 has BOTH crash-fixes AND 4 KD flags.",
+    "fired_and_healthy": "train cleared the 2 footguns (--target-modules attn-mlp + --lora-dropout 0), GPU 96%, epoch 1/5 step 1/550 loss 2.70. LoRA attn=64 expert=32.",
+    "the_defect": "QAT fake-quant on 64 module(s): attn=64 EXPERT=0. OlmoeExperts stores gate_up_proj/down_proj as 3-D Parameters wrapped by peft ParamWrapper -> unreached by attach_qat's per-nn.Linear STE + its lora_A/lora_B skip. Experts train against bf16 -> NOT co-adapted to NVFP4 -> v6 would ~= v5 (the co-adaptation doesn't happen where the ~10.8% uniform quant error lives). Offline qat 15/15 does NOT catch this (runtime wrapping gap).",
+    "actions": "Killed (GPU freed, JUDGE_HOLD cleared, partial adapter removed). Added a runtime ABORT guard in train_lora.py (SystemExit when experts exist + QAT expert-coverage==0; override QAT_ALLOW_UNCOVERED_EXPERTS=1) -> committed work branch 406090ee + re-deployed to spark-bridge 72aa65a5 so no future fire wastes hours.",
+    "deep_fix_needed": "STE-fake-quant the OlmoeExperts gate_up_proj/down_proj 3-D Parameters INSIDE the peft ParamWrapper forward (respecting _qat_bypass for the KD teacher). Needs verified on-Spark dev against the real ParamWrapper. VERIFY via the runtime coverage line showing expert>0 + a train step moving the expert params, NOT the offline invariants.",
+    "held_until": "expert-QAT coverage fixed + runtime-verified (expert>0). Do NOT re-fire v6 before that (the guard now aborts it anyway)."
   },
-  "shipConfig": "v5 + `--keep-top-experts 8` + conformal-abstention-serve -> answer ~93% of tokens at answered-top1 ~0.975, NO retrain. To wire into the runner: pass QAT/CERT env or add a runner flag that forwards --keep-top-experts to certify_lowram.",
-  "guardrailsAck": "canClaimAGI=false (raw v5 still FAILS 0.97 full-coverage; shippable via abstention+protection is MEASURED n=256, not a per-token proof); lint_claims OK; no plaintext secrets; JUDGE_HOLD set+cleared around each GPU run; code to work branch only.",
+  "shippable_now_no_v6": "v5 + --keep-top-experts 16 + conformal-abstention-serve -> ~94.5% answered @ ~0.975, no train (feat 7290f7a6, N-sweep 3c357ba3). v6's job (lift coverage) is already met no-train; v6 only adds value if the deep expert-QAT fix lets it lift RAW coverage at no memory cost.",
+  "guardrailsAck": "canClaimAGI=false (v6 produced NO valid number -- killed pre-training; not claimed); lint_claims OK; --run-train was owner-approved live then aborted by me on the defect; JUDGE_HOLD set+cleared; code to work branch + sanctioned spark-bridge deploy.",
   "open": [
-    "World-model real-model ablation (cloud step 2) still pending.",
-    "Optional: sweep --keep-top-experts N in {4,8,16} for the coverage/mem Pareto (each is a cert-only run)."
+    "Deep fused-expert QAT fix (above).",
+    "World-model real-model ablation (cloud step 2) still pending."
   ]
 }
