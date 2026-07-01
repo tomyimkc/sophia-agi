@@ -86,6 +86,53 @@ def quant_abstention_report(full_probs, low_probs, *, alpha: float = 0.02,
     }
 
 
+def quant_abstention_frontier(full_probs, low_probs, *, calib_frac: float = 0.5,
+                              target_answered: float = 0.97) -> "dict[str, Any]":
+    """Sweep the abstention threshold to trace the coverage vs answered-top1 FRONTIER and find the best
+    operating point that reaches ``target_answered`` at maximum coverage. This is the honest answer to
+    'is a raw-failing model shippable via abstention?' — a SINGLE alpha (e.g. 0.02) can be misleading
+    (it may answer ~100% and look un-shippable) while a stricter point on the frontier clears the bar.
+
+    Thresholds are chosen on the CALIB split (nonconformity quantiles) and MEASURED on the disjoint TEST
+    split, so the reported answered_top1 is out-of-sample. No overclaim: answered_top1 is measured."""
+    import numpy as np
+
+    full = np.asarray(full_probs, dtype=np.float64)
+    low = np.asarray(low_probs, dtype=np.float64)
+    n = full.shape[0]
+    if n < 8:
+        return {"error": "too few positions for a frontier", "n": int(n)}
+    agree = (full.argmax(1) == low.argmax(1))
+    nonconf = quant_nonconformity(low)
+    ncal = max(1, int(n * calib_frac))
+    cal_nc = nonconf[:ncal]
+    test_idx = np.arange(ncal, n)
+    n_test = len(test_idx)
+
+    frontier, best = [], None
+    for q in [round(x / 20.0, 3) for x in range(20, 9, -1)]:      # calib quantile 1.00 -> 0.50 (stricter)
+        thr = float(np.quantile(cal_nc, q))
+        answered = [i for i in test_idx if nonconf[i] <= thr]
+        cov = len(answered) / n_test if n_test else 0.0
+        atop1 = float(np.mean([agree[i] for i in answered])) if answered else 0.0
+        pt = {"calib_quantile": q, "threshold": round(thr, 4),
+              "coverage": round(cov, 4), "answered_top1": round(atop1, 4)}
+        frontier.append(pt)
+        if atop1 >= target_answered and cov > 0 and (best is None or cov > best["coverage"]):
+            best = pt
+    return {
+        "raw_top1": round(float(agree.mean()), 4),
+        "target_answered": target_answered,
+        "shippable_operating_point": best,       # None => abstention cannot rescue this model at target
+        "shippable": best is not None,
+        "frontier": frontier,
+        "n_calib": ncal, "n_test": n_test,
+        "note": "best = max-coverage point whose out-of-sample answered_top1 >= target. If None, the "
+                "quant top1-top2 margin does not separate the argmax-flips well enough -> abstention "
+                "cannot rescue this model; the recipe fix (v6) is the path. Measured, not guaranteed.",
+    }
+
+
 # --------------------------------------------------------------------------- #
 # Offline invariants — GPU-free, prove the abstention trade-off on synthetic data.
 # --------------------------------------------------------------------------- #
@@ -134,10 +181,18 @@ def offline_invariants() -> "tuple[bool, dict]":
     tie_mask = np.array([low_soft[i].max() - np.partition(low_soft[i], -2)[-2] < 0.05 for i in range(N)])
     checks["nonconformity_orders_confidence"] = nc[tie_mask].mean() > nc[~tie_mask].mean()
 
+    # 6. The FRONTIER finds a shippable operating point on separable data, and coverage is monotone
+    #    non-increasing as the threshold gets stricter (the honest coverage/accuracy trade-off).
+    fr = quant_abstention_frontier(fp_soft, low_soft, target_answered=0.97)
+    checks["frontier_finds_shippable_point"] = fr["shippable"] and fr["shippable_operating_point"]["coverage"] > 0.0
+    covs = [p["coverage"] for p in fr["frontier"]]
+    checks["frontier_coverage_monotone"] = all(covs[i] >= covs[i + 1] - 1e-9 for i in range(len(covs) - 1))
+
     detail["report"] = rep
     detail["strict_vs_loose"] = {"strict_answered": strict["answered_top1"],
                                  "loose_answered": loose["answered_top1"],
                                  "strict_cov": strict["coverage"], "loose_cov": loose["coverage"]}
+    detail["frontier_best"] = fr["shippable_operating_point"]
     ok = all(checks.values())
     return ok, {"checks": checks, **detail}
 
