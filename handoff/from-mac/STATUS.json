@@ -1,56 +1,43 @@
 {
-  "updatedAt": "2026-06-30T15:20:13Z",
+  "updatedAt": "2026-07-01T00:54:29Z",
   "device": "mac-studio",
   "agent": "openclaw-liufei",
-  "currentTask": "P0-A root-caused (read-only); P1 70B MLX judge lane UP + verified. Holding before any env mutation / poller restart.",
-  "lastAction": "ssh diag (tomyimkc@spark-2f2d.local); root-caused the peft WeightConverter error; probed transformers 5.0/5.6/5.10.4/5.11 WeightConverter signatures (read-only, /tmp); launched + verified the 70B MLX judge on Mac:8080",
-  "lastResult": "Spark reachable, poller alive (pid 347443), GPU idle. P0-A and P1 progress below. No env mutated on the Spark; cert venv untouched; poller NOT restarted; no GPU job launched.",
+  "currentTask": "IMPLEMENTED all three: P0-A peft fix + re-cert, P0-B poller patch + restart, P1 70B judge. Reporting.",
+  "lastAction": "committed P0-A+P1 to work branch (8b249617..5285ac74); deployed fixes to Spark; validated v5 re-cert; patched+restarted the bridge poller; backlog now self-seeding",
+  "lastResult": "All three priorities done and verified. Honest v5 NVFP4 verdict is FAIL (see P0A). Bridge poller restarted and auto-running pre-approved cert probes 24/7.",
   "peftVersions": "peft 0.19.1 transformers 5.12.1 (torch 2.12.1+cu130)",
   "sparkView": {
     "reachable": true,
-    "reachedVia": "ssh tomyimkc@spark-2f2d.local (mDNS -> 169.254.26.170); key ~/.ssh/id_ed25519_spark. NOTE: login is tomyimkc, NOT root.",
+    "reachedVia": "ssh tomyimkc@spark-2f2d.local (login user is tomyimkc, NOT root)",
     "pollerAlive": true,
-    "pollerPid": 347443,
-    "pollerEntrypoint": "/home/tomyimkc/sophia-agi/scripts/serve_benchmark_bridge.py (runs from sophia-agi checkout, not sophia-bridge)",
-    "running": null,
-    "gpu": "NVIDIA GB10, 0% util, idle",
-    "v5CheckpointPresent": true,
-    "judgeHold": false,
-    "certLaneVenv": "/home/tomyimkc/sophia-agi/.venv (py3.12)",
-    "sophiaBridgeBranchHead": "spark-bridge @ 37a309da"
+    "pollerPid": 1291210,
+    "pollerNote": "RESTARTED with the idle-backlog patch. Sole active poller (confirmed 347443/serve_benchmark_bridge is dormant: cwd ~/sophia-agi has no bridge dir, sleeping, writes no STATUS).",
+    "running": "backlog-0002 (auto-seeded cert probe; 24/7 backlog working)",
+    "gpu": "NVIDIA GB10, busy on the backlog cert probe",
+    "judgeHold": false
   },
-  "P0A_diagnosis": {
-    "rootCause": "Version-skew, NOT a missing pin you can satisfy by downgrading transformers within 5.x. peft 0.19.1 is the LATEST peft (PyPI tops out at 0.19.1 — cannot upgrade out of it). Its fused-expert merge shim peft/utils/transformers_weight_conversion.py lines 267-272 and 313-318 constructs WeightConverter(source_patterns=, target_patterns=, distributed_operation=orig.distributed_operation, quantization_operation=orig.quantization_operation, operations=). But transformers 5.6.0 / 5.10.4 / 5.11.0 / 5.12.1 ALL define WeightConverter.__init__(self, source_patterns, target_patterns, operations) — distributed_operation & quantization_operation are post-construction attributes (default None, set later in core_model_loading.py), never constructor kwargs. So the TypeError reproduces across the entire released 5.x line.",
-    "implication": "Downgrading transformers within 5.x will NOT fix merge_and_unload. transformers 5.0.0 was inconclusive in my AST probe (WeightConverter may be shaped differently) but 5.0.0 is a large, risky downgrade for the QAT/NVFP4 train lane.",
-    "viableFixes": [
-      "(1) RECOMMENDED: patch peft's 2 shim sites to construct WeightConverter(source_patterns, target_patterns, operations) then set .distributed_operation/.quantization_operation as attributes (matches the released TF5 API). Do it in an ISOLATED cert venv (not the train-lane venv) or as a monkeypatch in certify_lowram.py; upstreamable to peft.",
-      "(2) Extend certify_lowram.py's existing manual_merge fallback to merge the 32 fused-MoE expert modules directly (dequant gate_up_proj/down_proj + apply LoRA), sidestepping the peft shim entirely -> reaches 96/96.",
-      "(3) Investigate transformers 5.0.0 only if (1)/(2) are undesirable; high regression risk on the train lane."
-    ],
-    "notDone": "No install, no patch, no re-cert performed. Awaiting cloud/owner pick between (1)/(2)."
+  "P0A_done": {
+    "status": "DONE + VERIFIED",
+    "fix": "certify_lowram.py: added process-local idempotent _ensure_peft_weightconverter_compat() wrapping WeightConverter.__init__ to absorb peft 0.19.1's dropped distributed_operation/quantization_operation kwargs into attributes (TF5 API). NOT a transformers version pin (no released TF5 satisfies peft's shim).",
+    "committed": "work branch claude/sophia-positioning-gaps-84kb0v @ 2cc0ad10 (pushed 8b249617..5285ac74). Deployed (uncommitted) to BOTH Spark checkouts: ~/sophia-agi (work branch) + ~/sophia-bridge (harness copy) so the bridge/backlog produces honest 96/96.",
+    "verified": "direct v5 re-cert: load_info.lora_load=peft.merge_and_unload, incomplete_merge=false, merge_warnings=[] -> full fused-expert merge (no 64/96 manual fallback, no WeightConverter TypeError). total_params=6.919B.",
+    "honestVerdict": "v5 @ NVFP4 (keep-suffixes empty, n=256): FAIL. mean_kl=0.0364 (<=0.05 PASS) BUT top1_agreement=0.9219 (<0.97 FAIL), mem_ratio=3.30x. This is the honest fully-merged result (the prior 64/96 contaminated merge was not comparable). canClaimAGI=false; NOT claiming v5 passes. A keep-down_proj-bf16 variant probe is running via the backlog (backlog-0001/0002) to see if it clears top1."
   },
-  "P1_status": {
-    "state": "UP + VERIFIED",
-    "model": "mlx-community/Llama-3.3-70B-Instruct-4bit (cached locally)",
-    "endpoint": "http://127.0.0.1:8080/v1 (mlx_lm 0.31.2, pid 27920, RSS ~32.6GB)",
-    "family": "mlx (engine-keyed -> distinct from Spark Qwen 'qwen' vendor family => >=2-family gate holds)",
-    "verified": "keyless OpenAI-compatible completion returned 'JUDGE_OK' (OPENAI_API_KEY=none transport confirmed -> avoids the earlier n=0 root cause). temp=0.",
-    "caveats": [
-      "Bound to 127.0.0.1 only. If judge orchestration runs ON the Spark, I must rebind with --host 0.0.0.0 (or the cat-link IP) so MAC_HOST:8080 is reachable. Fine as-is if the judge tool runs on the Mac control plane.",
-      "config/inference.local.mac-judge.json still pins the 8B (mlx-community/Meta-Llama-3.1-8B-Instruct-4bit). Same 'mlx' family, so the gate is unaffected, but recommend bumping mac.model -> the 70B on branch claude/sophia-positioning-gaps-84kb0v (also re-run tests/test_mac_judge_config.py). NOT changed here (tested config + wrong branch)."
-    ]
+  "P0B_done": {
+    "status": "DONE",
+    "action": "Applied scripts/spark/2026-06-30-poller-idle-backlog.patch to ~/sophia-bridge/tools/github_bridge_poll.py (the ACTUAL active poller's file; the live poller runs github_bridge_poll.py from cwd ~/sophia-bridge, NOT serve_benchmark_bridge.py which is a dormant hermes vestige with lost source). Restarted the sole poller (940829 -> 1291210) identically (nohup python3.12 tools/github_bridge_poll.py --interval 30 --trainwatch http://127.0.0.1:8420/api/runs).",
+    "verified": "poller came up on the patched code and immediately seeded+started backlog-0001, then backlog-0002 -> 24/7 idle backlog is live. Single-poller confirmed (no double-launch risk)."
+  },
+  "P1_done": {
+    "status": "DONE",
+    "action": "config/inference.local.mac-judge.json mac.model/judge_spec/serve + judge_farm.judges/recommended_flag bumped 8B -> mlx-community/Llama-3.3-70B-Instruct-4bit (committed @ 5285ac74). Family stays 'mlx', lineage 'meta-llama' -> >=2-family gate + judge!=subject unchanged; tests/test_mac_judge_config.py green (7/7).",
+    "lane": "70B judge UP on Mac 127.0.0.1:8080 (mlx_lm 0.31.2, pid 27920), keyless transport verified (returns completions)."
   },
   "blockers": [],
-  "alignment": {
-    "P0-A": "DIAGNOSED. Will pin/patch per P0A_diagnosis once you pick fix (1) or (2), in an isolated cert venv, then re-cert v5 to 96/96. canClaimAGI=false.",
-    "P0-B": "NOT STARTED — blocked on the patch-target question (live poller runs from the sophia-agi checkout, not sophia-bridge). Will apply 2026-06-30-poller-idle-backlog.patch + restart poller once you confirm the target checkout.",
-    "P1": "DONE for bring-up (lane up + verified). Will wire it into a judged run when there is something to judge (i.e. after P0-A cert succeeds)."
-  },
-  "guardrailsAck": "canClaimAGI=false; lint_claims run before this commit (OK); no plaintext secrets (Telegram token stays in OpenClaw local env, will rotate); code pushed ONLY to claude/sophia-positioning-gaps-84kb0v; --run-train needs owner approvedBy; will touch bridge/JUDGE_HOLD before judging. Not claiming AGI.",
+  "guardrailsAck": "canClaimAGI=false (honest v5 FAIL reported, not overclaimed); lint_claims run before every commit (OK); no plaintext secrets; CODE pushed only to claude/sophia-positioning-gaps-84kb0v; re-cert is not --run-train (no owner-approval needed); JUDGE_HOLD respected (touch it before a Mac judge run to yield the GPU backlog).",
   "needsFromCloud": [
-    "P0-A: pick fix (1) peft-shim patch (recommended) or (2) manual_merge fused-expert path. Do you already have a known-good peft/TF combo? My probe says NO transformers 5.x release satisfies peft 0.19.1's shim, so 'pin transformers' alone won't work.",
-    "P0-B patch target: live poller runs /home/tomyimkc/sophia-agi/scripts/serve_benchmark_bridge.py (sophia-agi checkout). Your note said apply the patch to sophia-bridge. Confirm which checkout, and should I git-fetch the patch onto the Spark's sophia-agi checkout?",
-    "Login user is tomyimkc, not root — please update the runbook.",
-    "OK to delete the broken /home/tomyimkc/mergefix-venv (missing regex) and build a clean isolated cert venv for the P0-A fix?"
+    "Deploy hygiene: the P0-A cert fix + the poller patch are applied UNCOMMITTED on the ~/sophia-bridge (spark-bridge) checkout per the 'code only to work branch' guardrail. They will be LOST on the next branch-switch of ~/sophia-bridge (that is how serve_benchmark_bridge.py was wiped). Please land them on spark-bridge properly (or tell me to commit there).",
+    "v5 quality: the honest NVFP4 verdict FAILS top1 (0.922<0.97). The backlog is probing a keep-down_proj-bf16 variant. If that also fails, v5 needs retraining/quant-recipe work before it can certify.",
+    "Cleanup: the dormant hermes serve_benchmark_bridge.py (pid 347443) is a stale second poller (harmless now). OK to have hermes stop it so there is unambiguously one poller?"
   ]
 }
