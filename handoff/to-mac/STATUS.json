@@ -1,19 +1,18 @@
 {
-  "updatedAt": "2026-07-01T14:05:00Z",
+  "updatedAt": "2026-07-01T15:00:00Z",
   "from": "cloud",
-  "cluster_status_cloud_sees": {
-    "spark": "ALIVE but IDLE (poller beat 13:45Z, running:None, pending:[]). Last job was the cloud v6 n=1024 cert. GPU free.",
-    "mac_operator": "APPEARS INACTIVE. Your from-mac status is STALE at 08:04Z with the old 'fused-expert BLOCKER' headline — but you RESOLVED that (commits e8d16fab..8a326e59: 32/32 experts, v6 cert ran). Your last commit is 8a326e59; the 3 commits above it (e9ff56bc/101919c7/9d19c73d) are cloud's. Please REFRESH handoff/from-mac/STATUS.json — the stale file is misleading."
+  "board_consolidated": {
+    "abstention_hedge": "ADOPTED (conformal-abstention-serve). Operating points in serving/adopted_operating_points.json (95%-LCB): v5 cov0.6426/floor0.9831; v6 cov0.7188/floor0.9762 (default); v6_downproj16 cov0.8438/floor0.9732 @ mem1.90x (higher-coverage/higher-memory variant). All raw-FAIL 0.97 — measured hedge, canClaimAGI false.",
+    "W1W5_item3_sourceContam": "DONE = honest NO-GO. Open-world rigor: caught 99.2% but clean-over-block 74.5% (vs curated 5.9%). rigor-multifamily.public-report.json + sha on g04zs1. Row stays candidate/NO-GO. Not promoted.",
+    "W1W5_item2_realtimeC1": "PAUSED at 88/393 (22%). Cloud added batches v2+v3 (60 REAL sourced dated facts, no synthesis) via the NEW quality gate tools/validate_dated_pack.py. Status STAYS not_run/underpowered.",
+    "W1W5_item1_m3_3family": "NOT STARTED — needs your local Spark-vLLM + Mac-mlx judges (cloud cannot; must not substitute OpenRouter judges = breaks pre-registration)."
   },
-  "cloud_did_while_you_were_quiet": {
-    "adopted": "conformal-abstention-serve ADOPTED (T8 met v5+v6 n=1024 + owner sign-off): recipe e9ff56bc, ledger 101919c7, deployment artifact + adopted_policy() loader 9d19c73d. Don't re-log.",
-    "idle_spark": "Staged a bridge-doable v6 + down_proj-bf16 n=1024 cert (bridge/commands/2026-07-01-claude-web-cert-v6-downproj-1k.json) to use the idle GPU while you're away. If your poller runs it, cloud will LCB-verify it.",
-    "third_party": "Running item ③ source-contamination (W1-W5) in the CLOUD via OpenRouter (deepseek/qwen, non-US) — off-cluster, doesn't touch your GPU."
-  },
-  "YOUR_farm_only_tasks_STALLED": [
-    "① m3-3family judge (W1-W5) — REQUIRES the local Spark-vLLM + Mac-mlx judge servers; cloud CANNOT run it (and must not substitute OpenRouter judges — that breaks the pre-registration). Pull handoff/to-mac/W1-W5-DISPATCH.md (branch g04zs1) for the exact command + gate.",
-    "keep-top-experts n=1024 cert — you own tools/expert_protection.py + certify_lowram; bridge isn't wired for --keep-top-experts. Run certify_lowram directly at n=1024; it's expected to beat down_proj on the coverage/memory trade and could add a much-higher-coverage adopted operating point.",
-    "World-model real-model ablation A/B/C on the 70B."
+  "YOUR_farm_only_tasks": [
+    "① m3-3family judge — pull handoff/to-mac/W1-W5-DISPATCH.md (branch g04zs1): serve Qwen-7B (Spark vLLM) + Llama-3.3-70B (Mac mlx, openai: transport) + deepseek (OpenRouter), forced-choice over seeds 1-3. Gate in that doc.",
+    "keep-top-experts n=1024 cert — you own certify_lowram + tools/expert_protection.py; bridge NOT wired for --keep-top-experts. Run certify_lowram directly; if the 95%-LCB op point beats v6_downproj16 (cov 0.8438) at lower memory cost, add it to serving/adopted_operating_points.json (owner sign-off already covers the adopted ingredient; you add a variant point).",
+    "World-model real-model ablation A/B/C on the 70B (replication_pack + verifiability_model.decide; counterfactual_traps; novel-knowability)."
   ],
-  "guardrails": "canClaimAGI=false; adopted hedge is measured selective accuracy (both adapters raw-FAIL 0.97); a run is not a result — flip a row only when its pre-registered gate is met + artifact + sha256; do NOT substitute pre-registered judges; owner flips any NEW ingredient adoption; .claude/skills/** commit ENCRYPTED from a key-holding box only; no secrets on the public bridge."
+  "item2_how_to_continue_honestly": "To reach N>=393: add more REAL sourced dated facts as eval/fact_check/phase1_dated_batch_v4.jsonl (+), each with a `source` field, then run `python tools/validate_dated_pack.py eval/fact_check/phase1_dated_batch_v*.jsonl` (must pass: temporal_decontam + valid_time + provenance + unique ids). NO synthesis/paraphrase to inflate N. The pack stays not_run until N>=393 AND the >=2-family judge (kappa>=0.40) + live-backend (kind!=mock) conditions in data/realtime/benchmark/measurement_spec.json are met. Only then may a GO be considered — gate any slow-loop LoRA delta through claim_gate.",
+  "notes": "Cloud is idle now / responsive. Mac from-mac status is STALE (08:04) — please refresh it. OpenRouter key (used for ③) was owner-supplied in plaintext chat — owner is rotating it; do not persist it. All cloud commits: g04zs1 (③ + ② batches) and positioning-gaps (adoption + operating points).",
+  "guardrails": "canClaimAGI=false; a run is not a result (flip a row only when its pre-registered gate is met + artifact + sha256); do NOT relax any bar or synthesize eval items; owner flips any NEW ingredient adoption; merge don't clobber; .claude/skills/** commit ENCRYPTED from a key-holding box only; no secrets on the public bridge."
 }
