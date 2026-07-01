@@ -591,15 +591,26 @@ def run_certify(args: argparse.Namespace) -> dict:
     # 2) quantize the served weights (incl. fused experts) in place → low-RAM distributions.
     served_suffixes = resolve_served_suffixes(getattr(args, "keep_suffixes", ""))
     _ktop = int(getattr(args, "keep_top_experts", 0) or 0)
-    if _ktop > 0:
-        # opt-in no-train mixed-precision: hold the top-N most-routed experts/layer bf16.
-        from tools.expert_protection import top_routed_experts, protected_quantize_served
-        _keep = top_routed_experts(model, tok, rows, k=_ktop, n_eval=args.n_eval,
-                                   max_seq_len=args.max_seq_len, device=args.device)
+    _klayers = int(getattr(args, "keep_layers", 0) or 0)
+    if _ktop > 0 or _klayers > 0:
+        # opt-in no-train mixed-precision: hold top-N routed experts/layer AND/OR the last-N
+        # transformer blocks bf16 (QAT-v7 Lever D — the final layers decide the argmax). Both count
+        # as kept params so the memory ratio stays honest.
+        from tools.expert_protection import (top_routed_experts, protected_quantize_served,
+                                             layers_to_hold)
+        _keep = (top_routed_experts(model, tok, rows, k=_ktop, n_eval=args.n_eval,
+                                    max_seq_len=args.max_seq_len, device=args.device)
+                 if _ktop > 0 else {})
+        _keep_layers = layers_to_hold(model, _klayers) if _klayers > 0 else None
         qinfo = protected_quantize_served(model, scheme=args.scheme, suffixes=served_suffixes,
-                                          keep_experts=_keep)
-        print(f"[keep-top-experts] held top-{_ktop} routed experts/layer bf16 "
-              f"({qinfo.get('protected_experts')} expert-slices kept)", flush=True)
+                                          keep_experts=_keep, keep_layers=_keep_layers)
+        _bits = []
+        if _ktop > 0:
+            _bits.append(f"top-{_ktop} routed experts/layer ({qinfo.get('protected_experts')} slices)")
+        if _klayers > 0:
+            _bits.append(f"last-{_klayers} blocks {sorted(_keep_layers or [])} "
+                         f"({qinfo.get('protected_layer_params')} served params)")
+        print(f"[keep] held bf16: {' + '.join(_bits)}", flush=True)
     else:
         qinfo = quantize_served_params(model, scheme=args.scheme, suffixes=served_suffixes)
     per_tensor_ratio, eff_ratio = effective_mem_ratio(
@@ -633,6 +644,7 @@ def run_certify(args: argparse.Namespace) -> dict:
     out["device"] = args.device
     out["scheme"] = args.scheme
     out["keep_top_experts"] = _ktop
+    out["keep_layers"] = _klayers
     out["base_model"] = args.base_model
     out["adapter"] = str(adapter_dir)
     out["lora_load"] = load_info.get("lora_load")
@@ -736,6 +748,10 @@ def main(argv: "list[str] | None" = None) -> int:
                     help="hold the top-N MOST-ROUTED experts/layer in bf16 (no-train mixed-precision "
                          "coverage lever; 0=off). Measured on v5: top-8 -> +7pt shippable "
                          "abstention coverage (0.86->0.93). See tools/expert_protection.py.")
+    ap.add_argument("--keep-layers", type=int, default=0,
+                    help="hold the LAST N transformer blocks in bf16 (no-train depth-based mixed "
+                         "precision; 0=off) — QAT-v7 Lever D: the final layers decide the argmax. "
+                         "Composes with --keep-top-experts; both count as kept for the mem ratio.")
     ap.add_argument("--dtype", choices=("bf16", "fp16", "fp32"), default="bf16")
     ap.add_argument("--attn", choices=("auto", "sdpa", "eager", "flash_attention_2"), default="sdpa")
     ap.add_argument("--device", default="cuda", help="cuda / cpu")

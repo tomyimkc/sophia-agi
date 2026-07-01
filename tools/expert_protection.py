@@ -24,6 +24,20 @@ def layer_of(name: str) -> int:
     return int(m.group(1)) if m else -1
 
 
+def layers_to_hold(model: Any, n: int) -> "set[int]":
+    """The set of the LAST ``n`` transformer-layer indices present in ``model`` — the depth-based
+    bf16 hold (QAT-v7 Lever D: the argmax is decided by the final layers, so hold them full-precision
+    at serve time). ``n<=0`` => empty set. Uses the layer indices actually present, not a config
+    field, so it is robust to name schemes; returns e.g. {14, 15} for a 16-layer model and n=2."""
+    if n <= 0:
+        return set()
+    layers = {layer_of(name) for name, _ in model.named_parameters() if layer_of(name) >= 0}
+    if not layers:
+        return set()
+    top = max(layers)
+    return {L for L in layers if L > top - n}
+
+
 def top_routed_experts(model: Any, tok: Any, rows: "list[dict]", *, k: int,
                        n_eval: int, max_seq_len: int, device: str) -> "dict[int, set[int]]":
     """Return ``{layer: {top-k most-routed expert ids}}`` from a bf16 calib forward.
@@ -63,11 +77,15 @@ def top_routed_experts(model: Any, tok: Any, rows: "list[dict]", *, k: int,
 
 def protected_quantize_served(model: Any, *, scheme: str, suffixes,
                               keep_experts: "dict[int, set[int]]",
+                              keep_layers: "set[int] | None" = None,
                               is_served: Callable[..., bool] | None = None) -> dict:
-    """Quantize served weights to ``scheme`` in place, but hold ``keep_experts[layer]`` bf16 for the
-    fused 3-D expert tensors (per-expert-slice skip). Kept slices count as ``kept_params`` so the
-    memory ratio stays honest. Returns the same dict shape as
-    ``certify_lowram.quantize_served_params`` plus ``protected_experts``.
+    """Quantize served weights to ``scheme`` in place, but hold two kinds of slices bf16:
+    ``keep_experts[layer]`` (per-expert-slice skip on the fused 3-D expert tensors) AND any served
+    param whose transformer layer is in ``keep_layers`` (whole-param skip — depth-based mixed
+    precision, QAT-v7 Lever D). ``keep_layers`` takes precedence (a held layer's experts are held
+    too). Kept slices/params count as ``kept_params`` so the memory ratio stays honest. Returns the
+    ``certify_lowram.quantize_served_params`` dict shape plus ``protected_experts`` +
+    ``protected_layer_params``.
 
     ``is_served`` is injectable for tests; default = ``certify_lowram.is_served_param``. Uses the
     exact fake-quant the model trained against (``training.qat`` torch NVFP4 / INT8 per-channel).
@@ -84,12 +102,17 @@ def protected_quantize_served(model: Any, *, scheme: str, suffixes,
         scale = amax / 127.0
         return torch.clamp(torch.round(w / scale), -127, 127) * scale
 
-    q_params = kept_params = q_tensors = protected = 0
+    q_params = kept_params = q_tensors = protected = protected_layers = 0
     served_names: "list[str]" = []
     for name, p in model.named_parameters():
         n = p.numel()
         if not (p.dim() >= 2 and is_served(name, suffixes=suffixes)):
             kept_params += n
+            continue
+        if keep_layers and layer_of(name) in keep_layers:
+            # depth-based hold: keep the whole served param bf16 (the final layers decide the argmax)
+            kept_params += n
+            protected_layers += 1
             continue
         keep = keep_experts.get(layer_of(name)) if keep_experts else None
         with torch.no_grad():
@@ -109,4 +132,5 @@ def protected_quantize_served(model: Any, *, scheme: str, suffixes,
             served_names.append(name)
     return {"quantized_modules": q_tensors, "quantized_params": q_params,
             "kept_params": kept_params, "total_params": q_params + kept_params,
-            "quantized_sample": served_names, "protected_experts": protected}
+            "quantized_sample": served_names, "protected_experts": protected,
+            "protected_layer_params": protected_layers}
