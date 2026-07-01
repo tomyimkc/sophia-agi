@@ -1,31 +1,18 @@
 {
-  "updatedAt": "2026-07-01T04:05:00Z",
+  "updatedAt": "2026-07-01T04:30:00Z",
   "from": "cloud",
-  "OWNER_APPROVAL_v6": "EXPLICIT GO on the v6 QAT --run-train, given by the owner in the cloud session 2026-07-01 ('Yes to all' to the v6 GO recommendation). This is the human approvedBy the --run-train gate requires. Authorization scope: ONE v6 QAT training run + its cert. NOT a standing blanket for future --run-train.",
-  "v6_blocked_needs_your_deploy": {
-    "why": "The v6 code path is NOT on the spark-bridge checkout the idle poller runs from. Dispatching now would train a v5-IDENTICAL adapter and waste hours. Cloud CANNOT safely deploy it: spark-bridge's tools/train_lora.py has Spark-specific hardening the work-branch lacks (load_kwargs['device_map']={'':0} full-GPU pinning to avoid 'Tensor on device meta is not on the expected device cuda:0'; a _m.training guard in qat.py; a finalTrainLoss NaN-guard). A cloud file-clobber would REGRESS these and crash the train. You must MERGE, not replace.",
-    "deploySteps": [
-      "1) MERGE the v6 additions into spark-bridge, PRESERVING the bridge hardening: training/qat.py needs kd_top1_margin_loss + qat_bypass + the numpy refs (from work-branch claude/sophia-positioning-gaps-84kb0v HEAD) BUT keep the existing `if not _m.training:` guard; tools/train_lora.py needs the --qat-kd-weight/--qat-top1-weight/--qat-temp/--qat-margin flags + the v6 loss in the train loop (with torch.no_grad(), _qat_bypass(model): fp_logits=...; v6=_kd_top1(...)) BUT keep the device_map={'':0} pinning + trust_remote_code + finalTrainLoss NaN-guard. git cherry-pick/merge from the work branch is the reliable path; do NOT clobber.",
-      "2) run_local_benchmarks.sh B1: add to the train_lora invocation, with v5-SAFE defaults so absent env = v5-identical: --qat-kd-weight \"${QAT_KD_WEIGHT:-0}\" --qat-top1-weight \"${QAT_TOP1_WEIGHT:-0}\" --qat-temp \"${QAT_TEMP:-2.0}\" --qat-margin \"${QAT_MARGIN:-0}\". Add the matching QAT_KD_WEIGHT/QAT_TOP1_WEIGHT/QAT_TEMP/QAT_MARGIN default lines near the other QAT_* defaults.",
-      "3) tools/github_bridge_poll.py ENV_ALLOWLIST (and tools/spark_bridge.ENV_ALLOWLIST if present): add QAT_KD_WEIGHT, QAT_TOP1_WEIGHT, QAT_TEMP, QAT_MARGIN (currently only QAT_EPOCHS/QAT_LAMBDA). Without this the poller drops them.",
-      "4) VERIFY before GPU: python training/qat.py (expect 15/15 incl the 4 v6 checks); scripts/run_local_benchmarks.sh --bench-b --run-train (DRY-RUN, no --execute) and confirm the printed B1 train_lora command now includes the 4 v6 flags. Only then dispatch with --execute."
-    ],
-    "v6_run_command": {
-      "args": "--bench-b --run-train --execute",
-      "approvedBy": "owner explicit GO 2026-07-01 (recorded above) — single v6 run + cert",
-      "env": {
-        "QAT_BASE": "allenai/OLMoE-1B-7B-0924-Instruct",
-        "QAT_ADAPTER": "training/lora/checkpoints/olmoe-qat-spark-v6",
-        "QAT_DATA": "training/lora/train.jsonl",
-        "QAT_KD_WEIGHT": "1.0", "QAT_TOP1_WEIGHT": "0.5", "QAT_TEMP": "2.0", "QAT_MARGIN": "0",
-        "QAT_LAMBDA": "0.0005", "QAT_EPOCHS": "5",
-        "CERT_NEVAL": "1024", "CERT_OUT": "agi-proof/benchmark-results/nvfp4-v6-cert.json"
-      },
-      "note": "CERT_NEVAL=1024 so the v6 cert + abstention frontier are on the same firm sample as the v5 confirmation (apples-to-apples). Pre-registered forecast (Spark-Theory-Test-Forecast.md T7): top1 0.95-0.98, GO ~45%. If v6 also misses raw 0.97, the pre-registered next step is depth-mixed precision, NOT another knob — and v5+abstention still ships meanwhile."
-    },
-    "readAfter": "Write the v6 cert + frontier (raw top1, mean_kl, shippable_operating_point at confidence=0.95 via serving/abstention_serve) to handoff/from-mac/STATUS.json + a ledger row. Do NOT flip any recipe candidate->adopted; canClaimAGI stays false."
+  "since_last": "While you were between cycles I kept the idle Spark productive and built the end-to-end serving hedge. Full picture below; your two balls (v6 deploy+launch, real-model ablation A/B/C) are unchanged.",
+  "downproj_lever_result": {
+    "what": "Cert-only (no train) mixed-precision lever: hold down_proj in bf16, re-measure v5 @ n=1024 (cert-v5-downproj-frontier).",
+    "table": "full-NVFP4: raw 0.8975, kl 0.0551 FAIL, mem 3.30x, 95%-robust cov 0.6426 @ ans 0.9970 (floor 0.9831). down_proj-bf16: raw 0.9111, kl 0.0429 PASS, mem 1.90x, 95%-robust cov 0.7012 @ ans 0.9889 (floor 0.9718).",
+    "verdict": "Valid but memory-expensive lever: +6pts robust coverage and fixes mean_kl, but gives back ~42% of compression (3.30x->1.90x). NOT a v6 substitute. For low-RAM the full-NVFP4 @ 3.30x/64% is the better byte-efficient point. v6 (or a smarter mixed scheme) is still the path to real coverage gains without the memory cost."
   },
-  "context_v5_shippable": "Reminder: v5+abstention already SHIPS at the 95%-robust operating point coverage 0.6426 / answered 0.9970 / floor 0.9831 (n=1024). v6's job is to lift raw coverage so the hedge abstains on far fewer than 36% of tokens. v5 ships regardless of the v6 outcome.",
-  "alsoOpen_realModelAblation": "Still the other high-value Mac track (A: replication_pack on 70B + verifiability_model.decide; B: counterfactual_traps intervention-consistency; C: novel-knowability generalization). Sequence v6-train and the ablations however your GPU schedule prefers; v6 is the LONG job, the ablations are cheaper.",
-  "guardrails": "canClaimAGI=false; v6 --run-train authorized ONCE by owner (recorded); merge don't clobber (preserve Spark device_map hardening); dry-run to confirm the v6 flags before --execute; lint_claims + lint_recipe before any receipt commit; do NOT flip candidate->adopted without a real-model ablation + owner sign-off; code only to claude/sophia-positioning-gaps-84kb0v (work) and spark-bridge (bridge deploys); no plaintext secrets."
+  "serving_decoder_built": {
+    "what": "serving/abstaining_decoder.py: AbstainingDecoder(policy) enforces the abstention policy in the token loop over a caller-supplied quant logits_provider (only model touch-point, no FP model). Confident -> emit argmax; low-margin -> emit ABSTAIN_TOKEN (defer/flag/route). Live coverage + stop_on_coverage_below circuit-breaker so a mostly-abstained answer fails loud.",
+    "test": "tests/test_abstention_serve.py now 8/8. This is the deployable shape of v5+abstention end-to-end; drop it into your serving stack with policy_from_cert(cert, confidence=0.95)."
+  },
+  "recipe_update": "conformal-abstention-serve promoted candidate->VALIDATED on the real v5 n=1024 evidence (ablationDelta +0.0995 answered-over-raw at the robust point). adopted stays FALSE — lint flags it 'eligible to adopt'; the OWNER flips adopted. Do not flip it yourself.",
+  "YOUR_BALL_v6": "Unchanged and still the big one: git-MERGE the v6 code path into spark-bridge PRESERVING the Spark device_map={'':0} hardening (see prior handoff for the 4 steps + the exact v6 run command with owner approval). CERT_NEVAL=1024 so v6's cert is apples-to-apples with these v5 numbers. Dry-run to confirm the v6 flags appear in B1 before --execute.",
+  "YOUR_BALL_ablation": "Also unchanged: A) replication_pack on your 70B + verifiability_model.decide; B) counterfactual_traps intervention-consistency; C) novel-knowability generalization. The only path to promote any world-model prototype candidate->adopted.",
+  "guardrails": "canClaimAGI=false; abstention is a MEASURED hedge (v5 ships at ~64% coverage), not a capability claim; v6 --run-train authorized ONCE by owner; merge don't clobber; owner flips adopted; lint_claims + lint_recipe before receipt commits; code only to work branch + spark-bridge deploys; no plaintext secrets."
 }
