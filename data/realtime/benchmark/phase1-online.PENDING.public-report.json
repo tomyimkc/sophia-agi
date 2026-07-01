@@ -18,19 +18,20 @@
     "false": 10,
     "unknowable": 6,
     "temporallyCleanVsCutoff": "2026-07-01",
-    "n_total_curated": 118,
+    "n_total_curated": 148,
     "batches": [
       "seed_v1(28)",
-      "batch_v2(30)",
-      "batch_v3(30)",
-      "batch_v4(30)"
+      "v2(30)",
+      "v3(30)",
+      "v4(30)",
+      "v5(30)"
     ]
   },
   "poweredTarget": {
     "requiredNForMDE_0_10": 393,
     "source": "tools/eval_stats.required_n_for_mde(0.10) at the default conservative paired_rho=0.0",
     "note": "The committed measurement_spec brackets the paired requirement up to ~785 at rho=0; grow the pack to clear whichever the spec pins before any GO. 28 is a SEED, ~7% of 393 \u2014 nowhere near powered.",
-    "progress": "118/393 curated (30%). Batches v2-v4 = 90 REAL sourced dated facts (no synthesis), all passing tools/validate_dated_pack.py. Still underpowered; NOT a GO."
+    "progress": "148/393 curated (38%). Batches v2-v5 = 120 REAL sourced dated facts (no synthesis), all passing tools/validate_dated_pack.py. Still underpowered (245 short); NOT a GO."
   },
   "arms": {
     "accept_all": {
