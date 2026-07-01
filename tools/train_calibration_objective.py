@@ -40,14 +40,13 @@ from __future__ import annotations
 import argparse
 import json
 import math
-import sys
 from pathlib import Path
 from typing import Any, Callable, Sequence
 
 # ---- repo instruments (real interfaces; fail-closed if unavailable) ----
 try:
     from agent.calibration import expected_calibration_error, selective_risk, base_risk
-    from agent.abstention_scoring import score as abstention_score, classify
+    from agent.abstention_scoring import score as abstention_score
     _REPO_OK = True
     _IMPORT_ERR = ""
 except Exception as e:  # pragma: no cover
@@ -107,7 +106,6 @@ def fit_platt(
 ) -> tuple[float, float]:
     """Fit p_cal = sigmoid(a * logit(conf) + b) minimizing the proper-scoring +
     abstention loss by gradient descent. Returns (a, b). Pure Python, deterministic."""
-    base_fn = LOSSES[loss]
     a, b = 1.0, 0.0
     eps = 1e-6
     logits = [math.log(min(max(c, eps), 1 - eps) / (1 - min(max(c, eps), 1 - eps))) for c in conf]

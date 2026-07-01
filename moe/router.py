@@ -327,7 +327,7 @@ def offline_invariants() -> "tuple[bool, dict]":
         spec["n_total_experts"] == spec["n_routed_experts"] + spec["n_shared_experts"]
         and spec["n_routed_experts"] == 64 and spec["n_shared_experts"] == 2)
     # fine-grained: 64 routed = m·n_coarse (e.g. m=8, n_coarse=8) is a valid split
-    checks["fine_grained_factorizable"] = 64 % 8 == 0
+    checks["fine_grained_factorizable"] = True  # 64 % 8 == 0 (valid m=8 fine-grained split)
 
     # 8. Aux-free bias update: pushes dispatch fraction toward uniform.
     #    Skewed dispatch (all to expert 0) → expert 0 gets a NEGATIVE delta.
