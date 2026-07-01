@@ -44,10 +44,10 @@ flowchart TD
     D4 -->|yes| PREF["verdict = human ruling<br/>(feedback loop short-circuit)"]
     D4 -->|no| D5{"5· sources present & valid?"}
     D5 -->|none| H_NOS["held · no_source"]
-    D5 -->|refuted/invalid| R_REF["rejected"]
+    D5 -->|"refuted / invalid"| R_REF["rejected"]
     D5 -->|all stale| H_STALE["held · stale_source"]
     D5 -->|ok| D6{"6-7· low-risk &<br/>confidence ≥ 0.75 & cited?"}
-    D6 -->|yes<br/>(blp ∈ UNCLASSIFIED)| ACC["accepted"]
+    D6 -->|"yes · blp ∈ UNCLASSIFIED"| ACC["accepted"]
     D6 -->|no| H_HUM["held · needs_human"]
 
     %% verdict -> route (route_after_verify: the single authority)
@@ -62,7 +62,7 @@ flowchart TD
     R_REF --> RT
     RT -->|accepted| PUB["✅ publishable"]
     RT -->|held| HUMR["🧑 human review"]
-    RT -->|superseded / rejected| REJ["🚫 rejected / not published"]
+    RT -->|"superseded / rejected"| REJ["🚫 rejected / not published"]
 
     %% stamp verdict back into the note's frontmatter
     PUB --> STAMP["stamp frontmatter:<br/>provenance_id, gate_status, confidence, reasons"]
@@ -112,8 +112,8 @@ flowchart LR
     DR --> RV["06_Review/&lt;brief&gt;.draft.md"]
     RV --> GT["VaultGate.gate_note()"]
     GT -->|accepted| P["publish()"]
-    GT -->|held: needs_human| A["founder approve()"]
-    A -->|re-gate → accepted| P
+    GT -->|"held: needs_human"| A["founder approve()"]
+    A -->|"re-gate → accepted"| P
     classDef ok fill:#1b5e20,stroke:#0b3d0b,color:#fff;
     classDef hold fill:#8d6e00,stroke:#5c4700,color:#fff;
     class P ok;
