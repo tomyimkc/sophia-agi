@@ -37,3 +37,17 @@ Implemented the W1 gate's named seam — `agent.activation_probes.build_hidden_s
 Train a **mixed-domain** PRM (include physics in train) and test on a genuinely held-out
 **third** domain; sweep per-layer/per-token features; then wire the PRM as a dense reward in
 `tools/run_rlvr.py` on a GPU, keeping the symbolic verifier as a periodic reward-hack audit.
+
+## v2 (2026-07-02) — cross-domain robustly ~chance; gate is infrastructure-bound
+
+3-seed characterization (`w1-char-cross-domain-2026-07-02.candidate.json`): held-out-DOMAIN
+agreement is **~chance in BOTH directions** — train-math→test-physics **0.488**, train-physics→
+test-math **0.495** (3 seeds each). The accepted/rejected direction is domain-specific; the PRM
+does not transfer across domains. Mixed-domain training reaches **0.792** on held-out *instances*
+(within trained domains) — but that is not a held-out *domain*.
+
+**W1's ≥0.80 held-out-DOMAIN gate cannot be closed locally:** only two verifier domains exist
+(`math-sympy`, `physics-units`) so there is no true third held-out domain, and the
+PRM-as-dense-RLVR-reward half needs a GPU RL stack. This is an **infrastructure boundary, not a
+method failure** — the featurizer works within-domain (0.73/0.90). Closing needs a 3rd verifier
+domain or a GPU RLVR run. Row stays **Open**.

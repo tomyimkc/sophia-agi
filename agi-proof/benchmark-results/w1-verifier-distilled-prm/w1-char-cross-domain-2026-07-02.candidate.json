@@ -1,0 +1,33 @@
+{
+  "schema": "sophia.w1_char.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "configs": {
+    "trainMath_testPhysics_heldoutDomain": [
+      0.5,
+      0.464,
+      0.5
+    ],
+    "trainPhysics_testMath_heldoutDomain": [
+      0.485,
+      0.5,
+      0.5
+    ],
+    "mixedDomain_heldoutInstances": [
+      0.786,
+      0.786,
+      0.804
+    ]
+  },
+  "means": {
+    "m2p": 0.488,
+    "p2m": 0.495,
+    "mixed": 0.792
+  },
+  "gateMet": false,
+  "verdict": "HELD-OUT-DOMAIN agreement: train-math->test-physics 0.488, train-physics->test-math 0.495 (both ~chance 0.50). The accepted/rejected direction is DOMAIN-SPECIFIC; cross-domain transfer fails. Mixed-domain training reaches 0.792 on held-out INSTANCES (within trained domains), but that is NOT a held-out DOMAIN. With only 2 verifier domains (math-sympy, physics-units) there is no true 3rd held-out domain, and the PRM-as-dense-RLVR-reward half needs a GPU RL stack. => W1's >=0.80 held-out-DOMAIN gate CANNOT be closed locally; needs a 3rd verifier domain or GPU RLVR.",
+  "artifacts": {
+    "w1_char.py": "19dfb99073b3accc0ba4626b316cf7f304660e956d4bffa6632ae229e985b7e5"
+  },
+  "level3Evidence": false
+}
