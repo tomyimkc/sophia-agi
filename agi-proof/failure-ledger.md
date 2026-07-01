@@ -2626,3 +2626,24 @@ a transcription-risk that can break the bridge or crash the run. The correct too
 holds both trees (the Mac): `git checkout <workbranch> -- training/qat.py tools/train_lora.py` is byte-exact
 and instant. Cloud should do the small NEW-file deploys + bridge commands; the Mac does the file merges +
 dry-run before --execute. (Candidate addition to the spark-bridge-ops skill.)
+
+
+### v6 n=1024 confirmation + conformal-abstention-serve ADOPTED (2026-07-01)
+
+Cloud cert-only re-cert of the existing olmoe-qat-spark-v6 adapter at CERT_NEVAL=1024 (the Mac's
+train+cert ran at n=256), for the firm T8 adoption read. Result (n_test=512):
+
+- **Raw NO-GO, firmer than n=256:** top1 **0.9336** (n=256 showed 0.9609 — optimistic), mean_kl 0.0454
+  (≤0.05 ✓). v6 raw genuinely misses 0.97 by 0.066. The fused-expert co-adaptation is real but does not
+  clear the never-flip bar.
+- **Abstention frontier ROBUST + dominates v5:** 95%-Wilson-LCB operating point **coverage 0.7188 @
+  answered 0.9918 (floor 0.9762)** — vs v5's 0.6426 @ floor 0.9831. v6+abstention robustly ships at +8pts
+  coverage over v5. Multiple robust points (0.617@floor 0.982, 0.684@floor 0.979).
+
+**T8 adoption bar MET → `conformal-abstention-serve` flipped candidate→ADOPTED (recipe commit e9ff56bc).**
+T8 (pre-registered in Spark-Theory-Test-Forecast.md BEFORE this run): adopt iff the 95%-robust operating
+point clears coverage≥0.60 AND floor≥0.97 on ≥2 INDEPENDENT adapters + owner sign-off. Condition 1 v5
+(weight-space penalty) MET; Condition 2 v6 (KD+top1 output-space objective) MET at n=1024; owner signed off
+2026-07-01. Not fit-after-the-fact. **This is a MEASURED serving HEDGE, not a raw-bar pass and not a
+capability claim — both adapters raw-FAIL 0.97; canClaimAGI stays false.** Artifact: bridge result
+2026-07-01-claude-web-cert-v6-frontier-1k (CERT_OUT nvfp4-v6-frontier-1k.json).
