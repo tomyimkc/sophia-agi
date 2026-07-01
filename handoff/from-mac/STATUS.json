@@ -1,38 +1,28 @@
 {
-  "updatedAt": "2026-07-01T03:15:42Z",
+  "updatedAt": "2026-07-01T04:09:40Z",
   "device": "mac-studio",
   "agent": "claude-code-mac-operator",
-  "cycle": "frontier decision-gate (supersedes v6-train; cloud @29d8a313)",
-  "decision": {
-    "headline": "v5 IS SHIPPABLE via conformal abstention. v6 --run-train likely UNNECESSARY.",
-    "v5_frontier_recert": {
-      "how": "frontier certify (work branch 29d8a313) on olmoe-qat-spark-v5, cert-only --bench-b --execute, n=256.",
-      "rawVerdict": "FAIL at full coverage: top1 0.9219 (<0.97), mean_kl 0.0364 (<=0.05 PASS).",
-      "frontier_shippable": true,
-      "shippable_operating_point": {
-        "coverage": 0.8594,
-        "answered_top1": 0.9818,
-        "threshold": 0.8072,
-        "target": 0.97
-      },
-      "frontier_curve": "cov1.00->0.9297,0.96->0.9512,0.91->0.9658,0.86->0.9818(SHIP),0.79->0.9901,0.65->0.9880 (monotone).",
-      "n": "n_calib=128,n_test=128 (out-of-sample).",
-      "read": "v5 clears 0.97 answered-top1 by abstaining ~14% (coverage 0.86); margin separates argmax-flips well enough that abstention rescues v5 -> v6 NOT needed for 0.97-answered.",
-      "caveat": "answered_top1 MEASURED selective accuracy (n_test=128), NOT a per-token guarantee; validate larger n_test. canClaimAGI=false.",
-      "artifact": "spark:/tmp/frontier-v5-out.json"
-    }
+  "cycle": "methodology follow-through \u2014 expert-protection lever measured on REAL v5",
+  "headline": "NO-TRAIN WIN: protecting top-8/64 experts/layer bf16 (12%) raises v5 shippable coverage 0.8594 -> 0.9297 (abstention 14% -> 7%), still clears the 0.97-answered target. Harness-verified (baseline reproduces the cert's 0.9219 @ cov 0.8594 exactly).",
+  "result": {
+    "method": "reused cert load_merged_model + collect_next_token_probs + quant_abstention_frontier on real merged v5; per-slice protected quant custom (guard KEPT-BF16-OK); n_eval=256.",
+    "baseline_all_nvfp4": {
+      "raw_top1": 0.9219,
+      "shippable_coverage": 0.8594,
+      "answered": 0.9818
+    },
+    "protected_top8_bf16": {
+      "raw_top1": 0.9414,
+      "shippable_coverage": 0.9297,
+      "answered": 0.9748,
+      "mem_cost": "12% of expert params bf16"
+    },
+    "coverage_gain": 0.0703
   },
-  "v6_hold": {
-    "status": "HELD per cloud (frontier makes it likely unnecessary).",
-    "footguns_before_any_training": [
-      "target_modules 'all-linear' -> peft char-set crash (fix --target-modules attn-mlp).",
-      "lora.ParamWrapper fails with lora_dropout!=0 -> fused-MoE needs --lora-dropout 0."
-    ],
-    "note": "v6 never produced a capability result. If un-held: needs BOTH --target-modules attn-mlp AND --lora-dropout 0."
-  },
-  "worldModelAblation": "step 2 (A/B/C) NOT started (frontier decision was the gate). Needs the 70B judge lane. Next action.",
-  "guardrailsAck": "canClaimAGI=false; lint_claims before commit; no candidate->adopted flip; no plaintext secrets; JUDGE_HOLD set+cleared; CODE untouched.",
+  "recommendation": "Ship v5 + top-8-expert-protection + abstention -> answer ~93% of tokens at answered-top1 ~0.975, NO retrain. Stacks on the conformal-abstention-serve recipe cloud is adopting (fe0acf23). Productionize: add opt-in --keep-top-experts N to certify_lowram.py (routing-freq precompute + per-slice fused-expert skip; ~40 lines, additive/default-off).",
+  "methodology": "docs/06-Roadmap/2026-07-01-nvfp4-lever-portfolio-methodology.md (work branch, @6d459e84): measure-first lever portfolio. Refuted expert-mixed-precision-by-weight + RHT-on-weights (uniform ~10.8% weight error); found routing skew (top-8/layer=27.8%) -> this protection win. v6 QAD only to push coverage past ~93%. Retire the lambda knob-turn.",
+  "guardrailsAck": "canClaimAGI=false (raw v5 still FAILS 0.97 full-coverage; shippable via abstention+protection is MEASURED n=256, not a per-token proof); lint_claims OK; no plaintext secrets; JUDGE_HOLD set+cleared around each GPU probe; code doc-only to work branch.",
   "needsFromOwner": [
-    "Ship v5 @0.86-coverage/0.982-answered (abstain ~14%) vs train v6? Or validate frontier @larger n_test first?"
+    "Approve productionizing an opt-in --keep-top-experts in the cert so the ship config is reproducible? (Measurement done; this just wires it in.)"
   ]
 }
