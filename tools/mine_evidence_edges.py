@@ -25,8 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-import okf  # noqa: E402
-from okf import evidence_edges, gap_nodes  # noqa: E402
+from okf import evidence_edges, gap_nodes, load_pages  # noqa: E402
 
 DEFAULT_ROOTS = [ROOT / "wiki"]
 DEFAULT_OUT = ROOT / "agi-proof" / "edge-mining" / "proposed-edges.json"
@@ -49,7 +48,7 @@ def _load_floors(path: Path) -> dict:
 def build_report(roots, *, min_score: float) -> dict:
     """Build the full proposal report (no file I/O for the report itself)."""
     paths = [Path(r) for r in roots if Path(r).exists()]
-    pages = okf.load_pages(*paths)
+    pages = load_pages(*paths)
     attributions = evidence_edges.load_attributions(ATTRIBUTIONS_PATH)
 
     edges = evidence_edges.mine_edges(pages, attributions=attributions, min_score=min_score)
