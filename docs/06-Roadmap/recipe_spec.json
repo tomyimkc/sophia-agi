@@ -3,7 +3,14 @@
   "canClaimAGI": false,
   "claimBoundary": "The master training recipe for a wisdom-gated on-device model. Ingredients are folded in ONLY when proven (validated + a measured ablation delta + a passing gate). This spec is the single source of truth for what the trained model adopts; the failure ledger holds what is NOT yet proven. This is an AGI-candidate recipe, not proof of AGI.",
   "generated": "2026-07-01",
-  "layers": ["target-base", "data", "objective", "verification-in-loop", "quant-serve", "eval-promotion"],
+  "layers": [
+    "target-base",
+    "data",
+    "objective",
+    "verification-in-loop",
+    "quant-serve",
+    "eval-promotion"
+  ],
   "adoptionRule": "adopted:true REQUIRES proofStatus=='validated' AND ablationDelta is a number AND a gate is named. No measured on/off delta or no passing gate => must stay adopted:false (candidate/auxiliary). Enforced by tools/lint_recipe.py.",
   "buildMethod": [
     "1. inventory+gate: sort every idea into validated/candidate/open (audit the failure ledger)",
@@ -29,7 +36,7 @@
       "id": "olmoe-1b-7b-base",
       "layer": "target-base",
       "module": "tools/train_lora.py",
-      "description": "Base model: allenai/OLMoE-1B-7B (MoE, ~1.3B active) — small-active, on-device-plausible, LoRA-adaptable.",
+      "description": "Base model: allenai/OLMoE-1B-7B (MoE, ~1.3B active) \u2014 small-active, on-device-plausible, LoRA-adaptable.",
       "proofStatus": "candidate",
       "gate": "training runs end-to-end (v1-v5)",
       "ablationDelta": null,
@@ -71,12 +78,12 @@
       "id": "decontam-guard",
       "layer": "data",
       "module": "tools/assert_decontam.py",
-      "description": "Content-shingle decontamination + never-touched private split — a HYGIENE guard on the data, not signal.",
+      "description": "Content-shingle decontamination + never-touched private split \u2014 a HYGIENE guard on the data, not signal.",
       "proofStatus": "validated",
       "gate": "assert_decontam (enforced in make claim-check)",
       "ablationDelta": null,
       "adopted": false,
-      "note": "a guard, not an ingredient with an uplift delta — kept adopted:false by design."
+      "note": "a guard, not an ingredient with an uplift delta \u2014 kept adopted:false by design."
     },
     {
       "id": "v6-output-space-qat",
@@ -103,7 +110,7 @@
       "id": "process-supervision",
       "layer": "objective",
       "module": "provenance_bench/step_reward.py",
-      "description": "Step-level (process) reward, not just outcome — reward the derivation, not only the final answer.",
+      "description": "Step-level (process) reward, not just outcome \u2014 reward the derivation, not only the final answer.",
       "proofStatus": "candidate",
       "gate": "test_step_reward / test_step_verifier",
       "ablationDelta": null,
@@ -113,7 +120,7 @@
       "id": "deterministic-verifier-reward",
       "layer": "objective",
       "module": "agent/{chemistry,finance,biology,medicine}_verifier.py",
-      "description": "RLVR reward = deterministic verifiers as EXTERNAL ORACLES (mass-balance, A=L+E, reference) — the A1 oracle-escape, not LLM self-judge.",
+      "description": "RLVR reward = deterministic verifiers as EXTERNAL ORACLES (mass-balance, A=L+E, reference) \u2014 the A1 oracle-escape, not LLM self-judge.",
       "proofStatus": "validated",
       "gate": "each verifier's reference tests (exact checks, correct by construction)",
       "ablationDelta": null,
@@ -129,7 +136,7 @@
       "gate": "measure_trust_boundary (re-run 2026-07-01: contaminationBlockedRate 1.0, OFF 1.0 -> ON 0.0; artifact agi-proof/benchmark-results/trust-boundary-ablation.json)",
       "ablationDelta": 1.0,
       "adopted": true,
-      "note": "ADOPTED as a training-env signal gate: only gate-clean sub-agent output becomes training signal. SCOPE: blocks 100% of verifier-DETECTABLE contamination (admittedPoisonResidual counts poison with no detectable violation — the gate is a filter, not a truth oracle). canClaimAGI false."
+      "note": "ADOPTED as a training-env signal gate: only gate-clean sub-agent output becomes training signal. SCOPE: blocks 100% of verifier-DETECTABLE contamination (admittedPoisonResidual counts poison with no detectable violation \u2014 the gate is a filter, not a truth oracle). canClaimAGI false."
     },
     {
       "id": "gate-bounded-test-time-thinking",
@@ -154,13 +161,18 @@
     {
       "id": "conformal-abstention-serve",
       "layer": "quant-serve",
-      "module": "serving/quant_abstention.py",
-      "description": "Serve top1~0.92 + abstain on the low-margin flip tokens (nonconformity from the quant model alone) => answered-top1 high. The hedge that ships a sub-0.97 model honestly.",
-      "proofStatus": "candidate",
-      "gate": "quant_abstention offline_invariants (6 PASS: answered>raw, coverage<1, stricter-alpha monotone)",
-      "ablationDelta": null,
+      "module": "serving/quant_abstention.py + serving/abstention_serve.py + serving/abstaining_decoder.py",
+      "description": "Serve the sub-0.97 quant model + ABSTAIN on the low-margin flip tokens (nonconformity from the quant model alone) => answered-top1 clears the bar at reduced coverage. Frontier picks the max-coverage operating point whose confidence lower bound clears the target; the decoder enforces it in the token loop with a coverage circuit-breaker. Ships a sub-0.97 model honestly.",
+      "proofStatus": "validated",
+      "gate": "test_abstention_serve 8 PASS (quant_abstention frontier + abstention_serve LCB-selection + abstaining_decoder circuit-breaker) + REAL v5 NVFP4 cert @ n=1024 (nvfp4-v5-frontier-1k)",
+      "ablationDelta": 0.0995,
       "adopted": false,
-      "openItem": "answered-top1@coverage on the REAL v5/v6 cert distributions pending (rides the next cert)"
+      "openItem": "VALIDATED on real v5 n=1024: 95%-robust operating point answered 0.9970 @ coverage 0.6426 (full-NVFP4, floor 0.9831) or 0.7012 (down_proj-bf16, floor 0.9718, but mem 1.90x vs 3.30x). Owner sign-off flips adopted; v6 pending to raise raw coverage so the hedge abstains on far fewer tokens.",
+      "evidence": [
+        "agi-proof/benchmark-results/nvfp4-v5-frontier-1k.json",
+        "agi-proof/benchmark-results/nvfp4-v5-downproj-frontier.json",
+        "agi-proof/failure-ledger.md#v5-nvfp4-raw-fail-but-honestly-shippable-via-abstention"
+      ]
     },
     {
       "id": "iec-8pillar-promotion-gate",
@@ -177,7 +189,7 @@
       "id": "failure-ledger-falsifiability",
       "layer": "eval-promotion",
       "module": "agi-proof/failure-ledger.md",
-      "description": "The public list of what is NOT proven — the falsifiability mechanism. A claim shipped with its own refutation list.",
+      "description": "The public list of what is NOT proven \u2014 the falsifiability mechanism. A claim shipped with its own refutation list.",
       "proofStatus": "validated",
       "gate": "tools/validate_failure_ledger.py (structural validity, enforced)",
       "ablationDelta": null,
