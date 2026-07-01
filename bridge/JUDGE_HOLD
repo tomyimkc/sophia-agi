@@ -1,0 +1,1 @@
+{"holder":"mac-op-qat-gcfix","reason":"v6 stalls at step 10 — gradient-checkpointing x param-swap; diagnosing","at":"2026-07-01T09:44:32Z"}
