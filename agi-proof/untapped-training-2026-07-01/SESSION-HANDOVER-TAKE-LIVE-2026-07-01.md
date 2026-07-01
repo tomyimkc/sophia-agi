@@ -1,8 +1,21 @@
 # Session handover — W1–W5 take-live (2026-07-01)
 
 > **candidateOnly:true · canClaimAGI:false.** All five failure-ledger rows **remain Open**;
-> no gate was cleanly cleared. Two live gates landed as **strong candidates**, honestly not
-> flipped. Branch `feat/agi-proof-candidate-tools`, 4 commits pushed (`b07e2b9b..904954d6`).
+> no gate was cleanly cleared. **All five instruments were taken live locally** (W1–W5); the
+> live gates landed as **candidates / one clean Goodhart negative**, honestly not flipped.
+> Branch `feat/agi-proof-candidate-tools` (`b07e2b9b..601d3d15`).
+
+> **Round 2 (same session): W3, W4, and the W5 probe-as-loss coupling also taken live.**
+> - **W3** (commit `3c5e82cb`): conflicting-provenance experiment — provenance-weighted **0.95**
+>   vs uniform **0.50** correct; influence proxy agrees with LOO (de-poisoned slice 0.25→0.75);
+>   no register collapse. Controlled synthetic surface → **row Open**.
+> - **W4** (commit `fbebfa33`): multi-round self-play — held-out fabricate-and-pass **0.375→0.0**,
+>   BUT over-abstention side effect (2/5 answerable Qs refused) + fixed (non-adaptive) proposer →
+>   **row Open**.
+> - **W5 coupling** (commit `601d3d15`): custom MLX gradient-through-probe LoRA loop → **GOODHART
+>   DETECTED** (loss-probe 0.867→0.956, disjoint audit 0.756→0.711, gap 0.244>0.15; the audit
+>   correctly refused to certify). Valid negative → **row Open**. Reusable footgun found: `mlx_lm
+>   lora` fails when the valid split has fewer rows than `--batch-size` (use batch-size ≤ valid).
 
 ## What happened
 
@@ -45,16 +58,17 @@ Took the W1–W5 untapped-training **instruments** (from `b07e2b9b`) as live as 
   Python thread timeout). Qwen2.5-3B-Instruct is HF-cached (5.8GB); LoRA peak ~8.5GB.
 - Scratch harnesses (not committed): `w2_calib_pilot.py`, `w1_prm_live.py`, `w5_probe_live.py`.
 
-## Exact next steps (none done)
+## Exact next steps (to CLOSE the still-Open gates)
 
-- **W5 probe-as-loss coupling** (highest value, now unblocked): custom MLX LoRA loop, aux loss
-  `BCE(loss_probe(mean_pooled_hidden(text)), honesty_target)` on a headroom surface (truncated
-  claims, base sep ~0.80); after training re-featurize test with the adapted model, require the
-  **disjoint audit probe** to improve + `goodhartGap ≤ 0.15` + a from-scratch post-run audit to
-  still separate. A Goodhart negative is a valid result.
-- **W3 provenance-weighted**: weighted-vs-uniform SFT + a leave-one-out slice + register-collapse
-  check (fully local).
-- **W4 adversarial self-play**: ≥3 grok rounds with between-round LoRA retrain on mined
-  fabricate-and-pass negatives (local, ~20s/grok call).
-- **W2/W1 to close their gates**: larger held-out N + a ≥3rd seed + a broader non-math surface
-  (W2); mixed-domain PRM tested on a held-out THIRD domain + PRM-as-RLVR-reward on GPU (W1).
+All five instruments are now taken live; each row stays Open on a specific, documented gap:
+- **W2**: larger held-out N + a ≥3rd seed + a broader non-math verifier-checkable surface.
+- **W1**: mixed-domain PRM tested on a held-out THIRD domain; PRM-as-dense-RLVR-reward on GPU.
+- **W3**: real held-out generalization suite + ≥2 seeds + true per-example loss weighting (not
+  replication) + a real TracIn/influence backend validated vs full LOO.
+- **W4**: an ADAPTIVE proposer (novelty-per-round vs a floor) + a DPO objective (abstain-on-trap
+  preferred over fabricate, correct preferred over abstain) so fabrication drops WITHOUT
+  over-abstention + an answerable-accuracy guardrail.
+- **W5**: a probe-as-loss variant that improves the AUDIT probe too (multi-probe/ensemble loss,
+  adversarial-probe co-training, or steering to a held-out honesty target) with goodhartGap≤0.15.
+  The coupling built here validated the *audit* (it triggered it); closing needs a coupling that
+  *passes* it. Each artifact's `.candidate.json` has the exact `nextToClose`.
