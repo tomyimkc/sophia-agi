@@ -343,6 +343,7 @@ def build_model_and_tokenizer(
     attn_impl: str | None = None,
     resume_adapter: Path | None = None,
     lora_rank_alloc: bool = False,
+    qat: bool = False,
 ) -> tuple[Any, Any]:
     from peft import LoraConfig, PeftModel, get_peft_model, prepare_model_for_kbit_training
     from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
@@ -379,7 +380,14 @@ def build_model_and_tokenizer(
         model = prepare_model_for_kbit_training(model)
 
     model.config.use_cache = False
-    model.gradient_checkpointing_enable()
+    # Gradient checkpointing re-runs the forward during backward. The fused-expert QAT wrapper
+    # (training/qat._attach_qat_fused_experts) swaps each 3-D expert Parameter in/out of its module
+    # during forward; under checkpointing that swap runs AGAIN inside the backward recompute and
+    # progressively accumulates the 32 x ~0.5 GB merged expert tensors — fine for ~10 steps then a
+    # hard 99%-CPU / ~34 W-GPU stall. A 7B QAT run peaks ~37 GB, far under the Spark's 128 GB, so
+    # checkpointing is unnecessary here — skip it under QAT (co-adapting experts needs the live wrap).
+    if not qat:
+        model.gradient_checkpointing_enable()
 
     if resume_adapter and resume_adapter.exists():
         model = PeftModel.from_pretrained(model, str(resume_adapter), is_trainable=True)
@@ -1033,6 +1041,7 @@ def main() -> int:
             attn_impl=attn_impl,
             resume_adapter=args.resume_adapter,
             lora_rank_alloc=args.lora_rank_alloc,
+            qat=args.qat,
         )
 
     if args.backend != "mlx":
