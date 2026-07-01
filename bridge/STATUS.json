@@ -1,10 +1,8 @@
 {
-  "updatedAt": "2026-07-01T03:15:05Z",
+  "updatedAt": "2026-07-01T03:15:43Z",
   "host": "spark-2f2d",
-  "running": "2026-07-01-claude-web-cert-v5-frontier",
-  "pendingCommands": [
-    "2026-07-01-claude-web-cert-v5-frontier"
-  ],
+  "running": null,
+  "pendingCommands": [],
   "trainwatch": [
     {
       "id": "2026-06-30-claude-web-bench-a-04",
@@ -1102,6 +1100,11 @@
       "path": "agi-proof/benchmark-results/nvfp4-v3-downproj-cert.json",
       "bytes": 1186,
       "mtime": "2026-06-30T05:06:25Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/nvfp4-v5-frontier.json",
+      "bytes": 1211,
+      "mtime": "2026-07-01T03:15:40Z"
     },
     {
       "path": "agi-proof/benchmark-results/nvfp4-v5-keep-downproj.json",
