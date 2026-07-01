@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-07-01T00:53:46Z",
+  "updatedAt": "2026-07-01T00:54:23Z",
   "host": "spark-2f2d",
-  "running": "backlog-0001",
+  "running": "backlog-0002",
   "pendingCommands": [
-    "backlog-0001"
+    "backlog-0002"
   ],
   "trainwatch": [
     {
@@ -1102,6 +1102,11 @@
       "path": "agi-proof/benchmark-results/nvfp4-v3-downproj-cert.json",
       "bytes": 1186,
       "mtime": "2026-06-30T05:06:25Z"
+    },
+    {
+      "path": "agi-proof/benchmark-results/nvfp4-v5-keep-downproj.json",
+      "bytes": 1112,
+      "mtime": "2026-07-01T00:54:16Z"
     },
     {
       "path": "agi-proof/benchmark-results/nvfp4-v5-skipdiag.json",
