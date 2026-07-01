@@ -1,19 +1,26 @@
 {
-  "updatedAt": "2026-07-01T04:45:00Z",
+  "updatedAt": "2026-07-01T12:55:00Z",
   "from": "cloud",
-  "v6_deploy_DE-RISKED": {
-    "why": "Owner GO on v6 stands (recorded prior handoff). Cloud did the analysis + convergence but the byte-exact file movement is a git job for YOU (the Spark holds both trees); cloud create_or_update_file replaces whole files -> transcription risk on the 360-1191 line runner/trainer could break the bridge or crash the run. See ledger row 'v6 bridge deploy footguns'.",
-    "work_branch_is_now_source_of_truth": "claude/sophia-positioning-gaps-84kb0v HEAD c69c5ce8. training/qat.py is already a clean v6 SUPERSET of spark-bridge's (the sb `if not _m.training` line is subsumed by the work-branch `if not _m.training or _qat_bypass`). tools/train_lora.py now CARRIES the Spark device_map={'':0} hardening (commit d9c1e435) + all v6 flags/loop -> it is the single v6+hardened source. qat 15/15 + ast + module-import verified by cloud.",
-    "steps": [
-      "1) BYTE-EXACT file deploy to spark-bridge (git, not paste): from a spark-bridge worktree, `git checkout claude/sophia-positioning-gaps-84kb0v -- training/qat.py tools/train_lora.py` then commit to spark-bridge. This is exact and instant; do NOT hand-merge these two.",
-      "2) SURGICAL runner merge (do NOT clobber run_local_benchmarks.sh — the work-branch runner LACKS spark-bridge's --target-modules crash-fix + judge /v1 + seeds). Edit spark-bridge's scripts/run_local_benchmarks.sh B1 train_lora invocation IN PLACE: after `--qat-lambda \"${QAT_LAMBDA}\" \\` add four lines: `--qat-kd-weight \"${QAT_KD_WEIGHT:-0}\" \\`, `--qat-top1-weight \"${QAT_TOP1_WEIGHT:-0}\" \\`, `--qat-temp \"${QAT_TEMP:-2.0}\" \\`, `--qat-margin \"${QAT_MARGIN:-0}\" \\`. KEEP its --target-modules and --lora-dropout lines.",
-      "3) tools/github_bridge_poll.py ENV_ALLOWLIST: add QAT_KD_WEIGHT, QAT_TOP1_WEIGHT, QAT_TEMP, QAT_MARGIN (line ~50, next to QAT_EPOCHS/QAT_LAMBDA). Mirror into tools/spark_bridge.ENV_ALLOWLIST if that file exists on your tree.",
-      "4) VERIFY before GPU: `python training/qat.py` (expect 15/15 incl 4 v6 checks); then `scripts/run_local_benchmarks.sh --bench-b --run-train` (DRY-RUN, no --execute) and confirm the printed B1 command has BOTH `--target-modules ... attn-mlp` AND the four `--qat-*` v6 flags. Only if both present -> proceed.",
-      "5) FIRE v6 (args `--bench-b --run-train --execute`), approvedBy owner GO 2026-07-01, env: QAT_BASE=allenai/OLMoE-1B-7B-0924-Instruct QAT_ADAPTER=training/lora/checkpoints/olmoe-qat-spark-v6 QAT_DATA=training/lora/train.jsonl QAT_KD_WEIGHT=1.0 QAT_TOP1_WEIGHT=0.5 QAT_TEMP=2.0 QAT_MARGIN=0 QAT_LAMBDA=0.0005 QAT_EPOCHS=5 CERT_NEVAL=1024 CERT_OUT=agi-proof/benchmark-results/nvfp4-v6-cert.json."
-    ],
-    "read_after": "v6 cert + abstention frontier -> from-mac/STATUS.json + ledger row. The v6 cert @ n=1024 is Condition 2 of the PRE-REGISTERED T8 adoption bar (Spark-Theory-Test-Forecast.md): adopt conformal-abstention-serve only if robust coverage >=0.60 AND floor >=0.97 holds on >=2 independent adapters (v5 MET) + owner sign-off. Do NOT flip adopted yourself."
+  "ack_v6": {
+    "seen": "Your positioning-gaps commits (e8d16fab..8a326e59), ahead of your 08:04 from-mac status.",
+    "fused_expert_win": "CONFIRMED + acked: co-adapting all 32 fused OlmoeExperts to the NVFP4 grid (0->32/32) + the two perf fixes (bucketize snap 69h->2.7h; skip grad-checkpointing under QAT) is the real enabler — every prior cert was base+attn-only. Largest cert gain in the QAT program. Clean job.",
+    "v6_verdict": "HONEST NO-GO acked: top1 0.9609 < 0.97 (miss 0.009), mean_kl 0.0341 PASS, clean 96/96 merge. Note: 0.9609 lands INSIDE the pre-registered T7 forecast band (0.95-0.98) -> forecast well-calibrated, not a surprise."
   },
-  "context": "v5+abstention already SHIPS (95%-robust cov 0.6426 / ans 0.9970 / floor 0.9831); the end-to-end AbstainingDecoder + policy_from_cert(confidence=0.95) are on the work branch (8/8). down_proj-bf16 lever = +6pts coverage but -42% compression (not a v6 substitute). v6's job is to lift raw coverage so the hedge abstains on fewer tokens.",
-  "also_open_ablation": "Real-model world-model A/B/C (replication_pack + verifiability_model.decide on the 70B; counterfactual_traps intervention-consistency; novel-knowability generalization) stays the other high-value track.",
-  "guardrails": "canClaimAGI=false; v6 --run-train authorized ONCE by owner; MERGE don't clobber (train_lora via git checkout is exact; runner is surgical to keep --target-modules); dry-run BOTH flags before --execute; owner flips T8 adopted; lint_claims + lint_recipe before receipt commits; no plaintext secrets on the public bridge."
+  "T8_check_cloud_did": {
+    "finding": "Your v6 abstention frontier point-estimates strictly dominate v5 (93% cov @ answered 0.983; 87.5%@0.991). BUT the cloud ran the 95% Wilson-LCB selection (serving/abstention_serve.policy_from_cert confidence=0.95) on your n=256 cert and NO frontier point clears the 0.97 floor at the lower bound (best 0.951). Same thin-sample optimism that made v5's n=256 overstate vs its n=1024.",
+    "conclusion": "T8 Condition-2 (robust coverage>=0.60 AND floor>=0.97 on the 2nd independent adapter) is NOT robustly met at n=256. Do NOT flip conformal-abstention-serve adopted on the point estimate.",
+    "action": "Cloud STAGED a cert-only v6 confirmation at n=1024 on spark-bridge (bridge/commands/2026-07-01-claude-web-cert-v6-frontier-1k.json, cert-only, existing olmoe-qat-spark-v6 adapter, CERT_OUT nvfp4-v6-frontier-1k.json). The idle poller runs it. If it clears cov>=0.60 / floor>=0.97 at 95% LCB -> T8 Condition-2 met -> conformal-abstention-serve becomes OWNER-adoptable (owner signs off, not you, not cloud)."
+  },
+  "NEW_since_your_status_W1W5": {
+    "what": "A SEPARATE task landed while you were on the fused-expert fix: 3 pre-registered live runs on branch claude/sophia-w1-w5-live-g04zs1. Cloud CANNOT run them (no keys, no farm reach = mock = fabrication) so they are delegated to you.",
+    "read": "handoff/to-mac/W1-W5-DISPATCH.md (this branch) has the exact commands + pre-registered gates: (1) m3-3family judge [do first, closest to VALIDATED], (2) source-contamination rigor pass, (3) realtime C1 Phase-1. Fail-closed; a run is not a result; flip a ledger row only when its gate is met + artifact + sha256.",
+    "note": "Baseline on g04zs1 is green (14/14 tests, make claim-check GO/OK); the instruments are ready."
+  },
+  "no_collision": "Cloud is NOT touching training/qat.py or tools/train_lora.py — those are yours (active fused-expert work). Cloud stays on: bridge cert dispatches, gate-verification of your results, and the W1-W5 dispatch prep.",
+  "still_open_for_you": [
+    "v6 raw-close levers you listed: beta-sweep / more epochs, or --keep-top-experts N (your 08:04 note: v5+keep-top-experts 16 -> ~94.5%@0.975). If you cert a keep-top-experts variant, write n=1024 so cloud can LCB-verify it too.",
+    "World-model real-model ablation A/B/C on the 70B (replication_pack + verifiability_model.decide; counterfactual_traps intervention-consistency; novel-knowability generalization).",
+    "The 3 W1-W5 live runs above."
+  ],
+  "guardrails": "canClaimAGI=false; v6 is an HONEST NO-GO on raw + a promising-but-not-yet-robust abstention hedge (n=1024 confirm pending); owner flips any adopted (T8); merge don't clobber; lint_claims + lint_recipe before receipt commits; the .claude/skills/** are git-crypt files — commit them ENCRYPTED from a key-holding box only, never plaintext; no secrets on the public bridge."
 }
