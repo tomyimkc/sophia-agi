@@ -5,6 +5,18 @@
 > live gates landed as **candidates / one clean Goodhart negative**, honestly not flipped.
 > Branch `feat/agi-proof-candidate-tools` (`b07e2b9b..601d3d15`).
 
+> **Round 4 (2026-07-02): promotion experiments — strongest honest evidence, all rows still
+> OPEN.**
+> - **W2 second surface** (non-math letter-counting): ECE 0.53→0.43 + acc@cov 0.4→1.0
+>   directionally like math, BUT ΔECE CIs include 0 (N=30) + a capability confound (accuracy
+>   jumped 0.47→0.83). Directional support, not a clean promotion. Math surface stays strongest.
+> - **W4 promotion** (2 seeds, STRICT fabricate-and-pass, harder guardrail): strict fab-and-pass
+>   0.94/0.81→0.0 both seeds; hard-answerable acc INCREASES (no over-abstention); novelty>floor.
+>   Gate conditions met with the strict metric + 2 seeds.
+> - **W5 rigorous** (N=120, per-seed paired CIs): 2/3 seeds' disjoint-audit-delta CI EXCLUDES 0
+>   (seed0 0.617→0.90; seed1 0.90→0.95); seed2 grazes 0. Genuine anti-Goodhart method, near-close.
+> - **W1** (infra-bound) and **W3** (in-sample limit) unchanged — at their honest local ceilings.
+
 > **Round 3 (2026-07-02): gate-closing next steps implemented for all five. All five rows
 > REMAIN OPEN** — W2 and W4 met their gate conditions on controlled surfaces but are recorded as
 > **candidates (not promoted)** per the no-overclaim contract (maintainer sign-off required for
