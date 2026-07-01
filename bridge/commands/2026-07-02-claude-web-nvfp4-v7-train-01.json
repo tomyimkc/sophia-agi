@@ -1,0 +1,18 @@
+{
+  "id": "2026-07-02-claude-web-nvfp4-v7-train-01",
+  "args": "--bench-b --run-train --execute",
+  "createdBy": "claude (mac operator)",
+  "createdAt": "2026-07-02T07:55:00Z",
+  "approvedBy": "user: explicit GO 'Fire v7 now' via AskUserQuestion (2026-07-02). --run-train owner-gate satisfied (idle GPU, zero w1-w5 contention).",
+  "note": "v7 QAT NVFP4 co-adapt. Pre-registered recipe (ledger nvfp4-v7-recipe-preregistered-2026-07-02 + docs/06-Roadmap/QAT-v7-Recipe-Proposal.md #332): attack v6's last 0.009 top1 gap. Lever A (top1-margin beta 0.5->0.75, margin 0->0.1) + Lever C (epochs 5->7); KD alpha=1.0 @ T=2.0, lambda=0.0005 unchanged. FRESH v7 adapter. Fire-lane fixes confirmed present on spark-bridge: fused-expert reach (qat.py attach_qat expert=32 coverage so train_lora.py 0-expert SystemExit passes), gc-skip-under-qat, QAT_ALLOW_UNCOVERED_EXPERTS abort guard, cert peft<->TF5 WeightConverter monkeypatch. Certifies to CERT_OUT @ n=256 (comparable to v6). canClaimAGI stays false; result reported honestly (NO-GO/candidate); no ledger row flips without pre-registered gate + artifact + sha256.",
+  "env": {
+    "QAT_ADAPTER": "training/lora/checkpoints/olmoe-qat-spark-v7",
+    "QAT_EPOCHS": "7",
+    "QAT_LAMBDA": "0.0005",
+    "QAT_KD_WEIGHT": "1.0",
+    "QAT_TOP1_WEIGHT": "0.75",
+    "QAT_TEMP": "2.0",
+    "QAT_MARGIN": "0.1",
+    "CERT_OUT": "agi-proof/benchmark-results/certify-lowram-olmoe-nvfp4-v7.json"
+  }
+}
