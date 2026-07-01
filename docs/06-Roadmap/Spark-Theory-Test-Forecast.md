@@ -316,6 +316,7 @@ When a run lands:
 | T5 | 3B fits / 8B recompute-only | _pending_ | _—_ | _—_ |
 | T6 | A wins trace/edit, ties acc | _pending_ | _—_ | _—_ |
 | T7 | v6 (KD+top1) top1 0.95–0.98, GO ~45% | _pending_ | _—_ | _—_ |
+| T8 | abstention-serve adopt: robust cov ≥0.60 on ≥2 adapters | v5 MET (0.6426); 2nd pending | _—_ | _—_ |
 
 ## T7 — v6 output-space QAT (pre-registered 2026-07-01, BEFORE the run)
 **Hypothesis:** training the QAT objective on the cert's own metrics (output-space KD +
@@ -327,6 +328,23 @@ v5 baseline top1 0.922), mean_kl stays ≤ 0.05; **GO probability ~45%** (the lo
 directly, but a single 4-bit MoE may still flip a few argmaxes — a NO-GO here would point to
 depth-mixed precision or a less-aggressive scheme, not another recipe knob). **Decided before the
 run; measures the prediction, not a fit-after.** `canClaimAGI` false.
+
+## T8 — conformal-abstention-serve ADOPTION bar (pre-registered 2026-07-01, BEFORE the 2nd condition)
+**Decision being pre-registered:** when may `recipe_spec.conformal-abstention-serve` flip
+`candidate/validated → adopted`? The claim-promotion gate blocked a v5-only adopt: one model + one run
+is *necessary, not sufficient*, and adopting on it would be fit-after-the-fact (no pre-registered bar).
+So the bar is set HERE, before the second condition lands, to avoid moving the goalposts to the result.
+**Adoption bar (all required):** the frontier's **95%-robust** shippable operating point
+(`abstention_serve.policy_from_cert(..., confidence=0.95)`) must show **coverage ≥ 0.60 AND answered-top1
+lower-bound ≥ 0.97** on **≥ 2 INDEPENDENT adapters** (independent = different QAT objective and/or base
+model, not just a bigger-N re-run of the same one), **AND** the owner signs off on the flip.
+**Condition 1 — MET:** v5 full-NVFP4 @ n=1024 → robust coverage **0.6426**, floor **0.9831** (≥0.60, ≥0.97).
+**Condition 2 — PENDING:** the v6 cert (T7) at the same n=1024 is the decisive second, independent adapter
+(new KD+top1 objective). down_proj-bf16 on v5 does NOT count as independent (same adapter, precision knob).
+**Forecast:** ~55% that v6 also clears robust coverage ≥0.60 (it should serve at least as well as v5, and
+likely better) → adoption becomes honest; a v6 that fails the *raw* 0.97 but still serves ≥0.60 robust
+coverage STILL satisfies T8 (the hedge is a serving claim, not a never-flip claim). **Held at `validated`
+until Condition 2 + owner sign-off.** Decided before the run; `canClaimAGI` false.
 
 `canClaimAGI` stays **false** throughout; forecasts are predictions, not results, and every landed
 number goes through `make claim-check` before it is called anything but candidate.

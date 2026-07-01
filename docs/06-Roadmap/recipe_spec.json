@@ -167,7 +167,7 @@
       "gate": "test_abstention_serve 8 PASS (quant_abstention frontier + abstention_serve LCB-selection + abstaining_decoder circuit-breaker) + REAL v5 NVFP4 cert @ n=1024 (nvfp4-v5-frontier-1k)",
       "ablationDelta": 0.0995,
       "adopted": false,
-      "openItem": "VALIDATED on real v5 n=1024: 95%-robust operating point answered 0.9970 @ coverage 0.6426 (full-NVFP4, floor 0.9831) or 0.7012 (down_proj-bf16, floor 0.9718, but mem 1.90x vs 3.30x). Owner sign-off flips adopted; v6 pending to raise raw coverage so the hedge abstains on far fewer tokens.",
+      "openItem": "HELD at validated (NOT adopted) by the claim-promotion gate: v5-only is necessary-not-sufficient. Adoption bar pre-registered as T8 in Spark-Theory-Test-Forecast.md \u2014 needs the 95%-robust operating point (coverage>=0.60 AND floor>=0.97) on >=2 INDEPENDENT adapters + owner sign-off. Condition 1 MET (v5 n=1024: cov 0.6426, floor 0.9831). Condition 2 = the v6 cert (T7). down_proj-bf16 does NOT count (same adapter, precision knob).",
       "evidence": [
         "agi-proof/benchmark-results/nvfp4-v5-frontier-1k.json",
         "agi-proof/benchmark-results/nvfp4-v5-downproj-frontier.json",
