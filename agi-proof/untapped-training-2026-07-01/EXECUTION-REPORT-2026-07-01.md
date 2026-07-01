@@ -60,6 +60,14 @@ PYTHONPATH=. venv312/bin/python tools/distill_process_reward_model.py \
 
 ### W3 — `tools/provenance_weighted_training.py` (provenance weighting not validated vs LOO)
 
+> **UPDATE 2026-07-01 (same day): W3 taken LIVE locally.** Conflicting-provenance experiment
+> (20 invented facts; okf:// source teaches correct, model: source teaches wrong; weighting via
+> replication). All three gate mechanisms fire: **weighted 0.95 vs uniform 0.50 correct
+> (+0.45)**; **influence proxy agrees with LOO** (de-poisoned slice flips 0.25→0.75); **no
+> register collapse** (diversity 1.0). But it's a controlled synthetic in-sample surface
+> (N=20, single seed, replication-as-weighting) → strong candidate, **w3 row stays Open**.
+> Detail + checksums: `agi-proof/benchmark-results/w3-provenance-weighted/`.
+
 **Wired/run (offline, exact command):**
 ```
 PYTHONPATH=. venv312/bin/python tools/provenance_weighted_training.py \

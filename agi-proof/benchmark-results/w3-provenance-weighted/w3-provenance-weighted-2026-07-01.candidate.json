@@ -1,0 +1,45 @@
+{
+  "schema": "sophia.w3_provenance_weighted.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "createdAt": "2026-07-01",
+  "pinnedCommit": "d831a10d1bcd706848ae61fafb2760373f96d52a",
+  "baseModel": "Qwen/Qwen2.5-3B-Instruct",
+  "backend": "mlx-lm 0.31.3 LoRA SFT",
+  "design": "Conflicting-provenance experiment on 20 INVENTED facts (decontaminated). Each fact: a HIGH-trust okf:// source (rank 0.95) teaches the CORRECT answer, a LOW-trust model: source (rank 0.20) teaches a WRONG answer. Loss weight = REAL agent.source_ranking.rank_source, realized as replication (mlx_lm has no per-example loss weight): weighted=5:1 correct:wrong, uniform=1:1.",
+  "gate": "(a) provenance-weighted beats uniform on a held-out suite; (b) influence-proxy top rows agree with leave-one-out retraining on a slice; (c) output-diversity shows no register collapse.",
+  "results": {
+    "a_weightedBeatsUniform": {
+      "base_correct": 0.15,
+      "uniform_correct": 0.5,
+      "weighted_correct": 0.95,
+      "uniform_wrong": 0.5,
+      "weighted_wrong": 0.05,
+      "delta_correct": 0.45,
+      "verdict": "weighted 0.95 vs uniform 0.50 correct (+0.45)"
+    },
+    "b_influenceAgreesWithLOO": {
+      "dePoisoned8_uniform": "2/8=0.25",
+      "dePoisoned8_LOO": "6/8=0.75",
+      "stillPoisoned12_uniform": "8/12=0.667",
+      "stillPoisoned12_LOO": "6/12=0.50",
+      "verdict": "dropping the influence-proxy-implicated low-trust (model:) rows flips the de-poisoned slice 0.25->0.75; untouched facts ~stable -> proxy agrees with LOO"
+    },
+    "c_noRegisterCollapse": {
+      "weighted_diversityRatio": 1.0,
+      "weighted_distinctAnswers": 20,
+      "verdict": "diversity ratio 1.0, 20/20 distinct answers -> no register collapse"
+    }
+  },
+  "gateMet": false,
+  "gateVerdict": "CANDIDATE / NOT-CLEARED. All THREE gate mechanisms show the expected effect strongly (weighted 0.95 vs uniform 0.50; LOO flips de-poisoned slice 0.25->0.75; diversity 1.0). BUT this is a CONTROLLED SYNTHETIC conflict: the eval facts are the TRAINED facts (in-sample memorization of which source wins, not held-out generalization to unseen facts); N=20, single seed; loss-weighting realized as REPLICATION (a proxy; mlx_lm has no per-example loss weight); the influence proxy is simple (fingers the model: sources by construction). w3 row STAYS OPEN.",
+  "nextToClose": "A real held-out generalization suite (train the provenance-weighting PATTERN, test on unseen conflicting facts), >=2 seeds, true per-example loss-weighting (custom loop, not replication), and a real TracIn/influence-function backend validated vs full LOO across the set.",
+  "artifacts": {
+    "w3_eval_uniform.json": "f7a18fead62fdb11fc49318c9f6b6fc6d8f3ac5855ba165d5244996f6cd531c1",
+    "w3_eval_weighted.json": "1cbaa2160a32158ae3b7f802d7a2ef045b55c34086812bc26e09b32e5c5f6658",
+    "w3_eval_loo.json": "9d738caa22bbaef2631b0e86da5909e4362e1bbd1869736b3c011095ba616b3b",
+    "w3_base.json": "c2be663055b33dc6716a3d4ccdceeee4872a5d20b55469387eb3c8b693f0e221",
+    "w3_prov_live.py": "5af96b3554d8766dfa92dd9ae4374da9c942ef852824b3d898c21e6c0e3ee8fb"
+  }
+}
