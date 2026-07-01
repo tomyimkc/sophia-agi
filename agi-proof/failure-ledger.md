@@ -2481,3 +2481,28 @@ genuine uplift AND refused to celebrate it because the policy still emits cheats
 
 **Next:** add held-out private inputs to the GRPO *training* reward (make special-casing unprofitable
 in-loop, not only caught at eval), then re-run the 3-seed sweep for a clean integrity gate.
+
+
+### source-contamination rigor pass — open-world NO-GO (2026-07-01)
+
+The W1-W5 source-verifier rigor pass ran live from the cloud via OpenRouter (non-US models, real backend,
+0 mock). One VALID rigorous open-world family (answer=deepseek/deepseek-chat, judge=qwen/qwen-2.5-72b,
+answer≠judge, --runs 3, --retrieve → retrieval_status={'retrieved':60}):
+
+- **contamination_caught_rate 99.2%** (95% CI 97.7–100.0) — the defense still CATCHES contamination open-world.
+- **clean_over_blocked_rate 74.5%** (95% CI 70.6–76.5) — but it OVER-BLOCKS ~3 of 4 clean controls.
+
+**Verdict: NO-GO** (pre-registered: "over-block rises materially once refs are retrieved (open-world) — the
+curated setup was flattering"). The 2026-06-28 curated numbers (97.7% caught / **5.9%** over-block) were
+flattered by curated truth-refs; under open-world retrieval the over-block jumps to 74.5%. VALIDATED is
+unreachable. Likely mechanism: open-world Wikipedia refs don't reliably ENTAIL the clean facts → the
+entailment gate abstains on legitimate clean answers. Fix direction = retrieval quality / entailment
+calibration, NOT relaxing the bar. The 2nd family (answer=qwen-72b) was VOID (OpenRouter HTTP400 "does not
+support endpoint: completions" + upstream 429; mistral-7b HTTP404) — an infra limit; a crashed run is not a
+result. One valid open-world family showing 74.5% over-block already refutes the curated 5.9%, so the
+≥2-family bar (which existed to confirm a GOOD result) is not required to refuse this one.
+
+Artifact: agi-proof/source-verifier/rigor-multifamily.public-report.json (sha256 50c104e5…f479e; PENDING
+placeholder removed). Row source-contamination-live-multifamily-2026-06-28 stays CANDIDATE/NO-GO — NOT
+promoted. canClaimAGI=false. (The rigorous protocol working as designed: it caught that the curated 97.7%
+did not transfer to open-world.)

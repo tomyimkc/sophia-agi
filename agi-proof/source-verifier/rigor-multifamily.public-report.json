@@ -1,0 +1,63 @@
+{
+  "experimentId": "source-contamination-live-multifamily-rigor",
+  "status": "run",
+  "verdict": "NO-GO",
+  "go": false,
+  "canClaimAGI": false,
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "claimCeiling": "candidate_only; canClaimAGI:false",
+  "headline": "NO-GO \u2014 under the rigorous OPEN-WORLD protocol the source-contamination defense catches contamination (99.2%) but OVER-BLOCKS 74.5% of clean controls; the 2026-06-28 curated 5.9% over-block was flattering.",
+  "generatedAt": "2026-07-01T14:20:00+00:00",
+  "harness": "tools/run_source_contamination_bench.py --relay --retrieve --runs 3 (real OpenRouter backend, non-mock verified)",
+  "preregistration": "agi-proof/source-verifier/measurement_spec.json",
+  "runnerNote": "Executed from the cloud session via OpenRouter (non-US models). 0 mock markers in any scored run.",
+  "priorCandidate": {
+    "artifact": "agi-proof/source-verifier/live-multifamily-2026-06-28.json",
+    "contamination_caught_rate": 0.9767,
+    "clean_over_blocked_rate": 0.0588,
+    "holes": [
+      "single run per family (no CIs)",
+      "answer-model == judge-model per family",
+      "curated truth-refs (independence asserted, not measured)"
+    ]
+  },
+  "families": [
+    {
+      "pair": "answer=openrouter:deepseek/deepseek-chat, judge=openrouter:qwen/qwen-2.5-72b-instruct",
+      "answerNeJudge": true,
+      "retrieve": "open-world (retrieval_status={'retrieved':60})",
+      "runs": 3,
+      "n_cases": 60,
+      "contamination_caught_rate": 0.992,
+      "contamination_caught_rate_ci95": [
+        0.977,
+        1.0
+      ],
+      "clean_over_blocked_rate": 0.745,
+      "clean_over_blocked_rate_ci95": [
+        0.706,
+        0.765
+      ],
+      "valid": true,
+      "note": "Full rigorous open-world family. caught-rate CI-lower 0.977 (high, good) BUT over-block CI-upper 0.765 (very high, FAILS the 'defense must not destroy clean recall' criterion)."
+    },
+    {
+      "pair": "answer=openrouter:qwen/qwen-2.5-72b-instruct, judge=openrouter:deepseek/deepseek-chat",
+      "valid": false,
+      "void_reason": "OpenRouter infra: qwen-2.5-72b-instruct answer path returned HTTP400 'does not support endpoint: completions' (+ upstream 429). A crashed run is VOID, never scored. Retried non-US answer models mistral-7b (HTTP404 no endpoints) and qwen-2.5-7b \u2014 the harness answer path needs the /completions endpoint, which most non-US chat models on this key do not expose. Infra limit, not a scientific result."
+    }
+  ],
+  "gateEvaluation": {
+    "VALIDATED_requires": ">=3 runs/family answer!=judge + --retrieve, caught CI-low high AND over-block CI-up LOW, on >=2 families",
+    "met": false,
+    "why": "VALIDATED is unreachable: the one valid rigorous open-world family (deepseek/qwen) FAILS the over-block criterion (74.5%, CI-up 76.5% >> low). One valid open-world measurement showing 74.5% over-block already refutes the curated 5.9%; the >=2-family bar was to confirm a GOOD result, not required to refuse one. The 2nd family was infra-blocked (see families[1]).",
+    "verdict": "NO-GO (matches pre-registration: 'over-block-rate rises materially once refs are retrieved (open-world) \u2014 the curated/coupled setup was flattering the number')."
+  },
+  "interpretation": "The independent-verifier defense reliably CATCHES contamination even open-world (99.2%), but its clean-control RECALL collapses when truth-refs are RETRIEVED rather than curated (over-block 5.9% -> 74.5%). Most likely mechanism: open-world Wikipedia refs do not reliably ENTAIL the clean facts, so the entailment gate flags legitimate clean answers as unsupported and abstains. This is a real limitation of the open-world defense as specified; the fix direction is retrieval quality / entailment calibration, not relaxing the bar. The curated 2026-06-28 result stays CANDIDATE and must NOT be promoted.",
+  "results": {
+    "validFamilies": 1,
+    "voidFamilies": 1
+  },
+  "note": "answered/over-block are MEASURED selective metrics on the pack, not per-token guarantees. canClaimAGI=false. Row source-contamination-live-multifamily-2026-06-28 stays candidate/NO-GO; do not relax the over-block bar."
+}
