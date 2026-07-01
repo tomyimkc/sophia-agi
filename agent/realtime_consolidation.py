@@ -133,7 +133,14 @@ def revert(ledger_path: str | Path, delta_id: str, *, reverted_at: str | None = 
     path = Path(ledger_path)
     if not path.exists():
         return {"ok": False, "reason": "no ledger", "deltaId": delta_id}
-    entries = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    entries = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        try:
+            entries.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue  # tolerate a malformed/partial ledger line
     found = False
     for e in entries:
         if e.get("deltaId") == delta_id:

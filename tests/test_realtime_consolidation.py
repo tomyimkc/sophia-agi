@@ -87,8 +87,18 @@ def test_consolidate_self_decontaminates() -> None:
         assert rep["nRows"] == 1
 
 
+def test_revert_tolerates_malformed_ledger_line() -> None:
+    with tempfile.TemporaryDirectory() as d:
+        led = Path(d) / "reversibility_ledger.jsonl"
+        led.write_text('{"deltaId": "d1", "mergeState": "pending"}\n{ this is not json\n', encoding="utf-8")
+        res = rc.revert(led, "d1")  # must not raise on the malformed second line
+        assert res["ok"] is True
+        assert '"reverted"' in led.read_text(encoding="utf-8")
+
+
 def main() -> int:
     test_training_row_teaches_habit_not_fact()
+    test_revert_tolerates_malformed_ledger_line()
     test_needed_sources_never_empty_string()
     test_reward_is_bounded_and_verifier_sourced()
     test_consolidate_dry_run_and_ledger()

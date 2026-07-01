@@ -107,7 +107,6 @@ def _arm_metrics(comps: list[dict[str, Any]], arm: str) -> dict[str, Any]:
     tp = sum(1 for c in admitted if c["shouldAdmit"])
     fp = len(admitted) - tp
     n_true = sum(1 for c in comps if c["shouldAdmit"])
-    fn = n_true - tp
     precision = round(tp / len(admitted), 4) if admitted else 0.0
     recall = round(tp / n_true, 4) if n_true else 0.0
     f1 = round(2 * precision * recall / (precision + recall), 4) if (precision + recall) else 0.0

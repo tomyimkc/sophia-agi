@@ -304,8 +304,9 @@ def mark_stale(store_path: str | Path, as_of: str) -> dict[str, Any]:
 
     Reads the belief store, marks any ``ingested`` row whose ``validUntil`` is before
     ``as_of`` as ``stale`` / ``needsReverify`` (so a background pass re-runs the
-    retrieve→verify loop), and rewrites the store. Reversible and non-destructive:
-    the row and its provenance are kept, only the state changes.
+    retrieve→verify loop), and rewrites the store. Reversible for every valid row: the
+    row and its provenance are kept and only the state changes. A malformed/partial line
+    (if any) is skipped and not re-emitted on rewrite.
     """
     path = Path(store_path)
     if not path.exists():
