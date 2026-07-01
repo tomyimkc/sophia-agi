@@ -126,10 +126,10 @@
       "module": "agent/swarm_trust_boundary.py + tools/measure_trust_boundary.py",
       "description": "Sub-agent output reaches siblings ONLY if it clears the gate; measured on-vs-off contamination.",
       "proofStatus": "validated",
-      "gate": "measure_trust_boundary (blocked-rate 1.0 over detectable poison; clean +0.955 vs poisoned -0.445)",
+      "gate": "measure_trust_boundary (re-run 2026-07-01: contaminationBlockedRate 1.0, OFF 1.0 -> ON 0.0; artifact agi-proof/benchmark-results/trust-boundary-ablation.json)",
       "ablationDelta": 1.0,
-      "adopted": false,
-      "note": "measured mechanism; eligible to adopt into the training-env signal pending an explicit decision."
+      "adopted": true,
+      "note": "ADOPTED as a training-env signal gate: only gate-clean sub-agent output becomes training signal. SCOPE: blocks 100% of verifier-DETECTABLE contamination (admittedPoisonResidual counts poison with no detectable violation — the gate is a filter, not a truth oracle). canClaimAGI false."
     },
     {
       "id": "gate-bounded-test-time-thinking",

@@ -1,0 +1,61 @@
+{
+  "scenarioMessages": 5,
+  "poisonLabeled": 3,
+  "verifierFlagged": 3,
+  "contaminationRateOff": 1.0,
+  "contaminationRateOn": 0.0,
+  "contaminationBlockedRate": 1.0,
+  "admittedPoisonResidual": 0,
+  "note": "Boundary blocks 100% of VERIFIER-DETECTABLE contamination from reaching siblings. admittedPoisonResidual = poison with no detectable violation (admitted; the gate is a filter, not a truth oracle).",
+  "perMessage": [
+    {
+      "agentId": "researcher",
+      "labeledPoison": false,
+      "verifierFlagged": false,
+      "verdict": "accepted",
+      "violations": []
+    },
+    {
+      "agentId": "rogue",
+      "labeledPoison": true,
+      "verifierFlagged": true,
+      "verdict": "held",
+      "violations": [
+        "expected denial of socrates attribution",
+        "expected mention of correct author 'plato'",
+        "expected denial of socrates attribution",
+        "expected mention of correct author 'plato'",
+        "[authorship] forbidden attribution asserted: socrates -> republic"
+      ]
+    },
+    {
+      "agentId": "ontology",
+      "labeledPoison": false,
+      "verifierFlagged": false,
+      "verdict": "accepted",
+      "violations": []
+    },
+    {
+      "agentId": "drifter",
+      "labeledPoison": true,
+      "verifierFlagged": true,
+      "verdict": "held",
+      "violations": [
+        "expected denial of confucius attribution",
+        "expected denial of confucius attribution",
+        "[temporal] temporally impossible: Confucius (d. 479 BCE) could not have written Dao De Jing (created 400 BCE)",
+        "[authorship] forbidden attribution asserted: confucius -> dao_de_jing"
+      ]
+    },
+    {
+      "agentId": "math",
+      "labeledPoison": true,
+      "verifierFlagged": true,
+      "verdict": "held",
+      "violations": [
+        "false math: 100000 / 5000 = 25 (actual 20)",
+        "[arithmetic] false arithmetic: 100000 / 5000 = 25 (actual 20)"
+      ]
+    }
+  ]
+}
