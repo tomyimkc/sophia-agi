@@ -1,8 +1,10 @@
 {
-  "updatedAt": "2026-07-01T09:01:39Z",
+  "updatedAt": "2026-07-01T09:02:17Z",
   "host": "spark-2f2d",
-  "running": null,
-  "pendingCommands": [],
+  "running": "2026-07-01-claude-web-nvfp4-v6-train-01",
+  "pendingCommands": [
+    "2026-07-01-claude-web-nvfp4-v6-train-01"
+  ],
   "trainwatch": [
     {
       "id": "2026-06-30-claude-web-bench-a-04",
