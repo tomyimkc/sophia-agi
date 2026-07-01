@@ -7,6 +7,7 @@
 # self-test, and the GO/NO-GO claim receipts for the headline recipes.
 claim-check:
 	python tools/lint_claims.py
+	python tools/lint_recipe.py
 	python tools/lint_training_rows.py
 	python tools/assert_decontam.py
 	python tools/eval_stats.py
