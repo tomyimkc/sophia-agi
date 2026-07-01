@@ -579,7 +579,8 @@ fi
 # The code task's reward executes model-generated code (provenance_bench.code_exec);
 # opt in on this ephemeral GPU pod (the executor is time-boxed + process-group-isolated).
 # Needed for BOTH the offline smoke (code_reward.offline_invariants) and the live reward.
-if [ "$SOPHIA_TASK" = "code" ]; then
+# invention trains+evals on executed compositions too, so it needs the executor as well.
+if [ "$SOPHIA_TASK" = "code" ] || [ "$SOPHIA_TASK" = "invention" ]; then
   export SOPHIA_ALLOW_CODE_EXEC=1
 fi
 if [ {shlex.quote(args.remote_mode)} = "live" ]; then
@@ -701,7 +702,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--branch", default="", help="optional git branch/tag to clone")
     ap.add_argument("--model", default="zai-org/glm-4-9b-chat-hf")
     ap.add_argument("--remote-mode", choices=["offline", "live"], default="live", help="run only remote offline smoke test or full live GRPO")
-    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "step", "faithfulness", "calibration"], default="provenance", help="RLVR reward task: provenance (provenance_faithful), math (sympy math_equivalent), code (hidden-tests-pass via code_exec), concept (concept-TBox gate), step (process: every step verified), faithfulness (retrieve-then-reason GRPO + counterfactual citation-drop); or 'calibration' (T3 calibration-verifier trace gen + scoring, not RLVR)")
+    ap.add_argument("--task", choices=["provenance", "math", "code", "concept", "step", "faithfulness", "calibration", "invention"], default="provenance", help="RLVR reward task: provenance (provenance_faithful), math (sympy math_equivalent), code (hidden-tests-pass via code_exec), concept (concept-TBox gate), step (process: every step verified), faithfulness (retrieve-then-reason GRPO + counterfactual citation-drop), invention (compositional-generalization train with held-out enforcement); or 'calibration' (T3 calibration-verifier trace gen + scoring, not RLVR)")
     ap.add_argument("--step-domain", choices=["math", "physics"], default="math", help="for --task step: per-step oracle + held-out RL split (math needs sympy; physics is pure-Python)")
     ap.add_argument("--reward", choices=["verifier", "gate", "multiaxis"], default="verifier", help="reward signal (provenance task): verifier (default), gate (single-axis), or multiaxis (Thesis D dense reward; M1 collapse comparison)")
     ap.add_argument("--entailment-provider", choices=["", "deepseek", "llmhub"], default="",

@@ -33,11 +33,11 @@ on:
         type: choice
         options: [offline, live]
       task:
-        description: 'RLVR reward task: provenance / math (sympy) / code (hidden-tests-pass) / concept (concept-TBox gate) / step (process: every step verified) / faithfulness (retrieve-then-reason + counterfactual citation-drop)'
+        description: 'RLVR reward task: provenance / math (sympy) / code (hidden-tests-pass) / concept (concept-TBox gate) / step (process: every step verified) / faithfulness (retrieve-then-reason + counterfactual citation-drop) / invention (compositional, held-out-enforced)'
         required: true
         default: 'provenance'
         type: choice
-        options: [provenance, math, code, concept, step, faithfulness]
+        options: [provenance, math, code, concept, step, faithfulness, invention]
       step_domain:
         description: 'For task=step only: per-step oracle + held-out split (math needs sympy; physics pure-Python)'
         required: false
