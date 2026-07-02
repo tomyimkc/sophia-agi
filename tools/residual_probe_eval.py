@@ -61,8 +61,12 @@ def main(argv=None) -> int:
     ap.add_argument("--out", type=Path, default=None)
     args = ap.parse_args(argv)
 
-    import torch
-    from transformers import AutoModelForCausalLM, AutoTokenizer
+    try:
+        import torch
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+    except Exception as e:  # this eval needs a real model (Spark/GPU box), not offline CI
+        print(f"residual_probe_eval requires torch+transformers (run on the Spark): {e}", file=sys.stderr)
+        return 2
 
     rows = load_jsonl(args.data)
     train, test = _pair_split(rows)
