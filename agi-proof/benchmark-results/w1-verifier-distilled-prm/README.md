@@ -51,3 +51,14 @@ does not transfer across domains. Mixed-domain training reaches **0.792** on hel
 PRM-as-dense-RLVR-reward half needs a GPU RL stack. This is an **infrastructure boundary, not a
 method failure** — the featurizer works within-domain (0.73/0.90). Closing needs a 3rd verifier
 domain or a GPU RLVR run. Row stays **Open**.
+
+## v3 (2026-07-02) — genuine THIRD domain (boolean logic): cross-domain transfer still fails
+
+Added a real 3rd symbolic oracle — **boolean-logic equivalence via sympy** — so "held-out DOMAIN"
+means a domain never in training. Trained the PRM on math+physics, tested held-out on boolean
+(`w1-third-domain-boolean-2026-07-02.candidate.json`): **mean 0.467 across 3 seeds** (chance/below),
+while within-boolean control is 0.611. So even with a genuine third domain, the accepted/rejected
+direction does **not** transfer — confirming the PRM is domain-specific. W1's ≥0.80 held-out-DOMAIN
+gate is therefore unreachable via this featurizer's cross-domain transfer; it needs multi-domain
+*training coverage* or the PRM-as-RLVR-reward path (GPU). Row stays **Open** — method/infrastructure
+boundary, definitively characterized.

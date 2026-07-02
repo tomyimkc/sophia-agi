@@ -1,0 +1,24 @@
+{
+  "schema": "sophia.w1_thirddomain.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "thirdDomainOracle": "boolean-logic equivalence (sympy satisfiable(~Equivalent))",
+  "nBooleanRows": 80,
+  "trainMathPhysics_testBoolean_HELDOUTDOMAIN": [
+    0.45,
+    0.45,
+    0.5
+  ],
+  "mean_heldoutDomain": 0.467,
+  "withinBoolean_control": [
+    0.583,
+    0.417,
+    0.833
+  ],
+  "mean_withinBoolean": 0.611,
+  "gateMet": false,
+  "verdict": "Held-out-DOMAIN (train math+physics -> test BOOLEAN, a genuinely unseen 3rd domain) = 0.467 mean over 3 seeds. Within-boolean control = 0.611. If held-out-domain <0.80 -> domain-specificity CONFIRMED even with a true 3rd domain; the PRM direction does not transfer across domains, so W1's >=0.80 held-out-DOMAIN gate needs either multi-domain training coverage or the RLVR-reward path (GPU). Rows stay OPEN.",
+  "artifacts": {
+    "w1_v2_thirddomain.py": "c17ac59c901aced45f941861ab096c28f94af11d2acf2d8dfb8a83edda02eb4b"
+  }
+}
