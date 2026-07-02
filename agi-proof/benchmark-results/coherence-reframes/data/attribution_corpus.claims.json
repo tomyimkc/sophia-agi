@@ -1,0 +1,695 @@
+[
+{
+"work": "The Republic",
+"correct_author": "Plato",
+"wrong_author": "Aristotle",
+"wikipedia_title": "Republic (Plato)",
+"domain": "philosophy"
+},
+{
+"work": "Nicomachean Ethics",
+"correct_author": "Aristotle",
+"wrong_author": "Plato",
+"wikipedia_title": "Nicomachean Ethics",
+"domain": "philosophy"
+},
+{
+"work": "Politics",
+"correct_author": "Aristotle",
+"wrong_author": "Plato",
+"wikipedia_title": "Politics (Aristotle)",
+"domain": "political_theory"
+},
+{
+"work": "Metaphysics",
+"correct_author": "Aristotle",
+"wrong_author": "Plato",
+"wikipedia_title": "Metaphysics (Aristotle)",
+"domain": "philosophy"
+},
+{
+"work": "Poetics",
+"correct_author": "Aristotle",
+"wrong_author": "Plato",
+"wikipedia_title": "Poetics (Aristotle)",
+"domain": "philosophy"
+},
+{
+"work": "Symposium",
+"correct_author": "Plato",
+"wrong_author": "Xenophon",
+"wikipedia_title": "Symposium (Plato)",
+"domain": "philosophy"
+},
+{
+"work": "Phaedo",
+"correct_author": "Plato",
+"wrong_author": "Aristotle",
+"wikipedia_title": "Phaedo",
+"domain": "philosophy"
+},
+{
+"work": "The Apology of Socrates",
+"correct_author": "Plato",
+"wrong_author": "Xenophon",
+"wikipedia_title": "Apology (Plato)",
+"domain": "philosophy"
+},
+{
+"work": "Meditations",
+"correct_author": "Marcus Aurelius",
+"wrong_author": "Seneca the Younger",
+"wikipedia_title": "Meditations",
+"domain": "philosophy"
+},
+{
+"work": "Enchiridion",
+"correct_author": "Epictetus",
+"wrong_author": "Seneca the Younger",
+"wikipedia_title": "Enchiridion of Epictetus",
+"domain": "philosophy"
+},
+{
+"work": "On the Nature of Things",
+"correct_author": "Lucretius",
+"wrong_author": "Cicero",
+"wikipedia_title": "De rerum natura",
+"domain": "philosophy"
+},
+{
+"work": "The History of the Peloponnesian War",
+"correct_author": "Thucydides",
+"wrong_author": "Herodotus",
+"wikipedia_title": "History of the Peloponnesian War",
+"domain": "history"
+},
+{
+"work": "The Histories",
+"correct_author": "Herodotus",
+"wrong_author": "Thucydides",
+"wikipedia_title": "Histories (Herodotus)",
+"domain": "history"
+},
+{
+"work": "Anabasis",
+"correct_author": "Xenophon",
+"wrong_author": "Thucydides",
+"wikipedia_title": "Anabasis (Xenophon)",
+"domain": "history"
+},
+{
+"work": "The Elements",
+"correct_author": "Euclid",
+"wrong_author": "Archimedes",
+"wikipedia_title": "Euclid's Elements",
+"domain": "science"
+},
+{
+"work": "Almagest",
+"correct_author": "Ptolemy",
+"wrong_author": "Hipparchus",
+"wikipedia_title": "Almagest",
+"domain": "science"
+},
+{
+"work": "Parallel Lives",
+"correct_author": "Plutarch",
+"wrong_author": "Suetonius",
+"wikipedia_title": "Parallel Lives",
+"domain": "history"
+},
+{
+"work": "The Twelve Caesars",
+"correct_author": "Suetonius",
+"wrong_author": "Tacitus",
+"wikipedia_title": "The Twelve Caesars",
+"domain": "history"
+},
+{
+"work": "Annals",
+"correct_author": "Tacitus",
+"wrong_author": "Suetonius",
+"wikipedia_title": "Annals (Tacitus)",
+"domain": "history"
+},
+{
+"work": "Commentaries on the Gallic War",
+"correct_author": "Julius Caesar",
+"wrong_author": "Sallust",
+"wikipedia_title": "Commentarii de Bello Gallico",
+"domain": "history"
+},
+{
+"work": "Aeneid",
+"correct_author": "Virgil",
+"wrong_author": "Ovid",
+"wikipedia_title": "Aeneid",
+"domain": "history"
+},
+{
+"work": "Metamorphoses",
+"correct_author": "Ovid",
+"wrong_author": "Virgil",
+"wikipedia_title": "Metamorphoses",
+"domain": "history"
+},
+{
+"work": "Confessions",
+"correct_author": "Augustine of Hippo",
+"wrong_author": "Jerome",
+"wikipedia_title": "Confessions (Augustine)",
+"domain": "religion"
+},
+{
+"work": "The City of God",
+"correct_author": "Augustine of Hippo",
+"wrong_author": "Ambrose",
+"wikipedia_title": "The City of God",
+"domain": "religion"
+},
+{
+"work": "The Consolation of Philosophy",
+"correct_author": "Boethius",
+"wrong_author": "Cassiodorus",
+"wikipedia_title": "The Consolation of Philosophy",
+"domain": "philosophy"
+},
+{
+"work": "Summa Theologica",
+"correct_author": "Thomas Aquinas",
+"wrong_author": "Bonaventure",
+"wikipedia_title": "Summa Theologica",
+"domain": "religion"
+},
+{
+"work": "Summa contra Gentiles",
+"correct_author": "Thomas Aquinas",
+"wrong_author": "Albertus Magnus",
+"wikipedia_title": "Summa contra Gentiles",
+"domain": "religion"
+},
+{
+"work": "Proslogion",
+"correct_author": "Anselm of Canterbury",
+"wrong_author": "Peter Abelard",
+"wikipedia_title": "Proslogion",
+"domain": "religion"
+},
+{
+"work": "Cur Deus Homo",
+"correct_author": "Anselm of Canterbury",
+"wrong_author": "Thomas Aquinas",
+"wikipedia_title": "Cur Deus Homo",
+"domain": "religion"
+},
+{
+"work": "Sic et Non",
+"correct_author": "Peter Abelard",
+"wrong_author": "Anselm of Canterbury",
+"wikipedia_title": "Sic et Non",
+"domain": "religion"
+},
+{
+"work": "The Divine Comedy",
+"correct_author": "Dante Alighieri",
+"wrong_author": "Petrarch",
+"wikipedia_title": "Divine Comedy",
+"domain": "religion"
+},
+{
+"work": "The Guide for the Perplexed",
+"correct_author": "Maimonides",
+"wrong_author": "Judah Halevi",
+"wikipedia_title": "The Guide for the Perplexed",
+"domain": "religion"
+},
+{
+"work": "The Incoherence of the Philosophers",
+"correct_author": "Al-Ghazali",
+"wrong_author": "Averroes",
+"wikipedia_title": "The Incoherence of the Philosophers",
+"domain": "philosophy"
+},
+{
+"work": "The Incoherence of the Incoherence",
+"correct_author": "Averroes",
+"wrong_author": "Al-Ghazali",
+"wikipedia_title": "The Incoherence of the Incoherence",
+"domain": "philosophy"
+},
+{
+"work": "The Book of Healing",
+"correct_author": "Avicenna",
+"wrong_author": "Al-Farabi",
+"wikipedia_title": "The Book of Healing",
+"domain": "philosophy"
+},
+{
+"work": "The Canon of Medicine",
+"correct_author": "Avicenna",
+"wrong_author": "Al-Razi",
+"wikipedia_title": "The Canon of Medicine",
+"domain": "science"
+},
+{
+"work": "The Muqaddimah",
+"correct_author": "Ibn Khaldun",
+"wrong_author": "Al-Masudi",
+"wikipedia_title": "Muqaddimah",
+"domain": "history"
+},
+{
+"work": "The Prince",
+"correct_author": "Niccol\u00f2 Machiavelli",
+"wrong_author": "Francesco Guicciardini",
+"wikipedia_title": "The Prince",
+"domain": "political_theory"
+},
+{
+"work": "Discourses on Livy",
+"correct_author": "Niccol\u00f2 Machiavelli",
+"wrong_author": "Francesco Guicciardini",
+"wikipedia_title": "Discourses on Livy",
+"domain": "political_theory"
+},
+{
+"work": "The Praise of Folly",
+"correct_author": "Erasmus",
+"wrong_author": "Thomas More",
+"wikipedia_title": "In Praise of Folly",
+"domain": "philosophy"
+},
+{
+"work": "Utopia",
+"correct_author": "Thomas More",
+"wrong_author": "Erasmus",
+"wikipedia_title": "Utopia (book)",
+"domain": "political_theory"
+},
+{
+"work": "Essays",
+"correct_author": "Michel de Montaigne",
+"wrong_author": "Francis Bacon",
+"wikipedia_title": "Essays (Montaigne)",
+"domain": "philosophy"
+},
+{
+"work": "The Institutes of the Christian Religion",
+"correct_author": "John Calvin",
+"wrong_author": "Martin Luther",
+"wikipedia_title": "Institutes of the Christian Religion",
+"domain": "religion"
+},
+{
+"work": "Novum Organum",
+"correct_author": "Francis Bacon",
+"wrong_author": "Ren\u00e9 Descartes",
+"wikipedia_title": "Novum Organum",
+"domain": "philosophy"
+},
+{
+"work": "Meditations on First Philosophy",
+"correct_author": "Ren\u00e9 Descartes",
+"wrong_author": "Baruch Spinoza",
+"wikipedia_title": "Meditations on First Philosophy",
+"domain": "philosophy"
+},
+{
+"work": "Discourse on the Method",
+"correct_author": "Ren\u00e9 Descartes",
+"wrong_author": "Gottfried Wilhelm Leibniz",
+"wikipedia_title": "Discourse on the Method",
+"domain": "philosophy"
+},
+{
+"work": "Ethics",
+"correct_author": "Baruch Spinoza",
+"wrong_author": "Ren\u00e9 Descartes",
+"wikipedia_title": "Ethics (Spinoza)",
+"domain": "philosophy"
+},
+{
+"work": "Leviathan",
+"correct_author": "Thomas Hobbes",
+"wrong_author": "John Locke",
+"wikipedia_title": "Leviathan (Hobbes book)",
+"domain": "political_theory"
+},
+{
+"work": "Two Treatises of Government",
+"correct_author": "John Locke",
+"wrong_author": "Thomas Hobbes",
+"wikipedia_title": "Two Treatises of Government",
+"domain": "political_theory"
+},
+{
+"work": "An Essay Concerning Human Understanding",
+"correct_author": "John Locke",
+"wrong_author": "David Hume",
+"wikipedia_title": "An Essay Concerning Human Understanding",
+"domain": "philosophy"
+},
+{
+"work": "Monadology",
+"correct_author": "Gottfried Wilhelm Leibniz",
+"wrong_author": "Baruch Spinoza",
+"wikipedia_title": "Monadology",
+"domain": "philosophy"
+},
+{
+"work": "Pens\u00e9es",
+"correct_author": "Blaise Pascal",
+"wrong_author": "Ren\u00e9 Descartes",
+"wikipedia_title": "Pens\u00e9es",
+"domain": "religion"
+},
+{
+"work": "Mathematical Principles of Natural Philosophy",
+"correct_author": "Isaac Newton",
+"wrong_author": "Gottfried Wilhelm Leibniz",
+"wikipedia_title": "Philosophi\u00e6 Naturalis Principia Mathematica",
+"domain": "science"
+},
+{
+"work": "A Treatise of Human Nature",
+"correct_author": "David Hume",
+"wrong_author": "John Locke",
+"wikipedia_title": "A Treatise of Human Nature",
+"domain": "philosophy"
+},
+{
+"work": "An Enquiry Concerning Human Understanding",
+"correct_author": "David Hume",
+"wrong_author": "George Berkeley",
+"wikipedia_title": "An Enquiry Concerning Human Understanding",
+"domain": "philosophy"
+},
+{
+"work": "A Treatise Concerning the Principles of Human Knowledge",
+"correct_author": "George Berkeley",
+"wrong_author": "David Hume",
+"wikipedia_title": "A Treatise Concerning the Principles of Human Knowledge",
+"domain": "philosophy"
+},
+{
+"work": "The Spirit of the Laws",
+"correct_author": "Montesquieu",
+"wrong_author": "Voltaire",
+"wikipedia_title": "The Spirit of Law",
+"domain": "political_theory"
+},
+{
+"work": "Candide",
+"correct_author": "Voltaire",
+"wrong_author": "Denis Diderot",
+"wikipedia_title": "Candide",
+"domain": "philosophy"
+},
+{
+"work": "The Social Contract",
+"correct_author": "Jean-Jacques Rousseau",
+"wrong_author": "Montesquieu",
+"wikipedia_title": "The Social Contract",
+"domain": "political_theory"
+},
+{
+"work": "Emile, or On Education",
+"correct_author": "Jean-Jacques Rousseau",
+"wrong_author": "Voltaire",
+"wikipedia_title": "Emile, or On Education",
+"domain": "philosophy"
+},
+{
+"work": "The Wealth of Nations",
+"correct_author": "Adam Smith",
+"wrong_author": "David Ricardo",
+"wikipedia_title": "The Wealth of Nations",
+"domain": "economics"
+},
+{
+"work": "The Theory of Moral Sentiments",
+"correct_author": "Adam Smith",
+"wrong_author": "David Hume",
+"wikipedia_title": "The Theory of Moral Sentiments",
+"domain": "philosophy"
+},
+{
+"work": "Critique of Pure Reason",
+"correct_author": "Immanuel Kant",
+"wrong_author": "Georg Wilhelm Friedrich Hegel",
+"wikipedia_title": "Critique of Pure Reason",
+"domain": "philosophy"
+},
+{
+"work": "Critique of Practical Reason",
+"correct_author": "Immanuel Kant",
+"wrong_author": "Johann Gottlieb Fichte",
+"wikipedia_title": "Critique of Practical Reason",
+"domain": "philosophy"
+},
+{
+"work": "Groundwork of the Metaphysics of Morals",
+"correct_author": "Immanuel Kant",
+"wrong_author": "Georg Wilhelm Friedrich Hegel",
+"wikipedia_title": "Groundwork of the Metaphysics of Morals",
+"domain": "philosophy"
+},
+{
+"work": "Common Sense",
+"correct_author": "Thomas Paine",
+"wrong_author": "Thomas Jefferson",
+"wikipedia_title": "Common Sense (pamphlet)",
+"domain": "political_theory"
+},
+{
+"work": "Rights of Man",
+"correct_author": "Thomas Paine",
+"wrong_author": "Edmund Burke",
+"wikipedia_title": "Rights of Man",
+"domain": "political_theory"
+},
+{
+"work": "Reflections on the Revolution in France",
+"correct_author": "Edmund Burke",
+"wrong_author": "Thomas Paine",
+"wikipedia_title": "Reflections on the Revolution in France",
+"domain": "political_theory"
+},
+{
+"work": "A Vindication of the Rights of Woman",
+"correct_author": "Mary Wollstonecraft",
+"wrong_author": "Mary Shelley",
+"wikipedia_title": "A Vindication of the Rights of Woman",
+"domain": "political_theory"
+},
+{
+"work": "The Phenomenology of Spirit",
+"correct_author": "Georg Wilhelm Friedrich Hegel",
+"wrong_author": "Immanuel Kant",
+"wikipedia_title": "The Phenomenology of Spirit",
+"domain": "philosophy"
+},
+{
+"work": "The World as Will and Representation",
+"correct_author": "Arthur Schopenhauer",
+"wrong_author": "Georg Wilhelm Friedrich Hegel",
+"wikipedia_title": "The World as Will and Representation",
+"domain": "philosophy"
+},
+{
+"work": "On the Principles of Political Economy and Taxation",
+"correct_author": "David Ricardo",
+"wrong_author": "Thomas Robert Malthus",
+"wikipedia_title": "On the Principles of Political Economy and Taxation",
+"domain": "economics"
+},
+{
+"work": "An Essay on the Principle of Population",
+"correct_author": "Thomas Robert Malthus",
+"wrong_author": "David Ricardo",
+"wikipedia_title": "An Essay on the Principle of Population",
+"domain": "economics"
+},
+{
+"work": "Democracy in America",
+"correct_author": "Alexis de Tocqueville",
+"wrong_author": "John Stuart Mill",
+"wikipedia_title": "Democracy in America",
+"domain": "political_theory"
+},
+{
+"work": "On Liberty",
+"correct_author": "John Stuart Mill",
+"wrong_author": "Jeremy Bentham",
+"wikipedia_title": "On Liberty",
+"domain": "political_theory"
+},
+{
+"work": "Utilitarianism",
+"correct_author": "John Stuart Mill",
+"wrong_author": "Jeremy Bentham",
+"wikipedia_title": "Utilitarianism (book)",
+"domain": "philosophy"
+},
+{
+"work": "An Introduction to the Principles of Morals and Legislation",
+"correct_author": "Jeremy Bentham",
+"wrong_author": "John Stuart Mill",
+"wikipedia_title": "An Introduction to the Principles of Morals and Legislation",
+"domain": "philosophy"
+},
+{
+"work": "The Communist Manifesto",
+"correct_author": "Karl Marx",
+"wrong_author": "Pierre-Joseph Proudhon",
+"wikipedia_title": "The Communist Manifesto",
+"domain": "political_theory"
+},
+{
+"work": "Das Kapital",
+"correct_author": "Karl Marx",
+"wrong_author": "Friedrich Engels",
+"wikipedia_title": "Das Kapital",
+"domain": "economics"
+},
+{
+"work": "The Condition of the Working Class in England",
+"correct_author": "Friedrich Engels",
+"wrong_author": "Karl Marx",
+"wikipedia_title": "The Condition of the Working Class in England",
+"domain": "history"
+},
+{
+"work": "On the Origin of Species",
+"correct_author": "Charles Darwin",
+"wrong_author": "Alfred Russel Wallace",
+"wikipedia_title": "On the Origin of Species",
+"domain": "science"
+},
+{
+"work": "The Descent of Man",
+"correct_author": "Charles Darwin",
+"wrong_author": "Thomas Henry Huxley",
+"wikipedia_title": "The Descent of Man, and Selection in Relation to Sex",
+"domain": "science"
+},
+{
+"work": "Thus Spoke Zarathustra",
+"correct_author": "Friedrich Nietzsche",
+"wrong_author": "Arthur Schopenhauer",
+"wikipedia_title": "Thus Spoke Zarathustra",
+"domain": "philosophy"
+},
+{
+"work": "Beyond Good and Evil",
+"correct_author": "Friedrich Nietzsche",
+"wrong_author": "Arthur Schopenhauer",
+"wikipedia_title": "Beyond Good and Evil",
+"domain": "philosophy"
+},
+{
+"work": "On the Genealogy of Morality",
+"correct_author": "Friedrich Nietzsche",
+"wrong_author": "S\u00f8ren Kierkegaard",
+"wikipedia_title": "On the Genealogy of Morality",
+"domain": "philosophy"
+},
+{
+"work": "Fear and Trembling",
+"correct_author": "S\u00f8ren Kierkegaard",
+"wrong_author": "Friedrich Nietzsche",
+"wikipedia_title": "Fear and Trembling",
+"domain": "philosophy"
+},
+{
+"work": "Either/Or",
+"correct_author": "S\u00f8ren Kierkegaard",
+"wrong_author": "Arthur Schopenhauer",
+"wikipedia_title": "Either/Or",
+"domain": "philosophy"
+},
+{
+"work": "The Interpretation of Dreams",
+"correct_author": "Sigmund Freud",
+"wrong_author": "Carl Jung",
+"wikipedia_title": "The Interpretation of Dreams",
+"domain": "science"
+},
+{
+"work": "The Varieties of Religious Experience",
+"correct_author": "William James",
+"wrong_author": "John Dewey",
+"wikipedia_title": "The Varieties of Religious Experience",
+"domain": "religion"
+},
+{
+"work": "The Protestant Ethic and the Spirit of Capitalism",
+"correct_author": "Max Weber",
+"wrong_author": "\u00c9mile Durkheim",
+"wikipedia_title": "The Protestant Ethic and the Spirit of Capitalism",
+"domain": "history"
+},
+{
+"work": "The General Theory of Employment, Interest and Money",
+"correct_author": "John Maynard Keynes",
+"wrong_author": "Friedrich Hayek",
+"wikipedia_title": "The General Theory of Employment, Interest and Money",
+"domain": "economics"
+},
+{
+"work": "The Road to Serfdom",
+"correct_author": "Friedrich Hayek",
+"wrong_author": "Ludwig von Mises",
+"wikipedia_title": "The Road to Serfdom",
+"domain": "economics"
+},
+{
+"work": "Principia Ethica",
+"correct_author": "G. E. Moore",
+"wrong_author": "Bertrand Russell",
+"wikipedia_title": "Principia Ethica",
+"domain": "philosophy"
+},
+{
+"work": "Tractatus Logico-Philosophicus",
+"correct_author": "Ludwig Wittgenstein",
+"wrong_author": "Bertrand Russell",
+"wikipedia_title": "Tractatus Logico-Philosophicus",
+"domain": "philosophy"
+},
+{
+"work": "Being and Time",
+"correct_author": "Martin Heidegger",
+"wrong_author": "Edmund Husserl",
+"wikipedia_title": "Being and Time",
+"domain": "philosophy"
+},
+{
+"work": "Being and Nothingness",
+"correct_author": "Jean-Paul Sartre",
+"wrong_author": "Albert Camus",
+"wikipedia_title": "Being and Nothingness",
+"domain": "philosophy"
+},
+{
+"work": "The Second Sex",
+"correct_author": "Simone de Beauvoir",
+"wrong_author": "Jean-Paul Sartre",
+"wikipedia_title": "The Second Sex",
+"domain": "philosophy"
+},
+{
+"work": "A Theory of Justice",
+"correct_author": "John Rawls",
+"wrong_author": "Robert Nozick",
+"wikipedia_title": "A Theory of Justice",
+"domain": "political_theory"
+},
+{
+"work": "Anarchy, State, and Utopia",
+"correct_author": "Robert Nozick",
+"wrong_author": "John Rawls",
+"wikipedia_title": "Anarchy, State, and Utopia",
+"domain": "political_theory"
+}
+]
