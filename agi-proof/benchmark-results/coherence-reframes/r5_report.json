@@ -1,0 +1,41 @@
+{
+  "schema": "sophia.reframe_r5.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "reframe": "R5 internal-coupled abstention gate (risk-coverage)",
+  "n": 464,
+  "seeds": {
+    "0": {
+      "statedAURC": 0.8128,
+      "combinedAURC": 0.7987,
+      "delta": 0.014,
+      "ci95": [
+        -0.0212,
+        0.0354
+      ],
+      "combinedWins": false
+    },
+    "1": {
+      "statedAURC": 0.8128,
+      "combinedAURC": 0.812,
+      "delta": 0.0007,
+      "ci95": [
+        -0.0285,
+        0.0167
+      ],
+      "combinedWins": false
+    },
+    "7": {
+      "statedAURC": 0.8128,
+      "combinedAURC": 0.8135,
+      "delta": -0.0008,
+      "ci95": [
+        -0.0313,
+        0.0175
+      ],
+      "combinedWins": false
+    }
+  },
+  "internalGateBeatsStated_allSeeds": false,
+  "verdict": "no_significant_risk_coverage_gain"
+}

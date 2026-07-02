@@ -1,0 +1,39 @@
+{
+  "schema": "sophia.reframe_r4.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "reframe": "R4 paraphrase-stability vs self-consistency",
+  "n": 56,
+  "nCorrect": 9,
+  "seeds": {
+    "0": {
+      "aurocParaphrase": 0.5355,
+      "aurocSelfConsistency": 0.7352,
+      "delta": -0.1998,
+      "ci95": [
+        -0.4517,
+        0.0559
+      ]
+    },
+    "1": {
+      "aurocParaphrase": 0.5355,
+      "aurocSelfConsistency": 0.7352,
+      "delta": -0.1998,
+      "ci95": [
+        -0.4545,
+        0.0554
+      ]
+    },
+    "7": {
+      "aurocParaphrase": 0.5355,
+      "aurocSelfConsistency": 0.7352,
+      "delta": -0.1998,
+      "ci95": [
+        -0.4567,
+        0.0629
+      ]
+    }
+  },
+  "paraphraseBeatsSelfConsistency_allSeeds": false,
+  "verdict": "no_significant_edge_over_self_consistency"
+}

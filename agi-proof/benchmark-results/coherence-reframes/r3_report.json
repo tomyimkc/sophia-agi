@@ -1,0 +1,29 @@
+{
+  "schema": "sophia.reframe_r3.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "reframe": "R3 grounding phase-lock (marker-free)",
+  "withMarkers": {
+    "tag": "with-markers",
+    "n": 20,
+    "abstainRate": 0.85,
+    "embedBackend": "minilm:sentence-transformers/all-MiniLM-L6-v2",
+    "meanResidualSupported": 0.7643,
+    "meanResidualUnsupported": 0.8717,
+    "aurcByResidual": 0.292641,
+    "gap": 0.1074
+  },
+  "markerFree": {
+    "tag": "marker-free (honest)",
+    "n": 19,
+    "abstainRate": 0.8947,
+    "embedBackend": "minilm:sentence-transformers/all-MiniLM-L6-v2",
+    "meanResidualSupported": 0.7746,
+    "meanResidualUnsupported": 0.8499,
+    "aurcByResidual": 0.349967,
+    "gap": 0.0753
+  },
+  "leakDelta": 0.0321,
+  "verdict": "separation_was_label_leak \u2014 similarity cannot capture entailment",
+  "note": "If the marker-free gap collapses, phase-lock over similarity embeddings cannot distinguish supporting from refuting evidence (both are topical) \u2014 the real fix is NLI/entailment, not coherence."
+}

@@ -2499,3 +2499,28 @@ O4's 60% savings are a 2-oscillator k=2 saturation artifact with no selective sk
 Every figure adversarially re-derived; claims linter OK. Genuinely built + kept: the semantic-embedder seam,
 the real `build_hidden_state_featurizer` (unlocks W1/W5), and the missing O1/O4 adapter + O2 AUROC/CI harness.
 Report: `agi-proof/benchmark-results/oscillatory-crosspollination/`.
+
+
+## 2026-07-02 — Coherence reframes R1-R5: 4 negatives + 1 qualified positive (R2 OOD-disagreement)
+
+Follow-up to the O1-O5 oscillatory negative: 5 reframes coupling the RIGHT signals, built + run on real
+backends (DeepSeek+grok generation, all-MiniLM embedder, real Qwen2.5-3B MLX hidden states, DPO honesty
+probe in-sample AUROC 1.0), each adversarially verified (verifiers hunted for a bug HIDING a positive).
+All candidateOnly; no gate claimed 'met'. Report: agi-proof/benchmark-results/coherence-reframes/.
+
+- **R1 internal-vs-stated: NEGATIVE (sound).** honesty-probe coupled with stated confidence adds +0.017 AUROC
+  (CI∋0) at n=464; the +0.07 at n=160 was small-sample noise (group-aware CV -> -0.005). Defects logged:
+  logprob feature dead-constant (DeepSeek token-confidence saturates); combined-pack dedup ad-hoc.
+- **R2 ensemble-disagreement -> OOD/abstain: QUALIFIED POSITIVE (verified).** disagreement among domain-
+  specialist probes predicts the OOD ensemble's own errors at AUROC 0.80 (CI [0.71,0.88] excludes chance,
+  3 seeds), label=accepted (correct was near-degenerate). Turns cross-domain-transfer failure into an abstain
+  trigger. CAVEAT: not better than the ensemble confidence margin (0.834); single dataset n=112. Row stays Open.
+- **R3 grounding phase-lock (marker-free): WEAK (sound).** residual gap 0.075 (vs 0.107 with leaked markers);
+  real but too weak — similarity cannot capture entailment (needs NLI).
+- **R4 perturbation stability: NEGATIVE (sound).** paraphrase-stability AUROC 0.54 << self-consistency 0.74
+  (paraphrase near-zero signal); n=56 underpowered but point estimate clearly not-positive.
+- **R5 operational abstention gate: NEGATIVE (sound).** internal-coupled gate gives no risk-coverage gain vs
+  stated-alone (delta ~0, CI∋0) — follows from R1's null.
+
+Net: coupling the right signals mostly did not rescue coherence-as-verification, but ensemble DISAGREEMENT is
+an honest OOD/abstain candidate aligned with sophia's calibrated-abstention thesis. canClaimAGI=false.
