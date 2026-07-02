@@ -21,6 +21,7 @@ the drop-in that makes the geometry semantic. Every consumer surfaces this.
 from __future__ import annotations
 
 import hashlib
+import os
 import re
 from typing import Sequence
 
@@ -28,6 +29,67 @@ import numpy as np
 
 _TOKEN = re.compile(r"[a-z0-9]+")
 EMBED_DIM_DEFAULT = 64
+
+# --- semantic-embedder seam -------------------------------------------------
+# `hash_embed` is a lexical stand-in. When OSC_EMBED_BACKEND=minilm, it delegates
+# to a real sentence embedder (sentence-transformers/all-MiniLM-L6-v2, loaded
+# offline from the HF cache) so the coherence/residual geometry becomes semantic.
+# The default (unset) path stays the pure blake2b hash so the offline unit tests
+# and CI are unchanged. This is the single chokepoint feeding O1/O3/O4.
+_MINILM_NAME = "sentence-transformers/all-MiniLM-L6-v2"
+_MINILM = None
+_MINILM_DIM = 384
+_EMBED_CACHE: dict[str, np.ndarray] = {}
+
+
+def active_embed_backend() -> str:
+    """Which embedder `hash_embed` is currently delegating to (honesty surface)."""
+    if os.environ.get("OSC_EMBED_BACKEND", "").strip().lower() == "minilm":
+        return f"minilm:{_MINILM_NAME}"
+    return "hash:blake2b-lexical"
+
+
+def _load_minilm():
+    global _MINILM
+    if _MINILM is None:
+        os.environ.setdefault("HF_HUB_OFFLINE", "1")
+        os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+        os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+        import torch
+        from transformers import AutoModel, AutoTokenizer
+
+        tok = AutoTokenizer.from_pretrained(_MINILM_NAME)
+        mdl = AutoModel.from_pretrained(_MINILM_NAME)
+        mdl.eval()
+        _MINILM = (tok, mdl, torch)
+    return _MINILM
+
+
+def _semantic_embed(text: str) -> np.ndarray:
+    """Mean-pooled, L2-normalized all-MiniLM-L6-v2 vector (empty text -> zero vector).
+
+    Preserves hash_embed's two load-bearing invariants: non-empty text yields a
+    unit vector; empty/whitespace yields the zero 'no content' sentinel.
+    """
+    s = str(text)
+    if not s.strip():
+        return np.zeros(_MINILM_DIM, dtype=np.float64)
+    cached = _EMBED_CACHE.get(s)
+    if cached is not None:
+        return cached
+    tok, mdl, torch = _load_minilm()
+    with torch.no_grad():
+        enc = tok([s], padding=True, truncation=True, max_length=256, return_tensors="pt")
+        out = mdl(**enc)
+        last = out.last_hidden_state  # (1, seq, hidden)
+        mask = enc["attention_mask"].unsqueeze(-1).type_as(last)
+        summed = (last * mask).sum(dim=1)
+        counts = mask.sum(dim=1).clamp(min=1e-9)
+        vec = summed / counts
+        vec = torch.nn.functional.normalize(vec, p=2, dim=1)[0]
+        v = vec.cpu().numpy().astype(np.float64)
+    _EMBED_CACHE[s] = v
+    return v
 
 
 def _tokens(text: str) -> list[str]:
@@ -40,7 +102,13 @@ def hash_embed(text: str, dim: int = EMBED_DIM_DEFAULT) -> np.ndarray:
     Signed hashing (feature-hashing trick): each token maps to a bucket with a +/-1 sign,
     so unrelated tokens do not systematically inflate similarity. Returns a unit vector
     (zero vector for empty text, which callers treat as 'no content').
+
+    When OSC_EMBED_BACKEND=minilm, delegates to a real semantic embedder (all-MiniLM-L6-v2);
+    `dim` is then ignored (the model's native 384-d output is returned). The empty-text ->
+    zero-vector and non-empty -> unit-norm invariants hold on both paths.
     """
+    if os.environ.get("OSC_EMBED_BACKEND", "").strip().lower() == "minilm":
+        return _semantic_embed(text)
     v = np.zeros(int(dim), dtype=np.float64)
     toks = _tokens(text)
     if not toks:

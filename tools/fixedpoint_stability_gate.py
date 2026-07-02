@@ -128,7 +128,8 @@ def run(records: list[dict[str, Any]], *, dim: int = oc.EMBED_DIM_DEFAULT,
         "schema": "sophia.fixedpoint_stability.v1",
         "candidateOnly": True, "level3Evidence": False, "canClaimAGI": False,
         "n": len(per), "residualThreshold": residual_threshold,
-        "hashEmbedSeam": True,      # a semantic embedder is the drop-in that makes residual meaningful
+        "hashEmbedSeam": oc.active_embed_backend().startswith("hash"),  # false once a semantic embedder is wired
+        "embedBackend": oc.active_embed_backend(),
         "abstainRate": round(sum(1 for p in per if p["decision"] == "abstain") / len(per), 4),
         "records": per,
     }

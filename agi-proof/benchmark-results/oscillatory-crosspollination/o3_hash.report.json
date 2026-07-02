@@ -1,0 +1,224 @@
+{
+  "schema": "sophia.fixedpoint_stability.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "n": 20,
+  "residualThreshold": 0.6,
+  "hashEmbedSeam": true,
+  "embedBackend": "hash:blake2b-lexical",
+  "abstainRate": 0.95,
+  "records": [
+    {
+      "claim": "Douglas Adams wrote The Hitchhiker's Guide to the Galaxy",
+      "residual": 0.764822,
+      "drift": 0.764822,
+      "converged": true,
+      "lastStep": 4.061e-05,
+      "steps": 9,
+      "decision": "abstain",
+      "supported": true
+    },
+    {
+      "claim": "Jane Austen wrote Pride and Prejudice",
+      "residual": 0.941227,
+      "drift": 0.941227,
+      "converged": true,
+      "lastStep": 5.665e-05,
+      "steps": 14,
+      "decision": "abstain",
+      "supported": true
+    },
+    {
+      "claim": "George Orwell wrote Nineteen Eighty-Four",
+      "residual": 0.900732,
+      "drift": 0.900732,
+      "converged": true,
+      "lastStep": 8.048e-05,
+      "steps": 12,
+      "decision": "abstain",
+      "supported": true
+    },
+    {
+      "claim": "Mary Shelley wrote Frankenstein",
+      "residual": 1.062811,
+      "drift": 1.062811,
+      "converged": true,
+      "lastStep": 8.093e-05,
+      "steps": 18,
+      "decision": "abstain",
+      "supported": true
+    },
+    {
+      "claim": "US inflation increased in 2021",
+      "residual": 0.900119,
+      "drift": 0.900119,
+      "converged": true,
+      "lastStep": 7.672e-05,
+      "steps": 17,
+      "decision": "abstain",
+      "supported": true
+    },
+    {
+      "claim": "US unemployment decreased in 2021",
+      "residual": 0.740002,
+      "drift": 0.740002,
+      "converged": true,
+      "lastStep": 8.991e-05,
+      "steps": 10,
+      "decision": "abstain",
+      "supported": true
+    },
+    {
+      "claim": "Deployment incentives can create pressure to release AGI systems before safety e",
+      "residual": 0.449992,
+      "drift": 0.449992,
+      "converged": true,
+      "lastStep": 9.729e-05,
+      "steps": 3,
+      "decision": "accept",
+      "supported": true
+    },
+    {
+      "claim": "J. K. Rowling wrote The Hitchhiker's Guide to the Galaxy",
+      "residual": 0.810438,
+      "drift": 0.810438,
+      "converged": true,
+      "lastStep": 5.531e-05,
+      "steps": 7,
+      "decision": "abstain",
+      "supported": false
+    },
+    {
+      "claim": "Plato wrote The Dao De Jing",
+      "residual": 1.087889,
+      "drift": 1.087889,
+      "converged": true,
+      "lastStep": 0.0,
+      "steps": 2,
+      "decision": "abstain",
+      "supported": false
+    },
+    {
+      "claim": "Confucius wrote The Republic",
+      "residual": 1.210569,
+      "drift": 1.210569,
+      "converged": true,
+      "lastStep": 0.0,
+      "steps": 2,
+      "decision": "abstain",
+      "supported": false
+    },
+    {
+      "claim": "US inflation decreased in 2021",
+      "residual": 0.991192,
+      "drift": 0.991192,
+      "converged": true,
+      "lastStep": 4.378e-05,
+      "steps": 11,
+      "decision": "abstain",
+      "supported": false
+    },
+    {
+      "claim": "US unemployment increased in 2021",
+      "residual": 0.948871,
+      "drift": 0.948871,
+      "converged": true,
+      "lastStep": 4.654e-05,
+      "steps": 11,
+      "decision": "abstain",
+      "supported": false
+    },
+    {
+      "claim": "US GDP increased in 2021",
+      "residual": 1.105626,
+      "drift": 1.105626,
+      "converged": true,
+      "lastStep": 3.041e-05,
+      "steps": 8,
+      "decision": "abstain",
+      "supported": true
+    },
+    {
+      "claim": "US GDP decreased in 2020",
+      "residual": 1.042816,
+      "drift": 1.042816,
+      "converged": true,
+      "lastStep": 5.926e-05,
+      "steps": 8,
+      "decision": "abstain",
+      "supported": true
+    },
+    {
+      "claim": "US unemployment increased in 2020",
+      "residual": 0.968141,
+      "drift": 0.968141,
+      "converged": true,
+      "lastStep": 6.554e-05,
+      "steps": 5,
+      "decision": "abstain",
+      "supported": true
+    },
+    {
+      "claim": "US inflation decreased in 2020",
+      "residual": 1.041982,
+      "drift": 1.041982,
+      "converged": true,
+      "lastStep": 6.907e-05,
+      "steps": 7,
+      "decision": "abstain",
+      "supported": true
+    },
+    {
+      "claim": "US GDP decreased in 2021",
+      "residual": 1.086013,
+      "drift": 1.086013,
+      "converged": true,
+      "lastStep": 3.599e-05,
+      "steps": 9,
+      "decision": "abstain",
+      "supported": false
+    },
+    {
+      "claim": "US GDP increased in 2020",
+      "residual": 1.137797,
+      "drift": 1.137797,
+      "converged": true,
+      "lastStep": 9.985e-05,
+      "steps": 6,
+      "decision": "abstain",
+      "supported": false
+    },
+    {
+      "claim": "US unemployment decreased in 2020",
+      "residual": 0.943405,
+      "drift": 0.943405,
+      "converged": true,
+      "lastStep": 6.399e-05,
+      "steps": 7,
+      "decision": "abstain",
+      "supported": false
+    },
+    {
+      "claim": "US inflation increased in 2020",
+      "residual": 1.114545,
+      "drift": 1.114545,
+      "converged": true,
+      "lastStep": 3.551e-05,
+      "steps": 6,
+      "decision": "abstain",
+      "supported": false
+    }
+  ],
+  "separation": {
+    "nLabelled": 20,
+    "aurcByResidual": 0.277045,
+    "meanResidualSupported": 0.9017,
+    "meanResidualUnsupported": 1.0367,
+    "suggestedThreshold": 0.9692,
+    "atSuggested": {
+      "supportedAccepted": "7/11",
+      "unsupportedAccepted": "3/9"
+    }
+  }
+}

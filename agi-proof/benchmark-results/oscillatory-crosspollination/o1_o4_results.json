@@ -1,0 +1,161 @@
+{
+  "dataset": {
+    "source": "google/simpleqa-verified",
+    "subject": "deepseek-chat",
+    "grader": "grok",
+    "n_attempted": 129,
+    "n_full": 150,
+    "n_correct": 26,
+    "decontam": "SimpleQA is eval-only; never used for training in this repo"
+  },
+  "O1": {
+    "hash": {
+      "embedBackend": "hash:blake2b-lexical",
+      "seeds": {
+        "0": {
+          "baselineAurc": 0.7201,
+          "consensusAurc": 0.7205,
+          "delta": -0.0004,
+          "ci95": [
+            -0.0758,
+            0.0654
+          ],
+          "verdict": "inconclusive",
+          "consensusWins": false
+        },
+        "1": {
+          "baselineAurc": 0.7492,
+          "consensusAurc": 0.7513,
+          "delta": -0.0021,
+          "ci95": [
+            -0.0817,
+            0.0588
+          ],
+          "verdict": "inconclusive",
+          "consensusWins": false
+        },
+        "7": {
+          "baselineAurc": 0.7392,
+          "consensusAurc": 0.7427,
+          "delta": -0.0035,
+          "ci95": [
+            -0.0712,
+            0.063
+          ],
+          "verdict": "inconclusive",
+          "consensusWins": false
+        }
+      }
+    },
+    "minilm": {
+      "embedBackend": "minilm:sentence-transformers/all-MiniLM-L6-v2",
+      "seeds": {
+        "0": {
+          "baselineAurc": 0.7201,
+          "consensusAurc": 0.7389,
+          "delta": -0.0188,
+          "ci95": [
+            -0.0669,
+            0.0443
+          ],
+          "verdict": "inconclusive",
+          "consensusWins": false
+        },
+        "1": {
+          "baselineAurc": 0.7492,
+          "consensusAurc": 0.7397,
+          "delta": 0.0096,
+          "ci95": [
+            -0.069,
+            0.0428
+          ],
+          "verdict": "inconclusive",
+          "consensusWins": false
+        },
+        "7": {
+          "baselineAurc": 0.7392,
+          "consensusAurc": 0.7364,
+          "delta": 0.0028,
+          "ci95": [
+            -0.0612,
+            0.0468
+          ],
+          "verdict": "inconclusive",
+          "consensusWins": false
+        }
+      }
+    }
+  },
+  "O4": {
+    "hash": {
+      "embedBackend": "hash:blake2b-lexical",
+      "seeds": {
+        "0": {
+          "samplesSavedFrac": 0.4599,
+          "meanSamplesAdaptive": 3.24,
+          "nonConvergedAbstainRate": 0.2946,
+          "aurcDeltaCi95": [
+            -0.0999,
+            0.0498
+          ],
+          "noQualityLoss": true
+        },
+        "1": {
+          "samplesSavedFrac": 0.4186,
+          "meanSamplesAdaptive": 3.488,
+          "nonConvergedAbstainRate": 0.3333,
+          "aurcDeltaCi95": [
+            -0.1016,
+            0.0429
+          ],
+          "noQualityLoss": true
+        },
+        "7": {
+          "samplesSavedFrac": 0.4948,
+          "meanSamplesAdaptive": 3.031,
+          "nonConvergedAbstainRate": 0.2558,
+          "aurcDeltaCi95": [
+            -0.0835,
+            0.0649
+          ],
+          "noQualityLoss": true
+        }
+      }
+    },
+    "minilm": {
+      "embedBackend": "minilm:sentence-transformers/all-MiniLM-L6-v2",
+      "seeds": {
+        "0": {
+          "samplesSavedFrac": 0.5982,
+          "meanSamplesAdaptive": 2.411,
+          "nonConvergedAbstainRate": 0.0698,
+          "aurcDeltaCi95": [
+            -0.0658,
+            0.0874
+          ],
+          "noQualityLoss": true
+        },
+        "1": {
+          "samplesSavedFrac": 0.5633,
+          "meanSamplesAdaptive": 2.62,
+          "nonConvergedAbstainRate": 0.093,
+          "aurcDeltaCi95": [
+            -0.0915,
+            0.062
+          ],
+          "noQualityLoss": true
+        },
+        "7": {
+          "samplesSavedFrac": 0.6576,
+          "meanSamplesAdaptive": 2.054,
+          "nonConvergedAbstainRate": 0.0078,
+          "aurcDeltaCi95": [
+            -0.0485,
+            0.1148
+          ],
+          "noQualityLoss": true
+        }
+      }
+    }
+  }
+}

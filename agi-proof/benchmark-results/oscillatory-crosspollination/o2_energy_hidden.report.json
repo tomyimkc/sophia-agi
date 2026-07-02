@@ -1,0 +1,52 @@
+{
+  "schema": "sophia.o2_energy_hidden.v1",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "hiddenStateFeaturizerReady": true,
+  "featurizerModel": "Qwen/Qwen2.5-3B-Instruct",
+  "embedBackend": "mlx-hidden-state:Qwen/Qwen2.5-3B-Instruct",
+  "data": "agi-proof/external-eval/factcheck-full-r1.json",
+  "n": 69,
+  "domains": [
+    "authorship_external",
+    "doi",
+    "econ_empirical",
+    "open_empirical"
+  ],
+  "nAccepted": 12,
+  "nCorrect": 52,
+  "evaluation": "leave-one-domain-out out-of-fold (no in-sample optimism)",
+  "hiddenAUROCvsChance": {
+    "auroc": 0.4887,
+    "ci95": [
+      0.4167,
+      0.5408
+    ]
+  },
+  "linearStubAUROCvsChance": {
+    "auroc": 0.5356,
+    "ci95": [
+      0.3844,
+      0.6841
+    ]
+  },
+  "pairedHiddenMinusLinear": {
+    "aurocA": 0.4887,
+    "aurocB": 0.5356,
+    "delta": -0.0469,
+    "ci95": [
+      -0.1997,
+      0.1111
+    ]
+  },
+  "eceHidden": 0.7634,
+  "goodhartGap": 0.2607,
+  "gates": {
+    "hiddenBeatsChance(CI>0.5)": false,
+    "hiddenBeatsLinearStub(deltaCI>0)": false,
+    "goodhartGap<=0.15": false
+  },
+  "verdict": "gate_not_met",
+  "note": "Real MLX hidden-state energy head (build_hidden_state_featurizer seam, no stub); trained on verifier `accepted`, audited vs ground-truth `correct` via LODO out-of-fold. verified_traces.jsonl (brief's named source) absent -> factcheck pack used. No model weights updated."
+}

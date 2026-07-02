@@ -2486,3 +2486,16 @@ genuine uplift AND refused to celebrate it because the policy still emits cheats
 
 **Next:** add held-out private inputs to the GRPO *training* reward (make special-casing unprofitable
 in-loop, not only caught at eval), then re-run the 3-seed sweep for a clean integrity gate.
+
+
+## 2026-07-02 — O1–O5 oscillatory cross-pollination: live benchmark, ALL gates unmet (honest negative)
+
+Took the five fail-closed oscillatory/Kuramoto instruments (branch `feat/oscillatory-crosspollination`)
+from unit-tested to measured on real data (DeepSeek+grok generation, all-MiniLM semantic embedder, real
+Qwen2.5-3B MLX hidden states). **None of the five acceptance gates is met; all rows stay Open.** O1 ties
+self-consistency (AURC-delta CI∋0, 3 seeds); O2's hidden-state energy fails to generalize OOF (AUROC 0.49,
+robust to a proper probe + more data → 0.38–0.43); O3's residual separation is weak + a label-token leak;
+O4's 60% savings are a 2-oscillator k=2 saturation artifact with no selective skill; O5 stays simulation-only.
+Every figure adversarially re-derived; claims linter OK. Genuinely built + kept: the semantic-embedder seam,
+the real `build_hidden_state_featurizer` (unlocks W1/W5), and the missing O1/O4 adapter + O2 AUROC/CI harness.
+Report: `agi-proof/benchmark-results/oscillatory-crosspollination/`.
