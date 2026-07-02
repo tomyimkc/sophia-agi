@@ -1,0 +1,61 @@
+{
+  "schema": "sophia.nli_hedge_matched_D3.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "reframe": "hedge-matched claims ('traditionally attributed') vs sophia's hedged evidence; frozen NLI vs healthy semantic incumbent",
+  "realArm": {
+    "n": 106,
+    "supported": 30,
+    "manipFactBearing": 1.0,
+    "semanticIncumbentCoverage": 0.9245,
+    "incumbentHealthy": true,
+    "nliTotalCoverage": 0.1415,
+    "semanticAnswerableCoverage": 0.9333,
+    "nliAnswerableCoverage": 0.4333,
+    "answerableCoverageDrop": 0.5,
+    "abstentionGuardPass": false,
+    "NLI_vs_semantic_deltaF1": {
+      "0": 0.0312,
+      "1": 0.0312,
+      "7": 0.0312
+    },
+    "ci95_seed0": [
+      0.0,
+      0.065
+    ],
+    "primaryPass": false,
+    "label": "REAL non-forge n=106; MDE ~0.21 -> underpowered",
+    "GO": false
+  },
+  "forgeArm": {
+    "n": 318,
+    "supported": 90,
+    "manipFactBearing": 1.0,
+    "semanticIncumbentCoverage": 0.8491,
+    "incumbentHealthy": true,
+    "nliTotalCoverage": 0.1604,
+    "semanticAnswerableCoverage": 0.8778,
+    "nliAnswerableCoverage": 0.4778,
+    "answerableCoverageDrop": 0.4,
+    "abstentionGuardPass": false,
+    "NLI_vs_semantic_deltaF1": {
+      "0": 0.05,
+      "1": 0.05,
+      "7": 0.05
+    },
+    "ci95_seed0": [
+      0.0325,
+      0.0926
+    ],
+    "primaryPass": true,
+    "label": "FORGE hedge-matched paraphrases; INTERNAL-VALIDITY-ONLY (correlated)",
+    "GO": false
+  },
+  "verdict": "NO-GO (robust). Hedge-matching the claims HELPED (NLI answerable-coverage 0.06->0.43) but did not fix the over-abstention: NLI admits only 43% of true hedge-matched attributions vs the healthy semantic incumbent's 93% (answerable-coverage drop 0.50 >> 0.01). NLI's tiny F1 edge (real +0.031 CI[0,0.065] underpowered; forge +0.05 CI[0.033,0.093] internal-only) comes from correctly REJECTING wrong-author claims via contradiction, but at the cost of missing over half the true claims \u2014 because sophia's TERSE 3-sentence wiki prose often doesn't clearly enough state the attribution for the NLI cross-encoder to entail. This CONFIRMS the retrieval-bound thesis from the other side: entailment needs RICH evidence (FEVER sentences -> GO); on sophia's terse hedged prose it over-abstains (NO-GO), whether claims are blunt (D2) or hedge-matched (D3). sophia-domain qualifier remains OPEN; prerequisites: richer/longer sophia-domain evidence + more labeled data. Standing result unchanged: retrieval-bound GO on FEVER only. canClaimAGI=false.",
+  "guardMetricNote": "abstention guard uses ANSWERABLE-coverage (fraction of SUPPORTED claims admitted) per the protocol's wording ('refusing ANSWERABLE questions'); an earlier draft used TOTAL coverage, which wrongly penalized NLI for correctly REJECTING refuted claims the over-admitting semantic incumbent accepts. Corrected.",
+  "hedgeMatchingEffect": {
+    "nli_answerable_coverage_D2_blunt": 0.057,
+    "nli_answerable_coverage_D3_hedgematched": 0.4333,
+    "reading": "hedge-matching RAISED NLI's answerable-coverage from ~0.06 (blunt claims, D2) to 0.43 \u2014 the framing fix helped \u2014 but NLI still misses >half the true hedge-matched claims on sophia's TERSE 3-sentence wiki prose, so it still fails the \u22640.01 answerable-coverage guard vs semantic's 0.93."
+  }
+}

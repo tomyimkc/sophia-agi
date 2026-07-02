@@ -2649,3 +2649,18 @@ VERDICT: NOT GO. ROOT CAUSE = CLAIM-EVIDENCE HEDGE MISMATCH: sophia's provenance
 abstains (consistent with sophia's uncertainty discipline), semantic over-admits on topicality, lexical collapses.
 sophia-domain qualifier NOT closed. Standing result: retrieval-bound GO holds only on FEVER. Banked: ARC-SUMMARY.md.
 canClaimAGI=false.
+
+
+## 2026-07-02 — D3 (hedge-matched claims): NO-GO robust; over-abstention on terse prose confirms retrieval-bound
+
+The framing fix D2 identified. Hedge-matched claims ('X is the TRADITIONALLY ATTRIBUTED author of Y') vs sophia's
+hedged wiki-prose evidence, frozen NLI vs the healthy semantic incumbent (build_semantic_entailment). Corrected the
+abstention guard to ANSWERABLE-coverage (protocol wording; an earlier draft used total coverage, wrongly penalizing
+NLI for correctly rejecting refuted claims). RESULT: NO-GO. Hedge-matching RAISED NLI answerable-coverage 0.06->0.43
+(the framing fix helped) but NLI still admits only 43% of true attributions vs semantic's 93% (drop 0.50 >> 0.01 guard).
+NLI's tiny F1 edge (real +0.031 CI[0,0.065] underpowered; forge +0.05 CI[0.033,0.093] internal-only) comes from
+rejecting wrong-author claims via contradiction, at the cost of missing >half the true claims — because sophia's TERSE
+3-sentence wiki prose often doesn't clearly state the attribution for the cross-encoder to entail. CONFIRMS retrieval-bound
+from the other side: entailment needs RICH evidence (FEVER sentences -> GO); sophia terse prose -> over-abstains (NO-GO),
+blunt (D2) or hedge-matched (D3). sophia-domain qualifier OPEN; prereqs: richer/longer sophia evidence + more labeled data.
+canClaimAGI=false.

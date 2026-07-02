@@ -45,3 +45,6 @@ all reports + this summary. The harness is the deliverable; nothing claims a cap
 2. **Claims that match the evidence's epistemics** (hedged claims for hedged evidence) — or accept that
    blunt-claim verification is the wrong task for a hedged-provenance corpus.
 3. **A healthy incumbent** (semantic or hybrid) for any future gate — the lexical screen is not one.
+
+## D3 addendum (hedge-matched claims)
+Matching claim epistemics to sophia's hedged evidence ('X is the traditionally attributed author of Y') RAISED NLI's answerable-coverage from D2's ~0.06 to 0.43 — the framing fix helped — but NLI still over-abstains vs the healthy semantic incumbent (0.43 vs 0.93; fails the answerable-coverage guard) because sophia's TERSE 3-sentence wiki prose often doesn't clearly state the attribution. NO-GO, robust across blunt (D2) and hedge-matched (D3) claims. This confirms retrieval-bound from the other side: entailment needs RICH evidence; sophia's terse prose is insufficient. Prereq: richer/longer sophia-domain evidence + more labeled data.
