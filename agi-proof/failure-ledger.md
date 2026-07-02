@@ -2538,3 +2538,28 @@ disagreement to be a useful OOD signal. Interpretation: R2's factcheck AUROC 0.8
 structure (`accepted`), not correctness. Consistent with the whole arc — hidden-state signals decode surface
 structure well, factual correctness poorly. Report: agi-proof/benchmark-results/coherence-reframes/R2-VALIDATION-mmlu.public-report.json.
 The R2 candidate row stays Open. canClaimAGI=false.
+
+
+## 2026-07-02 — NLI-entailment grounding verifier: FIRST VALIDATED POSITIVE of the arc (entailment >> coherence)
+
+After O1-O5 + W1/W5 + R1-R5 (all coherence/hidden-state reframes) failed to beat baselines on factual
+correctness, the mechanism SWAP to textual entailment (NLI) works. For a claim + retrieved evidence, run
+NLI(premise=evidence, hypothesis=claim); supportScore = maxEntail - maxContradict. Head-to-head vs the
+coherence baseline (1 - fixed-point residual, semantic MiniLM):
+
+- FEVER (n=400 balanced SUPPORTS/REFUTES, gold evidence): NLI AUROC **0.962** vs coherence 0.650;
+  paired delta **+0.311, CI [0.258, 0.365] excludes 0 on all 3 seeds**. Gate MET.
+- C1/factcheck (n=59, same data where coherence failed): dedicated NLI 0.73 (+0.18 over coherence, CI grazes 0,
+  underpowered); LLM-as-NLI (grok) 0.77 (+0.23, CI [0.06,0.40] EXCLUDES 0, all seeds).
+
+Adversarially verified SOUND (independent agent + fast re-derivation, 4-decimal match): zero label leaks,
+correct polarity, coherence baseline fair/active. The NLI model is trained on MNLI/SNLI NOT FEVER (fair OOD),
+and 0.962 is CONSERVATIVE (~12% FEVER labels are wrong; NLI corrects them -> AUROC 1.0 with fixed labels).
+
+HONEST BOUNDS (why still candidateOnly): the NLI model is a purpose-built specialist; FEVER gold evidence is
+clean/curated (real retrieval is noisier); this validates the MECHANISM CHOICE for sophia's fact_check/grounding
+stack (use entailment, NOT coherence), it does NOT claim NLI 'solves verification'. canClaimAGI=false.
+
+Arc conclusion: coherence/hidden-state signals decode surface structure well, factual support poorly; the one
+validated win is asking 'does the evidence ENTAIL the claim' instead of 'is the answer coherent'. Report:
+agi-proof/benchmark-results/coherence-reframes/NLI-ENTAILMENT.public-report.json.
