@@ -1,12 +1,14 @@
 {
-  "passed": true,
-  "mean_kl": 0.003785,
-  "top1_agreement": 0.972656,
-  "protected_max_kl": 0.054208,
-  "protected_min_agreement": 0.972656,
+  "passed": false,
+  "mean_kl": 0.003894,
+  "top1_agreement": 0.980469,
+  "protected_max_kl": 0.154508,
+  "protected_min_agreement": 0.980469,
   "mem_ratio": 3.3016,
   "n_eval": 256,
-  "reasons": [],
+  "reasons": [
+    "protected_max_kl 0.1545 > 0.1"
+  ],
   "device": "cuda",
   "scheme": "nvfp4",
   "round_mode": "gptq",
@@ -26,26 +28,26 @@
   "incomplete_merge": false,
   "merge_warnings": [],
   "abstention": {
-    "raw_top1": 0.9727,
-    "answered_top1": 0.992,
-    "coverage": 0.9766,
-    "abstained": 0.0234,
+    "raw_top1": 0.9805,
+    "answered_top1": 0.9922,
+    "coverage": 1.0,
+    "abstained": 0.0,
     "target_answered_agreement": 0.98,
     "meets_target_on_answered": true,
-    "nonconformity_threshold": 0.9831,
+    "nonconformity_threshold": 1.0,
     "n_calib": 128,
     "n_test": 128,
     "alpha": 0.02,
     "note": "answered_top1 is MEASURED on a held-out split (selective accuracy), not a proven per-token guarantee. Serve-time signal (quant top1-top2 margin) needs no FP model."
   },
   "abstention_frontier": {
-    "raw_top1": 0.9727,
+    "raw_top1": 0.9805,
     "target_answered": 0.97,
     "shippable_operating_point": {
       "calib_quantile": 1.0,
       "threshold": 1.0,
       "coverage": 1.0,
-      "answered_top1": 0.9844
+      "answered_top1": 0.9922
     },
     "shippable": true,
     "frontier": [
@@ -53,66 +55,66 @@
         "calib_quantile": 1.0,
         "threshold": 1.0,
         "coverage": 1.0,
-        "answered_top1": 0.9844
+        "answered_top1": 0.9922
       },
       {
         "calib_quantile": 0.95,
-        "threshold": 0.9691,
+        "threshold": 0.9676,
         "coverage": 0.9766,
-        "answered_top1": 0.992
+        "answered_top1": 1.0
       },
       {
         "calib_quantile": 0.9,
-        "threshold": 0.9087,
-        "coverage": 0.9297,
+        "threshold": 0.8851,
+        "coverage": 0.9375,
         "answered_top1": 1.0
       },
       {
         "calib_quantile": 0.85,
-        "threshold": 0.8512,
-        "coverage": 0.9141,
+        "threshold": 0.8487,
+        "coverage": 0.9062,
         "answered_top1": 1.0
       },
       {
         "calib_quantile": 0.8,
-        "threshold": 0.8205,
-        "coverage": 0.8906,
+        "threshold": 0.8172,
+        "coverage": 0.8984,
         "answered_top1": 1.0
       },
       {
         "calib_quantile": 0.75,
-        "threshold": 0.7632,
-        "coverage": 0.8438,
+        "threshold": 0.7728,
+        "coverage": 0.875,
         "answered_top1": 1.0
       },
       {
         "calib_quantile": 0.7,
-        "threshold": 0.6617,
-        "coverage": 0.7812,
+        "threshold": 0.7042,
+        "coverage": 0.7969,
         "answered_top1": 1.0
       },
       {
         "calib_quantile": 0.65,
-        "threshold": 0.6041,
-        "coverage": 0.7188,
+        "threshold": 0.6092,
+        "coverage": 0.7422,
         "answered_top1": 1.0
       },
       {
         "calib_quantile": 0.6,
-        "threshold": 0.4906,
-        "coverage": 0.6719,
+        "threshold": 0.5307,
+        "coverage": 0.6797,
         "answered_top1": 1.0
       },
       {
         "calib_quantile": 0.55,
-        "threshold": 0.3992,
+        "threshold": 0.3949,
         "coverage": 0.6094,
         "answered_top1": 1.0
       },
       {
         "calib_quantile": 0.5,
-        "threshold": 0.3138,
-        "coverage": 0.5703,
+        "threshold": 0.3157,
+        "coverage": 0.5859,
         "answered_top1": 1.0
       }
     ],
