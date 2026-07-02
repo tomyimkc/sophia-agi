@@ -11,14 +11,17 @@ command that makes Layer 1 real instead of mock. It reads the JSON produced by
 and maps it onto `agent/ssil_layer1.adapter_candidate`, then runs the IDENTICAL
 orchestrator (G2/G4/G5/G6) that gates skills:
 
-  before/after capability  <- base.meanReward / adapterScore.meanReward   (G4 headline)
+  before/after capability  <- base.passAt1 / adapterScore.passAt1   (G4 headline; the
+                              load-bearing metric — meanReward is reported as ADVISORY
+                              only, it is an abstention-dominated artifact on step-style
+                              tasks and is never gated on)
   protected integrity      <- 1 - trueFalsePositiveRate  (lower FP = higher integrity;
                               a rise in false-positives shows up as a protected regression)
   contamination            <- entityIntersection non-empty -> G4 reject
 
-Fail-closed: if the report lacks a before/after capability pair, this errors with a
-clear message instead of inventing numbers. Output carries candidateOnly /
-canClaimAGI=false.
+Fail-closed: if the report lacks a before/after passAt1 pair, this refuses with
+reason 'passAt1 missing' instead of silently falling back to meanReward or
+inventing numbers. Output carries candidateOnly / canClaimAGI=false.
 """
 from __future__ import annotations
 
@@ -61,23 +64,24 @@ def _dig(report: dict[str, Any], *paths: tuple[str, ...]) -> Any:
 
 def map_report(report: dict[str, Any], *, adapter_id: str | None = None) -> dict[str, Any]:
     task = report.get("task") or "provenance"
-    # Capability metric: passAt1 for math/code (objective, ungameable per-item reward),
-    # meanReward for provenance (the FP-aware aggregate reward).
-    if task in ("math", "code"):
-        before = _dig(report, ("base", "passAt1"), ("baseScore", "passAt1"))
-        after = _dig(report, ("adapterScore", "passAt1"), ("adapter", "passAt1"))
-        capability_metric = "passAt1"
-        contam_key = "familyIntersection"
-    else:
-        before = _dig(report, ("base", "meanReward"), ("baseScore", "meanReward"))
-        after = _dig(report, ("adapterScore", "meanReward"), ("adapter", "meanReward"))
-        capability_metric = "meanReward"
-        contam_key = "entityIntersection"
+    # Capability metric: passAt1 for EVERY task. passAt1 (single greedy completion
+    # passes the task verifier) is the load-bearing, per-item-objective capability
+    # number; meanReward is an abstention/aggregate artifact (see the rlvr-harness-traps
+    # discipline) and is carried below as ADVISORY only — it is never gated on.
+    # FAIL-CLOSED: a report without passAt1 on both sides is refused with reason
+    # 'passAt1 missing'; there is NO silent fallback to meanReward.
+    capability_metric = "passAt1"
+    contam_key = "familyIntersection" if task in ("math", "code") else "entityIntersection"
+    before = _dig(report, ("base", "passAt1"), ("baseScore", "passAt1"))
+    after = _dig(report, ("adapterScore", "passAt1"), ("adapter", "passAt1"))
     if before is None or after is None:
+        missing = [side for side, val in (("base", before), ("adapterScore", after)) if val is None]
         raise SystemExit(
-            f"ERROR: report has no before/after capability pair for task={task} "
-            f"(expected base.{capability_metric} + adapterScore.{capability_metric}). "
-            "Produce it with: python3 tools/eval_rlvr_adapter.py --mode real --adapter <ckpt>"
+            f"ERROR: passAt1 missing ({', '.join(missing)}) for task={task} — the ingest gate "
+            "is fail-closed on the load-bearing capability metric and will NOT fall back to "
+            "meanReward (an aggregate/abstention artifact, advisory only). "
+            "Re-run: python3 tools/eval_rlvr_adapter.py --mode real --adapter <ckpt> "
+            "so base.passAt1 and adapterScore.passAt1 are emitted."
         )
     entity_intersection = (
         _dig(report, (contam_key,), ("split", contam_key), ("split", "entityIntersection")) or []
@@ -114,11 +118,18 @@ def map_report(report: dict[str, Any], *, adapter_id: str | None = None) -> dict
         "protected_before": prot_before, "protected_after": prot_after,
         "protectedAxis": protected_axis,
         "contaminated": contaminated, "entityIntersection": entity_intersection,
+        # ADVISORY ONLY — never gated on. Kept so a human can still see the reward
+        # aggregate next to the load-bearing passAt1 pair; fail-OPEN on absence
+        # (e.g. the invention task emits no meanReward at all).
+        "meanRewardAdvisory": {
+            "before": _dig(report, ("base", "meanReward"), ("baseScore", "meanReward")),
+            "after": _dig(report, ("adapterScore", "meanReward"), ("adapter", "meanReward")),
+        },
     }
     # Capability-panel deltas (attribution / hallucination / calibration), if the
     # report carries them (eval_rlvr_adapter.py --capability-panel). Fail-OPEN on
     # absence: old reports and non-panel runs still ingest exactly as before; the
-    # legacy G4/G5 headline (meanReward + FP integrity) is unaffected by these.
+    # G4/G5 headline (passAt1 + FP integrity) is unaffected by these.
     panel = report.get("capabilityPanel")
     if isinstance(panel, dict) and panel.get("delta"):
         pdelta = panel["delta"]

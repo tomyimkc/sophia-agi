@@ -492,13 +492,20 @@ if [ -d /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 ]; then
       --out /workspace/sophia-runpod/sophia-faithful-v1.compare-eval.json \\
       || echo "[runpod] faithfulness compare-eval failed (non-fatal)"
   else
+    # (task,reward,seed)-stamped output + rm -f BEFORE the eval: on a reused/shared
+    # /workspace (persistent network volume; parallel sweep arms) a fixed filename let a
+    # PREVIOUS run's report survive a swallowed eval failure and be scp'd back as THIS
+    # run's numbers (stale/cross-run report pickup). Stamping the run identity into the
+    # path and clearing it first is fail-closed: if this eval did not run, no file exists.
+    ADAPTER_EVAL_OUT="/workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.$SOPHIA_TASK-$SOPHIA_REWARD-seed$SOPHIA_SEED.json"
+    rm -f "$ADAPTER_EVAL_OUT"
     python tools/eval_rlvr_adapter.py --mode real \\
       --task "$SOPHIA_TASK" \\
       --step-domain "$SOPHIA_STEP_DOMAIN" \\
       --model "$SOPHIA_MODEL" \\
       --adapter /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 \\
       --seed "$SOPHIA_SEED" \\
-      --out /workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.json{capability_flag} \\
+      --out "$ADAPTER_EVAL_OUT"{capability_flag} \\
       || echo "[runpod] adapter-eval failed (non-fatal); no SSIL gate input produced"
   fi
   # PRIMARY metric for the code task: the POWERED N=175 open-invention suite
@@ -507,12 +514,15 @@ if [ -d /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 ]; then
   # invention report carries the integrity gate (checks.noRewardHacksAccepted) and
   # the power flag (checks.powered) the measurement_spec treats as primary.
   if [ "$SOPHIA_TASK" = "code" ]; then
+    # Same stale-pickup guard as the adapter-eval above: seed-stamped path, cleared first.
+    INVENTION_EVAL_OUT="/workspace/sophia-runpod/sophia-rlvr-v1.invention-eval.seed$SOPHIA_SEED.json"
+    rm -f "$INVENTION_EVAL_OUT"
     python tools/eval_rlvr_adapter.py --mode real \\
       --task invention \\
       --model "$SOPHIA_MODEL" \\
       --adapter /workspace/sophia-runpod/checkpoints/sophia-rlvr-v1 \\
       --seed "$SOPHIA_SEED" \\
-      --out /workspace/sophia-runpod/sophia-rlvr-v1.invention-eval.json \\
+      --out "$INVENTION_EVAL_OUT" \\
       || echo "[runpod] invention-eval failed (non-fatal)"
   fi
 fi
@@ -859,18 +869,22 @@ def main(argv: list[str] | None = None) -> int:
             )
             # Before/after adapter-eval (live mode only; best-effort). The workflow's
             # ingest step globs *adapter-eval*.json and runs it through the SSIL gate.
+            # The remote path is (task,reward,seed)-stamped and cleared before the eval
+            # (see _remote_training_script), so scp can only ever pick up a report THIS
+            # run's eval actually wrote — never a stale file from a reused /workspace.
+            eval_stamp = f"{args.task}-{args.reward}-seed{args.seed}"
             _scp_from_pod(
                 conn,
                 key_path,
-                "/workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.json",
-                args.artifacts_dir / f"{pod_id}.rlvr.adapter-eval.json",
+                f"/workspace/sophia-runpod/sophia-rlvr-v1.adapter-eval.{eval_stamp}.json",
+                args.artifacts_dir / f"{pod_id}.rlvr.adapter-eval.{eval_stamp}.json",
             )
             # POWERED open-invention primary eval (code task; best-effort).
             _scp_from_pod(
                 conn,
                 key_path,
-                "/workspace/sophia-runpod/sophia-rlvr-v1.invention-eval.json",
-                args.artifacts_dir / f"{pod_id}.rlvr.invention-eval.json",
+                f"/workspace/sophia-runpod/sophia-rlvr-v1.invention-eval.seed{args.seed}.json",
+                args.artifacts_dir / f"{pod_id}.rlvr.invention-eval.seed{args.seed}.json",
             )
             # Base-vs-adapter faithfulness contrast (faithfulness task; best-effort).
             _scp_from_pod(

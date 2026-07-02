@@ -284,8 +284,9 @@ def test_run_eval_step_requests_chat_template() -> None:
     seen: dict = {}
     tok_holder: dict = {"tok": _ChatTok()}
 
-    def fake_loader(model, adapter, *, max_new_tokens, chat_template=False):
+    def fake_loader(model, adapter, *, max_new_tokens, chat_template=False, seed=0):
         seen["chat_template"] = chat_template
+        seen["seed"] = seed
 
         def gen(prompt: str) -> str:
             # Exactly the real generator's templating line in _load_real_generators.

@@ -40,7 +40,9 @@ def test_concept_adapter_eval_and_ingest() -> None:
         report = json.loads(out.read_text(encoding="utf-8"))
         assert report["task"] == "concept"
         assert report["passed"] is True
-        # the report carries the keys ingest_rlvr_eval.map_report needs
+        # the report carries the keys ingest_rlvr_eval.map_report needs — passAt1 is
+        # the load-bearing gate metric, meanReward rides along as the advisory aggregate
+        assert "passAt1" in report["base"] and "passAt1" in report["adapterScore"]
         assert "meanReward" in report["base"] and "meanReward" in report["adapterScore"]
         # adapter (grounded) must beat base (careless) and not raise over-abstention
         assert report["delta"]["meanReward"] > 0
@@ -48,7 +50,10 @@ def test_concept_adapter_eval_and_ingest() -> None:
 
         mapped = ingest_rlvr_eval.map_report(report)
         assert mapped["task"] == "concept"
-        assert mapped["capabilityMetric"] == "meanReward"
+        assert mapped["capabilityMetric"] == "passAt1"
+        assert mapped["before"] == report["base"]["passAt1"]
+        assert mapped["after"] == report["adapterScore"]["passAt1"]
+        assert mapped["meanRewardAdvisory"]["after"] == report["adapterScore"]["meanReward"]
         assert mapped["after"] > mapped["before"]
         assert mapped["contaminated"] is False
 
