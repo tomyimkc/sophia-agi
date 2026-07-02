@@ -69,10 +69,15 @@ filter, NOT your change. Never stage them. The durable fix is the
 
 ## 4. Environment gaps that look like code failures
 
-- `pytest` / `sympy` are not preinstalled: a red run_rlvr offline check with
-  `cleanPositive: false` on the math step verifier means SYMPY IS MISSING
-  (the verifier abstains fail-closed), not that the reward is broken.
-  `pip install pytest sympy` first, then re-diagnose.
+- `pytest` / `sympy` / `z3-solver` / `numpy` are not preinstalled: a red run_rlvr
+  offline check with `cleanPositive: false` on the math step verifier means SYMPY IS
+  MISSING (the verifier abstains fail-closed), not that the reward is broken; a lone
+  `test_godel_oracle` failure means Z3 IS MISSING; a `build_rag_index --verify`
+  traceback means numpy. `pip install pytest sympy z3-solver numpy`, then re-diagnose.
+- The distro-packaged `cryptography` (41.0.7/deb) can PANIC on import (pyo3
+  PanicException, not ImportError) for the ed25519 primitives;
+  `pip install --upgrade cryptography` repairs it in place even when the uninstall
+  step errors on the missing debian RECORD file.
 - The builder (`build_local_sophia_dataset.build`) requires `out` under the repo
   root unless the manifest path fallback (is_relative_to) is present.
 

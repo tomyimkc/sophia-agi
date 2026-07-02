@@ -1,0 +1,72 @@
+# Background workers (ruflo-integration §3.7) — advisory, budget-capped, offline.
+#
+# The docs-sync/drift worker category already exists as CI gates; this workflow adds
+# the remaining cheap workers as a weekly cron + on-demand dispatch on a HOSTED
+# runner (never the self-hosted GPU boxes — a worker must not touch the Spark).
+# Every step is advisory (continue-on-error) except the readiness audit, whose FAIL
+# means the agent harness itself is broken and should page a human via a red run.
+# No step spends money, calls a model, or writes to the repo.
+name: harness-workers
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 5 * * 1"   # weekly, Monday 05:17 UTC
+
+permissions:
+  contents: read
+
+jobs:
+  workers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # worker: audit — agent-readiness scorecard (the one load-bearing step;
+      # tolerant of the locked git-crypt checkout by design)
+      - name: readiness audit
+        run: python tools/agent_readiness_audit.py --json | tee readiness.json
+
+      # worker: pattern-extract — mine router tuples from any committed traces
+      # (advisory; traces are usually local-only, so this is often a no-op)
+      - name: mine router tuples
+        continue-on-error: true
+        run: python tools/mine_router_tuples.py --out /tmp/router_tuples.jsonl
+
+      # worker: skill efficacy — co-occurrence report over session traces
+      - name: skill efficacy report
+        continue-on-error: true
+        run: python tools/skill_efficacy_report.py --json | tee skill-efficacy.json
+
+      # worker: claims hygiene — the no-overclaim linter on public prose
+      - name: claims lint
+        continue-on-error: true
+        run: python tools/lint_claims.py
+
+      # worker: witness verify — check any committed witness sidecars still match
+      - name: witness verify
+        continue-on-error: true
+        run: |
+          mapfile -t witnessed < <(git ls-files '*.witness.json' | sed 's/\.witness\.json$//')
+          if [ "${#witnessed[@]}" -gt 0 ]; then
+            pip install --quiet cryptography
+            python tools/witness.py verify "${witnessed[@]}"
+          else
+            echo "no witnessed artifacts yet"
+          fi
+
+      - name: upload worker reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: harness-worker-reports
+          path: |
+            readiness.json
+            skill-efficacy.json
+          if-no-files-found: ignore
+          retention-days: 30

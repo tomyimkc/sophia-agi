@@ -1136,3 +1136,135 @@ def source_verify_tool(answer: str, question: str = "") -> dict:
 
 def dumps(payload: dict) -> str:
     return json.dumps(payload, ensure_ascii=False, indent=2)
+
+
+# --------------------------------------------------------------------------- #
+# Meta-harness surface (ruflo-integration adoption, 2026-07-02): capabilities
+# index, gated experience memory, route preview, trajectory capture, resource
+# claims. Write-shaped tools are @audited(risk="medium") — approval-gated.
+# --------------------------------------------------------------------------- #
+
+_TOOL_FAMILIES = (
+    ("gate", ("validate", "source_verify", "gate_", "check_claim", "concept_edge",
+              "medical_citation", "corpus_stats")),
+    ("virtue", ("conscience", "constitution", "deontic", "deception", "moral",
+                "courage", "cowardice", "temperance", "intemperance", "attention",
+                "distraction", "justice", "partiality", "virtue", "andreia",
+                "sophrosyne", "prosoche", "dikaiosyne", "public_standard")),
+    ("belief", ("belief", "counterfactual", "retract", "revise", "wiki_")),
+    ("calibration", ("uncertainty", "conformal", "trajectory_eval",
+                     "capability_retention", "ocean", "personality", "mbti")),
+    ("council", ("council", "team_agents", "rubric", "sector")),
+    ("traces", ("trace_", "cross_trace")),
+    ("contract", ("record_claim", "verify_claim", "explain_verdict", "contract",
+                  "enqueue_task", "next_task", "program_status", "pif_")),
+    ("memory", ("memory_", "trajectory_record", "experience")),
+    ("orchestration", ("route_task", "claim_resource", "capabilities")),
+    ("external", ("web_evidence", "openclaw", "export_corpus")),
+)
+
+
+def capabilities() -> dict:
+    """Read-only index of the served tool surface, grouped by family, with risk
+    levels — the discoverability answer to a wide tool count."""
+    import re as _re
+
+    from sophia_mcp.audit import TOOL_RISK
+
+    server_src = (ROOT / "sophia_mcp" / "server.py").read_text(encoding="utf-8")
+    tools = sorted(set(_re.findall(r"def (sophia_[a-z0-9_]+)\(", server_src)))
+    families: dict = {name: [] for name, _ in _TOOL_FAMILIES}
+    families["other"] = []
+    for tool in tools:
+        stem = tool.removeprefix("sophia_")
+        for name, needles in _TOOL_FAMILIES:
+            if any(n in stem for n in needles):
+                families[name].append({"tool": tool, "risk": TOOL_RISK.get(tool, "low")})
+                break
+        else:
+            families["other"].append({"tool": tool, "risk": TOOL_RISK.get(tool, "low")})
+    return {
+        "schema": "sophia.capabilities.v1",
+        "nTools": len(tools),
+        "families": {k: v for k, v in families.items() if v},
+        "note": "risk=medium/high tools require SOPHIA_MCP_APPROVE_WRITES=1 "
+                "(and are held for approval when SOPHIA_MCP_APPROVAL=1)",
+    }
+
+
+def _experience_bank():
+    from agent import experience_memory as em
+
+    # read the paths at call time (not dataclass-default time) so deployments and
+    # tests can repoint the store via the module attributes
+    return em.ExperienceBank(path=em.BANK_PATH, quarantine_path=em.QUARANTINE_PATH)
+
+
+def memory_search(query: str, k: int = 3) -> dict:
+    """Read-only search over the gated experience bank (accepted rows only)."""
+    matches = _experience_bank().search(query, k=max(1, min(int(k), 10)))
+    return {"schema": "sophia.memory_search.v1", "query": query,
+            "matches": matches,
+            "note": "hints are advisory only — re-verify everything downstream"}
+
+
+@audited("sophia_memory_store", risk="medium")
+def memory_store(record: dict) -> dict:
+    """Store a verified trajectory record; the bank's gate quarantines anything
+    without well-formed verification evidence (fail-closed)."""
+    return _experience_bank().add(dict(record or {}), source="mcp:sophia_memory_store")
+
+
+SESSION_TRACES = ROOT / "agent" / "memory" / "session_traces" / "events.jsonl"
+
+
+@audited("sophia_trajectory_record", risk="medium")
+def trajectory_record(event: dict) -> dict:
+    """Append a structured session-trace event (the ambient-capture endpoint the
+    Stop hook also writes to). Schema-checked, append-only, size-capped."""
+    from datetime import datetime, timezone
+
+    event = dict(event or {})
+    kind = event.get("kind")
+    if not (isinstance(kind, str) and kind.strip()):
+        return {"ok": False, "reason": "event.kind (str) is required"}
+    payload = json.dumps(event, ensure_ascii=False, sort_keys=True)
+    if len(payload) > 20_000:
+        return {"ok": False, "reason": "event too large (>20000 chars serialized)"}
+    SESSION_TRACES.parent.mkdir(parents=True, exist_ok=True)
+    row = {"ts": datetime.now(timezone.utc).isoformat(), **event}
+    with SESSION_TRACES.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
+    try:
+        shown = str(SESSION_TRACES.relative_to(ROOT))
+    except ValueError:  # repointed store outside the repo
+        shown = str(SESSION_TRACES)
+    return {"ok": True, "path": shown}
+
+
+def route_task_preview(task: str) -> dict:
+    """Read-only SwarmPlan preview from the deterministic v1 router (never spawns
+    anything; the trained head stays candidate-only behind its ablation gate)."""
+    from agent.swarm_router import SwarmRouter
+
+    return SwarmRouter().decide(task or "").to_dict()
+
+
+@audited("sophia_claim_resource", risk="medium")
+def claim_resource(action: str, resource: str = "", holder: str = "",
+                   ttl_s: float = 0.0, note: str = "") -> dict:
+    """Machine-enforced shared-resource claims (one-GPU-job invariant).
+    action: claim | release | heartbeat | status."""
+    from agent import resource_claims as rc
+
+    action = (action or "").strip().lower()
+    if action == "status":
+        return rc.status()
+    if action == "claim":
+        return rc.claim(resource, holder, ttl_s=float(ttl_s) or rc.DEFAULT_TTL_S, note=note)
+    if action == "heartbeat":
+        return rc.heartbeat(resource, holder)
+    if action == "release":
+        return rc.release(resource, holder)
+    return {"ok": False, "reason": f"unknown action {action!r} "
+                                   f"(claim|release|heartbeat|status)"}

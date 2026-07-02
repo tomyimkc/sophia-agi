@@ -26,10 +26,16 @@ Design (Sophia discipline — deterministic, offline-testable, fail-closed):
   * **Execution via delegation** — each node runs through
     ``agent.subagent.run_subagent``, inheriting isolation, least-privilege tool
     scope, and per-node budgets.
+  * **Cross-run experience (opt-in)** — when an :class:`agent.experience_memory.
+    ExperienceBank` is passed, the engine additionally (a) recalls verified past
+    trajectories similar to each node's goal and injects them as *advisory* hints,
+    and (b) records each verifier-passed node outcome back into the bank. ``None``
+    (default) leaves behavior byte-identical to before this seam existed.
 
-Honest bound: recovery is *within-run* hint injection, not weight learning; success
-of the whole tree is still meant to be judged by an external oracle (see
-``horizon.py``), never by the engine itself.
+Honest bound: recovery is *within-run* hint injection, not weight learning; the
+experience bank generalizes hints across runs but they remain suggestions the
+node's own verifiers must still confirm. Success of the whole tree is still meant
+to be judged by an external oracle (see ``horizon.py``), never by the engine itself.
 """
 
 from __future__ import annotations
@@ -239,6 +245,7 @@ def run_long_horizon(
     *,
     client: ModelClient | None = None,
     recovery: RecoveryMemory | None = None,
+    experience: "object | None" = None,
     approve_tools: bool = False,
     max_nodes: int = 256,
     deadline_monotonic: float | None = None,
@@ -249,6 +256,12 @@ def run_long_horizon(
     On failure, a recovery hint is recorded; before each attempt the engine recalls
     a hint for the node's signature and injects it into the child's context. The
     ledger is durable: re-running with a resumed ledger skips ``done`` nodes.
+
+    ``experience`` (opt-in, default ``None`` = no behavior change) is an
+    :class:`agent.experience_memory.ExperienceBank`: before each node the engine
+    injects verified cross-run hints for similar goals (advisory only), and after a
+    verifier-passed node it records the outcome back into the bank (the bank's own
+    gate re-checks the evidence fields, fail-closed).
 
     ``deadline_monotonic`` (review D4) is a cooperative wall-clock budget expressed
     as a ``time.monotonic()`` value. When set, the engine stops launching new nodes
@@ -277,7 +290,8 @@ def run_long_horizon(
 
         sig = _signature(node.goal)
         hint = recovery.recall(signature=sig)
-        context = node_context(ledger, node, hint)
+        exp_hint = experience.hints_for(node.goal) if experience is not None else None
+        context = node_context(ledger, node, hint, experience_hint=exp_hint)
         spec = SubagentSpec(
             goal=node.goal,
             mode=node.mode,
@@ -296,6 +310,16 @@ def run_long_horizon(
             node.status = DONE
             node.result_text = child.final_text
             node.failure = None
+            if experience is not None:
+                from agent.experience_memory import record_from_subagent
+
+                # Verified-success write-back; the bank's own gate re-validates the
+                # evidence fields and quarantines anything malformed (fail-closed).
+                experience.add(record_from_subagent(
+                    node.goal, child.final_text,
+                    verified_by=["subagent.run_subagent:ok"],
+                    source=f"long_horizon:{ledger.ledger_id}",
+                ))
         else:
             node.status = FAILED
             node.failure = ";".join(child.failures) or "unknown"
@@ -321,10 +345,11 @@ def run_long_horizon(
     )
 
 
-def node_context(ledger: TaskLedger, node: SubtaskNode, hint: str | None) -> str:
+def node_context(ledger: TaskLedger, node: SubtaskNode, hint: str | None,
+                 *, experience_hint: str | None = None) -> str:
     """Assemble the context handed to a node: the dependency outputs it builds on,
-    plus any recalled recovery hint. Kept small; the child's own context manager
-    will budget it further."""
+    plus any recalled recovery hint and any cross-run experience hints (advisory).
+    Kept small; the child's own context manager will budget it further."""
     parts = [f"Overall goal: {ledger.goal}"]
     for dep in node.deps:
         dn = ledger.by_id(dep)
@@ -332,4 +357,6 @@ def node_context(ledger: TaskLedger, node: SubtaskNode, hint: str | None) -> str
             parts.append(f"Result of prerequisite {dep}:\n{dn.result_text}")
     if hint:
         parts.append(f"Recovery hint from a prior similar failure — heed it:\n{hint}")
+    if experience_hint:
+        parts.append(experience_hint)
     return "\n\n".join(parts)

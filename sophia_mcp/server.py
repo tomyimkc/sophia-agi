@@ -92,6 +92,14 @@ from sophia_mcp.tools_impl import (  # noqa: E402
     wiki_validate_tool,
     source_verify_tool,
 )
+from sophia_mcp.tools_impl import (  # noqa: E402  (meta-harness surface, 2026-07-02)
+    capabilities,
+    claim_resource,
+    memory_search,
+    memory_store,
+    route_task_preview,
+    trajectory_record,
+)
 from sophia_mcp import boundary, gateway_wiring  # noqa: E402
 
 try:
@@ -937,6 +945,58 @@ def sophia_program_status() -> str:
                          "true external sealing", "model x trait crossover", "live GRPO", "calibration"],
         "substrate": "Big Five (OCEAN) is measured; MBTI is a one-way display veneer.",
     })
+
+
+# --------------------------------------------------------------------------- #
+# Meta-harness surface (ruflo-integration adoption, 2026-07-02)
+# --------------------------------------------------------------------------- #
+
+
+@mcp.tool()
+def sophia_capabilities() -> str:
+    """Read-only index of the served tool surface grouped by family (gate, virtue,
+    belief, calibration, council, contract, memory, orchestration, external) with
+    per-tool risk levels. Start here when unsure which tool to call."""
+    return dumps(capabilities())
+
+
+@mcp.tool()
+def sophia_memory_search(query: str, k: int = 3) -> str:
+    """Search the gated experience bank for verified past trajectories similar to
+    the query. Read-only; returns advisory hints (accepted rows only — quarantined
+    rows are never retrievable)."""
+    return dumps(memory_search(query, k))
+
+
+@mcp.tool()
+def sophia_memory_store(record: dict) -> str:
+    """Store a verified trajectory record in the experience bank (risk=medium,
+    audited, approval-gated). The record must carry verdict=accepted plus a
+    non-empty verifiedBy list; anything else is quarantined, not stored."""
+    return dumps(memory_store(record))
+
+
+@mcp.tool()
+def sophia_trajectory_record(event: dict) -> str:
+    """Append a structured session-trace event (kind required) to the ambient
+    capture stream that feeds the trajectory-pack miner (risk=medium, audited)."""
+    return dumps(trajectory_record(event))
+
+
+@mcp.tool()
+def sophia_route_task(task: str) -> str:
+    """Preview the deterministic v1 SwarmRouter plan for a task (solo-vs-swarm,
+    teams, budgets, signals, honest cost estimate). Read-only — spawns nothing."""
+    return dumps(route_task_preview(task))
+
+
+@mcp.tool()
+def sophia_claim_resource(action: str, resource: str = "", holder: str = "",
+                          ttl_s: float = 0.0, note: str = "") -> str:
+    """Machine-enforced shared-resource claims (e.g. spark-gpu): action is one of
+    claim | release | heartbeat | status. TTL'd, fail-closed on a corrupt store;
+    only the holder can release a live claim (risk=medium, audited)."""
+    return dumps(claim_resource(action, resource, holder, ttl_s, note))
 
 
 if __name__ == "__main__":

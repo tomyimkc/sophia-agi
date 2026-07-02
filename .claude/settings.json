@@ -19,6 +19,10 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/git_write_guard.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/commit_claim_guard.sh"
           }
         ]
       }
@@ -30,6 +34,25 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/skill_capture_nudge.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/skill_invocation_trace.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/session_trace.sh"
           }
         ]
       }

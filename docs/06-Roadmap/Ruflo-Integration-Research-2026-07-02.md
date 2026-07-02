@@ -340,7 +340,33 @@ re-verify on retrieval); router head overfitting to historical task mix (mitigat
 suites + periodic hand-authored-v1 shadow comparison); scope creep toward ruflo's breadth
 (mitigate: the anti-adoption list above is part of this doc on purpose).
 
-## 8. Sources
+## 8. Implementation status (same day, 2026-07-02)
+
+The recommendations were implemented on this branch. Everything below is
+infrastructure — no capability or uplift claim changes; every learned/retrieved
+component stays candidate-only behind its pre-registered gate.
+
+| Doc § | Landed as | Status |
+|---|---|---|
+| 3.1 | `agent/experience_memory.py` (gated bank) + opt-in `experience=` seam in `agent/long_horizon.py` | shipped; uplift eval still to pre-register |
+| 3.2 | `.claude/hooks/session_trace.sh`, `skill_invocation_trace.sh`, `commit_claim_guard.sh` + settings registration | shipped |
+| 3.3 | `tests/test_ann_tripwire.py` (self-triggering upgrade tripwire at 5000 chunks) | shipped; HNSW deferred until it fires |
+| 3.4 | `agent/router_head.py` (candidate head, fail-closed to v1) + `tools/mine_router_tuples.py` | shipped; default remains v1 until the ablation gate |
+| 3.5 | `agent/goap_planner.py` (preconditions/effects, bounded A*, replan events, `plan_to_subtasks` lowering) | shipped as a standalone layer |
+| 3.6 | `JudgeConsensusPolicy` + `VALIDATION_POLICY` in `gateway/consensus.py` | shipped; adopt in judge-farm prereg next |
+| 3.7 | `.github/workflows/harness-workers.yml` (weekly, hosted runner, advisory) | shipped |
+| 3.8 | `tools/witness.py` (ed25519 keygen/sign/verify, sidecars) | shipped; key ceremony pending (owner-held key) |
+| 3.9 | `agent/resource_claims.py` + `sophia_claim_resource` MCP tool | shipped; launchers still to consult `is_free` |
+| 3.10 | `tools/agent_readiness_audit.py` | shipped (found + documented 4 pre-existing risk-table exemptions) |
+| §4 | `sophia_capabilities`, `sophia_memory_search/store`, `sophia_trajectory_record`, `sophia_route_task` MCP tools (write-shaped ones `@audited(risk=medium)`) | shipped |
+| §5 | `tools/skill_efficacy_report.py` + `skills/portable/sophia-measurement-contract/` | shipped |
+
+Follow-ups that intentionally did NOT land here: flipping any router/memory default
+(needs the ablation gate), the ed25519 key ceremony (owner-held secret), wiring
+`is_free` into the GPU launcher tools, and the §3.1 memory-on-vs-off pre-registered
+comparison.
+
+## 9. Sources
 
 - https://github.com/ruvnet/ruflo (README, wiki: Hooks & Workers, Intelligence Pipeline,
   Witness Verification, Benchmarks)
