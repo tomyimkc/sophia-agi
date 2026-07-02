@@ -27,5 +27,6 @@ CONTRACT.md filter=git-crypt diff=git-crypt
 .claude/skills/skill-author/** !filter !diff
 .claude/skills/spark-cluster-ops/** !filter !diff
 .claude/skills/rlvr-harness-traps/** !filter !diff
+.claude/skills/remote-session-fallbacks/** !filter !diff
 .grok/** filter=git-crypt diff=git-crypt
 agi-proof/benchmark-results/**/*.tar.gz filter=lfs diff=lfs merge=lfs -text

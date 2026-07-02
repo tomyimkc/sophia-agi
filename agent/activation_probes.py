@@ -96,18 +96,109 @@ def probe_deception_context(probe: "LinearProbe", text: str) -> dict[str, Any]:
     }
 
 
-def build_hidden_state_featurizer(spec: str = "mlx", *, adapter_path: "str | None" = None):
-    """Seam for residual-stream features (the real introspection upgrade), fail-closed.
+DEFAULT_FEATURIZER_MODEL = "Qwen/Qwen2.5-3B-Instruct"
+_FEATURIZER_MAX_TOKENS = 512
 
-    Replaces :func:`featurize_text`'s transparent features with hidden-state vectors from a
-    local model while preserving thresholding/calibration/fail-closed semantics. Lazy and
-    raises ``RuntimeError`` when the backend is unavailable, so the text-feature path stays
-    the offline default and a missing backend never silently degrades the probe.
+
+def build_hidden_state_featurizer(spec: str = "mlx", *, adapter_path: "str | None" = None):
+    """Residual-stream featurizer (the real introspection upgrade), fail-closed.
+
+    Returns ``featurize(text) -> list[float]``: the model's FINAL-layer hidden
+    states (the residual stream entering the lm_head), mean-pooled over tokens
+    and L2-normalized so centroid-probe geometry is scale-free.
+
+    ``spec`` is ``"mlx"`` (default model ``Qwen/Qwen2.5-3B-Instruct``, the repo's
+    frozen base) or ``"mlx:<model_id>"``; ``adapter_path`` loads a LoRA adapter so
+    a probe can be trained on adapter-modified activations. The model is loaded
+    lazily on the FIRST call and cached; construction itself stays cheap.
+
+    Fail-closed contract preserved: raises ``RuntimeError`` when the MLX backend
+    is unavailable (x86 CI, no mlx wheel), so the transparent
+    :func:`featurize_text` path stays the offline default and a missing backend
+    never silently degrades a probe. Truncates input to 512 tokens to bound
+    compute; determinism: pure forward pass, no sampling.
     """
-    raise RuntimeError(
-        "hidden-state featurizer requires a local MLX/PyTorch-MPS backend; not available "
-        "offline. Use the transparent featurize_text path until a backend is wired."
-    )
+    if not spec or not str(spec).startswith("mlx"):
+        raise RuntimeError(f"unknown featurizer spec {spec!r}; supported: 'mlx' or 'mlx:<model_id>'")
+    model_id = str(spec).partition(":")[2] or DEFAULT_FEATURIZER_MODEL
+    try:
+        import mlx.core as mx  # noqa: F401
+        from mlx_lm import load as _mlx_load
+    except Exception as e:  # pragma: no cover - exercised only where mlx is absent
+        raise RuntimeError(
+            "hidden-state featurizer requires the MLX backend (pip install mlx mlx-lm on "
+            "Apple Silicon / an MLX-supported box); not available here. Use the transparent "
+            f"featurize_text path until then. (import failed: {type(e).__name__}: {e})"
+        ) from e
+
+    state: dict[str, Any] = {}
+
+    def _ensure_loaded():
+        if "model" not in state:
+            model, tokenizer = _mlx_load(model_id, adapter_path=adapter_path)
+            state["model"], state["tokenizer"] = model, tokenizer
+        return state["model"], state["tokenizer"]
+
+    def featurize(text: str) -> list[float]:
+        import mlx.core as mx
+
+        model, tokenizer = _ensure_loaded()
+        tokens = tokenizer.encode(text or " ")[:_FEATURIZER_MAX_TOKENS] or [0]
+        # model.model is the transformer body: returns final hidden states
+        # [1, T, H] BEFORE the lm_head projection (mlx_lm model convention).
+        hidden = model.model(mx.array([tokens]))
+        pooled = mx.mean(hidden[0], axis=0)
+        norm = mx.sqrt(mx.sum(pooled * pooled)) + 1e-8
+        return [float(x) for x in (pooled / norm)]
+
+    featurize.model_id = model_id  # type: ignore[attr-defined]
+    featurize.adapter_path = adapter_path  # type: ignore[attr-defined]
+    # W5 readiness marker (tools/probe_representation_training._hidden_state_ready):
+    # this is the real residual-stream featurizer, not the stub seam.
+    featurize._is_real_hidden_state = True  # type: ignore[attr-defined]
+    return featurize
+
+
+def train_vector_probe(rows: "list[dict[str, Any]]", featurizer, *,
+                       name: str = "vector_probe", threshold: float = 0.5) -> LinearProbe:
+    """Centroid probe over an arbitrary featurizer (e.g. the hidden-state one).
+
+    Same math and fail-closed behavior as :func:`train_centroid_probe` (single-class
+    input yields a zero probe that flags nothing), but the feature dimension follows
+    the featurizer instead of the fixed transparent-feature set.
+    """
+    pos = [featurizer(r["text"]) for r in rows if bool(r.get("label"))]
+    neg = [featurizer(r["text"]) for r in rows if not bool(r.get("label"))]
+    if not pos or not neg:
+        dim = len(pos[0]) if pos else (len(neg[0]) if neg else 1)
+        return LinearProbe(name, [0.0] * dim, 0.0, threshold)
+    dim = len(pos[0])
+    mean = lambda vs: [sum(v[i] for v in vs) / len(vs) for i in range(dim)]
+    mp, mn = mean(pos), mean(neg)
+    weights = [a - b for a, b in zip(mp, mn)]
+    bias = -0.5 * (dot(weights, mp) + dot(weights, mn))
+    return LinearProbe(name, weights, bias, threshold)
+
+
+def evaluate_vector_probe(probe: LinearProbe, rows: "list[dict[str, Any]]", featurizer) -> dict[str, Any]:
+    """Mirror of :func:`evaluate_probe` for featurizer-backed probes."""
+    out = []
+    tp = tn = fp = fn = 0
+    for r in rows:
+        score = probe.score_vector(featurizer(r["text"]))
+        pred = score >= probe.threshold
+        lab = bool(r.get("label"))
+        tp += int(pred and lab); fp += int(pred and not lab)
+        tn += int((not pred) and (not lab)); fn += int((not pred) and lab)
+        out.append({"id": r.get("id"), "label": lab, "score": round(score, 4), "flagged": pred})
+    n = len(rows)
+    return {"schema": "sophia.activation_probe_eval.v1", "candidateOnly": True,
+            "level3Evidence": False, "probe": probe.name, "n": n,
+            "metrics": {"accuracy": round((tp+tn)/n, 4) if n else 0,
+                        "precision": round(tp/(tp+fp), 4) if tp+fp else 0,
+                        "recall": round(tp/(tp+fn), 4) if tp+fn else 0,
+                        "falsePositiveRate": round(fp/(fp+tn), 4) if fp+tn else 0},
+            "rows": out}
 
 
 def load_jsonl(path: str | Path) -> list[dict[str, Any]]:
@@ -120,4 +211,6 @@ def write_probe_eval(data_path: str | Path, out: str | Path) -> dict[str, Any]:
     return report
 
 
-__all__ = ["FEATURES", "featurize_text", "LinearProbe", "train_centroid_probe", "evaluate_probe", "load_jsonl", "write_probe_eval"]
+__all__ = ["FEATURES", "featurize_text", "LinearProbe", "train_centroid_probe", "evaluate_probe",
+           "load_jsonl", "write_probe_eval", "build_hidden_state_featurizer",
+           "train_vector_probe", "evaluate_vector_probe", "DEFAULT_FEATURIZER_MODEL"]

@@ -127,6 +127,27 @@ class LongHorizonRun:
         run.log("note", "run resumed from checkpoint", resumedEventCount=len(events))
         return run
 
+    # --- A6: persistent notes memory (Agents-A1 §3.2 write_notes/read_notes) ---
+    # Append-only sidecar surviving context compaction and resume; notes are the
+    # agent's own durable working memory across a long run, never a claim.
+    @property
+    def notes_path(self) -> Path:
+        return self.log_path.with_suffix(".notes.jsonl")
+
+    def notes_write(self, text: str, *, step: str | None = None) -> None:
+        rec = {"ts": _now_iso(), "step": step, "text": str(text)}
+        self.notes_path.parent.mkdir(parents=True, exist_ok=True)
+        with self.notes_path.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
+        self.log("note", "notes_write", step=step, notesChars=len(str(text)))
+
+    def notes_read(self, *, last: int = 20) -> list[dict[str, Any]]:
+        if not self.notes_path.exists():
+            return []
+        rows = [json.loads(l) for l in
+                self.notes_path.read_text(encoding="utf-8").splitlines() if l.strip()]
+        return rows[-last:]
+
     def summary(self) -> dict[str, Any]:
         counts: dict[str, int] = {etype: 0 for etype in EVENT_TYPES}
         for event in self.events:
@@ -222,7 +243,50 @@ def classify_autonomy(interventions: int, tool_calls: int, duration_sec: float =
     }
 
 
+def run_model_step(run: LongHorizonRun, step: dict[str, Any]) -> bool:
+    """A6: a step whose action is a MODEL decision, not a fixed argv.
+
+    The prompt gets the last notes as durable context; the answer is logged as
+    the tool_call. With ``gateCheck: true`` the epistemic gate runs on the
+    answer and its verdict is the step's ``verification`` event — the per-step
+    verifier outcome the trajectory pack consumes. Fail-closed: a mock backend
+    (no API key / no local model) is a ``failed_attempt``, never fabricated text.
+    """
+    name = step["name"]
+    run.log("state_transition", f"begin step: {name}", step=name, status="begin",
+            purpose=step.get("purpose", ""), kind="model")
+    from agent.model import default_client
+
+    client = default_client()
+    if getattr(getattr(client, "cfg", None), "kind", "mock") == "mock":
+        run.log("failed_attempt", f"model step fail-closed (mock backend): {name}",
+                step=name, backend="mock")
+        run.log("state_transition", f"end step: {name}", step=name, status="done", ok=False)
+        return False
+    notes = "\n".join(n["text"] for n in run.notes_read(last=10))
+    user = (f"NOTES SO FAR:\n{notes}\n\n" if notes else "") + str(step["model_prompt"])
+    result = client.generate(step.get("system", "You are a careful long-horizon agent."), user)
+    run.log("tool_call", f"model step: {name}", step=name,
+            returncode=0 if result.ok else 1, answerTail=(result.text or "")[-500:],
+            backend=result.provider, model=result.model)
+    ok = bool(result.ok)
+    if ok and step.get("gateCheck"):
+        from agent.gate import check_response
+
+        verdict = check_response(result.text or "", mode="advisor")
+        passed = bool(verdict.get("passed"))
+        run.log("verification", f"gate check for: {name}", step=name,
+                passed=passed, gateViolations=verdict.get("violations", [])[:5])
+        ok = passed
+    if ok and step.get("notesWrite"):
+        run.notes_write((result.text or "")[:1000], step=name)
+    run.log("state_transition", f"end step: {name}", step=name, status="done", ok=ok)
+    return ok
+
+
 def run_step(run: LongHorizonRun, step: dict[str, Any], *, timeout_sec: int) -> bool:
+    if step.get("kind") == "model":
+        return run_model_step(run, step)
     name = step["name"]
     cmd = step["cmd"]
     argv = cmd if isinstance(cmd, list) else ["bash", "-lc", cmd]
@@ -348,11 +412,38 @@ def main() -> int:
         if args.intervene:
             run.log("human_intervention", args.intervene)
 
+    # A6: declared resource manifest, ENFORCED by the runner (Agents-A1 states
+    # per-benchmark budgets; we go further and refuse to score a violated run).
+    manifest = spec.get("resourceManifest") or {}
+    max_steps = int(manifest.get("maxSteps", 0)) or None
+    max_tool_calls = int(manifest.get("maxToolCalls", 0)) or None
+    max_wall = float(manifest.get("maxWallClockSec", 0)) or None
+    manifest_violated = False
+
+    def _budget_exceeded() -> "str | None":
+        executed = sum(1 for e in run.events
+                       if e.get("type") == "state_transition" and e.get("status") == "begin")
+        tool_calls = sum(1 for e in run.events if e.get("type") == "tool_call")
+        elapsed = time.monotonic() - run.start_monotonic
+        if max_steps is not None and executed >= max_steps:
+            return f"maxSteps={max_steps}"
+        if max_tool_calls is not None and tool_calls >= max_tool_calls:
+            return f"maxToolCalls={max_tool_calls}"
+        if max_wall is not None and elapsed >= max_wall:
+            return f"maxWallClockSec={max_wall}"
+        return None
+
     completed = run.completed_steps()
     for step in spec.get("steps", []):
         if step["name"] in completed:
             run.log("note", f"skipping already-completed step: {step['name']}", step=step["name"])
             continue
+        exceeded = _budget_exceeded()
+        if exceeded:
+            manifest_violated = True
+            run.log("note", f"resource manifest budget reached ({exceeded}); halting",
+                    budget=exceeded)
+            break
         try:
             run_step(run, step, timeout_sec=args.timeout_sec)
         except subprocess.TimeoutExpired:
@@ -376,6 +467,11 @@ def main() -> int:
             "Tier 'below-short-demo' means this run was shorter than the 30-minute Short tier."
         ),
         "objectivePassed": objective_passed,
+        # A6: a run that hit its declared budget stays visible but is not
+        # scoreable — budgets are part of the pre-registered protocol, so a
+        # violated run must never be compared against a within-budget one.
+        "resourceManifest": {"declared": manifest, "violated": manifest_violated,
+                             "scoreable": not manifest_violated},
         **summary,
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)

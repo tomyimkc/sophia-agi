@@ -1,6 +1,6 @@
 {
   "schema": "sophia.skill_registry.unified_index.v1",
-  "count": 22,
+  "count": 23,
   "layers": {
     "A": "agent-skill (.claude)",
     "B": "harness-registry",
@@ -48,6 +48,28 @@
         "switch"
       ],
       "body_ref": ".claude/skills/git-discipline/SKILL.md",
+      "verifier_ref": null,
+      "reliability": null
+    },
+    {
+      "id": "remote-session-fallbacks",
+      "layer": "A",
+      "description": "Run when a Claude-Code-on-the-web / remote-container session hits harness or environment outages: Bash (or non-GitHub MCP tools) erroring with \"temporarily unavailable / cannot determine the safety of Bash right now\", git-crypt missing (\"git-crypt: command not found\"), encrypted skills arriving as ciphertext, or a push that must happen while local shell is down. Use even if the outage \"should be brief\" — these fallbacks keep the whole session productive instead of stalled, and they have repo-specific traps (never-stage files, post-API-push resync). metadata: short-description: \"Keep working through Bash/classifier outages, missing git-crypt, and API-push resync in remote sessions\"",
+      "triggers": [
+        "run",
+        "claude",
+        "code",
+        "web",
+        "remote",
+        "container",
+        "session",
+        "hits",
+        "harness",
+        "environment",
+        "outages",
+        "bash"
+      ],
+      "body_ref": ".claude/skills/remote-session-fallbacks/SKILL.md",
       "verifier_ref": null,
       "reliability": null
     },

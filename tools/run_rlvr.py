@@ -366,7 +366,24 @@ def _run_gpu(args: argparse.Namespace) -> int:
             data = physics_dataset.build_physics_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
         else:
             data = math_dataset.build_math_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
-        reward_fn = step_reward.make_grpo_reward(domain=args.step_domain)
+        if args.step_reward == "prm":
+            # W1 PRM arm: symbolic verdicts stay authoritative; the launch-distilled
+            # PRM scores ONLY abstained checks, capped at --prm-cap (< one symbolic
+            # vote). Fail-closed: no derivations file / degenerate labels -> abort
+            # before any GPU spend, never a silently constant reward.
+            from provenance_bench import prm_step_reward
+
+            if not args.prm_derivations or not args.prm_derivations.exists():
+                print("--step-reward prm requires --prm-derivations <jsonl> "
+                      "({id,domain,steps[]} rows); aborting fail-closed", file=sys.stderr)
+                raise SystemExit(2)
+            derivs = [json.loads(l) for l in
+                      args.prm_derivations.read_text(encoding="utf-8").splitlines() if l.strip()]
+            probe = prm_step_reward.distill_probe_from_derivations(derivs)
+            reward_fn = prm_step_reward.make_grpo_reward(
+                domain=args.step_domain, probe=probe, cap=args.prm_cap)
+        else:
+            reward_fn = step_reward.make_grpo_reward(domain=args.step_domain)
     else:
         data = rl_dataset.build_rl_dataset(eval_frac=args.eval_frac, seed=args.seed)
         if args.reward == "gate":
@@ -397,6 +414,19 @@ def _run_gpu(args: argparse.Namespace) -> int:
             reward_fn = _mar.make_grpo_reward()
         else:
             reward_fn = rl_reward.make_grpo_reward(records=data["train_gate_records"])
+
+    if args.advantage_shaping == "papo":
+        # A4 (Agents-A1 §4.2.4): asymmetric PAPO-style shaping — outcome reward
+        # group-normalized as usual; the dense multiaxis score shapes FAILED
+        # rollouts only (ranks failures by closeness to success, never
+        # double-counts successes). PAPO-shaped, not bit-identical PAPO: TRL
+        # re-normalizes per group (documented in rl_data_curation).
+        from agent import multiaxis_reward as _mar_proc
+        from provenance_bench import rl_data_curation
+
+        reward_fn = rl_data_curation.make_papo_group_reward(
+            reward_fn, _mar_proc.make_grpo_reward(),
+            num_generations=args.num_generations, lambda_neg=args.lambda_neg)
 
     # Collapse logger: wrap whatever reward we chose to record within-group reward std
     # per GRPO step. Reward collapse == within-group std -> 0 (constant reward => zero
@@ -588,6 +618,32 @@ def main(argv: list[str] | None = None) -> int:
              "pre-registered Habit-Strength Transfer experiment (habit-formation lane).",
     )
     ap.add_argument(
+        "--step-reward", default="symbolic", choices=["symbolic", "prm"],
+        help='step task only: "symbolic" (agent.step_verifier per-step reward, default) or '
+             '"prm" (W1: PRM-filled — symbolic verdicts stay authoritative, the launch-distilled '
+             "PRM scores only the checks the verifier abstained on, capped at --prm-cap; "
+             "requires --prm-derivations)",
+    )
+    ap.add_argument(
+        "--prm-derivations", type=Path, default=None,
+        help="step-reward prm: JSONL of {id,domain,steps[]} derivations distilled into the "
+             "launch-time probe via the real step verifier (fail-closed if missing or the "
+             "labels are single-class)",
+    )
+    ap.add_argument(
+        "--prm-cap", type=float, default=0.5,
+        help="step-reward prm: per-check cap on the PRM's contribution for abstained steps "
+             "(must stay < 1 so the learned proxy is strictly weaker than one symbolic vote)",
+    )
+    ap.add_argument(
+        "--advantage-shaping", default="none", choices=["none", "papo"],
+        help="A4: 'papo' = asymmetric advantage shaping (Agents-A1 §4.2.4) — the dense "
+             "multiaxis process score ranks FAILED rollouts by closeness to success; "
+             "successes are never double-counted (provenance_bench.rl_data_curation)",
+    )
+    ap.add_argument("--lambda-neg", type=float, default=0.5,
+                    help="A4: weight of the process term on failed rollouts (paper value 0.5)")
+    ap.add_argument(
         "--curriculum", action="store_true",
         help="order training tasks easy->hard by gate pass-rate (offline-safe)",
     )
@@ -609,6 +665,16 @@ def main(argv: list[str] | None = None) -> int:
             ok, detail = physics_reward.offline_invariants()
         elif args.task == "step":
             ok, detail = step_reward.offline_invariants(domain=args.step_domain)
+            # W1 PRM arm: prove the containment policy offline (oracle authority,
+            # reject-floor preserved, abstain fill capped, fail-closed distillation)
+            # before any paid run. Deliberately NOT a PRM-accuracy claim.
+            if args.step_reward == "prm":
+                from provenance_bench import prm_step_reward
+
+                prm_ok, prm_detail = prm_step_reward.offline_invariants(cap=args.prm_cap)
+                ok = ok and prm_ok
+                detail.setdefault("checks", {})["prmStepRewardInvariants"] = prm_ok
+                detail["prmStepReward"] = prm_detail
         elif args.task == "code":
             ok, detail = code_reward.offline_invariants()
             # The integrity gate is part of the code reward's contract when guarded
@@ -664,6 +730,14 @@ def main(argv: list[str] | None = None) -> int:
             ok = ok and gate_ok
             detail["checks"]["gateRewardInvariants"] = gate_ok
             detail["gateReward"] = gate_detail
+            # A4: prove the curation/shaping math offline (mixed-outcome filter,
+            # dynamic sampling predicate, PAPO asymmetry) before any paid run.
+            from provenance_bench import rl_data_curation as _rdc
+
+            rdc_ok, rdc_detail = _rdc.offline_invariants(lambda_neg=args.lambda_neg)
+            ok = ok and rdc_ok
+            detail["checks"]["rlDataCurationInvariants"] = rdc_ok
+            detail["rlDataCuration"] = rdc_detail
             # Thesis D: prove the multi-axis reward's invariants offline (fail-closed,
             # ordering, reward-positive abstention, density-beats-single-axis). This is
             # the CPU-side validation that the M1 GPU run's reward is sound before spend.
