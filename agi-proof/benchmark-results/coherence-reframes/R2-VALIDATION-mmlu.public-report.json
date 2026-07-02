@@ -1,0 +1,66 @@
+{
+  "schema": "sophia.reframe_r2_validation.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "title": "R2 validation attempt on balanced multi-domain MMLU \u2014 NOT VALIDATED (did not replicate)",
+  "date": "2026-07-02",
+  "premise": "R2 was a QUALIFIED POSITIVE on the factcheck packs (disagreement->error AUROC 0.80). This is the pre-registered validation: a balanced, multi-domain, both-class dataset (MMLU, 6 subjects, EXACT MC labels) + the paired head-to-head vs the confidence margin R2 had not yet won.",
+  "dataset": {
+    "source": "MMLU (cais/mmlu, all/test)",
+    "subjects": [
+      "clinical_knowledge",
+      "high_school_biology",
+      "high_school_macroeconomics",
+      "moral_disputes",
+      "prehistory",
+      "professional_accounting"
+    ],
+    "n": 480,
+    "accuracy": 0.825,
+    "labels": "exact multiple-choice (no LLM judge)",
+    "subject_model": "DeepSeek (non-mock)"
+  },
+  "result": {
+    "gateA_disagreement_beats_chance": {
+      "passed_allSeeds": false,
+      "disagreementAUROC": 0.5171,
+      "ci95_seed0": [
+        0.4496,
+        0.5831
+      ]
+    },
+    "gateB_adds_beyond_margin": {
+      "passed_allSeeds": false,
+      "delta_by_seed": {
+        "0": 0.0294,
+        "1": 0.0627,
+        "7": 0.0525
+      },
+      "note": "combined(margin,disagreement) vs margin-alone; every CI includes 0"
+    },
+    "oodEnsembleErrorRate": 0.175
+  },
+  "diagnosis": {
+    "why_it_failed": "On MMLU, factual CORRECTNESS is barely linearly decodable from Qwen2.5-3B hidden states even IN-DOMAIN, so the per-domain probes are too weak for their disagreement to carry an OOD-error signal.",
+    "inDomainProbeAUROC": {
+      "clinical_knowledge": 0.632,
+      "high_school_biology": 0.308,
+      "high_school_macroeconomics": 0.467,
+      "moral_disputes": 0.599,
+      "prehistory": 0.669,
+      "professional_accounting": 0.713,
+      "pooled_global": 0.59,
+      "_note": "in-SAMPLE fit+predict is ~1.0 (overfit: 2048 features on 80 rows/subject); the honest HELD-OUT within-domain CV AUROC is ~0.59 pooled (weak). So hidden states MEMORIZE correctness in-sample but generalize it weakly even within-domain (0.59) and not at all cross-domain (0.517)."
+    },
+    "inSamplePooledAUROC_overfit": 1.0,
+    "heldOutWithinDomainCV_AUROC": 0.59,
+    "crossDomainOOD_AUROC": 0.5171
+  },
+  "verdict": "R2 NOT VALIDATED \u2014 the factcheck AUROC 0.80 did not replicate on balanced multi-domain MMLU (AUROC 0.517 ~ chance).",
+  "interpretation": "R2's factcheck positive decoded the verifier-VERDICT structure (`accepted`, a stylistic/structural signal that IS linearly decodable), not factual correctness. On a clean factual-correctness benchmark the disagreement signal is at chance. Consistent with the whole arc: hidden-state signals decode surface structure well but factual correctness poorly (O2, W1, R1, R5 all null on correctness). Row stays Open; candidateOnly.",
+  "artifactHashes": {
+    "r2_validate_report.json": "4112aefc0eccfccf",
+    "mmlu_pack.jsonl": "2ff326ac43a5df63"
+  },
+  "adversarialVerification": "SOUND (independent agent): no harness bug; correctness labels, featurizer non-degeneracy, leave-own-domain-out ensemble, and OOD AUROC 0.517 all reproduced. Root cause = genuine representation domain-shift, not a fault."
+}

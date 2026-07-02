@@ -2524,3 +2524,17 @@ All candidateOnly; no gate claimed 'met'. Report: agi-proof/benchmark-results/co
 
 Net: coupling the right signals mostly did not rescue coherence-as-verification, but ensemble DISAGREEMENT is
 an honest OOD/abstain candidate aligned with sophia's calibrated-abstention thesis. canClaimAGI=false.
+
+
+## 2026-07-02 — R2 validation attempt on MMLU: NOT VALIDATED (factcheck positive did not replicate)
+
+Pre-registered validation of the one qualified positive (R2 ensemble-disagreement OOD-abstain). Balanced
+multi-domain MMLU (6 subjects, n=480, EXACT MC labels, DeepSeek subject, real Qwen2.5-3B hidden states) +
+the paired head-to-head vs the confidence margin. RESULT: R2 NOT VALIDATED. disagreement->ensemble-error
+AUROC=0.517 (CI∋chance, Gate A FAIL); adding disagreement to the margin gives no significant gain (Gate B
+FAIL, all seeds). Diagnosis: MMLU factual correctness is barely linearly decodable from Qwen hidden states
+even IN-DOMAIN (pooled CV AUROC 0.59; high_school_biology 0.31), so the per-domain probes are too weak for
+disagreement to be a useful OOD signal. Interpretation: R2's factcheck AUROC 0.80 decoded the verifier-VERDICT
+structure (`accepted`), not correctness. Consistent with the whole arc — hidden-state signals decode surface
+structure well, factual correctness poorly. Report: agi-proof/benchmark-results/coherence-reframes/R2-VALIDATION-mmlu.public-report.json.
+The R2 candidate row stays Open. canClaimAGI=false.
