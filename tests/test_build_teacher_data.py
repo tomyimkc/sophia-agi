@@ -43,3 +43,23 @@ def test_protected_seat_and_thin_data_fail_closed(tmp_path):
     r = build_teacher_pack("philosophy", [thin], [s], out_root=tmp_path / "o2", root=ROOT)
     assert not r["ok"] and not r["stages"]["stage1"]["ok"]
     assert "fail-closed" in r["stages"]["stage1"]["reason"]
+
+
+def test_committed_pack_disjoint_from_eval_ladder_benchmarks():
+    """Regression for the 2026-07-02 contamination incident: 26 committed v1
+    stage-1 rows WERE the eval-ladder philosophy holdout (train-on-test),
+    because decontamination didn't cover tests/benchmark-*.json. The committed
+    pack must be provably disjoint from every benchmark holdout."""
+    import json as _json
+    from provenance_bench.dataset_guard import normalize, prompt_of
+    from tools.build_teacher_data import _benchmark_prompt_set
+
+    bench = _benchmark_prompt_set(ROOT)
+    assert bench, "benchmark prompt set must be non-empty (tests/benchmark-*.json exist)"
+    for f in (ROOT / "training" / "teachers").glob("*/stage*/**/*.jsonl"):
+        for line in f.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            r = _json.loads(line)
+            pr = prompt_of(r)
+            assert not (pr and normalize(pr) in bench), f"benchmark leak in {f}: {pr[:80]}"
