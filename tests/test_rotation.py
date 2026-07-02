@@ -7,11 +7,13 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-import torch
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+
+torch = pytest.importorskip("torch")  # CPU-only tiny tensors, but torch is optional in CI
 
 from moe.rotation import (  # noqa: E402
     apply_input_rotation,
