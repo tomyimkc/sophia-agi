@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-02T02:30:00Z",
+  "updatedAt": "2026-07-02T03:15:00Z",
   "device": "mac-studio",
   "agent": "claude-code-mac-operator",
   "cycle": "executed all 3 dispatched farm tasks (W1-W5-DISPATCH) on the local Spark+Mac farm; results committed + pushed",
@@ -25,8 +25,9 @@
       "branch": "claude/sophia-positioning-gaps-84kb0v (pushed 7de42270..31982ed1)",
       "ledgerRow": "keep-top-experts-16-cert-no-improve-2026-07-02 (new)",
       "result": "certify_lowram --keep-top-experts 16 --scheme nvfp4 on olmoe-qat-spark-v6, n_eval=1024: 95%-Wilson-LCB operating point coverage 0.7969 @ answered_top1_lcb 0.9751 (clears 0.97 floor). Does NOT beat adopted v6_downproj16 (coverage 0.8438). raw_top1 0.9434, mean_kl 0.0339, quantized_fraction 0.7371.",
-      "conclusion": "keep-top-experts=16 is a lower-coverage point than the down_proj-bf16 lever at the same n=1024; the ~0.93 expectation was optimistic. serving/adopted_operating_points.json UNCHANGED.",
-      "artifact": "agi-proof/benchmark-results/nvfp4-v6-keeptop16-frontier-1k.json (sha256 f62207b7...)"
+      "conclusion": "keep-top-experts=16 is a lower-coverage point than down_proj-bf16 at n=1024. serving/adopted_operating_points.json UNCHANGED.",
+      "sweepFollowup": "Ran N=8/32/64 sweep + n=4096 confirmation (pushed positioning-gaps bf6740bc). n=1024 coverage is NON-MONOTONIC across N (0.867/0.797/0.863/0.801) = selection noise. At n=4096 keeptop8 TIES down_proj on coverage (0.9526 vs 0.9546) at ~36% LESS memory (eff 2.587x vs 1.901x). NO adoption (does not beat coverage); keeptop8 flagged as a memory-favorable variant for owner. METHODOLOGICAL: the n=1024 abstention-LCB coverage is noise-loose (both levers jump to ~0.95 at n=4096) -> the adopted v5/v6/v6_downproj16 operating points (all n=1024) UNDER-report true LCB coverage; consider re-certifying at n>=4096.",
+      "artifact": "agi-proof/benchmark-results/nvfp4-v6-keeptop{8,16,32,64}-frontier-1k.json + nvfp4-v6-{keeptop8,downproj}-frontier-4k.json"
     },
     "world_model_ablation_70B": {
       "verdict": "CANDIDATE (not promoted)",
@@ -45,8 +46,16 @@
   ],
   "bonusOwnerRequested": "Built a live farm dashboard (http://localhost:8600): m3 judge progress+ETA+70B heartbeat, a DGX Spark GB10 cluster panel (GPU/mem/jobs/bridge), and a continuous idle-gated methodology-benchmark suite (rotating nvfp4/int8 + down_proj/keep-top-experts precision levers on the Spark; yields to any judge/cert/train). Session-scoped (/tmp), not committed.",
   "guardrailsAck": "canClaimAGI=false; each ledger flip has a real non-mock run meeting its pre-registered gate + artifact + sha256; make claim-check GREEN + lint_claims OK before each push; deviations documented not hidden; no plaintext secrets persisted.",
+  "postDispatchFollowups": {
+    "vLLM_fix_assessed": "The Spark is GB10 sm_121 / CUDA13 / torch 2.12.1+cu130 — no prebuilt vLLM wheel matches (0.23/0.24 -> _C undefined-symbol). A source build in an ISOLATED venv is the only clean path (heavy, uncertain); NOT attempted (would break the shared cert venv). Owner-gated dedicated effort.",
+    "keeptop8_memory_variant": "Owner decision available: adopt keeptop8 (same coverage as down_proj16 at ~36% less memory) as a memory-favorable operating point? Not adopted autonomously (ties, does not beat coverage).",
+    "lessons_captured": "Two persistent-memory notes: serving footguns (vLLM-broken -> ollama-q8 tunnel; mlx_lm.server no-batch -> workers=2 + fresh restart) and the dashboard/benchmark tooling.",
+    "operating_points_n_sensitivity": "RECOMMENDED: re-certify the adopted operating points at n>=4096 — the n=1024 LCB coverage is conservative/noise-loose (true coverage ~0.95 vs the ~0.72-0.84 recorded)."
+  },
   "open": [
     "Clean-transport m3-3family confirmation (fp16-vLLM + OpenRouter) — infra-blocked (fix Spark vLLM + provide OpenRouter key).",
+    "Owner call: adopt keeptop8 as a memory-favorable operating point (same coverage, ~36% less memory).",
+    "Re-certify adopted operating points at n>=4096 (n=1024 LCB is noise-loose).",
     "Cloud item ② realtime C1 still under-powered (N<393); cloud owns.",
     "Fused-expert QAT v6 fire remains owner-gated (prior cycle)."
   ]
