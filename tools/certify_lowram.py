@@ -611,6 +611,15 @@ def run_certify(args: argparse.Namespace) -> dict:
             _bits.append(f"last-{_klayers} blocks {sorted(_keep_layers or [])} "
                          f"({qinfo.get('protected_layer_params')} served params)")
         print(f"[keep] held bf16: {' + '.join(_bits)}", flush=True)
+    elif getattr(args, "round_mode", "rtn") == "gptq":
+        from tools.gptq_cert import gptq_quantize_served_params
+        print("[gptq] Hessian-aware NVFP4 group-16 snap (calibrating served params)…", flush=True)
+        qinfo = gptq_quantize_served_params(
+            model, tok, rows, scheme=args.scheme, suffixes=served_suffixes,
+            n_calib=args.n_eval, max_seq_len=args.max_seq_len, device=args.device)
+        _gi = qinfo.get("gridIdentity", {})
+        print(f"[gptq] grid-identity verified={_gi.get('verified')} "
+              f"(canary {_gi.get('canary')}, maxAbsDiff {_gi.get('maxAbsDiff')})", flush=True)
     else:
         qinfo = quantize_served_params(model, scheme=args.scheme, suffixes=served_suffixes)
     per_tensor_ratio, eff_ratio = effective_mem_ratio(
@@ -643,6 +652,8 @@ def run_certify(args: argparse.Namespace) -> dict:
     out = report.as_dict()
     out["device"] = args.device
     out["scheme"] = args.scheme
+    out["round_mode"] = getattr(args, "round_mode", "rtn")
+    out["grid_identity"] = qinfo.get("gridIdentity")
     out["keep_top_experts"] = _ktop
     out["keep_layers"] = _klayers
     out["base_model"] = args.base_model
@@ -740,6 +751,10 @@ def main(argv: "list[str] | None" = None) -> int:
                     help="calibration rows (jsonl with chat 'messages'); deployment-distribution "
                          "TRAINING data by default — NOT the eval-sealed holdout (holdout_seal)")
     ap.add_argument("--scheme", choices=("int8", "nvfp4"), default="nvfp4")
+    ap.add_argument("--round-mode", choices=("rtn", "gptq"), default="rtn",
+                    help="rtn = round-to-nearest (default); gptq = Hessian-aware GPTQ on the NVFP4 "
+                         "group-16 served grid (routed-Hessian experts + per-layer attention, "
+                         "grid-identity verified). nvfp4 only.")
     ap.add_argument("--keep-suffixes", default="",
                     help="comma-separated served-linear suffixes to KEEP in bf16 (mixed precision, "
                          "e.g. 'down_proj') — the NVFP4 v5 top-1 lever; default quantizes the full "
