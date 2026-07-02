@@ -49,10 +49,35 @@ def _load_rows(paths: "Sequence[Path]") -> list[dict]:
     return rows
 
 
+def _benchmark_prompt_set(root: Path) -> set:
+    """Prompts from the eval-ladder benchmark files (tests/benchmark-*.json).
+
+    dataset_guard.eval_prompt_set does NOT cover these — training on them
+    silently invalidated the v1 philosophy teacher eval (26/528 rows were the
+    eval-ladder holdout; found on the Mac bench 2026-07-02). Fail-visible here.
+    """
+    from provenance_bench.dataset_guard import normalize
+    import json as _json
+
+    out: set = set()
+    for bf in sorted(root.glob("tests/benchmark-*.json")):
+        try:
+            data = _json.loads(bf.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        cases = data if isinstance(data, list) else data.get("cases", data.get("questions", []))
+        for c in cases if isinstance(cases, list) else []:
+            if isinstance(c, dict):
+                pr = c.get("prompt") or c.get("question") or ""
+                if pr:
+                    out.add(normalize(pr))
+    return out
+
+
 def _decontaminate(rows: "list[dict]", root: Path) -> "tuple[list[dict], int]":
     from provenance_bench.dataset_guard import eval_prompt_set, normalize, prompt_of
 
-    forbidden = eval_prompt_set(root=root)
+    forbidden = eval_prompt_set(root=root) | _benchmark_prompt_set(root)
     kept = [r for r in rows
             if not (prompt_of(r) and normalize(prompt_of(r)) in forbidden)]
     return kept, len(rows) - len(kept)
