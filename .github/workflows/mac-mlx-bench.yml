@@ -23,7 +23,7 @@ on:
         required: true
         default: 'featurizer'
         type: choice
-        options: [featurizer, probes-all]
+        options: [featurizer, probes-all, claim-router-ablation]
       model:
         description: 'Featurizer model id (must fit the Mac; default = the repo frozen base)'
         required: false
@@ -61,6 +61,7 @@ jobs:
           PY
 
       - name: Run the MLX featurizer suite (real hidden-state path)
+        if: ${{ inputs.suite != 'claim-router-ablation' }}
         run: |
           . .venv-mlx-bench/bin/activate
           if [ "$IN_SUITE" = "probes-all" ]; then
@@ -70,6 +71,26 @@ jobs:
           else
             PYTHONPATH=. python3 -m pytest tests/test_hidden_state_featurizer.py -v
           fi
+
+      - name: "R4: claim-router ablation (sophia-full vs sophia-claim-router, local MLX backend)"
+        if: ${{ inputs.suite == 'claim-router-ablation' }}
+        env:
+          SOPHIA_MODEL_PROVIDER: mlx
+        run: |
+          # Prices the claim router's marginal contribution on the committed
+          # 18-case abstain pack via the unified adapter backend (local MLX
+          # Qwen2.5-3B — iteration tier, candidateOnly). Promotion of
+          # use_claim_router to default-on must then clear evaluate_update()
+          # with answerable-coverage as a protected metric; this run only
+          # produces the evidence, never the decision.
+          . .venv-mlx-bench/bin/activate
+          mkdir -p agi-proof/benchmark-results/mac-mlx-bench
+          PYTHONPATH=. python3 tools/run_ablation_sophia.py \
+            agi-proof/baseline-ablation/abstain-pack-unambiguous-split-2026-06-27.json \
+            --backend adapter \
+            --modes sophia-full,sophia-claim-router \
+            --model-family mlx-qwen2.5-3b \
+            --out agi-proof/benchmark-results/mac-mlx-bench/claim-router-ablation.public-report.json
 
       - name: Readiness report (W5 / energy-head seams should now be live here)
         run: |
