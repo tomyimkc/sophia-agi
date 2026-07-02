@@ -107,3 +107,48 @@ def build_hybrid_entailment(lexical_fn, scorer: Scorer | None = None, *,
         return lexical_fn(claim, source)
 
     return entail
+
+
+# --- healthy semantic-similarity incumbent (for a fair NLI-vs-coherence comparison) ---
+_BIENCODER: dict = {}
+
+
+def _load_bi_encoder(model_name: str):
+    if model_name in _BIENCODER:
+        return _BIENCODER[model_name]
+    import os
+    os.environ.setdefault("HF_HUB_OFFLINE", "1")
+    os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+    from sentence_transformers import SentenceTransformer, util
+    m = SentenceTransformer(model_name)
+
+    def cos(a: str, b: str) -> float:
+        ea = m.encode(a, normalize_embeddings=True)
+        eb = m.encode(b, normalize_embeddings=True)
+        return float(util.cos_sim(ea, eb))
+
+    _BIENCODER[model_name] = cos
+    return cos
+
+
+def build_semantic_entailment(cos_fn=None, *, model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
+                              threshold: float = 0.45):
+    """A HEALTHY coherence/similarity incumbent EntailmentFn (the fair baseline for NLI).
+
+    The token-overlap lexical screen COLLAPSES on non-verbatim evidence (FEVER paraphrase coverage
+    0.003; sophia hedged provenance coverage 0.0), making NLI-vs-lexical unfalsifiable. A semantic
+    similarity admission fires on topical evidence (healthy coverage), so NLI-vs-semantic isolates the
+    mechanism question: does ENTAILMENT beat SIMILARITY as a grounding signal? Returns 'entails' iff
+    cos(claim, evidence) >= threshold, else 'irrelevant' (similarity cannot detect contradiction — which
+    is exactly the limitation NLI is hypothesized to fix). cos_fn injectable for tests.
+    """
+    cos = cos_fn or _load_bi_encoder(model_name)
+
+    def entail(claim, source) -> str:
+        premise = f"{getattr(source, 'title', '')} {getattr(source, 'snippet', '')}".strip()
+        hypothesis = getattr(claim, "text", "") or ""
+        if not premise or not hypothesis:
+            return "irrelevant"
+        return "entails" if cos(hypothesis, premise) >= threshold else "irrelevant"
+
+    return entail

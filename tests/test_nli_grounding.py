@@ -85,3 +85,23 @@ def test_hybrid_weak_contradiction_does_not_override_lexical():
     # contradiction below threshold -> defer to lexical (no spurious rejection)
     fn = build_hybrid_entailment(_lexical_stub, scorer=lambda p, h: (0.4, 0.3, 0.3), contradict_threshold=0.5)
     assert fn(_Claim(), _Src(snippet="Y was written by X")) == "entails"
+
+
+# --- healthy semantic incumbent ---
+from agent.nli_grounding import build_semantic_entailment
+
+
+def test_semantic_entails_above_threshold():
+    fn = build_semantic_entailment(cos_fn=lambda a, b: 0.8, threshold=0.45)
+    assert fn(_Claim(), _Src(snippet="topical supporting prose")) == "entails"
+
+
+def test_semantic_irrelevant_below_threshold():
+    fn = build_semantic_entailment(cos_fn=lambda a, b: 0.2, threshold=0.45)
+    assert fn(_Claim(), _Src(snippet="off topic")) == "irrelevant"
+
+
+def test_semantic_never_contradicts():
+    # similarity cannot detect contradiction -> only entails/irrelevant (the limitation NLI fixes)
+    fn = build_semantic_entailment(cos_fn=lambda a, b: 0.9, threshold=0.45)
+    assert fn(_Claim(), _Src(snippet="x")) in {"entails", "irrelevant"}
