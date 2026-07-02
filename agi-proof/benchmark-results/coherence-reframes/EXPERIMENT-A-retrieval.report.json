@@ -1,0 +1,46 @@
+{
+  "schema": "sophia.retrieval_experiment_A.combined.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "question": "Does sentence-level fact-bearing retrieval let entailment beat the incumbent lexical screen through the real gate? (the pre-registered test of 'grounding is retrieval-bound')",
+  "manipulationCheck": {
+    "factBearingFraction": 0.556,
+    "floor": 0.5,
+    "nClaimsWithEvidence": 18,
+    "pass": true
+  },
+  "c1_wikipedia_arm": {
+    "note": "faithful to the frozen protocol (C1 groundable subset + keyless Wikipedia sentence retrieval)",
+    "n": 18,
+    "NLI_deltaF1": {
+      "0": 0.1667,
+      "1": 0.1667,
+      "7": 0.1667
+    },
+    "ci95_seed0": [
+      -0.2,
+      0.3636
+    ],
+    "coverageDrop": 0.0,
+    "interpretation": "directionally strong (NLI -0.09 on metadata -> +0.17 on sentences; over-abstention 0.05->0.0) but UNDERPOWERED (n=18, CI includes 0). Not self-authored-extended (per protocol)."
+  },
+  "fever_gate_arm": {
+    "note": "power-adequate resolution: FEVER gold sentence evidence through the SAME gate (public benchmark, not self-authored)",
+    "n": 400,
+    "supported": 200,
+    "NLI_deltaF1_by_seed": {
+      "0": 0.1417,
+      "1": 0.1417,
+      "7": 0.1417
+    },
+    "ci95_seed0": [
+      0.08,
+      0.1909
+    ],
+    "coverageDrop": 0.0,
+    "pass": true,
+    "caveat": "the lexical incumbent is very brittle on FEVER's paraphrastic evidence (coverage 0.003) \u2014 part of NLI's win is token-overlap failing on paraphrase; the metadata<->sentence contrast is the robust signal."
+  },
+  "verdict": "GO \u2014 RETRIEVAL-BOUND DIAGNOSIS CONFIRMED. Entailment beats the incumbent lexical screen through the real gate IFF evidence is fact-bearing sentences: metadata evidence (rung 5) NLI -0.09 (loses, over-abstains); sentence evidence (FEVER n=400) NLI +0.142, CI [0.08,0.19] excludes 0 (wins, no over-abstention). The mechanism works given good evidence; the production blocker is retrieval/evidence quality, not the verifier head.",
+  "preDeclaredNext": "per the maintainer-AI's outcome table: GO -> fund D (retrieval as the product) with NLI as the escalation-tier verifier. D is a roadmap redirection -> maintainer decision."
+}

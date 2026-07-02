@@ -1,0 +1,17 @@
+{
+  "n": 400,
+  "supported": 200,
+  "matchedCoverage": 0.1,
+  "lexicalCoverage": 0.0025,
+  "NLI_vs_lexical_deltaF1_by_seed": {
+    "0": 0.1417,
+    "1": 0.1417,
+    "7": 0.1417
+  },
+  "ci95_seed0": [
+    0.08,
+    0.1909
+  ],
+  "coverageDrop": 0.0,
+  "pass": true
+}

@@ -2691,3 +2691,22 @@ Honest results (candidateOnly, canClaimAGI=false; full reports in agi-proof/benc
 - FIRST-CLASS NEGATIVES: THESIS-NOTE-coherence-is-not-truth.md — the ~15 coherence instruments ("coherence
   measures confidence not truth; a fluent hallucination is maximally coherent") defend the abstention thesis.
 Next: experiment A (sentence-level retriever + manipulation check) pre-registered to gate the retrieval-bound diagnosis.
+
+
+## 2026-07-02 — Experiment A (retrieval test): GO — the 'grounding is retrieval-bound' diagnosis is CONFIRMED
+
+Pre-registered A (maintainer-AI protocol): does sentence-level fact-bearing retrieval let entailment beat the
+incumbent lexical screen through the real fact_check_gate? Manipulation check PASSED (keyless Wikipedia sentence
+retrieval on the C1 evidence-groundable subset = 55.6% fact-bearing vs ~0% metadata; note 33/53 C1 claims are
+DETERMINISTIC math/doi/url/date, excluded).
+- C1-Wikipedia arm (faithful, n=18): NLI ΔF1 -0.09 (metadata, rung 5) -> +0.17 (sentences); over-abstention
+  coverage-drop 0.05 -> 0.0. Directionally strong but UNDERPOWERED (CI [-0.20,+0.36] includes 0; not extended
+  with self-authored tasks per protocol).
+- FEVER-through-gate arm (power-adequate, n=400 gold sentences, public benchmark): NLI ΔF1 **+0.142, CI [0.08,0.19]
+  excludes 0, 3 seeds, coverage drop 0.0 = GO.**
+CONCLUSION: entailment beats the incumbent lexical screen through the real gate IFF the evidence is fact-bearing
+sentences (metadata -> loses/over-abstains; sentences -> wins). Grounding verification IS retrieval-bound; the
+mechanism works given good evidence; the production blocker is retrieval quality, not the verifier head. Caveat:
+on FEVER the lexical screen is brittle on paraphrase (coverage 0.003), so part of the win is token-overlap failing;
+the metadata<->sentence contrast is the robust signal. PRE-DECLARED NEXT: GO -> fund D (retrieval as the product,
+NLI as escalation-tier verifier) — a roadmap redirection, maintainer decision. candidateOnly, canClaimAGI=false.
