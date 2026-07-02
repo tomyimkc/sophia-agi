@@ -131,10 +131,134 @@ def output_mse(W: torch.Tensor, Wq: torch.Tensor, X: torch.Tensor) -> float:
     return float((d * d).mean())
 
 
+# --------------------------------------------------------------------------- #
+# NVFP4 group-16 grid — the SERVED grid, so GPTQ output is served-reproducible.
+#
+# The low-RAM cert / vLLM ``--quantization nvfp4`` path blocks the WHOLE flattened
+# weight into groups of 16 with a per-block absmax micro-scale (``scale = amax/6``) and
+# snaps to the E2M1 levels. For a ``[out, in]`` row-major weight a block is 16 consecutive
+# INPUT columns within one output row — i.e. a per-(output-row, 16-input-group) scale. GPTQ
+# must therefore quantize on THIS grid (not per-column, which blocks along the output dim)
+# for the number to be reproducible by the server. Values/bounds are bit-identical to
+# ``training.qat._torch_nvfp4`` (kept in sync; grid-identity is verified against it at cert
+# time on a canary expert). ``in`` must be a multiple of ``group_size`` (OLMoE: 2048/1024 ✓).
+# --------------------------------------------------------------------------- #
+_NVFP4_LEVELS = (0.0, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0)
+_NVFP4_BOUNDS = (0.25, 0.75, 1.25, 1.75, 2.5, 3.5, 5.0)  # midpoints of consecutive levels
+
+
+_NVFP4_LB_CACHE: "dict[tuple, tuple]" = {}
+
+
+def _nvfp4_levels_bounds(device, dtype):
+    """Cached ``(levels, bounds)`` tensors per (device, dtype) — the hot path avoids re-alloc."""
+    key = (device, dtype)
+    lb = _NVFP4_LB_CACHE.get(key)
+    if lb is None:
+        lb = (torch.tensor(_NVFP4_LEVELS, device=device, dtype=dtype),
+              torch.tensor(_NVFP4_BOUNDS, device=device, dtype=dtype))
+        _NVFP4_LB_CACHE[key] = lb
+    return lb
+
+
+def _nvfp4_snap(vals: torch.Tensor, scale: torch.Tensor) -> torch.Tensor:
+    """Snap ``vals`` to ``sign · E2M1_level · scale`` (``scale`` broadcasts over ``vals``).
+
+    Computed in ``vals.dtype`` — matching ``training.qat._torch_nvfp4`` (which keeps levels/scale
+    in ``w.dtype``) so the result is BIT-IDENTICAL when called at the SAME precision (the cert
+    calls this in float32 to match the RTN served path ``fq(p.float())``). Constants are cached.
+    """
+    levels, bounds = _nvfp4_levels_bounds(vals.device, vals.dtype)
+    s = scale.clamp_min(1e-12)
+    idx = torch.bucketize((vals / s).abs(), bounds)
+    return torch.sign(vals) * levels[idx] * s
+
+
+def nvfp4_group_quantize(W: torch.Tensor, *, group_size: int = 16) -> torch.Tensor:
+    """Round-to-nearest NVFP4 on the SERVED grid: per-(output-row, ``group_size``-input) scale.
+
+    Bit-identical to ``training.qat._torch_nvfp4(W)`` **at the same precision** when
+    ``W.shape[1] % group_size == 0`` (both block 16 consecutive input columns per output row).
+    Because ``_torch_nvfp4`` uses ``dtype=w.dtype`` internally, the grid-identity check and the
+    cert's served snap call BOTH in float32 (matching the RTN path ``fq(p.float())``); this
+    function follows ``W``'s dtype, so pass ``W.float()`` for the served-grid equivalence.
+    """
+    if W.dim() != 2:
+        raise ValueError(f"W must be 2-D [rows, cols], got shape {tuple(W.shape)}")
+    rows, cols = W.shape
+    if cols % group_size != 0:
+        raise ValueError(f"in-dim {cols} must be a multiple of group_size {group_size}")
+    # compute in W.dtype (NOT float32) so this is bit-identical to _torch_nvfp4 on bf16 weights.
+    Wg = W.reshape(rows, cols // group_size, group_size)             # [out, n_groups, g]
+    scale = Wg.abs().amax(dim=2, keepdim=True).clamp_min(1e-12) / 6.0  # [out, n_groups, 1]
+    return _nvfp4_snap(Wg, scale).reshape(rows, cols)
+
+
+def gptq_quantize_grouped(
+    W: torch.Tensor,
+    H: torch.Tensor,
+    *,
+    group_size: int = 16,
+    percdamp: float = 0.01,
+) -> torch.Tensor:
+    """GPTQ on the NVFP4 group-16 SERVED grid — Hessian-aware, output-error minimizing.
+
+    Same inverse-Hessian error compensation as :func:`gptq_quantize`, but the quantizer snaps
+    each column to the per-(output-row, input-group) NVFP4 scale (fixed from the group's weights
+    at group entry, standard GPTQ static-group), so the returned ``Wq`` ALREADY lies on the NVFP4
+    served grid (E2M1 · group-scale). Blocks are the groups themselves (``blocksize ==
+    group_size``) so a group never straddles a block. The cert re-applies ``_torch_nvfp4`` (in
+    float32, matching the RTN path) as the stored served weight — a near-idempotent safety snap
+    onto the canonical grid, not a separate quantization step. Returns ``Wq`` in ``W``'s dtype.
+    """
+    if W.dim() != 2:
+        raise ValueError(f"W must be 2-D [rows, cols], got {tuple(W.shape)}")
+    rows, cols = W.shape
+    if H.shape != (cols, cols):
+        raise ValueError(f"H must be [cols, cols]=[{cols},{cols}], got {tuple(H.shape)}")
+    if cols % group_size != 0:
+        raise ValueError(f"in-dim {cols} must be a multiple of group_size {group_size}")
+
+    Wf = W.clone().float()
+    Hf = H.clone().float()
+    dead = torch.diag(Hf) == 0
+    Hf[dead, dead] = 1.0
+    Wf[:, dead] = 0.0
+    damp = percdamp * torch.mean(torch.diag(Hf))
+    di = torch.arange(cols, device=Wf.device)
+    Hf[di, di] += damp
+    Lc = torch.linalg.cholesky(Hf)
+    Hinv = torch.cholesky_inverse(Lc)
+    Hinv = torch.linalg.cholesky(Hinv, upper=True)
+
+    Wq = torch.zeros_like(Wf)
+    for g0 in range(0, cols, group_size):           # each block IS one NVFP4 group
+        g1 = g0 + group_size
+        W1 = Wf[:, g0:g1].clone()
+        scale = W1.abs().amax(dim=1).clamp_min(1e-12) / 6.0   # [out] fixed for the group
+        Q1 = torch.zeros_like(W1)
+        Err1 = torch.zeros_like(W1)
+        Hinv1 = Hinv[g0:g1, g0:g1]
+        for i in range(group_size):
+            w = W1[:, i]
+            d = Hinv1[i, i]
+            q = _nvfp4_snap(w, scale)
+            Q1[:, i] = q
+            err = (w - q) / d
+            W1[:, i:] -= err.unsqueeze(1) * Hinv1[i, i:].unsqueeze(0)
+            Err1[:, i] = err
+        Wq[:, g0:g1] = Q1
+        Wf[:, g1:] -= Err1 @ Hinv[g0:g1, g1:]       # propagate the group's error onward
+    Wq[:, dead] = 0.0
+    return Wq.to(W.dtype)
+
+
 __all__ = [
     "ColumnQuantizer",
     "uniform_symmetric_quantizer",
     "rtn_quantize",
     "gptq_quantize",
     "output_mse",
+    "nvfp4_group_quantize",
+    "gptq_quantize_grouped",
 ]
