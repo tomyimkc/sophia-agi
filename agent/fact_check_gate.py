@@ -146,10 +146,13 @@ _SUBJECTIVE_RE = re.compile(
 )
 # A code-fence artifact line (``` or ```lang) left over after fenced blocks are
 # extracted; must never be treated as an open factual claim.
-# NOTE py3.10 compat: possessive quantifiers (*+) are py3.11-only in `re`.
-# Greedy equivalents are semantically identical here (adjacent tokens are
-# disjoint: \s vs backtick vs [a-z0-9_+-]) and remain linear-time — no ReDoS surface.
-_FENCE_ARTIFACT_RE = re.compile(r"^\s*`{3,}\s*[a-z0-9_+-]*\s*$", re.I)
+# NOTE py3.10 compat: possessive quantifiers (*+) are py3.11-only in `re`, so
+# they cannot be the ReDoS armor here. Instead the pattern is minimized: the
+# only call site matches against .strip()'ed input, so the outer \s* groups
+# were dead weight — what remains is an anchored literal fence run, ONE \s*
+# separator, and a disjoint character class. No ambiguous quantifier adjacency,
+# linear-time by construction.
+_FENCE_ARTIFACT_RE = re.compile(r"^`{3,}\s*[a-z0-9_+-]*$", re.I)
 _AUTHORSHIP_VERB_RE = re.compile(r"\b(?:wrote|authored|penned|composed|author of|written by)\b", re.I)
 # Interrogative opener (sentence splitting strips the trailing '?', so detect the
 # leading question word instead). A question asserts nothing factual.
