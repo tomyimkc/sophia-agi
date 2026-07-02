@@ -42,7 +42,10 @@ import argparse
 import json
 import random
 from pathlib import Path
-from typing import Any, Callable, Sequence
+from typing import Any, Sequence
+
+if False:  # typing-only import kept out of runtime (CodeQL: unused import)
+    from typing import Callable  # noqa: F401
 
 SCHEMA = "sophia.selfplay_task_forge.v1"
 UNCERTAIN = {"compiled", "legendary", "none_extant"}

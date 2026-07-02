@@ -25,8 +25,10 @@ Guardrails (do not bypass):
 
 Usage:
   PYTHONPATH=. python3 tools/train_council_teacher.py --seat philosophy \
-      --stage1-data training/teachers/philosophy_reasoning.jsonl \
-      --stage2-data training/teachers/philosophy_tools.jsonl --plan   # validate only
+      --stage1-data training/teachers/philosophy/stage1/train.jsonl \
+      --stage2-data training/teachers/philosophy/stage2/train.jsonl --plan  # validate only
+  (--stage*-data point at the train.jsonl INSIDE each stage dir built by
+   tools/build_teacher_data.py; the stage DIRECTORY is what mlx_lm consumes)
   (drop --plan on the Mac bench to actually train; runs mlx_lm lora twice)
 """
 from __future__ import annotations

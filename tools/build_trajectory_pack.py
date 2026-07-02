@@ -98,22 +98,24 @@ def case_to_trajectory(rec: "dict[str, Any]", *, require_evidence: bool = True) 
 def long_horizon_to_trajectory(events: "list[dict[str, Any]]",
                                *, require_evidence: bool = False) -> "tuple[str, dict | None]":
     """Convert one long-horizon run's event stream (tools/run_long_horizon.py)."""
-    goal = next((e for e in events if e.get("kind") == "goal"), None)
+    # real runner schema (tools/run_long_horizon.py): events carry "type" and
+    # "message"; tool_calls carry argv/stdoutTail; verifications carry "passed".
+    goal = next((e for e in events if e.get("type") == "goal"), None)
     if goal is None:
         return "dropped_no_text", None
-    verifications = [e for e in events if e.get("kind") == "verification"]
+    verifications = [e for e in events if e.get("type") == "verification"]
     if not verifications:
         return "dropped_not_verifiable", None
-    actions = [e for e in events if e.get("kind") in ("tool_call", "self_correction")]
+    actions = [e for e in events if e.get("type") in ("tool_call", "self_correction")]
     if len(actions) < 2:
         return "dropped_not_process_informative", None
-    artifacts = [e for e in events if e.get("kind") == "artifact"]
+    artifacts = [e for e in events if e.get("type") == "artifact"]
     if require_evidence and not artifacts:
         return "dropped_not_evidence_covering", None
-    messages = [_msg("user", str(goal.get("detail") or goal.get("goal") or "long-horizon goal"))]
+    messages = [_msg("user", str(goal.get("message") or "long-horizon goal"))]
     steps = []
     for e in actions:
-        action = str(e.get("detail") or e.get("argv") or e.get("kind"))
+        action = str(e.get("message") or e.get("argv") or e.get("type"))
         messages.append(_msg("assistant", f"ACTION: {action}"))
         obs = str(e.get("stdoutTail") or e.get("output") or "")[:2000]
         if obs:

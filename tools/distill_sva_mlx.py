@@ -154,7 +154,7 @@ def build_mlx_sva_step(base_model_id: str, teacher_adapters: Mapping[str, str],
                 continue
             t_probs = mx.softmax(t_logits[t - 1])
             s_probs = mx.softmax(s_logits[t - 1])
-            top = mx.argpartition(-t_probs, k)[:k]
+            top = mx.argpartition(-t_probs, k - 1)[:k]  # kth is 0-based; k would over-partition/err at boundary
             ps, pt = s_probs[top], t_probs[top]
             ps_n = ps / mx.maximum(mx.sum(ps), 1e-12)
             pt_n = pt / mx.maximum(mx.sum(pt), 1e-12)

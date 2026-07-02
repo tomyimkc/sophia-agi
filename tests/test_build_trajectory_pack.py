@@ -49,15 +49,17 @@ def test_build_pack_counts_and_fail_closed_empty():
 
 
 def test_long_horizon_events_conversion():
+    # the REAL runner schema (tools/run_long_horizon.py): type + message fields
     events = [
-        {"kind": "goal", "detail": "optimize the thing"},
-        {"kind": "tool_call", "detail": "run step 1", "stdoutTail": "ok", "passed": True},
-        {"kind": "self_correction", "detail": "retry step", "passed": True},
-        {"kind": "verification", "passed": True},
+        {"type": "goal", "message": "optimize the thing", "runId": "r1"},
+        {"type": "tool_call", "message": "ran: step 1", "argv": ["bash"], "stdoutTail": "ok"},
+        {"type": "self_correction", "message": "retried step: step 1", "returncode": 0},
+        {"type": "verification", "message": "verification for: step 1", "passed": True},
     ]
     disp, row = long_horizon_to_trajectory(events)
     assert disp == "sft" and row["metadata"]["verifications"] == [{"passed": True}]
-    events[-1] = {"kind": "verification", "passed": False}
+    assert "optimize the thing" in row["messages"][0]["content"]
+    events[-1] = {"type": "verification", "passed": False}
     disp, _ = long_horizon_to_trajectory(events)
     assert disp == "dpo_negative"
-    assert long_horizon_to_trajectory([{"kind": "goal"}])[0] == "dropped_not_verifiable"
+    assert long_horizon_to_trajectory([{"type": "goal", "message": "g"}])[0] == "dropped_not_verifiable"

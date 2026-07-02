@@ -39,7 +39,13 @@ def _load_rows(paths: "Sequence[Path]") -> list[dict]:
                 continue
             r = json.loads(line)
             if isinstance(r.get("messages"), list) and r["messages"]:
-                rows.append({"messages": r["messages"], "metadata": r.get("metadata", {})})
+                # STRIP per-row source metadata: several upstream corpus rows carry
+                # copy/pasted trap/tradition labels that mismatch their content
+                # (found in review of stage1/valid.jsonl) — mislabeled metadata
+                # silently poisons any metadata-driven slicing. The trainer only
+                # consumes messages; pack-level provenance lives in the report.
+                rows.append({"messages": r["messages"],
+                             "metadata": {"sourceMetadataStripped": True}})
     return rows
 
 
