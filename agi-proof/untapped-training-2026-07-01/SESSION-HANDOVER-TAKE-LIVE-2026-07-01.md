@@ -5,6 +5,22 @@
 > live gates landed as **candidates / one clean Goodhart negative**, honestly not flipped.
 > Branch `feat/agi-proof-candidate-tools` (`b07e2b9b..601d3d15`).
 
+> **Round 5 (2026-07-02): deep promotion — every gap that CAN be addressed locally, addressed.
+> All rows still OPEN (maintainer sign-off pending).**
+> - **W2 accuracy-controlled 2nd surface**: keeping the model's OWN answers on letter-counting,
+>   ECE 0.533→0.14–0.20 at CONSTANT accuracy, **all 3 seeds' ΔECE CIs exclude 0** → removes the
+>   capability confound + math-specificity. W2 now lowers ECE on TWO independent surfaces.
+> - **W3 held-out GENERALIZATION**: rule-learning (zibbo=N>50) with flipped low-provenance labels
+>   → provenance-weighted **generalizes to unseen N: 0.834 vs uniform 0.500**, 2 seeds. Addresses
+>   the in-sample gap (the core W3 objection) — genuine generalization, not memorization.
+> - **W5 larger-N**: seed2's non-significance is a **CEILING effect** (base 0.919), not power —
+>   larger N didn't close it; improvement scales with headroom. 2/3 seeds significant; genuine
+>   anti-Goodhart method.
+> - **W1 genuine 3rd domain** (boolean-logic sympy oracle): cross-domain transfer still ~chance
+>   (0.467) → domain-specificity DEFINITIVE; gate needs multi-domain training or GPU RLVR.
+> - **Remaining are enhancements beyond the gate** (not gaps): W4 generative/learning adversary,
+>   W3 real TracIn backend + ≥3 seeds, W5 matched-base-audit seeds, W1 GPU RLVR / multi-domain PRM.
+
 > **Round 4 (2026-07-02): promotion experiments — strongest honest evidence, all rows still
 > OPEN.**
 > - **W2 second surface** (non-math letter-counting): ECE 0.53→0.43 + acc@cov 0.4→1.0
