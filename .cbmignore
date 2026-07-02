@@ -17,6 +17,7 @@ CONTRACT.md
 !.claude/skills/skill-author/**
 !.claude/skills/spark-cluster-ops/**
 !.claude/skills/rlvr-harness-traps/**
+!.claude/skills/remote-session-fallbacks/**
 # --- non-git-crypt gitignored secrets (backstop) ---
 .env
 .env.*
