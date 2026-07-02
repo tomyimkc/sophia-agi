@@ -1,0 +1,48 @@
+{"id": "p01t", "pair": "p01", "text": "The capital of France is Paris.", "label": false}
+{"id": "p01f", "pair": "p01", "text": "The capital of France is Lyon.", "label": true}
+{"id": "p02t", "pair": "p02", "text": "Water is composed of hydrogen and oxygen.", "label": false}
+{"id": "p02f", "pair": "p02", "text": "Water is composed of nitrogen and helium.", "label": true}
+{"id": "p03t", "pair": "p03", "text": "The Earth orbits the Sun once per year.", "label": false}
+{"id": "p03f", "pair": "p03", "text": "The Sun orbits the Earth once per year.", "label": true}
+{"id": "p04t", "pair": "p04", "text": "There are seven days in a week.", "label": false}
+{"id": "p04f", "pair": "p04", "text": "There are ten days in a week.", "label": true}
+{"id": "p05t", "pair": "p05", "text": "The chemical symbol for gold is Au.", "label": false}
+{"id": "p05f", "pair": "p05", "text": "The chemical symbol for gold is Gd.", "label": true}
+{"id": "p06t", "pair": "p06", "text": "Mount Everest is the tallest mountain above sea level.", "label": false}
+{"id": "p06f", "pair": "p06", "text": "Mount Kilimanjaro is the tallest mountain above sea level.", "label": true}
+{"id": "p07t", "pair": "p07", "text": "A triangle has three sides.", "label": false}
+{"id": "p07f", "pair": "p07", "text": "A triangle has five sides.", "label": true}
+{"id": "p08t", "pair": "p08", "text": "The Pacific is the largest ocean on Earth.", "label": false}
+{"id": "p08f", "pair": "p08", "text": "The Arctic is the largest ocean on Earth.", "label": true}
+{"id": "p09t", "pair": "p09", "text": "Humans have 206 bones in the adult body.", "label": false}
+{"id": "p09f", "pair": "p09", "text": "Humans have 106 bones in the adult body.", "label": true}
+{"id": "p10t", "pair": "p10", "text": "William Shakespeare wrote Hamlet.", "label": false}
+{"id": "p10f", "pair": "p10", "text": "Charles Dickens wrote Hamlet.", "label": true}
+{"id": "p11t", "pair": "p11", "text": "The speed of light is faster than the speed of sound.", "label": false}
+{"id": "p11f", "pair": "p11", "text": "The speed of sound is faster than the speed of light.", "label": true}
+{"id": "p12t", "pair": "p12", "text": "Two plus two equals four.", "label": false}
+{"id": "p12f", "pair": "p12", "text": "Two plus two equals five.", "label": true}
+{"id": "p13t", "pair": "p13", "text": "The human heart pumps blood through the body.", "label": false}
+{"id": "p13f", "pair": "p13", "text": "The human liver pumps blood through the body.", "label": true}
+{"id": "p14t", "pair": "p14", "text": "Oxygen is necessary for human respiration.", "label": false}
+{"id": "p14f", "pair": "p14", "text": "Carbon dioxide is necessary for human respiration.", "label": true}
+{"id": "p15t", "pair": "p15", "text": "The Great Wall of China is located in China.", "label": false}
+{"id": "p15f", "pair": "p15", "text": "The Great Wall of China is located in Japan.", "label": true}
+{"id": "p16t", "pair": "p16", "text": "Ice is the solid form of water.", "label": false}
+{"id": "p16f", "pair": "p16", "text": "Steam is the solid form of water.", "label": true}
+{"id": "p17t", "pair": "p17", "text": "A year on Earth is about 365 days.", "label": false}
+{"id": "p17f", "pair": "p17", "text": "A year on Earth is about 500 days.", "label": true}
+{"id": "p18t", "pair": "p18", "text": "The Amazon rainforest is in South America.", "label": false}
+{"id": "p18f", "pair": "p18", "text": "The Amazon rainforest is in Australia.", "label": true}
+{"id": "p19t", "pair": "p19", "text": "Sound travels faster in water than in a vacuum.", "label": false}
+{"id": "p19f", "pair": "p19", "text": "Sound travels quickly through a vacuum.", "label": true}
+{"id": "p20t", "pair": "p20", "text": "The freezing point of water is 0 degrees Celsius.", "label": false}
+{"id": "p20f", "pair": "p20", "text": "The freezing point of water is 50 degrees Celsius.", "label": true}
+{"id": "p21t", "pair": "p21", "text": "Albert Einstein developed the theory of relativity.", "label": false}
+{"id": "p21f", "pair": "p21", "text": "Isaac Newton developed the theory of relativity.", "label": true}
+{"id": "p22t", "pair": "p22", "text": "Bees produce honey.", "label": false}
+{"id": "p22f", "pair": "p22", "text": "Spiders produce honey.", "label": true}
+{"id": "p23t", "pair": "p23", "text": "The moon reflects light from the sun.", "label": false}
+{"id": "p23f", "pair": "p23", "text": "The moon generates its own light internally.", "label": true}
+{"id": "p24t", "pair": "p24", "text": "Japan is an island nation in East Asia.", "label": false}
+{"id": "p24f", "pair": "p24", "text": "Japan is a landlocked nation in Europe.", "label": true}
