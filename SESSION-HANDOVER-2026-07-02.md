@@ -59,3 +59,55 @@ off the Spark GPU and the `w1–w5` branch.
 Required CI checks `fast` + `ci-complete`; `make claim-check` (no-overclaim + gate GO/NO-GO);
 the generated-artifact drift gates (skill index, wiki, results page, failure-ledger validator).
 Never flip a ledger row to a positive claim without a pre-registered gate + artifact + sha256.
+
+---
+
+# Appendix — web session (later on 2026-07-02): recommendation-adoption sprint
+
+> Branch `claude/sophia-workflow-agi-recommendations-2z8pbt` (all pushed). Separate session
+> from the Mac-operator one above; be aware BOTH exist. My seam work (W1/W2/W3/W5) may brush
+> against the ACTIVE `claude/sophia-w1-w5-live-g04zs1` branch at merge time — reconcile there,
+> not by rebasing their branch.
+
+## A1. What landed (one commit each, tests green, lint_claims OK throughout)
+- `c225e23` chart-vs-code verification + ranked recommendations
+  (`docs/09-Agent/flowcharts/Workflow-AGI-Recommendations-2026-07-02.md`).
+- `e860d04` **R5/W1**: `provenance_bench/prm_step_reward.py` + `run_rlvr --task step
+  --step-reward prm --prm-derivations --prm-cap` — PRM wired as an RLVR arm; symbolic oracle
+  authoritative, PRM fills abstains only, capped; containment invariants in the dry-run report.
+- `27e2fd1a` **R6/W3**: `build_local_sophia_dataset --provenance-weighting[/-floor/-repeat]`
+  — declared PACK_PROVENANCE map → curriculum order + 1:1 weight sidecar + optional
+  replication; default build byte-identical.
+- `dbef2a52` **R3/W5 seam CLOSED**: real `build_hidden_state_featurizer` (MLX final-layer
+  residual stream, lazy, fail-closed on x86) + `train_vector_probe`/`evaluate_vector_probe`
+  + new `mac-mlx-bench.yml` (self-hosted macOS runner lane).
+- `57c0e3c7` **R2/W2 bridge**: `tools/build_calibration_dpo_pack.py` — balanced honesty DPO
+  pairs (one-sided packs refused), registered as `dpo_calibration.jsonl`; Platt baseline +
+  post-train re-audit pre-registered in its own report.
+- `b59fc296` **R4 vehicle**: `mac-mlx-bench.yml suite=claim-router-ablation`
+  (sophia-full vs sophia-claim-router, 18-case abstain pack, mlx adapter backend).
+- New plaintext skill `remote-session-fallbacks` (Bash-classifier outage playbook,
+  post-API-push resync, git-crypt-in-container, cluster-dispatch-from-web).
+
+## A2. In flight — check FIRST
+- **rlvr-runpod run #64** (offline smoke, provenance/gate/seed0): `waiting` on the owner's
+  `runpod-paid` approval → actions/runs/28558110902. Owner pre-authorized smoke → then the
+  3-seed live sweep (reward=gate AND multiaxis).
+- **spark-gpu run #2** (offline reward-wiring smoke, NO model load / NO GPU allocation —
+  safe next to the active bridge work): `queued` until the Spark runner is free/online →
+  actions/runs/28558129937.
+- **mac-mlx-bench**: not yet dispatched; first `suite=featurizer` (validates Mac runner +
+  flips W5/energy-head readiness True there), then `suite=claim-router-ablation` (R4 evidence).
+
+## A3. Next steps (plan of record)
+1. Approve #64 → smoke green → dispatch live sweep seeds {0,1,2} × reward {gate, multiaxis}.
+2. Post-train re-audit MUST include answerable-coverage (abstention-collapse check);
+   pass@1/VSC load-bearing, never meanReward; ledger row `rlvr-live-run-not-yet-gated-2026-06-21`.
+3. Mac bench R4 deltas → if router wins, `evaluate_update()` with answerable-coverage
+   protected BEFORE flipping `use_claim_router` default.
+4. R5 live arm needs a derivations JSONL; R2 training needs records that carry prompt+answer.
+
+## A4. Traps rediscovered
+`rlvr.public-report.json` is rewritten by every run incl. dry-runs — `git checkout --` before
+commit. Red `cleanPositive` on step-task offline invariants = missing sympy, not a bug.
+`sophia-security-audit/SKILL.md` shows M after unlock (clean-filter artifact) — never stage.
