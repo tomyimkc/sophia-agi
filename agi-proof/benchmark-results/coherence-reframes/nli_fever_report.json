@@ -1,0 +1,89 @@
+{
+  "schema": "sophia.nli_grounding.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "reframe": "NLI-entailment grounding verifier vs coherence baseline",
+  "nliModel": "cross-encoder/nli-deberta-v3-base",
+  "n": 400,
+  "nSupported": 200,
+  "seeds": {
+    "0": {
+      "NLI_vs_chance": {
+        "auroc": 0.9619,
+        "ci95": [
+          0.9421,
+          0.9786
+        ]
+      },
+      "coherence_vs_chance": {
+        "auroc": 0.6505,
+        "ci95": [
+          0.5969,
+          0.7029
+        ]
+      },
+      "NLI_vs_coherence_paired": {
+        "aurocA": 0.9619,
+        "aurocB": 0.6505,
+        "delta": 0.3114,
+        "ci95": [
+          0.2579,
+          0.3645
+        ]
+      }
+    },
+    "1": {
+      "NLI_vs_chance": {
+        "auroc": 0.9619,
+        "ci95": [
+          0.9428,
+          0.9788
+        ]
+      },
+      "coherence_vs_chance": {
+        "auroc": 0.6505,
+        "ci95": [
+          0.5969,
+          0.7028
+        ]
+      },
+      "NLI_vs_coherence_paired": {
+        "aurocA": 0.9619,
+        "aurocB": 0.6505,
+        "delta": 0.3114,
+        "ci95": [
+          0.2575,
+          0.3649
+        ]
+      }
+    },
+    "7": {
+      "NLI_vs_chance": {
+        "auroc": 0.9619,
+        "ci95": [
+          0.9426,
+          0.9789
+        ]
+      },
+      "coherence_vs_chance": {
+        "auroc": 0.6505,
+        "ci95": [
+          0.5953,
+          0.7035
+        ]
+      },
+      "NLI_vs_coherence_paired": {
+        "aurocA": 0.9619,
+        "aurocB": 0.6505,
+        "delta": 0.3114,
+        "ci95": [
+          0.2574,
+          0.3649
+        ]
+      }
+    }
+  },
+  "NLI_beatsChance_allSeeds": true,
+  "NLI_beatsCoherence_allSeeds": true,
+  "verdict": "NLI_beats_coherence_and_chance"
+}
