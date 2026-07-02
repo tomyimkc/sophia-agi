@@ -85,6 +85,23 @@ def _to_mlx_rows(rows: list[dict]) -> list[dict]:
 
 HOLDOUT_SRC = "training/lora/holdout.jsonl"
 
+# W3 provenance weighting: pack -> provenance identifier consumed by
+# agent.source_ranking.rank_source. Declared DATA, not runtime judgment: each
+# pack maps to the kind of source that GENERATED it, so the tier assignment is
+# deterministic and reviewable. Self-generated model traces are deliberately
+# left at the generic tier (a gate-checked trace is still self-authored);
+# only packs converted from the repo's curated data dirs get the data/ tier.
+PACK_PROVENANCE = {
+    "sft_source_discipline.jsonl": "data/attributions.json",       # curated-local
+    "sft_wiki_provenance.jsonl": "wiki://provenance-sft",          # wiki tier
+    "sft_council_traces.jsonl": "self://council-traces",           # generic (self-generated)
+    "sft_religion_repair_c4.jsonl": "self://council-religion-repair",
+    "sft_moral_gate.jsonl": "data/moral_corpus",                   # converted curated data
+    "general_instruct.jsonl": "external://instruct-slice",         # generic (external)
+    "sft_from_feedback.jsonl": "data/feedback-promoted",           # human-reviewed, promoted
+    "sft_hk_advisor.jsonl": "self://hk-advisor-traces",
+}
+
 
 def _sft_sources(out: Path) -> list[tuple[str, str, str]]:
     gi = out / "general_instruct.jsonl"
@@ -147,6 +164,9 @@ def build(
     *,
     out: Path = DEFAULT_OUT,
     base_model: str = DEFAULT_BASE_MODEL,
+    provenance_weighting: bool = False,
+    provenance_floor: float = 0.1,
+    provenance_repeat: int = 0,
 ) -> int:
     from provenance_bench.dataset_guard import normalize, prompt_of
     from provenance_bench.holdout_seal import verify_manifest
@@ -189,7 +209,13 @@ def build(
         if clean_rows:
             all_train.extend(clean_rows)
             if kind == "sft":
-                all_sft.extend(clean_rows)
+                if provenance_weighting:
+                    # Tag the MLX-bound copy with its pack so the fitted rows can be
+                    # weighted after token-fit (fit_rows preserves metadata on splits).
+                    all_sft.extend({**r, "metadata": {**(r.get("metadata") or {}), "pack": name}}
+                                   for r in clean_rows)
+                else:
+                    all_sft.extend(clean_rows)
             if not check_only:
                 _write_jsonl(out / name, clean_rows)
 
@@ -204,6 +230,61 @@ def build(
 
     mlx_train_fitted, mlx_train_fit = fit_rows(_to_mlx_rows(all_sft), max_tokens=MLX_MAX_TOKENS)
     mlx_valid_fitted, mlx_valid_fit = fit_rows(_to_mlx_rows(holdout), max_tokens=MLX_MAX_TOKENS)
+
+    # ---- W3: provenance-weighted curriculum + sampling (opt-in, additive) ----
+    # Each fitted row inherits its pack's deterministic source-trust rank
+    # (agent.source_ranking via PACK_PROVENANCE). Consumables:
+    #   * curriculum order (high-trust first) in the written train.jsonl;
+    #   * optional weight-proportional REPLICATION (--provenance-repeat N>0) so the
+    #     trust signal survives mlx_lm's per-epoch shuffle (sampling ~ loss weight);
+    #   * a 1:1 sidecar (train_provenance_weights.jsonl) for a future trainer that
+    #     consumes true per-example loss weights.
+    # The floor down-weights low-trust data; it never deletes it. Applied AFTER
+    # decontamination and token-fit, so neither guard is affected.
+    prov_manifest: dict = {"enabled": bool(provenance_weighting)}
+    if provenance_weighting:
+        from agent.source_ranking import rank_source
+
+        def _row_weight(row: dict) -> dict:
+            pack = str((row.get("metadata") or {}).get("pack", ""))
+            src_id = PACK_PROVENANCE.get(pack, f"self://unmapped-{pack or 'row'}")
+            rs = rank_source(src_id)
+            return {"pack": pack, "provenanceSource": src_id, "tier": rs.tier,
+                    "rank": round(float(rs.rank), 4),
+                    "weight": round(max(provenance_floor, float(rs.rank)), 4)}
+
+        row_w = [_row_weight(r) for r in mlx_train_fitted]
+        order = sorted(range(len(mlx_train_fitted)), key=lambda i: -row_w[i]["weight"])
+        mlx_train_fitted = [mlx_train_fitted[i] for i in order]
+        row_w = [row_w[i] for i in order]
+        if provenance_repeat > 0 and row_w:
+            w_min = min(x["weight"] for x in row_w)
+            w_max = max(x["weight"] for x in row_w)
+            span = (w_max - w_min) or 1.0
+            expanded_rows, expanded_w = [], []
+            for r, w in zip(mlx_train_fitted, row_w):
+                copies = 1 + round(provenance_repeat * (w["weight"] - w_min) / span)
+                expanded_rows.extend([r] * copies)
+                expanded_w.extend([{**w, "copies": copies}] * copies)
+            mlx_train_fitted, row_w = expanded_rows, expanded_w
+        sidecar = [{"index": i, **w} for i, w in enumerate(row_w)]
+        tier_counts: dict[str, int] = {}
+        for w in row_w:
+            tier_counts[w["tier"]] = tier_counts.get(w["tier"], 0) + 1
+        prov_manifest.update({
+            "floor": provenance_floor, "repeat": provenance_repeat,
+            "rowsAfterWeighting": len(mlx_train_fitted),
+            "tierCounts": tier_counts,
+            "packProvenance": PACK_PROVENANCE,
+            "sidecar": "mlx/train_provenance_weights.jsonl",
+            "note": "deterministic pack-level trust (agent.source_ranking); order + "
+                    "replication only — no row is deleted; decontamination/token-fit "
+                    "unaffected. candidateOnly: any training uplift must clear the "
+                    "promotion gate before being claimed.",
+        })
+        if not check_only:
+            _write_jsonl(out / "mlx" / "train_provenance_weights.jsonl", sidecar)
+
     if not check_only:
         _write_jsonl(out / "mlx" / "train.jsonl", mlx_train_fitted)
         _write_jsonl(out / "mlx" / "valid.jsonl", mlx_valid_fitted)
@@ -244,8 +325,10 @@ def build(
             "clean": contam["clean"] and not holdout_overlap,
         },
         "mlx": {"trainRows": len(mlx_train_fitted), "validRows": len(mlx_valid_fitted),
-                "path": str(out.relative_to(ROOT) / "mlx"), "maxTokens": MLX_MAX_TOKENS,
+                "path": str((out.relative_to(ROOT) if out.is_relative_to(ROOT) else out) / "mlx"),
+                "maxTokens": MLX_MAX_TOKENS,
                 "fit": {"train": mlx_train_fit, "valid": mlx_valid_fit}},
+        "provenanceWeighting": prov_manifest,
         "claimBoundary": "Trains behavioral discipline, not general intelligence. "
                          "External MCP/verifier gates enforce correctness at runtime.",
     }
@@ -270,8 +353,20 @@ def main(argv=None) -> int:
     ap.add_argument("--check", action="store_true", help="guard only; no writes (CI)")
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT, help="output pack directory")
     ap.add_argument("--base-model", default=DEFAULT_BASE_MODEL, help="target base model id")
+    ap.add_argument("--provenance-weighting", action="store_true",
+                    help="W3: order the MLX train rows high-trust-first and write a 1:1 "
+                         "per-row weight sidecar from deterministic pack provenance "
+                         "(agent.source_ranking); default off = byte-identical build")
+    ap.add_argument("--provenance-floor", type=float, default=0.1,
+                    help="W3: minimum per-row weight — low-trust data is down-weighted, never deleted")
+    ap.add_argument("--provenance-repeat", type=int, default=0,
+                    help="W3: max EXTRA copies of the highest-trust rows (weight-proportional "
+                         "replication so trust survives mlx_lm's per-epoch shuffle); 0 = order+sidecar only")
     args = ap.parse_args(argv)
-    return build(args.check, out=args.out, base_model=args.base_model)
+    return build(args.check, out=args.out, base_model=args.base_model,
+                 provenance_weighting=args.provenance_weighting,
+                 provenance_floor=args.provenance_floor,
+                 provenance_repeat=args.provenance_repeat)
 
 
 if __name__ == "__main__":
