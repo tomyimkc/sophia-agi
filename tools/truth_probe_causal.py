@@ -23,8 +23,8 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
+from itertools import islice
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -57,6 +57,9 @@ def main(argv=None) -> int:
     except TypeError:
         model = AutoModelForCausalLM.from_pretrained(args.model, torch_dtype=torch.bfloat16).to(dev).eval()
     L = args.layer
+    if not (0 <= L < len(model.model.layers)):
+        print(f"--layer {L} out of range [0,{len(model.model.layers)})", file=sys.stderr)
+        return 2
 
     def last_resid(text):
         cap = {}
@@ -80,10 +83,13 @@ def main(argv=None) -> int:
     rand = torch.randn(w.shape, generator=g).to(dev); rand = rand / rand.norm()
 
     def steer_hook(vec, alpha):
+        # modify ONLY the last token's residual — where w is fit and the next-token logits are
+        # read — so the intervention matches the stated causal test (not a whole-sequence shift).
         def hook(_m, _i, out):
-            if isinstance(out, tuple):
-                return (out[0] + alpha * vec.to(out[0].dtype),) + out[1:]
-            return out + alpha * vec.to(out.dtype)
+            hs = out[0] if isinstance(out, tuple) else out
+            hs = hs.clone()
+            hs[:, -1, :] = hs[:, -1, :] + alpha * vec.to(hs.dtype)
+            return (hs,) + out[1:] if isinstance(out, tuple) else hs
         return hook
 
     def first_id(s):
@@ -97,7 +103,8 @@ def main(argv=None) -> int:
         try:
             with torch.no_grad():
                 for r in rows:
-                    ids = tok(f"{r['text']} This statement is", return_tensors="pt").input_ids.to(dev)
+                    ids = tok(f"{r['text']} This statement is", return_tensors="pt",
+                              truncation=True, max_length=64).input_ids.to(dev)
                     lg = model(ids).logits[0, -1].float()
                     gs.append((lg[tid] - lg[fid]).item())
         finally:
@@ -115,20 +122,23 @@ def main(argv=None) -> int:
     causal["is_causal"] = bool(causal["gap_plus_w"] > causal["gap_off"] > causal["gap_minus_w"]
                                and abs(causal["effect_w"]) > 2 * abs(causal["effect_rand"]))
 
-    third = {"status": "skipped"}
     try:
         from datasets import load_dataset
         ds = load_dataset(args.third_party, split=args.third_party_split)
         sk = "statement" if "statement" in ds.column_names else ds.column_names[0]
         lk = "label" if "label" in ds.column_names else ds.column_names[-1]
-        items = [(x[sk], int(x[lk])) for x in ds][:300]
-        tr = torch.stack([last_resid(t) for t, y in items if y == 1][:80]).mean(0)
-        fa = torch.stack([last_resid(t) for t, y in items if y == 0][:80]).mean(0)
+        items = [(x[sk], int(x[lk])) for x in islice(ds, 400)]  # bounded scan, not the whole set
+        pos = [t for t, y in items if y == 1]
+        neg = [t for t, y in items if y == 0]
+        k = min(len(pos), len(neg)); half = k // 2  # balanced calib/test from available examples
+        tr = torch.stack([last_resid(t) for t in pos[:half]]).mean(0)
+        fa = torch.stack([last_resid(t) for t in neg[:half]]).mean(0)
         w2 = (tr - fa); w2 = w2 / w2.norm()
-        sc = [torch.dot(w2, last_resid(t)).item() for t, y in items[160:]]
-        lb = [bool(y) for _, y in items[160:]]
+        test = [(t, 1) for t in pos[half:k]] + [(t, 0) for t in neg[half:k]]
+        sc = [torch.dot(w2, last_resid(t)).item() for t, _ in test]
+        lb = [bool(y) for _, y in test]
         third = {"status": "ok", "dataset": args.third_party, "split": args.third_party_split,
-                 "n_test": len(sc), "auroc": round(auroc(sc, lb), 4)}
+                 "n_calib": 2 * half, "n_test": len(sc), "auroc": round(auroc(sc, lb), 4)}
     except Exception as e:
         third = {"status": f"unavailable: {type(e).__name__}: {str(e)[:120]}"}
 
