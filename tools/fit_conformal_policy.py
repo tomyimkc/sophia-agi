@@ -41,6 +41,8 @@ if str(ROOT) not in sys.path:
 from agent.conformal_gate import (  # noqa: E402
     ConformalPolicy,
     evaluate_policy,
+    conformal_risk_control,
+    crc_validity_check,
     fit_conformal_policy,
     load_jsonl,
 )
@@ -132,6 +134,9 @@ def main(argv=None) -> int:
     ap.add_argument("--alpha", type=float, default=0.1, help="risk level for the persisted policy")
     ap.add_argument("--holdout", type=float, default=0.5)
     ap.add_argument("--persist", action="store_true", help="write the fitted policy to config/")
+    ap.add_argument("--risk-control", action="store_true",
+                    help="also fit Conformal Risk Control (CRC): a distribution-free finite-sample "
+                         "bound on the DEPLOYED false-answer rate E[answered AND wrong] <= alpha")
     ap.add_argument("--out", type=Path, default=REPORT_PATH)
     args = ap.parse_args(argv)
 
@@ -173,6 +178,26 @@ def main(argv=None) -> int:
         ),
     }
 
+    if args.risk_control:
+        buckets = sorted({r.get("risk", "normal") for r in labeled})
+        report["riskControl"] = {
+            "note": "Conformal Risk Control (CRC, Angelopoulos et al. 2022 arXiv:2208.02814): a "
+                    "distribution-free finite-sample bound on the MARGINAL false-answer rate "
+                    "E[answered AND wrong] <= alpha, per risk bucket. This UPGRADES the reported "
+                    "falseAnswerRate into a calibrated bound. candidateOnly; assumes calibration/"
+                    "test exchangeability (per-bucket = group-conditional refinement).",
+            "byAlpha": {
+                f"{a:.2f}": {
+                    risk: {
+                        "fit": conformal_risk_control(labeled, alpha=a, risk_bucket=risk),
+                        "validity": crc_validity_check(labeled, alpha=a, risk_bucket=risk, n_splits=200, seed=0),
+                    }
+                    for risk in buckets
+                }
+                for a in sorted(set(DEFAULT_ALPHAS) | {args.alpha})
+            },
+        }
+
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
@@ -186,6 +211,17 @@ def main(argv=None) -> int:
     for s in sweep:
         flags = "VALID" if s["validityHolds"] else "FAILED-VALIDITY"
         print(f"  alpha={s['alpha']:.2f}  held-out validity: {flags}")
+    if args.risk_control:
+        print("Conformal Risk Control (deployed false-answer bound E[answered AND wrong] <= alpha):")
+        for a_key, by_risk in report["riskControl"]["byAlpha"].items():
+            for risk, blk in by_risk.items():
+                fit, val = blk["fit"], blk["validity"]
+                if fit.get("feasible"):
+                    print(f"  alpha={a_key} risk={risk}: coverage={fit['coverage']} "
+                          f"crcBound={fit['crcBound']} | validity mean={val['meanRealizedFalseAnswerRate']} "
+                          f"({'VALID' if val['valid'] else 'CHECK'})")
+                else:
+                    print(f"  alpha={a_key} risk={risk}: INFEASIBLE ({fit.get('reason','')})")
     print(f"Wrote {(args.out.relative_to(ROOT) if args.out.is_absolute() and args.out.is_relative_to(ROOT) else args.out)}")
     if args.persist:
         print(f"Persisted policy -> {POLICY_PATH.relative_to(ROOT)}")

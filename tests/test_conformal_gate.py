@@ -16,6 +16,8 @@ if str(ROOT) not in sys.path:
 
 from agent.conformal_gate import (
     ConformalPolicy,
+    conformal_risk_control,
+    crc_validity_check,
     evaluate_policy,
     fit_conformal_policy,
 )
@@ -89,6 +91,52 @@ def test_evaluate_policy_reports_no_overclaim_fields():
     assert ev["candidateOnly"] is True
     assert ev["level3Evidence"] is False
     assert 0.0 <= ev["metrics"]["coverage"] <= 1.0
+
+
+def test_crc_bound_holds_and_is_at_most_alpha():
+    # CRC selects the largest threshold whose (n*Rhat + 1)/(n+1) <= alpha; the reported
+    # bound must be <= alpha and the in-sample empirical risk must be <= the bound.
+    rows = synthetic_rows(600)
+    rc = conformal_risk_control(rows, alpha=0.1)
+    assert rc["feasible"] is True
+    assert rc["crcBound"] <= 0.1 + 1e-9
+    assert rc["empiricalRisk"] <= rc["crcBound"] + 1e-9
+    # in-sample realized marginal false-answer rate == empiricalRisk (by construction).
+    # CRC fits on the risk_bucket subset (default "normal"), same convention as
+    # fit_conformal_policy — so the realized rate is over that bucket, not all rows.
+    tau = rc["threshold"]
+    bucket = [r for r in rows if r.get("risk", "normal") == "normal"]
+    realized = sum(1 for r in bucket if float(r["nonconformity"]) <= tau and not r["correct"]) / len(bucket)
+    assert abs(realized - rc["empiricalRisk"]) < 1e-6  # empiricalRisk is stored rounded to 6dp
+    assert rc["candidateOnly"] is True and rc["level3Evidence"] is False
+
+
+def test_crc_infeasible_when_n_too_small():
+    # alpha=0.05 needs n >= 19 (B/(n+1) <= alpha). With n=10 even abstain-all can't certify.
+    rows = [{"nonconformity": i / 10, "correct": i % 2 == 0} for i in range(10)]
+    rc = conformal_risk_control(rows, alpha=0.05)
+    assert rc["feasible"] is False
+    assert rc["threshold"] is None
+    assert rc["crcBound"] > 0.05  # B/(n+1) = 1/11 ~ 0.0909
+
+
+def test_crc_more_coverage_at_larger_alpha():
+    # A looser risk budget answers at least as many rows (monotone in alpha).
+    rows = synthetic_rows(600)
+    lo = conformal_risk_control(rows, alpha=0.05)
+    hi = conformal_risk_control(rows, alpha=0.2)
+    assert lo["feasible"] and hi["feasible"]
+    assert hi["answered"] >= lo["answered"]
+
+
+def test_crc_validity_mean_realized_within_alpha():
+    # The empirical demonstration of E[loss] <= alpha: mean held-out realized
+    # false-answer rate across many random splits must not exceed alpha.
+    rows = synthetic_rows(600)
+    v = crc_validity_check(rows, alpha=0.1, n_splits=120, seed=0, holdout=0.3)
+    assert v["feasibleSplits"] > 0
+    assert v["meanRealizedFalseAnswerRate"] <= 0.1 + 1e-9
+    assert v["valid"] is True
 
 
 if __name__ == "__main__":
