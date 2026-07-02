@@ -1,0 +1,48 @@
+{
+  "schema": "sophia.nli_hybrid_gate.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "arm": "contradiction-only hybrid (admission=lexical, reject=NLI-contradiction) vs lexical incumbent",
+  "sealedSnapshot": {
+    "n": 59,
+    "supported": 31,
+    "sha256": "497d4df04736ba3a"
+  },
+  "matchedCoverage": 0.1695,
+  "hybrid_vs_lexical_deltaF1": {
+    "0": 0.0,
+    "1": 0.0,
+    "7": 0.0
+  },
+  "hybrid_vs_lexical_ci95": {
+    "0": [
+      -0.0526,
+      0.0526
+    ],
+    "1": [
+      -0.0526,
+      0.0526
+    ],
+    "7": [
+      -0.0526,
+      0.0526
+    ]
+  },
+  "hybrid_primary_pass": false,
+  "reference_NLIentailment_vs_lexical_deltaF1": {
+    "0": -0.0976,
+    "1": -0.0976,
+    "7": -0.0976
+  },
+  "coverage": {
+    "lexical": 0.1695,
+    "hybrid": 0.1695,
+    "drop": 0.0,
+    "guardPass": true
+  },
+  "selectiveAURC": {
+    "lexical": 0.2614,
+    "hybrid": 0.2734
+  },
+  "verdict": "NO-GO \u2014 the contradiction-hybrid does not clear the pre-registered gate vs lexical"
+}

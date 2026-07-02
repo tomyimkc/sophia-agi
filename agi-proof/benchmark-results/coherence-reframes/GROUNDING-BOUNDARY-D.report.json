@@ -1,0 +1,41 @@
+{
+  "schema": "sophia.grounding_boundary.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "title": "Grounding-verification boundary (D): contradiction-hybrid + \u03ba-taxonomy + live retrieval \u2014 RETRIEVAL-BOUND",
+  "date": "2026-07-02",
+  "steps": {
+    "contradiction_hybrid_gate": {
+      "arm": "admission=lexical + reject=NLI-contradiction, vs lexical incumbent (sealed C1 snapshot, pre-registered)",
+      "deltaF1_by_seed": {
+        "0": 0.0,
+        "1": 0.0,
+        "7": 0.0
+      },
+      "ci95_seed0": [
+        -0.0526,
+        0.0526
+      ],
+      "coverageDrop": 0.0,
+      "verdict": "NO-GO (TIE): \u0394F1=0.0, no harm/no help",
+      "why": "On uninformative title-only C1 evidence the NLI-contradiction detector has nothing to fire on, so the hybrid degenerates to lexical. Reference NLI-entailment arm = -0.098 (over-abstains)."
+    },
+    "two_family_taxonomy": {
+      "n_disagreements": 33,
+      "titleOnlyEvidence": "11/33",
+      "grok_hallucinated_entail_on_false": "3/33",
+      "deberta_correct_abstain_on_false": "8/33",
+      "finding": "the two NLI families fail DIFFERENTLY: grok LLM-NLI over-admits (hallucinates entailment on uninformative evidence); deberta cross-encoder conservatively abstains. \u03ba=0.477.",
+      "file": "data/nli_disagreements_taxonomy.jsonl"
+    },
+    "live_retrieval": {
+      "backend": "LiveFactBackend (keyless: Crossref/OpenAlex/Wikidata over urllib)",
+      "result": "attempted for real; evidence returned for ~2/8 claims (scholarly/DOI only), and it is BIBLIOGRAPHIC METADATA (titles/DOI records), NOT fact-bearing sentences; other claim types timed out / returned nothing",
+      "implication": "live retrieval does not solve the evidence-quality bottleneck for factual entailment; it supports structural checks (does this DOI/work exist) not sentence-level support/refute"
+    }
+  },
+  "unifiedConclusion": "Grounding verification on this stack is RETRIEVAL-BOUND, not mechanism-bound. On uninformative evidence (C1 fixtures titles; keyless live metadata) NO entailment method (NLI/hybrid/lexical) beats the lexical screen. The FEVER win (NLI 0.96 vs coherence 0.65) required sentence-level GOLD evidence. The productive lever is fact-bearing sentence retrieval, not the verifier head. NLI stays a validated-vs-coherence primitive + optional fail-closed backend; the contradiction-hybrid is a safe additive drop-in (ties lexical when evidence is thin, and would add contradiction-catching when evidence is informative).",
+  "artifactHashes": {
+    "sealedSnapshot_sha256": "497d4df04736ba3a"
+  }
+}
