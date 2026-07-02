@@ -1,0 +1,101 @@
+{
+  "schema": "sophia.reframe_r2_validate.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "dataset": "MMLU (6 subjects, exact labels)",
+  "n": 480,
+  "nDomainProbes": 6,
+  "subjects": [
+    "clinical_knowledge",
+    "high_school_biology",
+    "high_school_macroeconomics",
+    "moral_disputes",
+    "prehistory",
+    "professional_accounting"
+  ],
+  "oodEnsembleErrorRate": 0.175,
+  "gateA_usable": {
+    "0": {
+      "auroc": 0.5171,
+      "ci95": [
+        0.4496,
+        0.5831
+      ]
+    },
+    "1": {
+      "auroc": 0.5171,
+      "ci95": [
+        0.4487,
+        0.5864
+      ]
+    },
+    "7": {
+      "auroc": 0.5171,
+      "ci95": [
+        0.448,
+        0.5859
+      ]
+    }
+  },
+  "gateB_additive": {
+    "0": {
+      "aurocA": 0.5009,
+      "aurocB": 0.4716,
+      "delta": 0.0294,
+      "ci95": [
+        -0.0587,
+        0.1122
+      ]
+    },
+    "1": {
+      "aurocA": 0.5201,
+      "aurocB": 0.4573,
+      "delta": 0.0627,
+      "ci95": [
+        -0.0185,
+        0.1433
+      ]
+    },
+    "7": {
+      "aurocA": 0.4727,
+      "aurocB": 0.4202,
+      "delta": 0.0525,
+      "ci95": [
+        -0.0066,
+        0.1132
+      ]
+    }
+  },
+  "headToHead_disagreement_vs_margin": {
+    "0": {
+      "aurocA": 0.5171,
+      "aurocB": 0.5092,
+      "delta": 0.0079,
+      "ci95": [
+        -0.0118,
+        0.0271
+      ]
+    },
+    "1": {
+      "aurocA": 0.5171,
+      "aurocB": 0.5092,
+      "delta": 0.0079,
+      "ci95": [
+        -0.0125,
+        0.0271
+      ]
+    },
+    "7": {
+      "aurocA": 0.5171,
+      "aurocB": 0.5092,
+      "delta": 0.0079,
+      "ci95": [
+        -0.0112,
+        0.0275
+      ]
+    }
+  },
+  "gateA_passed_allSeeds": false,
+  "gateB_passed_allSeeds": false,
+  "verdict": "R2_not_usable_on_this_data"
+}
