@@ -1,0 +1,67 @@
+{
+  "schema": "sophia.reframe_r2.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "reframe": "R2 ensemble disagreement as OOD/abstain signal",
+  "probeLabel": "accepted",
+  "n": 112,
+  "nDomainProbes": 3,
+  "domains": [
+    "doi",
+    "econ_empirical",
+    "math"
+  ],
+  "oodEnsembleErrorRate": 0.2589,
+  "seeds": {
+    "0": {
+      "disagreementAUROCvsError": {
+        "auroc": 0.8014,
+        "ci95": [
+          0.7106,
+          0.8756
+        ]
+      },
+      "ensembleMarginBaselineAUROC": {
+        "auroc": 0.8342,
+        "ci95": [
+          0.7562,
+          0.9005
+        ]
+      }
+    },
+    "1": {
+      "disagreementAUROCvsError": {
+        "auroc": 0.8014,
+        "ci95": [
+          0.7169,
+          0.8774
+        ]
+      },
+      "ensembleMarginBaselineAUROC": {
+        "auroc": 0.8342,
+        "ci95": [
+          0.7588,
+          0.8999
+        ]
+      }
+    },
+    "7": {
+      "disagreementAUROCvsError": {
+        "auroc": 0.8014,
+        "ci95": [
+          0.713,
+          0.8763
+        ]
+      },
+      "ensembleMarginBaselineAUROC": {
+        "auroc": 0.8342,
+        "ci95": [
+          0.7561,
+          0.9034
+        ]
+      }
+    }
+  },
+  "verdict": "disagreement_is_usable_abstain_signal",
+  "disagreementBeatsChance_allSeeds": true
+}

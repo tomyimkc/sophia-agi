@@ -1,0 +1,117 @@
+{
+  "schema": "sophia.reframe_r1.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "reframe": "R1 internal-vs-stated coherence",
+  "n": 464,
+  "nCorrect": 82,
+  "honestyProbeInSampleAUROC": 1.0,
+  "styleConfoundCheck": {
+    "probeStd": 0.1387,
+    "probeAloneAUROCvsCorrect": 0.4818
+  },
+  "arms": {
+    "stated+logprob": {
+      "meanDelta": 0.0,
+      "beatsStatedAlone_allSeeds": false
+    },
+    "stated+probe": {
+      "meanDelta": 0.0165,
+      "beatsStatedAlone_allSeeds": false
+    },
+    "stated+probe+logprob": {
+      "meanDelta": 0.0165,
+      "beatsStatedAlone_allSeeds": false
+    }
+  },
+  "seeds": {
+    "0": {
+      "stated+logprob": {
+        "aurocCombined": 0.5394,
+        "aurocStatedAlone": 0.5394,
+        "delta": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "stated+probe": {
+        "aurocCombined": 0.5592,
+        "aurocStatedAlone": 0.5394,
+        "delta": 0.0198,
+        "ci95": [
+          -0.0207,
+          0.0559
+        ]
+      },
+      "stated+probe+logprob": {
+        "aurocCombined": 0.5592,
+        "aurocStatedAlone": 0.5394,
+        "delta": 0.0198,
+        "ci95": [
+          -0.0207,
+          0.0559
+        ]
+      }
+    },
+    "1": {
+      "stated+logprob": {
+        "aurocCombined": 0.5644,
+        "aurocStatedAlone": 0.5644,
+        "delta": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "stated+probe": {
+        "aurocCombined": 0.5744,
+        "aurocStatedAlone": 0.5644,
+        "delta": 0.01,
+        "ci95": [
+          -0.0304,
+          0.0476
+        ]
+      },
+      "stated+probe+logprob": {
+        "aurocCombined": 0.5744,
+        "aurocStatedAlone": 0.5644,
+        "delta": 0.01,
+        "ci95": [
+          -0.0304,
+          0.0476
+        ]
+      }
+    },
+    "7": {
+      "stated+logprob": {
+        "aurocCombined": 0.5321,
+        "aurocStatedAlone": 0.5321,
+        "delta": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "stated+probe": {
+        "aurocCombined": 0.5518,
+        "aurocStatedAlone": 0.5321,
+        "delta": 0.0197,
+        "ci95": [
+          -0.0157,
+          0.054
+        ]
+      },
+      "stated+probe+logprob": {
+        "aurocCombined": 0.5518,
+        "aurocStatedAlone": 0.5321,
+        "delta": 0.0197,
+        "ci95": [
+          -0.0157,
+          0.054
+        ]
+      }
+    }
+  },
+  "verdict": "no_arm_beats_stated_alone"
+}

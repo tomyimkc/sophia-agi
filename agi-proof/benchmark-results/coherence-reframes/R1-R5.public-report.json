@@ -1,0 +1,109 @@
+{
+  "schema": "sophia.coherence_reframes.public_report.v1",
+  "title": "Coherence reframes R1-R5 \u2014 triangulation instruments benchmarked on real data",
+  "date": "2026-07-02",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "premise": "Follow-up to the O1-O5 oscillatory negative. Five reframes that couple the RIGHT signals (internal-vs-stated, ensemble-disagreement, grounding-lock, perturbation-stability, operational-gate) instead of scoring answer-coherence (= confidence). Built + run on real backends, adversarially verified (each verifier hunted for a bug HIDING a positive).",
+  "backends": {
+    "generation": "DeepSeek subject + grok grader (non-mock)",
+    "embedder": "all-MiniLM-L6-v2 (offline)",
+    "hiddenStates": "Qwen2.5-3B-Instruct via MLX (real featurizer)",
+    "honestyProbe": "logistic over Qwen hidden states, DPO honest/deceptive pairs (in-sample AUROC 1.0)"
+  },
+  "headline": "4 of 5 reframes are honest negatives/weak on real data. ONE \u2014 R2, ensemble disagreement as an OOD/abstain signal \u2014 is a QUALIFIED POSITIVE: disagreement among domain-specialist probes predicts the ensemble's own errors at AUROC 0.80 (CI excludes chance, 3 seeds), turning the cross-domain-transfer failure into a usable abstention trigger. Caveat: it does not beat the ensemble's confidence margin (0.834). The promising R1 signal at n=160 (+0.07 AUROC) EVAPORATED at n=464 (+0.017, CI includes 0) \u2014 a textbook small-sample regression, confirmed by group-aware CV (-0.005). No gate is claimed 'met'; all candidateOnly.",
+  "results": {
+    "R1_internal_vs_stated": {
+      "verdict": "NEGATIVE (adversarially sound, conservative)",
+      "gate": "logistic(stated, internal) beats stated-alone at AUROC(correct), paired CI>0, >=2 seeds",
+      "numbers": {
+        "n": 464,
+        "nCorrect": 82,
+        "probeInSampleAUROC": 1.0,
+        "statedPlusProbe_delta_by_seed": {
+          "0": 0.0198,
+          "1": 0.01,
+          "7": 0.0197
+        },
+        "ci_all_include_0": true,
+        "n160_delta_was": 0.07,
+        "regressedTo": 0.017
+      },
+      "adversarial": "Sound. -probe reproduces identical delta (LR sign-invariant); group-aware CV -> -0.005 (leakage FAVORED probe); C x class_weight sweep never clears 0. DPO honesty probe carries ~no correctness info on SimpleQA (domain mismatch).",
+      "defectsLogged": [
+        "logprob feature is a dead constant 1.0 (DeepSeek token-confidence saturates) -> stated+logprob delta identically 0",
+        "combined-pack dedup was ad-hoc fuzzy (dropped 56 rows, enriched-incorrect); does not affect verdict"
+      ]
+    },
+    "R2_ensemble_disagreement_ood": {
+      "verdict": "QUALIFIED POSITIVE (verified)",
+      "gate": "disagreement (std of out-of-domain probes' P) predicts OOD ensemble error, AUROC>0.5 CI excluding chance, >=2 seeds",
+      "numbers": {
+        "probeLabel": "accepted",
+        "domains": [
+          "doi",
+          "econ_empirical",
+          "math"
+        ],
+        "n": 112,
+        "oodEnsembleErrorRate": 0.2589,
+        "disagreementAUROC": 0.8014,
+        "ci95_seed0": [
+          0.7106,
+          0.8756
+        ],
+        "ensembleMarginBaselineAUROC": 0.8342,
+        "verdict": "disagreement_is_usable_abstain_signal"
+      },
+      "adversarial": "verdict FLIPPED from the initial 'underpowered': 'correct' label was near-degenerate (3 domains 100% true) so no probes trained; 'accepted' (balanced 27/95) trains 3 probes and the signal clears chance on all seeds. Honest caveat: NOT better than the ensemble margin (paired delta -0.033, CI straddles 0).",
+      "boundary": "Usable OOD/abstain signal; requires >=3 both-class domains; on par with (not superior to) the simpler ensemble-margin. Single dataset, n=112."
+    },
+    "R3_grounding_lock": {
+      "verdict": "WEAK / borderline (sound)",
+      "gate": "marker-free claim<->evidence residual separates supported/unsupported with a real gap",
+      "numbers": {
+        "gapWithMarkers": 0.1074,
+        "gapMarkerFree": 0.0753,
+        "leakDelta": 0.0321,
+        "aurcByResidualMarkerFree": 0.349967
+      },
+      "adversarial": "Sound. Marker-stripping complete (22->0); stricter claim-echo removal raises gap to 0.099 not collapse. Real but weak content signal; similarity cannot capture entailment (needs NLI)."
+    },
+    "R4_perturbation_stability": {
+      "verdict": "NEGATIVE (sound, underpowered n=56)",
+      "gate": "paraphrase-stability beats temperature self-consistency at AUROC(correct), paired CI>0",
+      "numbers": {
+        "n": 56,
+        "nCorrect": 9,
+        "paraphraseAUROC": 0.5355,
+        "selfConsistencyAUROC": 0.7352,
+        "delta": -0.1998
+      },
+      "adversarial": "Sound. paraphrase near-zero signal (0.583 correct vs 0.564 wrong) vs self-consistency strong (0.741 vs 0.511). n=56 (paraphrase-gen failed ~half) -> underpowered but point estimate clearly not-positive."
+    },
+    "R5_operational_gate": {
+      "verdict": "NEGATIVE (sound)",
+      "gate": "logistic(stated, probe) abstention gate lowers fabrication-AURC vs stated-alone, paired CI>0",
+      "numbers": {
+        "statedAURC": 0.8128,
+        "combinedAURC": 0.7987,
+        "delta_by_seed": {
+          "0": 0.014,
+          "1": 0.0007,
+          "7": -0.0008
+        }
+      },
+      "adversarial": "Sound. Full numeric reproduction; correct AURC/CI polarity. Follows directly from R1's null (probe carries no correctness info)."
+    }
+  },
+  "takeaway": "Coupling the right signals mostly did not rescue coherence-as-verification on these datasets \u2014 but ONE reframe did: ensemble DISAGREEMENT is an honest OOD/abstain trigger (you never ask a probe to generalize; you ask whether your experts still agree). That aligns with sophia's calibrated-abstention thesis. It is a candidate, not a validated result: it needs >=3 both-class domains, doesn't beat the confidence margin, and is one dataset.",
+  "artifactHashes": {
+    "r1_report_combined.json": "191ce6eb1b9f4100",
+    "r2_report.json": "58fbcd5bf11078e1",
+    "r3_report.json": "35a1de66855ed073",
+    "r4_report.json": "0c3fff5e9f29be85",
+    "r5_report.json": "5bef8ba581ffc13b",
+    "r1_combined.jsonl": "7c19636cfa4af319"
+  }
+}
