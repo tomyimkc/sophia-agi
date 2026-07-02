@@ -1,0 +1,10 @@
+{
+  "schema": "sophia.mac_mlx_bench.v1",
+  "hiddenStateFeaturizerReady": true,
+  "energyHeadFeaturizerReady": false,
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "canClaimAGI": false,
+  "boundary": "Mac bench = iteration/validation tier; never a registered number.",
+  "producedBy": "local-run (self-hosted runner registration owner-gated; bench logic run directly on the Mac)"
+}
