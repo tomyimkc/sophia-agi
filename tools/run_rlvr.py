@@ -415,6 +415,19 @@ def _run_gpu(args: argparse.Namespace) -> int:
         else:
             reward_fn = rl_reward.make_grpo_reward(records=data["train_gate_records"])
 
+    if args.advantage_shaping == "papo":
+        # A4 (Agents-A1 §4.2.4): asymmetric PAPO-style shaping — outcome reward
+        # group-normalized as usual; the dense multiaxis score shapes FAILED
+        # rollouts only (ranks failures by closeness to success, never
+        # double-counts successes). PAPO-shaped, not bit-identical PAPO: TRL
+        # re-normalizes per group (documented in rl_data_curation).
+        from agent import multiaxis_reward as _mar_proc
+        from provenance_bench import rl_data_curation
+
+        reward_fn = rl_data_curation.make_papo_group_reward(
+            reward_fn, _mar_proc.make_grpo_reward(),
+            num_generations=args.num_generations, lambda_neg=args.lambda_neg)
+
     # Collapse logger: wrap whatever reward we chose to record within-group reward std
     # per GRPO step. Reward collapse == within-group std -> 0 (constant reward => zero
     # advantage => no learning signal). This is the headline M1 measurement.
@@ -623,6 +636,14 @@ def main(argv: list[str] | None = None) -> int:
              "(must stay < 1 so the learned proxy is strictly weaker than one symbolic vote)",
     )
     ap.add_argument(
+        "--advantage-shaping", default="none", choices=["none", "papo"],
+        help="A4: 'papo' = asymmetric advantage shaping (Agents-A1 §4.2.4) — the dense "
+             "multiaxis process score ranks FAILED rollouts by closeness to success; "
+             "successes are never double-counted (provenance_bench.rl_data_curation)",
+    )
+    ap.add_argument("--lambda-neg", type=float, default=0.5,
+                    help="A4: weight of the process term on failed rollouts (paper value 0.5)")
+    ap.add_argument(
         "--curriculum", action="store_true",
         help="order training tasks easy->hard by gate pass-rate (offline-safe)",
     )
@@ -709,6 +730,14 @@ def main(argv: list[str] | None = None) -> int:
             ok = ok and gate_ok
             detail["checks"]["gateRewardInvariants"] = gate_ok
             detail["gateReward"] = gate_detail
+            # A4: prove the curation/shaping math offline (mixed-outcome filter,
+            # dynamic sampling predicate, PAPO asymmetry) before any paid run.
+            from provenance_bench import rl_data_curation as _rdc
+
+            rdc_ok, rdc_detail = _rdc.offline_invariants(lambda_neg=args.lambda_neg)
+            ok = ok and rdc_ok
+            detail["checks"]["rlDataCurationInvariants"] = rdc_ok
+            detail["rlDataCuration"] = rdc_detail
             # Thesis D: prove the multi-axis reward's invariants offline (fail-closed,
             # ordering, reward-positive abstention, density-beats-single-axis). This is
             # the CPU-side validation that the M1 GPU run's reward is sound before spend.
