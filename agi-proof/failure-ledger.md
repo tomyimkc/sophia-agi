@@ -2589,3 +2589,21 @@ catches contradictions). NLI-entailment stays a validated-vs-coherence primitive
 fail-closed backend (agent/nli_grounding.py) — NOT promoted to default-on, NOT promoted to main.
 Report: coherence-reframes/NLI-ACCEPTANCE-GATE.report.json. Follow-on = D (locate the boundary:
 live-noisy retrieval, multi-hop, the disagreement taxonomy). canClaimAGI=false.
+
+
+## 2026-07-02 — Grounding boundary (D): contradiction-hybrid TIE + live retrieval = RETRIEVAL-bound
+
+Honest follow-ons to the NLI acceptance-gate NO-GO.
+- **Contradiction-only hybrid** (admission=lexical + reject=NLI-contradiction), pre-registered same protocol,
+  sealed C1 snapshot: **NO-GO but a TIE — ΔF1=0.0 (CI [-0.05,+0.05], 3 seeds), coverage drop 0.0.** No harm,
+  no help: on uninformative title-only C1 evidence the NLI-contradiction detector has nothing to fire on, so the
+  hybrid degenerates to lexical. (Reference: NLI-entailment arm = -0.098, over-abstains.)
+- **Two-family taxonomy** (κ=0.477, 33 disagreements): the families fail DIFFERENTLY — grok LLM-NLI over-admits
+  (hallucinated entailment on 3 false claims); deberta cross-encoder conservatively abstains (correct on 8);
+  11/33 disagreements are on title-only evidence.
+- **Live-noisy retrieval** (keyless LiveFactBackend: Crossref/OpenAlex/Wikidata): attempted for real; returns
+  BIBLIOGRAPHIC METADATA (titles/DOI records) for ~2/8 claims, NOT fact-bearing sentences.
+- **UNIFIED CONCLUSION: grounding verification here is RETRIEVAL-bound, not mechanism-bound.** On uninformative
+  evidence NO method (NLI/hybrid/lexical) beats the lexical screen; the FEVER win needed sentence-level GOLD
+  evidence. The lever is fact-bearing retrieval, not the verifier head. NLI + the contradiction-hybrid stay
+  candidateOnly optional fail-closed backends. canClaimAGI=false.

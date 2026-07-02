@@ -80,3 +80,30 @@ def build_nli_entailment(
         return "irrelevant"
 
     return entail
+
+
+def build_hybrid_entailment(lexical_fn, scorer: Scorer | None = None, *,
+                            model_name: str = _DEFAULT_MODEL, contradict_threshold: float = 0.5):
+    """Contradiction-only hybrid EntailmentFn: admission stays on the cheap `lexical_fn`; NLI adds
+    ONLY contradiction-catching.
+
+    Motivated by the acceptance-gate NO-GO: NLI *entailment* over-abstains, but the lexical screen's
+    negation cues + NLI's strong *contradiction* detection are the load-bearing signal. So:
+      label = 'contradicts'  iff NLI detects a strong contradiction (argmax + threshold)
+      else   = lexical_fn(claim, source)   (the incumbent admission screen drives entail/irrelevant)
+    This cannot introduce NLI's admission over-abstention (lexical drives admission); it only lets
+    NLI reject false claims the lexical screen would otherwise admit. `lexical_fn` is injected to keep
+    this module decoupled from fact_check_gate.
+    """
+    score = scorer or _load_cross_encoder(model_name)
+
+    def entail(claim, source) -> str:
+        premise = f"{getattr(source, 'title', '')} {getattr(source, 'snippet', '')}".strip()
+        hypothesis = getattr(claim, "text", "") or ""
+        if premise and hypothesis:
+            p_contra, p_entail, p_neutral = score(premise, hypothesis)
+            if p_contra == max(p_contra, p_entail, p_neutral) and p_contra >= contradict_threshold:
+                return "contradicts"
+        return lexical_fn(claim, source)
+
+    return entail

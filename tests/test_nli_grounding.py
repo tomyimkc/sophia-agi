@@ -57,3 +57,31 @@ def test_empty_evidence_or_claim_is_irrelevant():
 def test_returns_only_contract_labels():
     fn = build_nli_entailment(scorer=lambda p, h: (0.4, 0.5, 0.1))
     assert fn(_Claim(), _Src(snippet="evidence")) in {"entails", "contradicts", "irrelevant"}
+
+
+# --- contradiction-only hybrid ---
+from agent.nli_grounding import build_hybrid_entailment
+
+
+def _lexical_stub(claim, src):
+    # a fake incumbent screen: 'entails' if the snippet mentions 'by X', else 'irrelevant'
+    return "entails" if "written by x" in (src.snippet or "").lower() else "irrelevant"
+
+
+def test_hybrid_defers_admission_to_lexical():
+    # NLI neutral -> hybrid must return the lexical label (admission not over-abstained)
+    fn = build_hybrid_entailment(_lexical_stub, scorer=lambda p, h: (0.1, 0.2, 0.7))
+    assert fn(_Claim(), _Src(snippet="Y was written by X")) == "entails"
+    assert fn(_Claim(), _Src(snippet="unrelated text")) == "irrelevant"
+
+
+def test_hybrid_lets_nli_reject_contradiction_lexical_would_admit():
+    # lexical would 'entails' (mentions 'written by x'), but NLI detects contradiction -> reject
+    fn = build_hybrid_entailment(_lexical_stub, scorer=lambda p, h: (0.96, 0.02, 0.02))
+    assert fn(_Claim(), _Src(snippet="Y was written by X")) == "contradicts"
+
+
+def test_hybrid_weak_contradiction_does_not_override_lexical():
+    # contradiction below threshold -> defer to lexical (no spurious rejection)
+    fn = build_hybrid_entailment(_lexical_stub, scorer=lambda p, h: (0.4, 0.3, 0.3), contradict_threshold=0.5)
+    assert fn(_Claim(), _Src(snippet="Y was written by X")) == "entails"
