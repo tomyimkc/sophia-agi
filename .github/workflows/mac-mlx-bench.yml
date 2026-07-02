@@ -1,0 +1,101 @@
+name: mac-mlx-bench
+
+# Mac cluster test bench lane (Mac Studio M3 Ultra, MLX/Metal) — dispatch-only.
+#
+# ROLE: validate the REAL residual-stream featurizer path
+# (agent.activation_probes.build_hidden_state_featurizer) and anything else that
+# needs Apple Silicon + MLX, on the self-hosted Mac runner. This is the
+# iteration/validation tier: artifacts are candidateOnly, never registered
+# numbers (the x86 RunPod lane stays the source of record — same provenance
+# boundary as spark-gpu.yml).
+#
+# PREREQUISITE (one-time, on the Mac Studio):
+#   Register a self-hosted runner (Settings -> Actions -> Runners -> New
+#   self-hosted runner, macOS/arm64). Default labels [self-hosted, macOS, ARM64]
+#   are what this workflow targets. The Mac needs python3 + `pip install mlx
+#   mlx-lm pytest` (or the job's install step below does it in a venv).
+
+on:
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: 'What to run on the Mac bench'
+        required: true
+        default: 'featurizer'
+        type: choice
+        options: [featurizer, probes-all]
+      model:
+        description: 'Featurizer model id (must fit the Mac; default = the repo frozen base)'
+        required: false
+        default: 'Qwen/Qwen2.5-3B-Instruct'
+
+concurrency:
+  group: mac-mlx-bench
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  mlx:
+    runs-on: [self-hosted, macOS, ARM64]
+    timeout-minutes: 90
+    env:
+      IN_SUITE: ${{ inputs.suite }}
+      IN_MODEL: ${{ inputs.model }}
+      HF_HOME: ~/.cache/huggingface
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Preflight — confirm Apple Silicon + MLX importable
+        run: |
+          uname -m
+          python3 -m venv .venv-mlx-bench 2>/dev/null || true
+          . .venv-mlx-bench/bin/activate
+          python3 -m pip install -q --upgrade pip
+          python3 -m pip install -q mlx mlx-lm pytest sympy
+          python3 - <<'PY'
+          import platform
+          import mlx.core as mx
+          print(f"arch={platform.machine()} mlx ok, default device: {mx.default_device()}")
+          PY
+
+      - name: Run the MLX featurizer suite (real hidden-state path)
+        run: |
+          . .venv-mlx-bench/bin/activate
+          if [ "$IN_SUITE" = "probes-all" ]; then
+            PYTHONPATH=. python3 -m pytest tests/test_hidden_state_featurizer.py \
+              tests/test_probe_representation_training.py tests/test_energy_verifier_head.py \
+              tests/test_prm_step_reward.py -v
+          else
+            PYTHONPATH=. python3 -m pytest tests/test_hidden_state_featurizer.py -v
+          fi
+
+      - name: Readiness report (W5 / energy-head seams should now be live here)
+        run: |
+          . .venv-mlx-bench/bin/activate
+          PYTHONPATH=. python3 - <<'PY'
+          import json
+          from tools.probe_representation_training import _hidden_state_ready
+          from tools.energy_verifier_head import _featurizer_ready
+          report = {
+              "schema": "sophia.mac_mlx_bench.v1",
+              "hiddenStateFeaturizerReady": _hidden_state_ready(),
+              "energyHeadFeaturizerReady": _featurizer_ready(),
+              "candidateOnly": True, "level3Evidence": False, "canClaimAGI": False,
+              "boundary": "Mac bench = iteration/validation tier; never a registered number.",
+          }
+          print(json.dumps(report, indent=2))
+          import pathlib
+          out = pathlib.Path("agi-proof/benchmark-results/mac-mlx-bench/readiness.json")
+          out.parent.mkdir(parents=True, exist_ok=True)
+          out.write_text(json.dumps(report, indent=2) + "\n")
+          PY
+
+      - name: Upload bench artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mac-mlx-bench-reports
+          path: agi-proof/benchmark-results/mac-mlx-bench/**
+          if-no-files-found: warn
