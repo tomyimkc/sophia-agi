@@ -71,7 +71,13 @@ def main(argv=None) -> int:
             return pre
         hooks.append(lin.register_forward_pre_hook(mk(name)))
 
-    rows = [json.loads(x) for x in args.calib.read_text().splitlines() if x.strip()][: args.n_rows]
+    rows = []  # stream only the first --n-rows non-empty lines (avoid loading the whole file)
+    with args.calib.open(encoding="utf-8") as fh:
+        for line in fh:
+            if line.strip():
+                rows.append(json.loads(line))
+                if len(rows) >= args.n_rows:
+                    break
     with torch.no_grad():
         for r in rows:
             ids = tok(_as_text(r), return_tensors="pt", truncation=True, max_length=256).input_ids.to(dev)
