@@ -2671,3 +2671,42 @@ default). Ingredient conformal-abstention-serve already adopted (owner sign-off)
 variant point, not a new adoption. Coverage progression (95%-robust): v5 0.64 -> v6 0.72 -> v6+down_proj
 0.84. The Mac's --keep-top-experts lever may beat down_proj on the coverage/memory trade (pending). Artifact:
 spark-bridge bridge/results/2026-07-01-claude-web-cert-v6-downproj-1k.json. canClaimAGI=false.
+
+
+## 2026-07-02 — NLI-entailment grounding primitive promoted to main (thin); production gate = NO-GO (retrieval-bound)
+
+Net-positive infra from the coherence-reframes arc (feat/oscillatory-crosspollination), promoted thin off main:
+agent/nli_grounding.py (fail-closed NLI + contradiction-hybrid EntailmentFn backends for fact_check_gate),
+tests, and a self-contained acceptance harness tools/nli_grounding_gate.py. NOT default-on; the gate keeps
+its lexical screen unless a backend is injected. (main already had a better py3.10 fence-regex fix — not touched.)
+
+Honest results (candidateOnly, canClaimAGI=false; full reports in agi-proof/benchmark-results/coherence-reframes/):
+- VALIDATED vs COHERENCE: NLI entailment on FEVER gold evidence AUROC 0.962 vs coherence 0.650 (Δ+0.31, CI excludes 0).
+- PRODUCTION acceptance gate (pre-registered, real fact_check_gate.external_ground, sealed snapshot): NO-GO —
+  NLI ΔF1 -0.09 vs the incumbent lexical screen and FAILS the calibrated-abstention guard (over-abstains,
+  coverage drop 0.05). Contradiction-hybrid = TIE (ΔF1 0.0). Fail-closed PASS; two-family κ 0.477.
+- UNIFIED DIAGNOSIS (candidate, to be gated by experiment A): grounding verification here is RETRIEVAL-bound,
+  not mechanism-bound — on uninformative title/metadata evidence no method beats the lexical screen; the FEVER
+  win needed sentence-level gold evidence. Live keyless retrieval returns metadata, not fact-bearing sentences.
+- FIRST-CLASS NEGATIVES: THESIS-NOTE-coherence-is-not-truth.md — the ~15 coherence instruments ("coherence
+  measures confidence not truth; a fluent hallucination is maximally coherent") defend the abstention thesis.
+Next: experiment A (sentence-level retriever + manipulation check) pre-registered to gate the retrieval-bound diagnosis.
+
+
+## 2026-07-02 — Experiment A (retrieval test): GO — the 'grounding is retrieval-bound' diagnosis is CONFIRMED
+
+Pre-registered A (maintainer-AI protocol): does sentence-level fact-bearing retrieval let entailment beat the
+incumbent lexical screen through the real fact_check_gate? Manipulation check PASSED (keyless Wikipedia sentence
+retrieval on the C1 evidence-groundable subset = 55.6% fact-bearing vs ~0% metadata; note 33/53 C1 claims are
+DETERMINISTIC math/doi/url/date, excluded).
+- C1-Wikipedia arm (faithful, n=18): NLI ΔF1 -0.09 (metadata, rung 5) -> +0.17 (sentences); over-abstention
+  coverage-drop 0.05 -> 0.0. Directionally strong but UNDERPOWERED (CI [-0.20,+0.36] includes 0; not extended
+  with self-authored tasks per protocol).
+- FEVER-through-gate arm (power-adequate, n=400 gold sentences, public benchmark): NLI ΔF1 **+0.142, CI [0.08,0.19]
+  excludes 0, 3 seeds, coverage drop 0.0 = GO.**
+CONCLUSION: entailment beats the incumbent lexical screen through the real gate IFF the evidence is fact-bearing
+sentences (metadata -> loses/over-abstains; sentences -> wins). Grounding verification IS retrieval-bound; the
+mechanism works given good evidence; the production blocker is retrieval quality, not the verifier head. Caveat:
+on FEVER the lexical screen is brittle on paraphrase (coverage 0.003), so part of the win is token-overlap failing;
+the metadata<->sentence contrast is the robust signal. PRE-DECLARED NEXT: GO -> fund D (retrieval as the product,
+NLI as escalation-tier verifier) — a roadmap redirection, maintainer decision. candidateOnly, canClaimAGI=false.

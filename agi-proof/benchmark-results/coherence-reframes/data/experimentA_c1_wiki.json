@@ -1,0 +1,57 @@
+{
+  "schema": "sophia.retrieval_experiment_A.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "retriever": "keyless Wikipedia REST passage retrieval (sentence-level)",
+  "c1_claim_mix": {
+    "total": 53,
+    "deterministic_excluded": 33,
+    "evidence_groundable": 20,
+    "got_wiki_evidence": 18
+  },
+  "manipulationCheck": {
+    "factBearingFraction": 0.556,
+    "floor": 0.5,
+    "nClaimsWithEvidence": 18,
+    "pass": true
+  },
+  "sealedSnapshot": {
+    "n": 18,
+    "supported": 10,
+    "sha256": "7bcb50638b57b6f8"
+  },
+  "matchedCoverage": 0.1,
+  "arms": {
+    "NLI": {
+      "deltaF1": {
+        "0": 0.1667,
+        "1": 0.1667,
+        "7": 0.1667
+      },
+      "ci95_seed0": [
+        -0.2,
+        0.3636
+      ],
+      "coverageDrop": 0.0,
+      "pass": false
+    },
+    "hybrid": {
+      "deltaF1": {
+        "0": 0.1667,
+        "1": 0.1667,
+        "7": 0.1667
+      },
+      "ci95_seed0": [
+        -0.2,
+        0.3636
+      ],
+      "coverageDrop": 0.0,
+      "pass": false
+    }
+  },
+  "latency": {
+    "meanSecPerClaim": 0.925
+  },
+  "MDE_note": "n=18 with 10 supported \u2014 report CI width as power; small n likely underpowered for a +0.05 floor (no self-authored extension)",
+  "verdict": "NO-GO (manip passed) \u2014 mechanism does not beat the incumbent even on sentence-level evidence -> bank per B"
+}

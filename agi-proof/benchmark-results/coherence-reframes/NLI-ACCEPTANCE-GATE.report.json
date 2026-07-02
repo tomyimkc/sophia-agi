@@ -1,0 +1,69 @@
+{
+  "schema": "sophia.nli_acceptance_gate.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "preRegistered": {
+    "f1Floor": 0.05,
+    "coverageDropMax": 0.01,
+    "kappaMin": 0.4,
+    "primary": "paired \u0394F1 at matched coverage \u2265 floor, CI excludes 0, \u22653 seeds"
+  },
+  "sealedSnapshot": {
+    "n": 59,
+    "supported": 31,
+    "sha256": "497d4df04736ba3a",
+    "source": "C1 fixtures + factcheck packs, marker-stripped (CURATED retrieval, not live-noisy)"
+  },
+  "matchedCoverage": 0.1695,
+  "primary_deltaF1_by_seed": {
+    "0": {
+      "deltaF1": -0.0976,
+      "ci95": [
+        -0.1667,
+        0.0
+      ]
+    },
+    "1": {
+      "deltaF1": -0.0976,
+      "ci95": [
+        -0.1667,
+        0.0444
+      ]
+    },
+    "7": {
+      "deltaF1": -0.0976,
+      "ci95": [
+        -0.1667,
+        0.0
+      ]
+    }
+  },
+  "primary_pass": false,
+  "calibratedAbstentionGuard": {
+    "nli_AURC": 0.3068,
+    "lexical_AURC": 0.2614,
+    "nli_coverage": 0.1186,
+    "lexical_coverage": 0.1695,
+    "coverageDrop": 0.0508,
+    "coverageGuardPass": false
+  },
+  "failClosed": {
+    "noEvidenceVerdict": "held",
+    "pass": true
+  },
+  "twoFamily": {
+    "kappa": 0.4768,
+    "pass": true,
+    "secondary": "grok LLM-NLI"
+  },
+  "protected": {
+    "claimsMatched": 0,
+    "note": "N/A \u2014 the C1 fact pack has no dedicated religion/history PROTECTED suite; this guard must be enforced by the W2 promotion gate (evaluate_update) before any default-on"
+  },
+  "latency": {
+    "meanSecPerClaim_nli": 0.0795,
+    "note": "cross-encoder cost per (claim,evidence); use NLI as an escalation tier, not blanket"
+  },
+  "verdict": "NO-GO \u2014 NLI does not clear the pre-registered acceptance gate vs the lexical screen",
+  "outcome": "keep candidateOnly (optional backend); ledger row + D (locate the boundary)"
+}
