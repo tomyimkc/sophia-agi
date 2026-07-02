@@ -1,0 +1,7 @@
+Starting training..., iters: 150
+Iter 1: Val loss 2.416, Val took 7.392s
+Iter 150: Val loss 1.396, Val took 7.351s
+Starting training..., iters: 250
+Iter 1: Val loss 2.098, Val took 0.873s
+Iter 200: Val loss 1.493, Val took 0.816s
+Iter 250: Val loss 1.525, Val took 0.812s

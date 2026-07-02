@@ -1,0 +1,272 @@
+{
+  "schema": "sophia.eval_ladder.v2",
+  "headline": "PASS gate = CONTENT channel per suite; FORMAT and COMBINED reported only.",
+  "passGate": "content",
+  "createdAt": "2026-07-02T05:50:11.729636+00:00",
+  "candidateOnly": true,
+  "level3Evidence": false,
+  "model": "Qwen/Qwen2.5-3B-Instruct",
+  "adapter": "training/mlx_adapters/sophia-philosophy-3b-v2",
+  "backend": "mlx",
+  "domains": [
+    "philosophy"
+  ],
+  "claimBoundary": "Local-model ladder status/results; not AGI proof. External gates enforce correctness.",
+  "promotionRule": "promote only if the family metric improves at acceptable false-positive cost.",
+  "rungs": [
+    {
+      "rung": "base",
+      "command": [
+        "/Users/tom/.pyenv/versions/3.10.6/bin/python3",
+        "tools/eval_mlx_model.py",
+        "--model",
+        "Qwen/Qwen2.5-3B-Instruct",
+        "--domains",
+        "philosophy"
+      ],
+      "returncode": 1,
+      "status": "complete",
+      "summary": {
+        "passGate": "content",
+        "domains": {
+          "philosophy": {
+            "passGate": "content",
+            "format": {
+              "passed": 9,
+              "total": 9,
+              "score_pct": 100.0
+            },
+            "content": {
+              "passed": 7,
+              "total": 9,
+              "score_pct": 77.8
+            },
+            "combined": {
+              "passed": 7,
+              "total": 9,
+              "score_pct": 77.8
+            },
+            "passed": 7,
+            "total": 9,
+            "score_pct": 77.8
+          }
+        },
+        "channels": {
+          "format": {
+            "passed": 9,
+            "total": 9,
+            "score_pct": 100.0
+          },
+          "content": {
+            "passed": 7,
+            "total": 9,
+            "score_pct": 77.8
+          },
+          "combined": {
+            "passed": 7,
+            "total": 9,
+            "score_pct": 77.8
+          }
+        },
+        "passed": 7,
+        "total": 9,
+        "score_pct": 77.8
+      },
+      "stdoutTail": "MLX model: Qwen/Qwen2.5-3B-Instruct\nDomains: philosophy | cases: 9\n  philosophy/trap_confucius_ddj...\n  philosophy/socrates_republic...\n  philosophy/analects_compiled...\n  philosophy/laozi_uncertainty...\n  philosophy/trap_confucius_mencius...\n  philosophy/trap_laozi_zhuangzi...\n  philosophy/socrates_symposium...\n  philosophy/zhuangzi_analects_boundary...\n  philosophy/symposium_dialogue_not_autograph...\nphilosophy: 7/9 (77.8%)\nTOTAL: 7/9 (77.8%)\n",
+      "stderrTail": "\nFetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]\nFetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 35713.09it/s]\n"
+    },
+    {
+      "rung": "base+gate",
+      "command": [
+        "/Users/tom/.pyenv/versions/3.10.6/bin/python3",
+        "tools/eval_mlx_model.py",
+        "--model",
+        "Qwen/Qwen2.5-3B-Instruct",
+        "--domains",
+        "philosophy",
+        "--with-gate"
+      ],
+      "returncode": 1,
+      "status": "complete",
+      "summary": {
+        "passGate": "content",
+        "domains": {
+          "philosophy": {
+            "passGate": "content",
+            "format": {
+              "passed": 9,
+              "total": 9,
+              "score_pct": 100.0
+            },
+            "content": {
+              "passed": 7,
+              "total": 9,
+              "score_pct": 77.8
+            },
+            "combined": {
+              "passed": 7,
+              "total": 9,
+              "score_pct": 77.8
+            },
+            "passed": 7,
+            "total": 9,
+            "score_pct": 77.8,
+            "gateFailures": 9
+          }
+        },
+        "channels": {
+          "format": {
+            "passed": 9,
+            "total": 9,
+            "score_pct": 100.0
+          },
+          "content": {
+            "passed": 7,
+            "total": 9,
+            "score_pct": 77.8
+          },
+          "combined": {
+            "passed": 7,
+            "total": 9,
+            "score_pct": 77.8
+          }
+        },
+        "passed": 7,
+        "total": 9,
+        "score_pct": 77.8,
+        "gateFailures": 9
+      },
+      "stdoutTail": "MLX model: Qwen/Qwen2.5-3B-Instruct\nDomains: philosophy | cases: 9\n  philosophy/trap_confucius_ddj...\n  philosophy/socrates_republic...\n  philosophy/analects_compiled...\n  philosophy/laozi_uncertainty...\n  philosophy/trap_confucius_mencius...\n  philosophy/trap_laozi_zhuangzi...\n  philosophy/socrates_symposium...\n  philosophy/zhuangzi_analects_boundary...\n  philosophy/symposium_dialogue_not_autograph...\nphilosophy: 7/9 (77.8%)\nTOTAL: 7/9 (77.8%)\n",
+      "stderrTail": "\nFetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]\nFetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 134337.14it/s]\n"
+    },
+    {
+      "rung": "adapter",
+      "command": [
+        "/Users/tom/.pyenv/versions/3.10.6/bin/python3",
+        "tools/eval_mlx_model.py",
+        "--model",
+        "Qwen/Qwen2.5-3B-Instruct",
+        "--adapter",
+        "training/mlx_adapters/sophia-philosophy-3b-v2",
+        "--domains",
+        "philosophy"
+      ],
+      "returncode": 1,
+      "status": "complete",
+      "summary": {
+        "passGate": "content",
+        "domains": {
+          "philosophy": {
+            "passGate": "content",
+            "format": {
+              "passed": 9,
+              "total": 9,
+              "score_pct": 100.0
+            },
+            "content": {
+              "passed": 4,
+              "total": 9,
+              "score_pct": 44.4
+            },
+            "combined": {
+              "passed": 4,
+              "total": 9,
+              "score_pct": 44.4
+            },
+            "passed": 4,
+            "total": 9,
+            "score_pct": 44.4
+          }
+        },
+        "channels": {
+          "format": {
+            "passed": 9,
+            "total": 9,
+            "score_pct": 100.0
+          },
+          "content": {
+            "passed": 4,
+            "total": 9,
+            "score_pct": 44.4
+          },
+          "combined": {
+            "passed": 4,
+            "total": 9,
+            "score_pct": 44.4
+          }
+        },
+        "passed": 4,
+        "total": 9,
+        "score_pct": 44.4
+      },
+      "stdoutTail": "MLX model: Qwen/Qwen2.5-3B-Instruct + adapter training/mlx_adapters/sophia-philosophy-3b-v2\nDomains: philosophy | cases: 9\n  philosophy/trap_confucius_ddj...\n  philosophy/socrates_republic...\n  philosophy/analects_compiled...\n  philosophy/laozi_uncertainty...\n  philosophy/trap_confucius_mencius...\n  philosophy/trap_laozi_zhuangzi...\n  philosophy/socrates_symposium...\n  philosophy/zhuangzi_analects_boundary...\n  philosophy/symposium_dialogue_not_autograph...\nphilosophy: 4/9 (44.4%)\nTOTAL: 4/9 (44.4%)\n",
+      "stderrTail": "\nFetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]\nFetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 56936.25it/s]\n"
+    },
+    {
+      "rung": "adapter+gate",
+      "command": [
+        "/Users/tom/.pyenv/versions/3.10.6/bin/python3",
+        "tools/eval_mlx_model.py",
+        "--model",
+        "Qwen/Qwen2.5-3B-Instruct",
+        "--adapter",
+        "training/mlx_adapters/sophia-philosophy-3b-v2",
+        "--domains",
+        "philosophy",
+        "--with-gate"
+      ],
+      "returncode": 1,
+      "status": "complete",
+      "summary": {
+        "passGate": "content",
+        "domains": {
+          "philosophy": {
+            "passGate": "content",
+            "format": {
+              "passed": 9,
+              "total": 9,
+              "score_pct": 100.0
+            },
+            "content": {
+              "passed": 4,
+              "total": 9,
+              "score_pct": 44.4
+            },
+            "combined": {
+              "passed": 4,
+              "total": 9,
+              "score_pct": 44.4
+            },
+            "passed": 4,
+            "total": 9,
+            "score_pct": 44.4,
+            "gateFailures": 9
+          }
+        },
+        "channels": {
+          "format": {
+            "passed": 9,
+            "total": 9,
+            "score_pct": 100.0
+          },
+          "content": {
+            "passed": 4,
+            "total": 9,
+            "score_pct": 44.4
+          },
+          "combined": {
+            "passed": 4,
+            "total": 9,
+            "score_pct": 44.4
+          }
+        },
+        "passed": 4,
+        "total": 9,
+        "score_pct": 44.4,
+        "gateFailures": 9
+      },
+      "stdoutTail": "MLX model: Qwen/Qwen2.5-3B-Instruct + adapter training/mlx_adapters/sophia-philosophy-3b-v2\nDomains: philosophy | cases: 9\n  philosophy/trap_confucius_ddj...\n  philosophy/socrates_republic...\n  philosophy/analects_compiled...\n  philosophy/laozi_uncertainty...\n  philosophy/trap_confucius_mencius...\n  philosophy/trap_laozi_zhuangzi...\n  philosophy/socrates_symposium...\n  philosophy/zhuangzi_analects_boundary...\n  philosophy/symposium_dialogue_not_autograph...\nphilosophy: 4/9 (44.4%)\nTOTAL: 4/9 (44.4%)\n",
+      "stderrTail": "\nFetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]\nFetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 22166.02it/s]\n"
+    }
+  ]
+}
