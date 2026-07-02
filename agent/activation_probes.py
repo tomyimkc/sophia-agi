@@ -201,6 +201,50 @@ def evaluate_vector_probe(probe: LinearProbe, rows: "list[dict[str, Any]]", feat
             "rows": out}
 
 
+def auroc(scores: list[float], labels: list[bool]) -> float:
+    """Rank-based AUROC (Mann-Whitney U); 0.5 = chance. Ties get average rank.
+
+    The threshold-free ranking metric that :func:`evaluate_vector_probe`'s fixed-threshold
+    accuracy hides: a probe can rank perfectly (AUROC 1.0) yet be badly miscalibrated at 0.5.
+    """
+    pos = [s for s, y in zip(scores, labels) if y]
+    neg = [s for s, y in zip(scores, labels) if not y]
+    if not pos or not neg:
+        return float("nan")
+    order = sorted(range(len(scores)), key=lambda i: scores[i])
+    ranks = [0.0] * len(scores)
+    i = 0
+    while i < len(order):
+        j = i
+        while j + 1 < len(order) and scores[order[j + 1]] == scores[order[i]]:
+            j += 1
+        avg = (i + j) / 2.0 + 1.0  # 1-based average rank over the tie group
+        for k in range(i, j + 1):
+            ranks[order[k]] = avg
+        i = j + 1
+    rank_pos = sum(ranks[k] for k, y in enumerate(labels) if y)
+    u = rank_pos - len(pos) * (len(pos) + 1) / 2.0
+    return u / (len(pos) * len(neg))
+
+
+def ece(scores: list[float], labels: list[bool], *, bins: int = 10) -> float:
+    """Expected Calibration Error over ``bins`` equal-width score buckets (0 = calibrated)."""
+    n = len(scores)
+    if not n:
+        return float("nan")
+    total = 0.0
+    for b in range(bins):
+        lo, hi = b / bins, (b + 1) / bins
+        idx = [i for i, s in enumerate(scores)
+               if s >= lo and (s < hi or (b == bins - 1 and s <= hi))]
+        if not idx:
+            continue
+        conf = sum(scores[i] for i in idx) / len(idx)
+        acc = sum(1 for i in idx if labels[i]) / len(idx)
+        total += (len(idx) / n) * abs(acc - conf)
+    return total
+
+
 def load_jsonl(path: str | Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines() if line.strip()]
 
@@ -213,4 +257,5 @@ def write_probe_eval(data_path: str | Path, out: str | Path) -> dict[str, Any]:
 
 __all__ = ["FEATURES", "featurize_text", "LinearProbe", "train_centroid_probe", "evaluate_probe",
            "load_jsonl", "write_probe_eval", "build_hidden_state_featurizer",
-           "train_vector_probe", "evaluate_vector_probe", "DEFAULT_FEATURIZER_MODEL"]
+           "train_vector_probe", "evaluate_vector_probe", "DEFAULT_FEATURIZER_MODEL",
+           "auroc", "ece"]
