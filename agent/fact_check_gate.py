@@ -146,7 +146,13 @@ _SUBJECTIVE_RE = re.compile(
 )
 # A code-fence artifact line (``` or ```lang) left over after fenced blocks are
 # extracted; must never be treated as an open factual claim.
-_FENCE_ARTIFACT_RE = re.compile(r"^\s*+`{3,}\s*+[a-z0-9_+-]*+\s*+$", re.I)
+try:
+    _FENCE_ARTIFACT_RE = re.compile(r"^\s*+`{3,}\s*+[a-z0-9_+-]*+\s*+$", re.I)
+except re.error:
+    # Possessive quantifiers (*+) require py3.11+. The non-possessive form matches the
+    # same strings and is ReDoS-safe here: \s and [a-z0-9_+-] are disjoint character
+    # classes, so there is no ambiguous overlap to backtrack over.
+    _FENCE_ARTIFACT_RE = re.compile(r"^\s*`{3,}\s*[a-z0-9_+-]*\s*$", re.I)
 _AUTHORSHIP_VERB_RE = re.compile(r"\b(?:wrote|authored|penned|composed|author of|written by)\b", re.I)
 # Interrogative opener (sentence splitting strips the trailing '?', so detect the
 # leading question word instead). A question asserts nothing factual.
