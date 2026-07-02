@@ -96,7 +96,9 @@ def gptq_quantize_served_params(model: Any, tok: Any, rows: "list[dict]", *,
 
     def served_snap(W, H):
         Wq = gptq_quantize_grouped(W.float(), H, group_size=group_size, percdamp=percdamp)
-        return _torch_nvfp4(Wq.to(W.dtype))     # final canonical SERVED snap
+        # snap in FLOAT32 to match the RTN served path (certify_lowram quantize_served_params does
+        # fq(p.float())) so the GPTQ number is apples-to-apples with the RTN baseline grid, then store.
+        return _torch_nvfp4(Wq.float()).to(W.dtype)
 
     grid_identity = {"verified": False, "canary": None, "maxAbsDiff": None}
     q_params = kept_params = q_tensors = 0
@@ -120,12 +122,12 @@ def gptq_quantize_served_params(model: Any, tok: Any, rows: "list[dict]", *,
                     Wq = gptq_quantize_grouped(gate_up[e].float(), exp_Hgu[name][e],
                                                group_size=group_size, percdamp=percdamp)
                     if not grid_identity["verified"]:  # VERIFY grid-identity on the first real expert
-                        a = _torch_nvfp4(Wq.to(gate_up.dtype))          # canonical served grid
-                        b = nvfp4_group_quantize(Wq.to(gate_up.dtype), group_size=group_size)
+                        a = _torch_nvfp4(Wq.float())                    # canonical served grid (float32, RTN-consistent)
+                        b = nvfp4_group_quantize(Wq.float(), group_size=group_size)
                         grid_identity = {"verified": bool(torch.equal(a, b)),
                                          "canary": f"{name}.gate_up_proj[{e}]",
                                          "maxAbsDiff": float((a.float() - b.float()).abs().max())}
-                    gate_up[e].copy_(_torch_nvfp4(Wq.to(gate_up.dtype)))
+                    gate_up[e].copy_(_torch_nvfp4(Wq.float()).to(gate_up.dtype))
                 else:
                     gate_up[e].copy_(_torch_nvfp4(gate_up[e].float()).to(gate_up.dtype))
                 if exp_Hdp[name][e] is not None:
