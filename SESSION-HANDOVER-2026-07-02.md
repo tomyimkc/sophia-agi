@@ -111,3 +111,29 @@ Never flip a ledger row to a positive claim without a pre-registered gate + arti
 `rlvr.public-report.json` is rewritten by every run incl. dry-runs — `git checkout --` before
 commit. Red `cleanPositive` on step-task offline invariants = missing sympy, not a bug.
 `sophia-security-audit/SKILL.md` shows M after unlock (clean-filter artifact) — never stage.
+
+## A5. Second wave (same session, after the Agents-A1 study): A-series IMPLEMENTED + live sweep
+
+Paper study: `agi-proof/agents-a1-horizon-scaling-2026-07-02/README.md` (3e8d721d). All seven
+proposals then implemented, each tested + linted (57 passed / 2 MLX-skipped overall):
+- `82c5831f` **A4** `provenance_bench/rl_data_curation.py` + run_rlvr `--advantage-shaping papo
+  --lambda-neg` (mixed-outcome filter, dynamic-sampling predicate, PAPO shaping; offline invariants
+  in the dry-run report).
+- `72732300` **A2** `tools/distill_sva_mlx.py` — SVA math core (top-k truncated reverse-KL, rho
+  monitor, hard routing, Eq.-6 aggregation) CI-tested; MLX step = Mac-bench seam.
+- `2a1c8745` **A1** `tools/build_trajectory_pack.py` — run_case/long-horizon records ->
+  loss-masked (s,a,o,v) trajectories; failures -> DPO negatives; five acceptance gates.
+- `82c5591f` **A5** `tools/selfplay_task_forge.py` — masked-entity multi-hop + doNotAttributeTo /
+  authorConfidence traps over data/attributions.json; decontaminated; seed-deterministic.
+- `2b8ef965` **A6** long-horizon v2: `.notes.jsonl` durable memory, `kind:model` steps with
+  gateCheck verification events, ENFORCED resourceManifest (violated -> scoreable:false).
+- `6a12a05c` **A3** `tools/train_council_teacher.py` (two-stage specialist SFT; protected seats
+  refused; candidate-only) + **A7** `tools/stage_decomposition_report.py` (fail-visible stage
+  regressions; dual official/reproduced baseline provenance).
+
+**R1 state: offline smoke run #64 SUCCEEDED on the pod path** (pod rented+deleted, artifacts
+uploaded, 2026-07-02T01:55Z). The 3-seed live sweep is DISPATCHED and pending runpod-paid
+approvals: provenance x {gate, multiaxis} x seeds {0,1,2} on this branch (includes the A4/R5
+run_rlvr additions, inert on the gate/multiaxis path). After the sweep: ingest_rlvr_eval gates
+per run + the calibration/abstention re-audit INCLUDING answerable-coverage before touching
+ledger row `rlvr-live-run-not-yet-gated-2026-06-21`. pass@1/VSC load-bearing, never meanReward.
