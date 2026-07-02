@@ -98,24 +98,12 @@
     {
       "id": "runpod-mcp",
       "layer": "A",
-      "description": "Manage RunPod infrastructure through MCP — create/list/stop GPU pods, check pod and serverless-endpoint status, manage templates, network volumes, and container registries via natural language. Use when the user wants pod running status, to launch/terminate a RunPod pod, inspect a serverless endpoint, or asks about \"RunPod MCP\". Wraps the official @runpod/mcp-server (RunPod REST API). Requires a RUNPOD_API_KEY. metadata: short-description: \"Official RunPod MCP server — manage pods/endpoints, check status\" source: \"https://docs.runpod.io/get-started/mcp-servers\" package: \"@runpod/mcp-server\"",
-      "triggers": [
-        "manage",
-        "runpod",
-        "infrastructure",
-        "through",
-        "mcp",
-        "create",
-        "list",
-        "stop",
-        "gpu",
-        "pods",
-        "check",
-        "pod"
-      ],
+      "description": "(encrypted — unlock to index)",
+      "triggers": [],
       "body_ref": ".claude/skills/runpod-mcp/SKILL.md",
       "verifier_ref": null,
-      "reliability": null
+      "reliability": null,
+      "encrypted": true
     },
     {
       "id": "session-handover",
@@ -164,24 +152,12 @@
     {
       "id": "sophia-agi",
       "layer": "A",
-      "description": "Operate the Sophia AGI repo: provenance corpus (validate attributions, run the epistemic gate, score benchmarks) AND the local verifier-gated training substrate (build/decontaminate packs, W2 promotion gate, continual feedback loop). Use when the user mentions Sophia AGI, source discipline, provenance, attribution traps, corpus validation, benchmark scoring, local training, adapter promotion, RSI/continual learning, or runs /sophia-agi. Prefer MCP tools (sophia_validate, sophia_gate_check, sophia_benchmark_*) when the sophia-agi MCP server is enabled. metadata: short-description: \"Sophia AGI corpus + epistemic gate + training-substrate operator\"",
-      "triggers": [
-        "operate",
-        "sophia",
-        "agi",
-        "repo",
-        "provenance",
-        "corpus",
-        "validate",
-        "attributions",
-        "run",
-        "epistemic",
-        "gate",
-        "score"
-      ],
+      "description": "(encrypted — unlock to index)",
+      "triggers": [],
       "body_ref": ".claude/skills/sophia-agi/SKILL.md",
       "verifier_ref": null,
-      "reliability": null
+      "reliability": null,
+      "encrypted": true
     },
     {
       "id": "sophia-security-audit",
@@ -230,24 +206,12 @@
     {
       "id": "wisdom-gpu-prebaked",
       "layer": "A",
-      "description": "Run Sophia-Wisdom-4B GPU jobs (SFT/ORPO/eval on RunPod) WITHOUT wasting GPU credit. Use whenever launching tools/runpod_wisdom_pilot_selfreport.py or the wisdom-pilot-runpod workflow, or when a pod restart-loops / dies during setup, or when the user mentions the pre-baked image, pip-install death loop, RunPod wastage, or \"don't waste resources again\". Wraps the pre-baked CUDA image (docker/wisdom-pilot) + the mandatory cost-guard runbook.",
-      "triggers": [
-        "run",
-        "sophia",
-        "wisdom",
-        "gpu",
-        "jobs",
-        "sft",
-        "orpo",
-        "eval",
-        "runpod",
-        "without",
-        "wasting",
-        "credit"
-      ],
+      "description": "(encrypted — unlock to index)",
+      "triggers": [],
       "body_ref": ".claude/skills/wisdom-gpu-prebaked/SKILL.md",
       "verifier_ref": null,
-      "reliability": null
+      "reliability": null,
+      "encrypted": true
     },
     {
       "id": "ci-path-selection",
