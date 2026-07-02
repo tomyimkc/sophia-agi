@@ -2563,3 +2563,29 @@ stack (use entailment, NOT coherence), it does NOT claim NLI 'solves verificatio
 Arc conclusion: coherence/hidden-state signals decode surface structure well, factual support poorly; the one
 validated win is asking 'does the evidence ENTAIL the claim' instead of 'is the answer coherent'. Report:
 agi-proof/benchmark-results/coherence-reframes/NLI-ENTAILMENT.public-report.json.
+
+
+## 2026-07-02 — NLI production acceptance gate: NO-GO (pre-registered; validated-vs-coherence ≠ beats-lexical)
+
+Ran the maintainer-AI's PRE-REGISTERED acceptance gate (registered before running; no post-hoc
+threshold moves): does the NLI backend beat the incumbent lexical screen END-TO-END through
+agent.fact_check_gate.external_ground, on a SEALED evidence snapshot (sha256 497d4df04736ba3a,
+n=59, C1 fixtures + factcheck packs, marker-stripped)? Unblocked by the py3.10 fence-regex fix
+(fact_check_gate.py:149 possessive-quantifier -> version-aware fallback).
+
+RESULT: **NO-GO.**
+- PRIMARY paired ΔF1 at matched coverage (0.17) = **-0.098** all 3 seeds (CI [-0.167, 0]) — NLI is
+  WORSE than lexical, far below the pre-registered +0.05 floor.
+- CALIBRATED-ABSTENTION guard FAIL: NLI coverage 0.119 vs lexical 0.170 (drop 0.051 > 0.01 cap);
+  NLI selective-AURC 0.307 > lexical 0.261. The exact "abstain-everything" pathology the guard exists
+  to catch (entailment on curated-but-imperfect evidence over-abstains).
+- Fail-closed PASS (no evidence -> held). Two-family κ(deberta, grok-LLM-NLI)=0.477 ≥ 0.40 PASS
+  (disagreements -> data/nli_disagreements_taxonomy.jsonl = boundary/D seed corpus). Latency 0.08 s/claim.
+  PROTECTED religion/history: none in C1 pack (defer to W2 promotion gate).
+
+INTERPRETATION: the FEVER win (NLI 0.96 vs COHERENCE 0.65) does NOT translate to beating the
+production LEXICAL screen (token-coverage + negation cues, a much stronger baseline that already
+catches contradictions). NLI-entailment stays a validated-vs-coherence primitive and an OPTIONAL,
+fail-closed backend (agent/nli_grounding.py) — NOT promoted to default-on, NOT promoted to main.
+Report: coherence-reframes/NLI-ACCEPTANCE-GATE.report.json. Follow-on = D (locate the boundary:
+live-noisy retrieval, multi-hop, the disagreement taxonomy). canClaimAGI=false.
