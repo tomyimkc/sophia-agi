@@ -1,0 +1,64 @@
+{
+  "schema": "sophia.nli_healthy_incumbent_D2.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "question": "With a HEALTHY (semantic-similarity) incumbent instead of the collapsing lexical screen, does NLI entailment beat coherence/similarity as a grounding signal on sophia's domain?",
+  "incumbent": "semantic-similarity (all-MiniLM cosine, threshold 0.45) \u2014 fires on topical evidence",
+  "verifier": "frozen NLI (build_nli_entailment)",
+  "realArm": {
+    "n": 106,
+    "supported": 30,
+    "manipulationFactBearing": 1.0,
+    "incumbentHealth_semanticCoverage": 0.783,
+    "incumbentHealthy": true,
+    "matchedCoverage": 0.783,
+    "NLI_vs_semantic_deltaF1": {
+      "0": 0.0531,
+      "1": 0.0531,
+      "7": 0.0531
+    },
+    "ci95_seed0": [
+      0.0,
+      0.1468
+    ],
+    "coverageDrop": 0.7264,
+    "pass_CIexcludes0_and_floor": false,
+    "label": "REAL non-forge n=106; MDE ~0.21 -> UNDERPOWERED (point estimate interpretable now the incumbent is healthy, but CI wide)"
+  },
+  "forgeArm": {
+    "n": 348,
+    "supported": 120,
+    "manipulationFactBearing": 1.0,
+    "incumbentHealth_semanticCoverage": 0.7931,
+    "incumbentHealthy": true,
+    "matchedCoverage": 0.7931,
+    "NLI_vs_semantic_deltaF1": {
+      "0": 0.0707,
+      "1": 0.0707,
+      "7": 0.0707
+    },
+    "ci95_seed0": [
+      0.0576,
+      0.1404
+    ],
+    "coverageDrop": 0.704,
+    "pass_CIexcludes0_and_floor": true,
+    "label": "FORGE paraphrase-expanded; INTERNAL-VALIDITY-ONLY (cases correlated -> CI optimistic, NOT an external result)"
+  },
+  "verdict": "NOT GO. Incumbent-fix WORKED (semantic healthy, cov 0.78 vs lexical's collapsed 0.009). With an interpretable healthy incumbent: NLI beats semantic on F1-at-matched-coverage (real +0.053 CI [0.0,0.147] borderline/underpowered; forge +0.071 CI [0.058,0.140] internal-validity-only) \u2014 BUT by CATASTROPHIC over-abstention (NLI cov 0.057 vs 0.78; drop 0.73 >> 0.01 fails the calibrated-abstention guard). ROOT CAUSE: a CLAIM-EVIDENCE HEDGE MISMATCH \u2014 sophia's provenance evidence is epistemically hedged ('attributed to', 'compiled', 'legendary') so it does NOT strictly entail blunt 'X wrote Y' claims; NLI correctly abstains, semantic over-admits on topicality, lexical collapses. NLI abstaining here is CONSISTENT with sophia's own uncertainty discipline \u2014 the blunt claims are mis-specified for hedged evidence. sophia-domain qualifier NOT closed. Standing result: retrieval-bound GO holds only on FEVER (verbatim-ish evidence, blunt claims match). canClaimAGI=false.",
+  "threeWayCoverage_fixedHostnames": {
+    "lexical": 0.0094,
+    "semantic": 0.783,
+    "nli": 0.0566,
+    "reading": "lexical COLLAPSES (0.009 << 0.10, incumbent-degenerate \u2014 D's finding stands); semantic HEALTHY (0.78, over-admits on topicality); NLI OVER-ABSTAINS (0.057)"
+  },
+  "harnessBugFixed": "sources_of shared hostname 'wiki.local' -> gate's >=2-independent-domains rule collapsed all evidence to 1 domain -> spurious coverage 0.0 in D. FIXED to distinct hostnames. D's lexical-collapse finding STANDS (true cov 0.0094, still << 0.10); the exact 0.0 was bug-inflated.",
+  "abstentionGuard": {
+    "nliCoverage": 0.057,
+    "semanticCoverage": 0.783,
+    "coverageDrop": 0.726,
+    "floor": 0.01,
+    "pass": false,
+    "reading": "NLI wins F1-at-matched-coverage only by admitting ~6% vs semantic's 78% \u2014 coverage drop 0.73 >> 0.01 FAILS the calibrated-abstention guard (the over-abstention pathology, at scale)"
+  }
+}

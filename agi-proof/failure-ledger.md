@@ -2629,3 +2629,23 @@ stronger baseline). Both new guards worked exactly as designed, catching a +0.34
 STANDING QUALIFIER (per maintainer-AI overclaim watch): 'retrieval-bound is GO-confirmed' holds ONLY on FEVER
 through the real gate (n=400); the sophia-domain arm is now shown to be blocked on data scarcity + incumbent
 collapse, NOT confirmed. D exists to close that qualifier and did not.
+
+
+## 2026-07-02 — D2 (fix the incumbent) + D correction: NOT GO; sophia-domain blocked by claim-evidence hedge mismatch
+
+Implemented all D-decision options. FIX THE INCUMBENT: swapped the collapsing lexical screen for a HEALTHY
+semantic-similarity incumbent (all-MiniLM cosine, coverage 0.78 vs lexical's 0.009). Added build_semantic_entailment
+to agent/nli_grounding.py (+3 tests). Re-ran the frozen NLI verifier on the sophia pack.
+- HARNESS BUG FOUND + FIXED: D's sources_of shared hostname 'wiki.local' -> the gate's >=2-independent-domains
+  rule collapsed all evidence to 1 domain -> spurious coverage 0.0. Fixed to distinct hostnames. D's lexical-collapse
+  finding STANDS (true lexical coverage 0.0094, still << 0.10 floor); the exact 0.0 was bug-inflated. (Correction to
+  the 2026-07-02 D ledger row.)
+- REAL arm (n=106, healthy incumbent): NLI ΔF1 vs semantic = +0.053, CI [0.0,0.147] (borderline; underpowered, MDE 0.21).
+- FORGE arm (n=348, internal-validity-only): NLI ΔF1 +0.071, CI [0.058,0.140] excludes 0.
+- BUT NLI FAILS the calibrated-abstention guard hard: coverage 0.057 vs semantic 0.78, drop 0.73 >> 0.01. NLI wins
+  F1-at-matched-coverage only by admitting ~6%.
+VERDICT: NOT GO. ROOT CAUSE = CLAIM-EVIDENCE HEDGE MISMATCH: sophia's provenance evidence is epistemically hedged
+('attributed to'/'compiled'/'legendary') so it does not strictly entail blunt 'X wrote Y' claims; NLI correctly
+abstains (consistent with sophia's uncertainty discipline), semantic over-admits on topicality, lexical collapses.
+sophia-domain qualifier NOT closed. Standing result: retrieval-bound GO holds only on FEVER. Banked: ARC-SUMMARY.md.
+canClaimAGI=false.
