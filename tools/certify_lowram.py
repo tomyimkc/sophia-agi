@@ -592,7 +592,24 @@ def run_certify(args: argparse.Namespace) -> dict:
     served_suffixes = resolve_served_suffixes(getattr(args, "keep_suffixes", ""))
     _ktop = int(getattr(args, "keep_top_experts", 0) or 0)
     _klayers = int(getattr(args, "keep_layers", 0) or 0)
-    if _ktop > 0 or _klayers > 0:
+    if getattr(args, "round_mode", "rtn") == "gptq":
+        # GPTQ takes precedence and handles keep-top-experts itself (holds them bf16, GPTQs the rest)
+        # — the tail-KL (protected_max_kl) lever. keep-layers is not wired for GPTQ (use RTN for that).
+        from tools.gptq_cert import gptq_quantize_served_params
+        from tools.expert_protection import top_routed_experts
+        _keep = (top_routed_experts(model, tok, rows, k=_ktop, n_eval=args.n_eval,
+                                    max_seq_len=args.max_seq_len, device=args.device)
+                 if _ktop > 0 else {})
+        print("[gptq] Hessian-aware NVFP4 group-16 snap (calibrating served params"
+              + (f"; hold top-{_ktop} routed experts/layer bf16" if _ktop > 0 else "") + ")…", flush=True)
+        qinfo = gptq_quantize_served_params(
+            model, tok, rows, scheme=args.scheme, suffixes=served_suffixes,
+            n_calib=args.n_eval, max_seq_len=args.max_seq_len, device=args.device, keep_experts=_keep)
+        _gi = qinfo.get("gridIdentity", {})
+        print(f"[gptq] grid-identity verified={_gi.get('verified')} (canary {_gi.get('canary')}, "
+              f"maxAbsDiff {_gi.get('maxAbsDiff')}); held {qinfo.get('protected_experts', 0)} expert slices bf16",
+              flush=True)
+    elif _ktop > 0 or _klayers > 0:
         # opt-in no-train mixed-precision: hold top-N routed experts/layer AND/OR the last-N
         # transformer blocks bf16 (QAT-v7 Lever D — the final layers decide the argmax). Both count
         # as kept params so the memory ratio stays honest.
@@ -611,15 +628,6 @@ def run_certify(args: argparse.Namespace) -> dict:
             _bits.append(f"last-{_klayers} blocks {sorted(_keep_layers or [])} "
                          f"({qinfo.get('protected_layer_params')} served params)")
         print(f"[keep] held bf16: {' + '.join(_bits)}", flush=True)
-    elif getattr(args, "round_mode", "rtn") == "gptq":
-        from tools.gptq_cert import gptq_quantize_served_params
-        print("[gptq] Hessian-aware NVFP4 group-16 snap (calibrating served params)…", flush=True)
-        qinfo = gptq_quantize_served_params(
-            model, tok, rows, scheme=args.scheme, suffixes=served_suffixes,
-            n_calib=args.n_eval, max_seq_len=args.max_seq_len, device=args.device)
-        _gi = qinfo.get("gridIdentity", {})
-        print(f"[gptq] grid-identity verified={_gi.get('verified')} "
-              f"(canary {_gi.get('canary')}, maxAbsDiff {_gi.get('maxAbsDiff')})", flush=True)
     else:
         qinfo = quantize_served_params(model, scheme=args.scheme, suffixes=served_suffixes)
     per_tensor_ratio, eff_ratio = effective_mem_ratio(

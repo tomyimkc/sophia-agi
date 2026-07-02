@@ -27,12 +27,23 @@ def gptq_quantize_served_params(model: Any, tok: Any, rows: "list[dict]", *,
                                 scheme: str, suffixes: "tuple[str, ...]",
                                 n_calib: int = 512, max_seq_len: int = 1024,
                                 device: str = "cuda", group_size: int = 16,
-                                percdamp: float = 0.01) -> dict:
+                                percdamp: float = 0.01,
+                                keep_experts: "dict[int, set] | None" = None) -> dict:
+    """``keep_experts`` = ``{layer: {expert ids}}`` (from ``expert_protection.top_routed_experts``)
+    held bf16 (the tail-KL lever addressing protected_max_kl); the rest are GPTQ'd. Held slices
+    count as ``kept_params`` so the memory ratio is honest (holding experts bf16 lowers it)."""
+    import re
     import torch
     import torch.nn as nn
 
     from training.qat import _torch_nvfp4
     from moe.gptq import gptq_quantize_grouped, nvfp4_group_quantize
+
+    def _layer_of(nm):
+        mm = re.search(r"layers\.(\d+)\.", nm)
+        return int(mm.group(1)) if mm else -1
+
+    keep_experts = keep_experts or {}
     from tools.certify_lowram import is_served_param, _split_prompt_completion
 
     if scheme != "nvfp4":
@@ -113,11 +124,17 @@ def gptq_quantize_served_params(model: Any, tok: Any, rows: "list[dict]", *,
         if len(served_names) < 8:
             served_names.append(name)
 
+    protected_experts = 0
     for name, mod in expert_mods.items():
         gate_up = mod.gate_up_proj.data
         down = mod.down_proj.data
+        held = keep_experts.get(_layer_of(name), set())
         for e in range(mod.num_experts):
             with torch.no_grad():
+                if e in held:                       # hold this expert bf16 (protected_max_kl lever)
+                    kept_params += gate_up[e].numel() + down[e].numel()
+                    protected_experts += 1
+                    continue
                 if exp_Hgu[name][e] is not None:
                     Wq = gptq_quantize_grouped(gate_up[e].float(), exp_Hgu[name][e],
                                                group_size=group_size, percdamp=percdamp)
@@ -134,7 +151,7 @@ def gptq_quantize_served_params(model: Any, tok: Any, rows: "list[dict]", *,
                     down[e].copy_(served_snap(down[e], exp_Hdp[name][e]))
                 else:
                     down[e].copy_(_torch_nvfp4(down[e].float()).to(down.dtype))
-        q_params += gate_up.numel() + down.numel(); q_tensors += 2
+                q_params += gate_up[e].numel() + down[e].numel(); q_tensors += 2
         if len(served_names) < 8:
             served_names.append(name + ".gate_up_proj")
 
@@ -145,4 +162,5 @@ def gptq_quantize_served_params(model: Any, tok: Any, rows: "list[dict]", *,
     return {"quantized_modules": q_tensors, "quantized_params": q_params,
             "kept_params": kept_params, "total_params": q_params + kept_params,
             "quantized_sample": served_names, "round_mode": "gptq",
-            "gridIdentity": grid_identity, "nCalibTokens": seen}
+            "gridIdentity": grid_identity, "nCalibTokens": seen,
+            "protected_experts": protected_experts}
