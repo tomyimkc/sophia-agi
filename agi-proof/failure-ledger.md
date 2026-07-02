@@ -2607,3 +2607,25 @@ Honest follow-ons to the NLI acceptance-gate NO-GO.
   evidence NO method (NLI/hybrid/lexical) beats the lexical screen; the FEVER win needed sentence-level GOLD
   evidence. The lever is fact-bearing retrieval, not the verifier head. NLI + the contradiction-hybrid stay
   candidateOnly optional fail-closed backends. canClaimAGI=false.
+
+
+## 2026-07-02 — Experiment D (sophia-domain retrieval): NOT GO — margin uninterpretable (2 guards fired)
+
+Funded per the maintainer-AI outcome table (A GO -> fund D), frozen gate. REAL WORK = assemble a sophia-domain
+evidence-groundable pack from existing non-forge material: caps at n=106 (30 supported attributions + 76
+doNotAttributeTo negatives; wiki/text mirrors the same works; hidden-reviewer packs are self-authored/forge;
+disputes are contested). Two pre-registered guards fired:
+- MDE (pre-run, per protocol): ~0.21 >> +0.05 floor at n=106/30-supported -> UNDERPOWERED, declared before running.
+- INCUMBENT-HEALTH (new clause): lexical screen coverage = 0.0 < 0.10 floor -> INCUMBENT-DEGENERATE. The
+  token-overlap lexical screen collapses on sophia's HEDGED provenance evidence ('attributed to'/'compiled'),
+  never firing against blunt 'X wrote Y' claims — same FEVER-style collapse the clause guards against. So the
+  NLI ΔF1 +0.34 (CI [0.11,0.48]) is NLI beating a COLLAPSED baseline, NOT a real win — labeled uninterpretable.
+Manipulation check PASSED (100% fact-bearing wiki prose). retriever = sophia's own wiki-corpus prose (deployment
+grounding source). VERDICT: NOT GO; sophia-domain qualifier NOT closed. Prerequisites are TWO: (a) a larger
+curated evidence-groundable attribution pack (labeled data is the scarce binding constraint), AND (b) a healthy
+incumbent (the lexical token-overlap screen cannot engage realistic hedged evidence — a fair test needs a
+stronger baseline). Both new guards worked exactly as designed, catching a +0.34 mirage. candidateOnly, canClaimAGI=false.
+
+STANDING QUALIFIER (per maintainer-AI overclaim watch): 'retrieval-bound is GO-confirmed' holds ONLY on FEVER
+through the real gate (n=400); the sophia-domain arm is now shown to be blocked on data scarcity + incumbent
+collapse, NOT confirmed. D exists to close that qualifier and did not.

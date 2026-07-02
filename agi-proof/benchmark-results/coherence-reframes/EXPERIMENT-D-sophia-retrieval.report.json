@@ -1,0 +1,47 @@
+{
+  "schema": "sophia.retrieval_experiment_D.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "domain": "sophia provenance/attribution (philosophy/religion/history)",
+  "retriever": "sophia's own wiki-corpus prose, sentence-split (offline; the deployment grounding source)",
+  "pack": {
+    "n": 106,
+    "supported": 30,
+    "refuted": 76,
+    "worksWithWikiEvidence": 30,
+    "sha256": "c4be82fa5a3f9b9b"
+  },
+  "preRunMDE": {
+    "estimatedCIHalfWidth": 0.21,
+    "floor": 0.05,
+    "powered": false,
+    "note": "MDE ~0.21 >> +0.05 floor at n=106/30-supported; reported BEFORE running per protocol"
+  },
+  "manipulationCheck": {
+    "factBearingFraction": 1.0,
+    "floor": 0.5,
+    "pass": true
+  },
+  "incumbentHealth": {
+    "lexicalCoverage": 0.0,
+    "floor": 0.1,
+    "healthy": false,
+    "note": "guards against FEVER-style baseline collapse (there lexical cov was 0.003)",
+    "verdict": "INCUMBENT-DEGENERATE (margin uninterpretable) \u2014 lexical collapses on hedged provenance evidence"
+  },
+  "NLI_vs_lexical_deltaF1_by_seed": {
+    "0": 0.3415,
+    "1": 0.3415,
+    "7": 0.3415
+  },
+  "ci95_seed0": [
+    0.1111,
+    0.4762
+  ],
+  "coverageDrop": 0.0,
+  "verdict": "NOT GO \u2014 margin UNINTERPRETABLE. TWO pre-registered guards fired: (1) INCUMBENT-DEGENERATE \u2014 lexical coverage 0.0 < 0.10 floor (the token-overlap screen collapses on sophia's hedged provenance evidence 'attributed to'/'compiled', never firing against blunt 'X wrote Y' claims \u2014 the same FEVER-style collapse the clause guards against), so the NLI \u0394F1 +0.34 (CI [0.11,0.48]) is NLI beating a collapsed baseline, NOT a real win; (2) UNDERPOWERED \u2014 n=106/30-supported, MDE ~0.21 >> +0.05 (declared pre-run). Manipulation check PASSED (100% fact-bearing wiki prose). The sophia-domain qualifier is NOT closed. Prerequisites are TWO, not one: (a) a larger curated evidence-groundable attribution pack (labeled data is scarce in sophia's domain), AND (b) a healthy incumbent \u2014 the lexical token-overlap screen cannot engage realistic hedged evidence, so a fair test needs a stronger baseline (e.g. a semantic/lexical hybrid incumbent) or the comparison is unfalsifiable.",
+  "guardsFired": [
+    "incumbent-health (cov 0.0 < 0.10)",
+    "MDE pre-check (0.21 >> 0.05)"
+  ]
+}
