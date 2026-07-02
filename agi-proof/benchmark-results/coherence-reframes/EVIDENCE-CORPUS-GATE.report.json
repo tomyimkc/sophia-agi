@@ -1,0 +1,80 @@
+{
+  "schema": "sophia.evidence_corpus_gate.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "corpus": {
+    "works": 99,
+    "passages": 198,
+    "evidence": "independent Wikipedia leads (multi-sentence), NOT sophia's own wiki"
+  },
+  "n": 134,
+  "supported": 67,
+  "preRunMDE": {
+    "estimatedCIHalfWidth": 0.124,
+    "floor": 0.05
+  },
+  "arm1_evidence_as_curated": {
+    "n": 134,
+    "supported": 67,
+    "manipFactBearing": 0.854,
+    "incumbentSemanticCoverage": 0.4627,
+    "incumbentHealthy": true,
+    "answerableCovSemantic": 0.5821,
+    "answerableCovNLI": 0.1194,
+    "answerableCovDrop": 0.4627,
+    "abstentionGuardPass": false,
+    "NLI_vs_semantic_deltaF1": {
+      "0": 0.2326,
+      "1": 0.2326,
+      "7": 0.2326
+    },
+    "ci95_seed0": [
+      0.1102,
+      0.3437
+    ],
+    "primaryPass": true
+  },
+  "arm2_retrieval_semantic": {
+    "n": 134,
+    "supported": 67,
+    "manipFactBearing": 0.907,
+    "incumbentSemanticCoverage": 0.791,
+    "incumbentHealthy": true,
+    "answerableCovSemantic": 0.8358,
+    "answerableCovNLI": 0.0746,
+    "answerableCovDrop": 0.7612,
+    "abstentionGuardPass": false,
+    "NLI_vs_semantic_deltaF1": {
+      "0": -0.0116,
+      "1": -0.0116,
+      "7": -0.0116
+    },
+    "ci95_seed0": [
+      -0.093,
+      0.0562
+    ],
+    "primaryPass": false
+  },
+  "arm2_retrieval_hash_production": {
+    "n": 134,
+    "supported": 67,
+    "manipFactBearing": 0.845,
+    "incumbentSemanticCoverage": 0.2761,
+    "incumbentHealthy": true,
+    "answerableCovSemantic": 0.3433,
+    "answerableCovNLI": 0.0,
+    "answerableCovDrop": 0.3433,
+    "abstentionGuardPass": false,
+    "NLI_vs_semantic_deltaF1": {
+      "0": -0.0577,
+      "1": -0.0577,
+      "7": -0.0577
+    },
+    "ci95_seed0": [
+      -0.2,
+      0.0619
+    ],
+    "primaryPass": false
+  },
+  "verdict": "NO-GO \u2014 mechanism does not clear the gate even on curated in-domain evidence | MDE 0.124 (floor 0.05)"
+}

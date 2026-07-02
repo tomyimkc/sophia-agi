@@ -2664,3 +2664,29 @@ rejecting wrong-author claims via contradiction, at the cost of missing >half th
 from the other side: entailment needs RICH evidence (FEVER sentences -> GO); sophia terse prose -> over-abstains (NO-GO),
 blunt (D2) or hedge-matched (D3). sophia-domain qualifier OPEN; prereqs: richer/longer sophia evidence + more labeled data.
 canClaimAGI=false.
+
+
+## 2026-07-02 — Evidence-corpus acceptance gate (redirect-and-fund capstone): NO-GO, default-on line CLOSED
+
+The held-out acceptance instrument the maintainer-AI asked for: an INDEPENDENT 99-work Wikipedia
+evidence corpus (philosophy/political-theory/history/religion/science/economics), curated by a SEPARATE
+agent (curator != gate-runner), ingested into a real retrieval path; the curated pack is its held-out
+instrument. Blunt claims ('{author} wrote {work}') to match Wikipedia's blunt lead prose. Two arms,
+frozen gate: NLI (build_nli_entailment) vs the healthy semantic incumbent (build_semantic_entailment)
+through the real fact_check_gate.external_ground. n=134 (67 supported), 198 passages, MDE 0.124.
+RESULT: NO-GO — overdetermined and power-robust.
+(1) DEPLOYABLE arm (retrieval) shows NO win before any guard: retrieval-semantic ΔF1 -0.012 CI[-0.093,0.056],
+    production-hash ΔF1 -0.058 CI[-0.20,0.062] — both point estimates <=0. Default-on cannot be recommended.
+(2) Even the CEILING (arm1 curated) is disqualified: real F1 lift +0.233 CI[0.110,0.344] (3 seeds) but bought
+    ENTIRELY by over-abstention — NLI admits only 12% of true attributions vs the incumbent's 58% (answerable-cov
+    drop 0.46 >> 0.01 guard). And it is NOT a junk-evidence artifact: manipulation check PASSES on every arm
+    (0.85-0.91 fact-bearing), incumbent healthy on every arm. NLI over-abstains on rich, fact-bearing evidence anyway.
+(3) Power does not rescue: retrieval effects at/below zero (nothing positive to miss); curated effect far above MDE
+    but coverage-disqualified. Two guard clauses (two-family κ, explicit fail-closed) were not wired into this
+    harness — both are GO-preconditions, so their absence can only keep the verdict at NO-GO.
+CLOSES the sophia-domain grounding line from the opposite side of D/D2/D3: terse prose was never the cause —
+NLI-as-grounding-ADMITTER over-abstains even on an independent rich corpus. The FEVER positive was retrieval-bound
+(needed pre-selected single-sentence fact-bearing evidence). Default-on grounding line CLOSED. Mechanism retained
+only where honestly earned: contradiction-only hybrid (build_hybrid_entailment), which never triggered a coverage
+penalty. NLI primitive stays on main behind the EntailmentFn seam, injectable, fail-closed, OFF by default.
+candidateOnly=true, canClaimAGI=false.
