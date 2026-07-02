@@ -187,7 +187,7 @@ def main(argv=None) -> int:
                     "falseAnswerRate into a calibrated bound. candidateOnly; assumes calibration/"
                     "test exchangeability (per-bucket = group-conditional refinement).",
             "byAlpha": {
-                f"{a:.2f}": {
+                f"{a:g}": {  # precision-preserving key (0.075 -> "0.075", not "0.07")
                     risk: {
                         "fit": conformal_risk_control(labeled, alpha=a, risk_bucket=risk),
                         "validity": crc_validity_check(labeled, alpha=a, risk_bucket=risk, n_splits=200, seed=0),

@@ -164,7 +164,8 @@ def conformal_risk_control(
             break  # monotone: no larger tau can satisfy it either
     if best_tau is None:
         if abstain_all_bound <= alpha:  # certified only by answering nothing
-            return {**base, "feasible": True, "threshold": float("-inf"),
+            # threshold=None (JSON-safe; NOT -inf which serializes to invalid -Infinity)
+            return {**base, "feasible": True, "threshold": None, "abstainAll": True,
                     "empiricalRisk": 0.0, "crcBound": round(abstain_all_bound, 6),
                     "answered": 0, "coverage": 0.0,
                     "note": "certified only by abstaining on all rows at this alpha"}
@@ -174,7 +175,10 @@ def conformal_risk_control(
     answered = sum(1 for r in bucket if float(r["nonconformity"]) <= best_tau)
     return {
         **base, "feasible": True,
-        "threshold": round(best_tau, 6),
+        # EXACT selected calibration score — rounding could enlarge the answered set past
+        # what the CRC inequality certified, so a consumer must use this exact threshold.
+        "threshold": best_tau,
+        "abstainAll": False,
         "empiricalRisk": round(best_rhat, 6),
         "crcBound": round((n * best_rhat + B) / (n + 1), 6),
         "answered": answered,
@@ -214,6 +218,9 @@ def crc_validity_check(
         if not rc.get("feasible"):
             continue
         tau = rc["threshold"]
+        if tau is None:  # abstain-all: answers nothing -> zero false answers on held-out
+            realized.append(0.0)
+            continue
         loss = sum(
             1 for r in test
             if float(r["nonconformity"]) <= tau and not bool(r.get("correct", False))
