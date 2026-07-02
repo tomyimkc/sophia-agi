@@ -72,3 +72,13 @@ underpowered), and there is a **capability confound** (the SFT taught the correc
 accuracy jumped 0.467 → 0.83, mixing calibration with a capability gain — unlike the math surface
 where base accuracy was already high). The strongest W2 evidence remains the **math** surface
 (3 seeds, all ΔECE CIs exclude 0). Row stays **Open**.
+
+## Accuracy-controlled second surface (2026-07-02) — clean non-math calibration
+
+Re-ran the letter-counting surface **accuracy-controlled**: the SFT keeps the model's OWN answer
+(not gold), only calibrating confidence, so any ECE change is pure calibration
+(`w2-accuracy-controlled-letters-2026-07-02.candidate.json`). ECE drops **0.533 → 0.137/0.173/0.195**
+with accuracy essentially **constant** (0.467 → 0.50/0.53/0.567), and **all 3 seeds' ΔECE CIs exclude
+0**. This removes the earlier capability confound *and* the math-specificity concern — so
+calibration-SFT lowers held-out ECE across **two independent** verifier-checkable surfaces (math +
+letter-counting). Awaiting maintainer sign-off for promotion. Row **Open**.

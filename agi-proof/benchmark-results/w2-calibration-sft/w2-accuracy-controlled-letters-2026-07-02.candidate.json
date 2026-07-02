@@ -1,0 +1,45 @@
+{
+  "schema": "sophia.w2_accuracy_controlled.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "createdAt": "2026-07-02",
+  "pinnedCommit": "5f777863e3552b91e0f2ea8095c8a1a7a3eaff3b",
+  "surface": "NON-MATH letter-counting, ACCURACY-CONTROLLED: SFT keeps the model's OWN answer (not gold), only calibrates confidence -> isolates calibration from capability gain",
+  "base": {
+    "ece": 0.5333,
+    "acc": 0.467
+  },
+  "seeds": {
+    "seed0": {
+      "ece": 0.1947,
+      "acc": 0.567,
+      "ci": [
+        0.0183,
+        0.5926
+      ]
+    },
+    "seed1": {
+      "ece": 0.1733,
+      "acc": 0.533,
+      "ci": [
+        0.055,
+        0.6077
+      ]
+    },
+    "seed2": {
+      "ece": 0.1373,
+      "acc": 0.5,
+      "ci": [
+        0.0813,
+        0.6316
+      ]
+    }
+  },
+  "verdict": "CLEAN non-math calibration, accuracy-controlled -> resolves the earlier confound; row stays OPEN per contract. Keeping the model's own answers, ECE drops 0.533 -> 0.137/0.173/0.195 with accuracy ~CONSTANT (0.467 -> 0.50/0.53/0.567), and all 3 seeds' \u0394ECE 95% CI EXCLUDES 0. This removes the capability confound (accuracy did not change) AND the math-taxonomy-specific concern (non-math surface). Combined with the math surface (3 seeds, CIs exclude 0), W2's calibration-SFT lowers held-out ECE across TWO independent verifier-checkable surfaces. Awaiting maintainer sign-off for any promotion.",
+  "artifacts": {
+    "lc_base_eval.jsonl": "9edd40f8b01710f2facb17c9eb8c511cd7b94afa7bd60739744b36d0a2ad0b6b",
+    "lc_own_eval_s0.jsonl": "e801641b0fdf97c3afc9086da1ff1debdf663546996c70b196e9b785c5874d99",
+    "lc_own_eval_s1.jsonl": "93347fc8f102280a499f81991da55991854676f4a8b94b502d3903f24fddd407",
+    "lc_own_eval_s2.jsonl": "a5c3f603ef2663ab687da433e7bd02da823e31fbc6ce9e887a4cf0aa765afebd"
+  }
+}

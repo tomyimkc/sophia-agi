@@ -1,0 +1,27 @@
+{
+  "schema": "sophia.w3_rulelearning.v1",
+  "candidateOnly": true,
+  "canClaimAGI": false,
+  "createdAt": "2026-07-02",
+  "pinnedCommit": "5f777863e3552b91e0f2ea8095c8a1a7a3eaff3b",
+  "task": "made-up rule (N is 'zibbo' iff N>50); okf labels correct, model labels FLIPPED; custom per-example weighted-CE LoRA loop; test on HELD-OUT unseen N",
+  "seeds": {
+    "seed0": {
+      "weighted_heldout_acc": 0.917,
+      "uniform_heldout_acc": 0.5,
+      "delta": 0.417
+    },
+    "seed1": {
+      "weighted_heldout_acc": 0.75,
+      "uniform_heldout_acc": 0.5,
+      "delta": 0.25
+    }
+  },
+  "mean_weighted": 0.834,
+  "mean_uniform": 0.5,
+  "verdict": "GENUINE HELD-OUT GENERALIZATION (addresses W3's core gap) -> row stays OPEN per contract. On a learnable RULE with 50% flipped (low-provenance) labels, provenance-weighted training GENERALIZES to UNSEEN N: weighted 0.834 vs uniform 0.500 (chance) mean over 2 seeds. Uniform is confused by the noisy labels; provenance-weighting (okf 0.95 >> model 0.20) recovers the true rule and it transfers to held-out inputs. This is held-out generalization, NOT in-sample fact-memorization -- the objection that blocked the earlier fact-conflict version. Remaining for promotion: >=3 seeds, more rule tasks, and a real influence/TracIn backend; then maintainer sign-off.",
+  "artifacts": {
+    "w3v3_rulelearning.json": "8158744be34d7bd6859dd2768e85bfb80d638c880d4a7863d9a4e71ae914c525",
+    "w3_v3_rulelearning.py": "6257101c6696623ff79523979f3f14146875130f3ae1266b5a738b25fa82fa1a"
+  }
+}

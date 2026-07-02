@@ -49,3 +49,13 @@ construction). A strong demonstration of the mechanism, not a cleared general ga
 A real held-out generalization suite (train the weighting *pattern*, test unseen conflicting
 facts), ≥2 seeds, true per-example loss weighting (custom loop, not replication), and a real
 TracIn/influence-function backend validated against full leave-one-out across the set.
+
+## v3 (2026-07-02) — HELD-OUT GENERALIZATION on a rule task (addresses the core gap)
+
+The earlier fact-conflict version was in-sample. This version uses a learnable **rule** (a number
+is "zibbo" iff N>50) with clean (okf) vs **flipped** (model) labels, and tests on **unseen N**
+(`w3-rulelearning-heldout-2026-07-02.candidate.json`). Provenance-weighted training **generalizes**:
+weighted **0.834** vs uniform **0.500** (chance) mean over 2 seeds. Uniform is confused by the 50%
+flipped labels; provenance-weighting (okf 0.95 ≫ model 0.20) recovers the true rule and it transfers
+to held-out inputs — **genuine held-out generalization, not fact-memorization**. Remaining for
+promotion: ≥3 seeds + more rule tasks + a real TracIn/influence backend, then sign-off. Row **Open**.
