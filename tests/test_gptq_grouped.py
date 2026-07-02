@@ -53,6 +53,17 @@ def test_nvfp4_group_bit_identical_to_served_flatten_grid():
     assert torch.equal(mine, ref), f"max|Δ|={(mine-ref).abs().max()}"
 
 
+def test_nvfp4_group_bit_identical_bf16():
+    # The real cert case: on BF16 weights the group quantizer must equal _torch_nvfp4 bit-for-bit
+    # (the earlier float32-internal snap was off by one bf16 ULP -> grid-identity failed on experts).
+    g = torch.Generator().manual_seed(0)
+    W = torch.randn(32, 64, generator=g).to(torch.bfloat16)
+    mine = nvfp4_group_quantize(W, group_size=16)
+    ref = _torch_nvfp4_ref(W)
+    assert mine.dtype == torch.bfloat16
+    assert torch.equal(mine, ref), f"bf16 max|Δ|={(mine.float()-ref.float()).abs().max()}"
+
+
 def test_nvfp4_group_values_on_grid():
     g = torch.Generator().manual_seed(1)
     W = torch.randn(16, 32, generator=g)

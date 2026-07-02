@@ -148,9 +148,13 @@ _NVFP4_BOUNDS = (0.25, 0.75, 1.25, 1.75, 2.5, 3.5, 5.0)  # midpoints of consecut
 
 
 def _nvfp4_snap(vals: torch.Tensor, scale: torch.Tensor) -> torch.Tensor:
-    """Snap ``vals`` to ``sign · E2M1_level · scale`` (``scale`` broadcasts over ``vals``)."""
-    levels = torch.tensor(_NVFP4_LEVELS, device=vals.device, dtype=torch.float32)
-    bounds = torch.tensor(_NVFP4_BOUNDS, device=vals.device, dtype=torch.float32)
+    """Snap ``vals`` to ``sign · E2M1_level · scale`` (``scale`` broadcasts over ``vals``).
+
+    Computed in ``vals.dtype`` — matching ``training.qat._torch_nvfp4`` (which keeps levels/scale
+    in ``w.dtype``) so the result is BIT-IDENTICAL on bf16 weights, not off by a bf16 ULP.
+    """
+    levels = torch.tensor(_NVFP4_LEVELS, device=vals.device, dtype=vals.dtype)
+    bounds = torch.tensor(_NVFP4_BOUNDS, device=vals.device, dtype=vals.dtype)
     s = scale.clamp_min(1e-12)
     idx = torch.bucketize((vals / s).abs(), bounds)
     return torch.sign(vals) * levels[idx] * s
@@ -166,10 +170,10 @@ def nvfp4_group_quantize(W: torch.Tensor, *, group_size: int = 16) -> torch.Tens
     rows, cols = W.shape
     if cols % group_size != 0:
         raise ValueError(f"in-dim {cols} must be a multiple of group_size {group_size}")
-    Wf = W.float().reshape(rows, cols // group_size, group_size)     # [out, n_groups, g]
-    scale = Wf.abs().amax(dim=2, keepdim=True).clamp_min(1e-12) / 6.0  # [out, n_groups, 1]
-    q = _nvfp4_snap(Wf, scale)
-    return q.reshape(rows, cols).to(W.dtype)
+    # compute in W.dtype (NOT float32) so this is bit-identical to _torch_nvfp4 on bf16 weights.
+    Wg = W.reshape(rows, cols // group_size, group_size)             # [out, n_groups, g]
+    scale = Wg.abs().amax(dim=2, keepdim=True).clamp_min(1e-12) / 6.0  # [out, n_groups, 1]
+    return _nvfp4_snap(Wg, scale).reshape(rows, cols)
 
 
 def gptq_quantize_grouped(
