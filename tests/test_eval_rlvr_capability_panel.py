@@ -98,9 +98,12 @@ def test_ingest_fail_open_when_panel_absent():
     report = eval_mod.run_eval(_args(eval_mod, capability_panel=False))
     mapped = ingest_mod.map_report(report)
     assert "capabilityPanelDelta" not in mapped
-    # The legacy headline numbers are present and well-formed.
-    assert mapped["before"] == report["base"]["meanReward"]
-    assert mapped["after"] == report["adapterScore"]["meanReward"]
+    # The headline numbers are present and well-formed: passAt1 is load-bearing,
+    # meanReward is carried as advisory only.
+    assert mapped["before"] == report["base"]["passAt1"]
+    assert mapped["after"] == report["adapterScore"]["passAt1"]
+    assert mapped["meanRewardAdvisory"]["before"] == report["base"]["meanReward"]
+    assert mapped["meanRewardAdvisory"]["after"] == report["adapterScore"]["meanReward"]
 
 
 def test_ingest_real_committed_report_still_maps():

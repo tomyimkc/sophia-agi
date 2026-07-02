@@ -476,6 +476,10 @@ def _run_gpu(args: argparse.Namespace) -> int:
         max_completion_length=args.max_completion_len,
         num_train_epochs=args.epochs,
         max_steps=args.max_steps,  # >0 bounds a smoke run (overrides epochs)
+        # The dispatched run seed. Without this, TRL trains on its default seed (42)
+        # for EVERY dispatched --seed, so "independent replications" only varied the
+        # data split — the rollout/init RNG was identical across the sweep.
+        seed=args.seed,
         beta=args.beta,
         logging_steps=5,
         save_strategy="no",
@@ -534,6 +538,7 @@ def _run_gpu(args: argparse.Namespace) -> int:
             "vllm": args.vllm, "quant": args.quant, "epochs": args.epochs, "lr": args.lr,
             "beta": args.beta, "num_generations": args.num_generations,
             "target_modules": target_modules,
+            "seed": args.seed,  # effective split + GRPO seed (auditable per run)
         },
         "trainCases": n_train,
         "evalCases": n_eval,

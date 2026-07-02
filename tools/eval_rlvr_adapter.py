@@ -26,6 +26,7 @@ gate.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import statistics
 import sys
@@ -82,6 +83,25 @@ def _run_capability_panel(args: argparse.Namespace, model_desc: str) -> dict | N
         return {"ok": False, "error": f"{type(exc).__name__}: {exc}", "candidateOnly": True}
 
 
+def _split_audit(seed: int, eval_frac: float, ids: list[str]) -> dict:
+    """Auditable identity of THIS eval run, recorded in every report.
+
+    ``effectiveSeed`` is the seed this process actually used for the held-out
+    split and generation; ``splitHash`` is a stable hash of the exact held-out
+    ids that were scored. Two sweep reports that claim different (arm, seed)
+    but carry an identical splitHash + identical numbers are candidate evidence
+    of stale/cross-run report pickup (a measurement artifact), not of signal.
+    This block records identity only — it makes no capability claim.
+    """
+    payload = json.dumps(sorted(ids)).encode("utf-8")
+    return {
+        "effectiveSeed": int(seed),
+        "evalFrac": float(eval_frac),
+        "nEvalIds": len(ids),
+        "splitHash": hashlib.sha256(payload).hexdigest()[:16],
+    }
+
+
 def _write(path: Path, obj: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(obj, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -101,9 +121,15 @@ def _mock_completion(case: Any, *, improved: bool) -> str:
 
 
 def _load_real_generators(
-    model_name: str, adapter_path: Path, *, max_new_tokens: int, chat_template: bool = False
+    model_name: str, adapter_path: Path, *, max_new_tokens: int, chat_template: bool = False,
+    seed: int = 0,
 ):
     """Return (base_generate, adapter_generate). Imported lazily for CPU/CI safety.
+
+    ``seed``: the dispatched run seed. Generation is greedy (do_sample=False), but the
+    RNG state is still seeded here so the eval-generation path is PROVABLY bound to the
+    dispatched seed (and stays correct if sampling is ever enabled). The caller records
+    the same value as ``audit.effectiveSeed`` in the report.
 
     ``chat_template``: when True (the code and step tasks), wrap each prompt in the
     model's own chat template before tokenizing, so an *instruct/chat* base (e.g.
@@ -118,10 +144,11 @@ def _load_real_generators(
     """
     import torch
     from peft import PeftModel
-    from transformers import AutoModelForCausalLM, AutoTokenizer
+    from transformers import AutoModelForCausalLM, AutoTokenizer, set_seed
 
     if not torch.cuda.is_available():
         raise RuntimeError("real RLVR adapter eval needs CUDA; use --mode mock locally")
+    set_seed(seed)  # bind eval generation to the dispatched seed (auditable, not just implied)
     tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=False)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
@@ -232,7 +259,9 @@ def run_eval(args: argparse.Namespace) -> dict:
     else:
         if not args.adapter:
             raise SystemExit("--adapter is required under --mode real")
-        base_gen, adapter_gen = _load_real_generators(args.model, args.adapter, max_new_tokens=args.max_new_tokens)
+        base_gen, adapter_gen = _load_real_generators(
+            args.model, args.adapter, max_new_tokens=args.max_new_tokens, seed=args.seed
+        )
         base = {}
         adapter = {}
         for i, c in enumerate(cases, 1):
@@ -276,6 +305,7 @@ def run_eval(args: argparse.Namespace) -> dict:
         },
         "rows": {"base": base_score["rows"], "adapter": adapter_score["rows"]},
     }
+    report["audit"] = _split_audit(args.seed, args.eval_frac, [c.id for c in cases])
     if args.capability_panel:
         # Optional capability-delta panel (attribution / hallucination / calibration).
         # Attached as a NEW key only — the legacy base/adapterScore/delta/checks above
@@ -336,7 +366,9 @@ def run_eval_math(args: argparse.Namespace) -> dict:
             raise SystemExit("--adapter is required under --mode real")
         if not math_reward.sympy_available():
             raise SystemExit("math adapter eval needs sympy; pip install -r requirements-math.txt")
-        base_gen, adapter_gen = _load_real_generators(args.model, args.adapter, max_new_tokens=args.max_new_tokens)
+        base_gen, adapter_gen = _load_real_generators(
+            args.model, args.adapter, max_new_tokens=args.max_new_tokens, seed=args.seed
+        )
         base, adapter = {}, {}
         for i, p in enumerate(problems, 1):
             print(f"[eval-math] {i}/{len(problems)} {p['id']}", flush=True)
@@ -376,6 +408,7 @@ def run_eval_math(args: argparse.Namespace) -> dict:
         },
         "rows": {"base": base_score["rows"], "adapter": adapter_score["rows"]},
     }
+    report["audit"] = _split_audit(args.seed, args.eval_frac, [p["id"] for p in problems])
     report["passed"] = all(report["checks"].values())
     return report
 
@@ -443,7 +476,8 @@ def run_eval_step(args: argparse.Namespace) -> dict:
         # chat_wrap is a NO-OP for a base/completion model (no chat template), so the
         # registered Qwen2.5-Math-7B BASE run stays on the identical raw-prompt path.
         base_gen, adapter_gen = _load_real_generators(
-            args.model, args.adapter, max_new_tokens=args.max_new_tokens, chat_template=True
+            args.model, args.adapter, max_new_tokens=args.max_new_tokens, chat_template=True,
+            seed=args.seed,
         )
         base, adapter = {}, {}
         for i, p in enumerate(problems, 1):
@@ -482,6 +516,7 @@ def run_eval_step(args: argparse.Namespace) -> dict:
         },
         "rows": {"base": base_score["rows"], "adapter": adapter_score["rows"]},
     }
+    report["audit"] = _split_audit(args.seed, args.eval_frac, [p["id"] for p in problems])
     report["passed"] = all(report["checks"].values())
     return report
 
@@ -538,7 +573,8 @@ def run_eval_code(args: argparse.Namespace) -> dict:
         if not code_reward.exec_enabled():
             raise SystemExit("code adapter eval needs SOPHIA_ALLOW_CODE_EXEC=1 (interpreter = reward)")
         base_gen, adapter_gen = _load_real_generators(
-            args.model, args.adapter, max_new_tokens=args.max_new_tokens, chat_template=True
+            args.model, args.adapter, max_new_tokens=args.max_new_tokens, chat_template=True,
+            seed=args.seed,
         )
         base, adapter = {}, {}
         for i, t in enumerate(tasks, 1):
@@ -579,6 +615,7 @@ def run_eval_code(args: argparse.Namespace) -> dict:
         },
         "rows": {"base": base_score["rows"], "adapter": adapter_score["rows"]},
     }
+    report["audit"] = _split_audit(args.seed, args.eval_frac, [t["id"] for t in tasks])
     report["passed"] = all(report["checks"].values())
     return report
 
@@ -640,7 +677,8 @@ def run_eval_invention(args: argparse.Namespace) -> dict:
         if not args.adapter:
             raise SystemExit("--adapter is required under --mode real")
         base_gen, adapter_gen = _load_real_generators(
-            args.model, args.adapter, max_new_tokens=args.max_new_tokens, chat_template=True)
+            args.model, args.adapter, max_new_tokens=args.max_new_tokens, chat_template=True,
+            seed=args.seed)
         base, adapter = {}, {}
         for i, t in enumerate(tasks, 1):
             print(f"[eval-invention] {i}/{len(tasks)} {t['id']}", flush=True)
@@ -684,6 +722,7 @@ def run_eval_invention(args: argparse.Namespace) -> dict:
         },
         "rows": {"base": base_score["rows"], "adapter": adapter_score["rows"]},
     }
+    report["audit"] = _split_audit(args.seed, args.eval_frac, [t["id"] for t in tasks])
     report["passed"] = all(report["checks"].values())
     return report
 
@@ -750,7 +789,9 @@ def run_eval_concept(args: argparse.Namespace) -> dict:
     else:
         if not args.adapter:
             raise SystemExit("--adapter is required under --mode real")
-        base_gen, adapter_gen = _load_real_generators(args.model, args.adapter, max_new_tokens=args.max_new_tokens)
+        base_gen, adapter_gen = _load_real_generators(
+            args.model, args.adapter, max_new_tokens=args.max_new_tokens, seed=args.seed
+        )
         base, adapter = {}, {}
         for i, c in enumerate(cases, 1):
             print(f"[eval-concept] {i}/{len(cases)} {c['id']}", flush=True)
@@ -791,6 +832,7 @@ def run_eval_concept(args: argparse.Namespace) -> dict:
         },
         "rows": {"base": base_score["rows"], "adapter": adapter_score["rows"]},
     }
+    report["audit"] = _split_audit(args.seed, args.eval_frac, [c["id"] for c in cases])
     report["passed"] = all(report["checks"].values())
     return report
 

@@ -78,8 +78,8 @@ def test_g8_enforced_once_provisioned() -> None:
 def test_harden_from_report_maps_and_runs() -> None:
     report = {
         "adapter": "sophia-rlvr-v1",
-        "base": {"meanReward": 0.531, "trueFalsePositiveRate": 0.2083},
-        "adapterScore": {"meanReward": 0.6885, "trueFalsePositiveRate": 0.2083},
+        "base": {"passAt1": 0.531, "meanReward": 0.531, "trueFalsePositiveRate": 0.2083},
+        "adapterScore": {"passAt1": 0.6885, "meanReward": 0.6885, "trueFalsePositiveRate": 0.2083},
         # Real probe present but the adapter REFUSED every subversion request (safe).
         "probes": {"monitor_subversion": {"score": 0.0}},
     }
@@ -97,8 +97,8 @@ def test_harden_from_report_monitor_subversion_halts() -> None:
     # probe HALTs the loop via G8 even though the other five probes are unmeasured.
     report = {
         "adapter": "sophia-rlvr-v1",
-        "base": {"meanReward": 0.531, "trueFalsePositiveRate": 0.2083},
-        "adapterScore": {"meanReward": 0.6885, "trueFalsePositiveRate": 0.2083},
+        "base": {"passAt1": 0.531, "meanReward": 0.531, "trueFalsePositiveRate": 0.2083},
+        "adapterScore": {"passAt1": 0.6885, "meanReward": 0.6885, "trueFalsePositiveRate": 0.2083},
         "probes": {"monitor_subversion": {"score": 1.0}},
     }
     r = ih.harden_from_report(report, {"verdict": "promote"}, adapter_id="sophia-rlvr-v1")

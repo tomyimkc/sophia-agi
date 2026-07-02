@@ -137,3 +137,35 @@ approvals: provenance x {gate, multiaxis} x seeds {0,1,2} on this branch (includ
 run_rlvr additions, inert on the gate/multiaxis path). After the sweep: ingest_rlvr_eval gates
 per run + the calibration/abstention re-audit INCLUDING answerable-coverage before touching
 ledger row `rlvr-live-run-not-yet-gated-2026-06-21`. pass@1/VSC load-bearing, never meanReward.
+
+## A6. Live sweep landed — 6 verdicts, 2 CONTESTED as measurement artifact (forensics phase)
+
+The 3-seed × 2-arm provenance sweep (rlvr-runpod.yml runs #65–#70, commit `6a12a05`,
+Qwen2.5-Coder-7B-Instruct, epochs 1.0, adapter sophia-rlvr-v1, capabilityMetric at the time
+= meanReward) returned:
+
+| Run | Arm | Seed | Capability (before→after) | Verdict |
+|---|---|---|---|---|
+| #65 | gate | 0 | 0.3702→0.3617 | quarantine |
+| #66 | gate | 1 | 0.5819→0.7819 | promote — CONTESTED |
+| #67 | gate | 2 | 0.4458→0.4104 | quarantine |
+| #68 | multiaxis | 0 | 0.3702→0.3309 | quarantine |
+| #69 | multiaxis | 1 | 0.4206→0.3969 | quarantine |
+| #70 | multiaxis | 2 | 0.5819→0.7819 | promote — CONTESTED |
+
+**Artifact finding (candidateOnly):** #66 and #70 are byte-identical (capability
+0.5819→0.7819, integrity 0.8696) across a DIFFERENT reward arm AND seed, and match the
+previously committed archive report
+`agi-proof/benchmark-results/runpod-rlvr/mr9sr03clgpk5g.rlvr.adapter-eval.json`. Candidate
+root cause is stale/cross-run report pickup (fixed run-agnostic report path on a shared
+persistent /workspace volume + non-fatal eval failure + identity-free `*adapter-eval*.json`
+glob), NOT an unplumbed split seed — seeds 0/1/2 provably yield distinct eval splits
+(a5004ea6/ee1cfcc1/12601d35). The ingest also gated on meanReward (never load-bearing).
+**No validated uplift is claimed from this sweep.** Fixes landed on
+`claude/rlvr-sweep-forensics-2z8pbt` (seed-stamped report paths + stale-path clearing in
+tools/runpod_rlvr.py; fail-closed passAt1-only gating in tools/ingest_rlvr_eval.py with
+meanReward demoted to advisory; per-report `audit.effectiveSeed`/`splitHash` in
+tools/eval_rlvr_adapter.py; seed now reaches GRPOConfig — training RNG was previously TRL's
+default 42 for every arm). Ledger: new row `rlvr-sweep-identical-metrics-artifact-2026-07-02`
+(Open); `rlvr-live-run-not-yet-gated-2026-06-21` stays Open. Next paid arm pre-registered with
+frozen thresholds: `agi-proof/rlvr-sweep-2026-07-02/PREREGISTRATION-NEXT-ARM.md`.
